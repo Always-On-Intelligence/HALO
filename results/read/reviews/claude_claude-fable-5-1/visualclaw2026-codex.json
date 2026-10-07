@@ -1,0 +1,107 @@
+{
+  "id": "visualclaw2026-codex",
+  "configuration": "VisualClawArena run with the Codex backend (codex exec, GPT-5.5) under the VisualClaw self-evolution stack: Cascade-8 keyframes (dHash + 128-dim CPU encoder + change gate, tau_major 0.30, 1 fps, max 8 frames, question-cited timestamps pinned) staged as _clip_frames/*.jpg; runner-side skill injection (hot/cold) from a run-local working bank seeded from seed_universal_mc; per-scenario memory store written after every round and retrieved for later rounds; FullEvo with the Cat. variant (retrieved memory concatenated into the standard evolver prompt, runner flag --memory-evolver-context-mode simple_concat), evolver fired within a scenario every N failures and at end of scenario with the cross-scenario failure buffer. Judged from paper Secs. 1, 3, 4, 5 and the runner/engine/evolver/memory code at commit f6de05b.",
+  "sources_read": [
+    "https://arxiv.org/html/2606.16295v1 (version v1; Sections 1-5 read through the fetch tool with a second verification pass on every quoted sentence; Appendix A.1-A.12 could not be retrieved: the fetch output truncates after References and the saved PDF could not be rendered locally)",
+    "benchmark/visualclawarena/runner.py",
+    "benchmark/visualclawarena/engines/codex_cli.py",
+    "benchmark/visualclawarena/engines/base.py",
+    "benchmark/visualclawarena/engines/claude_code.py",
+    "benchmark/visualclawarena/cascade_frames.py",
+    "benchmark/visualclawarena/work_copy.py",
+    "benchmark/visualclawarena/access_logger.py",
+    "benchmark/visualclawarena/eval/exec_check_scorer.py",
+    "benchmark/visualclawarena/eval/multi_choice_scorer.py",
+    "benchmark/visualclawarena/aggregate_per_day_curve.py",
+    "benchmark/skill_wire.py",
+    "visualclaw/modules/skill/evolver.py",
+    "visualclaw/modules/skill/manager.py",
+    "visualclaw/modules/memory/manager.py",
+    "visualclaw/modules/memory/models.py",
+    "visualclaw/modules/memory/retriever.py",
+    "visualclaw/modules/memory/policy.py",
+    "visualclaw/config/defaults.yaml",
+    "visualclaw/config.py (skill/memory defaults)",
+    "scripts/run_visualclawarena_self_evolve.sh",
+    "plugins/codex/hooks.sh",
+    "README.md",
+    "docs/visualclawarena.md",
+    "docs/architecture.md",
+    "tests/test_skills_and_memory.py",
+    "visualclaw/skills_seed/seed_universal_mc/video-context-grounding/SKILL.md",
+    "visualclaw/skills_seed/seed_universal_mc/skill_utility.jsonl",
+    "Supplementary, not primary: https://ucsc-vlaa.github.io/VisualClaw/ and https://huggingface.co/datasets/UCSC-VLAA/VisualClawArena (no additional protocol detail beyond the paper)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "After every round the runner writes a memory unit whose content is the round's task question (sensed user/task input) plus the agent's conclusion, tagged with the scored outcome, into the per-scenario memory store; failure records containing the question, the expected answer and the tail of the sensed workspace/prompt context are appended to the cross-scenario failure buffer that the evolver pools. The paper describes memory ingest of solved examples and routing of failures into the same memory loop.",
+      "locator": "benchmark/visualclawarena/runner.py:752-797 (_store_round_memory), 1015-1028, 1933-1942, 2059-2067; paper Sec. 3.4 and Sec. 4.2",
+      "quote": "The memory store M_v saves correctly-answered examples as dense embeddings and retrieves only high-confidence matches."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Before each Codex call the runner retrieves skills from the evolving bank for the round question and prepends them in hot/cold format, then retrieves memories stored by earlier rounds of the scenario and prepends them; this prompt is what Codex acts on to produce the multiple-choice letter or the file-write blocks that the engine applies to the workspace.",
+      "locator": "benchmark/visualclawarena/runner.py:860-909 (skill retrieve + format_for_injection_hybrid), 913-932 (retrieve_for_prompt + _prepend_memory), 937-942 (engine.run_agent); engines/codex_cli.py:192-204; paper Sec. 4.2 and Sec. 3.3",
+      "quote": "For each evolve step, the runner initializes a clean computer workspace, applies the step's document or data updates, stages the selected visual keyframes as local image files, and prepends retrieved skills or memory context to the agent prompt."
+    },
+    "A->S": {
+      "label": "absent",
+      "rationale": "In the Codex variant the agent does not direct sensing. The paper describes a noninteractive bridge in which the runner supplies the workspace snapshot and image attachments up front and applies file writes only after the call returns (contrast with Claude Code's tool loop). The engine runs codex exec with a read-only sandbox and instructs the model not to issue shell, exec, or filesystem-read commands and to use only the injected snapshot and attached images. Keyframes are selected once per scenario, before any round, from the clip using fixed thresholds and timestamps cited in the scenario questions, never from agent requests. The evaluator's check of the final workspace is explicitly placed outside the agent. Files the agent wrote in earlier rounds are re-read only through the next round's fixed full-workspace snapshot, an environment loop rather than action-guided sensing.",
+      "locator": "paper Sec. 4.2; benchmark/visualclawarena/engines/codex_cli.py:104-112 (CODEX_EXEC_CONSTRAINTS), 129-132 (sandbox default read-only), 159 and 188-204 (images and snapshot supplied up front); runner.py:1574-1703 (keyframes extracted before the round loop)",
+      "quote": "Codex uses a stricter noninteractive bridge: the runner provides the workspace snapshot and image attachments up front, then applies the file writes emitted by Codex after the call returns."
+    },
+    "M->S": {
+      "label": "absent",
+      "rationale": "The complete sensing path carries no retained-prior input. The cascade keyframe selector takes only the clip, fixed thresholds (tau_major 0.30, Hamming 6, 1 fps, 30 s silence ceiling) and timestamps cited in the scenario's own questions; the Codex workspace snapshot reads every text file under a fixed character budget. The paper defines G as a per-frame edge gate operating on arriving frames. Skills and memories reach only the answer-time agent prompt, which the protocol classifies as M->A; no memory-guided sampling, attention, compression or interpretation step exists in this configuration.",
+      "locator": "benchmark/visualclawarena/cascade_frames.py:67-232 (cascade_extract_keyframes signature and loop); runner.py:1588-1625 (only question-cited timestamps are pinned); engines/codex_cli.py:409-455 (_workspace_snapshot_for_prompt); paper Sec. 3.1-3.2",
+      "quote": "G inspects each arriving frame and emits a major / minor / skip verdict."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The agent's own answer (tail of the assistant output) is stored as an episodic memory unit for the scenario after every round; the per-round answer.txt and prompt.txt logs are read back to build failure samples (response_text = the agent's answer) that are delivered to the LLM evolver, which rewrites the skill bank, and are persisted to the cross-scenario failure buffer.",
+      "locator": "benchmark/visualclawarena/runner.py:945-949 (prompt/answer logs), 1015-1028 (memory store of the answer), 1785-1828 and 1898-1942 (failure samples built from the agent's answers), 2059-2067 (buffer append); benchmark/skill_wire.py:482-575; visualclaw/modules/skill/evolver.py:197-331; paper Sec. 1 and Sec. 3.1",
+      "quote": "Correctly-solved examples are stored in the memory bank, and failures trigger an offline LLM evolver that uses relevant memories and failures to update the skill bank."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of its own actions for later use: every round's question and the agent's conclusion are stored as a memory unit tagged with the round outcome, and prompt/answer logs are written per round and read back by the evolver. The paper states that solved examples are stored in memory and failure trajectories are kept for the evolver.",
+      "locator": "benchmark/visualclawarena/runner.py:752-797, 945-954, 1015-1028; paper Sec. 3.4 and Sec. 1",
+      "quote": "The memory store M_v saves correctly-answered examples as dense embeddings and retrieves only high-confidence matches."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "The runner's evaluator scores each round in-loop (parses the final letter against the key; runs the exec-check script against the written workspace) and the pass/fail result is retained in the memory unit's outcome field and in the failure records with the expected answer. The signal is benchmark ground truth obtained by the runner's evaluator rather than a user reaction, but it is obtained and retained by the service loop and the paper states it is routed back into memory and evolution.",
+      "locator": "benchmark/visualclawarena/runner.py:981-1002 (score_mc_round / score_ec_round), 1020-1025 (round_passed stored), 1915-1942 and 2059-2067 (failure records with reference); paper Sec. 4.2",
+      "quote": "In both cases, scoring remains outside the agent. The evaluator checks the final workspace state for execution-style tasks or parses the final answer for multiple-choice rounds, and failures are routed back into the same memory and skill-evolution loop."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Each failure sample links the round's question, the reference/expected answer and the agent's own incorrect response, and the evolver is asked to generate skills that would have prevented those failures; the per-skill utility tracker credits or blames the skills injected in a round with that round's pass/fail (tracking runs whenever SkillWire is active; F2 pruning only with --utility-prune). This scoring happens during the run and drives the correction, not post-hoc author analysis.",
+      "locator": "benchmark/visualclawarena/runner.py:1793-1828 (failure sample composition), 1766-1772 (record_result); benchmark/skill_wire.py:311-346; visualclaw/modules/skill/evolver.py:467-482 (evolver prompt); paper Sec. 3.4",
+      "quote": "When |D^fail|≥N_evo, the evolver retrieves relevant memory from M_v and proposes new skills: ΔS=ℰ(S,D^fail,M_v)."
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The LLM evolver (not a developer or user) generates new reusable skill rules and the SkillManager writes them as SKILL.md files into the run-local working bank seeded from seed_universal_mc, with qa_types.json sidecar tags, token-Jaccard (F1) dedup of near-duplicate names, and optional F2 utility pruning; in the Cat. variant the retrieved memory is concatenated into the standard evolver prompt without a guidance prefix. These skills are later applied as prompt rules, so this is a change to the service's mechanism rather than content used by a fixed mechanism.",
+      "locator": "visualclaw/modules/skill/evolver.py:245-291 (add_skill write_to_disk, qa_types sidecar); visualclaw/modules/skill/manager.py:894-923 (_write_skill_file); benchmark/visualclawarena/runner.py:1355-1373 (working bank), 1249-1259 (simple_concat = Cat.), 1866-1884 and 2013-2022 (evolve calls); paper Sec. 3.4",
+      "quote": "The Cat. variant follows the same direct concatenation spirit: ΔS_Cat.=ℰ(𝒫_0(S,D^fail)⊕R).",
+      "what": "The skill bank: new SKILL.md rule files (name, description, category, 6-15 lines of actionable guidance) added to the run-local working bank by the evolver, plus qa_types.json routing tags; the bank is deduplicated (F1) and optionally pruned (F2)."
+    },
+    "later_use": {
+      "label": "stated",
+      "rationale": "The paper states that at each evolve step the runner prepends retrieved skills to the agent prompt and reports 200-scenario Codex runs of the evolving configuration (VisualClaw (Cat.) 54.27 macro accuracy) with early/mid/late within-scenario accuracy and a per-step curve. In code the within-scenario evolver adds new skills to the live SkillManager so later rounds in the same scenario retrieve them, and the working bank directory persists so evolved skills carry across scenarios.",
+      "locator": "paper Sec. 4.2, Sec. 5.3 (VisualClawArena results table and Fig. 5); benchmark/visualclawarena/runner.py:1774-1777 and 1235-1243 (later rounds see new skills), 1220-1222 (bank persists across runs); visualclaw/modules/skill/evolver.py:260-271",
+      "quote": "The early/mid/late columns and Fig. 5 show a generally increasing within-scenario trend rather than a flat pass rate."
+    }
+  },
+  "notes": "Configuration judged: VisualClawArena / Codex (GPT-5.5), Cascade-8 + FullEvo Cat. Paper text was read through the fetch tool; each quoted sentence was re-checked in a second verification pass and reported as exact (math rendered in plain text), but the appendix (A.3 Detailed Algorithm, A.5 Additional VisualClawArena Details) could not be retrieved, so judgments rest on Secs. 1-5 plus the code. Observations: (1) the paper says memory saves correctly-answered examples, while the runner stores every round, pass or fail, with an outcome tag; (2) the paper describes dense-embedding memory, while the arena runner builds MemoryManager from defaults.yaml (keyword retrieval, use_embeddings false) unless a project config overrides it; (3) the public self-evolve script defaults to related_prefix (the Guide variant) and does not enable F2 pruning, so Cat. corresponds to --memory-evolver-context-mode simple_concat with utility tracking but no pruning; (4) the outcome signal is benchmark ground truth (answer keys and exec-check scripts) obtained in-loop by the runner's evaluator, which the paper places outside the agent; it was counted for Outcome/Attribution because it is obtained, retained and used by the service loop during the run, not scored post-hoc by the authors; (5) A->S is absent specifically for the Codex bridge; the Claude Code variant's tool loop would be a different judgment.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 699,
+    "code_commit": "f6de05bb8f03e8ba44ec5ee458961cd70002a6d5"
+  }
+}

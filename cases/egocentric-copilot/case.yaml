@@ -1,0 +1,18 @@
+id: egocentric-copilot
+name: "Egocentric Co-Pilot"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2603.01104
+sources:
+  - url: https://arxiv.org/html/2603.01104v1
+    kind: paper
+    version: "2603.01104v1"
+    sha256: 8f41c88bf9374b3a765ddc3a24dd8383e3c46b6dfde302e2cbd200382e0659b5
+code:
+  repo: https://github.com/YoungSeng/Egocentric-Co-Pilot
+  commit: 4bdc1c49f72d6b20e3daf0d35ce06b6b5ca2ee43
+variants:
+  - id: egocopilot2026
+    label: "Egocentric Co-Pilot"
+    configuration: "Smart-glasses assistant with event/query history, HCC, MCP tools, and clarifier"
+modes: [read, run]

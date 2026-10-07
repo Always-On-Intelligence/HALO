@@ -1,0 +1,18 @@
+id: ouroboros
+name: "Ouroboros"
+domain: digital
+kind: research
+report: https://arxiv.org/abs/2608.08311
+sources:
+  - url: https://arxiv.org/html/2608.08311v3
+    kind: paper
+    version: "2608.08311v3"
+    sha256: 68c0f88993a8535219af6c338da8be7234eab93fbefeb1217a01128e19a1b7cb
+code:
+  repo: https://github.com/razzant/ouroboros
+  commit: 4b37f96223b4b8248eea80c9be22cf923759cd5a
+variants:
+  - id: ouroboros2026
+    label: "Ouroboros"
+    configuration: "Hope live deployment with reviewed experience-driven core evolution"
+modes: [read, run]

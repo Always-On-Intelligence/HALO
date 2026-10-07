@@ -1,0 +1,26 @@
+id: elliq
+name: "ElliQ"
+domain: physical
+kind: product
+report: https://doi.org/10.14283/jarlife.2024.2
+sources:
+  - url: https://www.jarlife.net/4982-elliq-an-ai-driven-social-robot-to-alleviate-loneliness-progress-and-lessons-learned.html
+    kind: paper
+    version: ""
+    sha256: 4fb0c8075be5b76babd543a74c83bc4a5b03b0035120a1be4a9e06eb550f7442
+  - url: https://www.intuitionrobotics.com/post/new-year-new-elliq
+    kind: official_product_documentation
+    version: ""
+    sha256: c986b1036aa683e3fac243805cefe350f3018d285e6913f1a6f9aff62dc044a6
+  - url: https://elliq.com/pages/faqs
+    kind: official_product_documentation
+    version: ""
+    sha256: 22fd89262dbb96e7a389863b0b4380592b7695629bea0b223f52a3a340c70a0f
+  - url: https://elliq.com/pages/elliq-privacy-policy
+    kind: official_product_documentation
+    version: ""
+variants:
+  - id: elliq
+    label: "ElliQ"
+    configuration: "ElliQ product mechanism described by the 2024 paper and official ElliQ 3/current FAQ; proprietary implementation not inspected"
+modes: [read]

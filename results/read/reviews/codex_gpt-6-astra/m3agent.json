@@ -1,0 +1,91 @@
+{
+  "id": "m3agent",
+  "configuration": "M3-Agent long-video QA: memory-7b-sft plus trained control-32b-rl, with an external multimodal graph. Control history is retained across retrieval rounds within each question.",
+  "sources_read": [
+    "https://arxiv.org/html/2508.09736 — listed unversioned content snapshot; sections 3.3–6 and selected appendix passages (§§10–15), including Algorithm 1 and the control trajectory.",
+    "https://github.com/ByteDance-Seed/M3-Agent at verified commit 0e3e41939bd8a0b66d756e7b7eb8d5fe9992da5c",
+    "README.md",
+    "m3_agent/control.py",
+    "m3_agent/memorization_memory_graphs.py",
+    "m3_agent/memorization_intermediate_outputs.py",
+    "mmagent/memory_processing_qwen.py",
+    "mmagent/face_processing.py",
+    "mmagent/voice_processing.py",
+    "mmagent/videograph.py",
+    "mmagent/retrieve.py",
+    "mmagent/prompts.py",
+    "mmagent/utils/chat_qwen.py",
+    "mmagent/utils/video_processing.py",
+    "mmagent/utils/general.py",
+    "configs/processing_config.json",
+    "configs/memory_config.json",
+    "cases/m3-agent/case.yaml",
+    "halo/read/schema.json"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Video/audio observations yield episodic and semantic entries that are inserted into the graph; recurring evidence updates stored representations and weights. The graph is serialized for subsequent use.",
+      "locator": "m3_agent/memorization_memory_graphs.py:44–67,98–100; mmagent/memory_processing_qwen.py:183–254; [paper §§4.1–4.2](https://arxiv.org/html/2508.09736).",
+      "quote": "process_memories(video_graph, episodic_memories, clip_id, type=\"episodic\")"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved graph entries enter the control model's conversation context and determine further searches, answer content, and when to answer.",
+      "locator": "m3_agent/control.py:79–89,117–131,168–188; mmagent/retrieve.py:237–275; [paper §4.3, Algorithm 1](https://arxiv.org/html/2508.09736)."
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "Control directs searches of already retained graph content. Neither these searches nor the separate benchmark grader establishes control of observation acquisition, interpretation, or expected-effect sensing. No complete exclusion of that route is stated.",
+      "locator": "m3_agent/control.py:100–132,201–211; m3_agent/memorization_memory_graphs.py:69–100; [paper §§3.3,4.2–4.3](https://arxiv.org/html/2508.09736)."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Stored face and voice embeddings identify people in incoming clips. The resulting persistent identities condition interpretation and description of the current video/audio, independently of answer-time retrieval.",
+      "locator": "mmagent/face_processing.py:149–185; mmagent/voice_processing.py:197–218; mmagent/videograph.py:614–670; mmagent/memory_processing_qwen.py:36–150; [paper §4.2 and appendix §10](https://arxiv.org/html/2508.09736)."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Assistant reasoning and search decisions are appended to conversation state and reused in subsequent control rounds. This is task-local retention across model/tool interactions; persistence of those decisions into the external graph or later questions is not established.",
+      "locator": "m3_agent/control.py:164–194; [paper §4.3, Algorithm 1, lines 7–8](https://arxiv.org/html/2508.09736).",
+      "quote": "data[\"conversations\"].append({\"role\": \"assistant\", \"content\": outputs[i].outputs[0].text})"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains its own search decisions in conversation history and supplies that history to later rounds of the same question; this judgment does not rely on benchmark result files.",
+      "locator": "m3_agent/control.py:176–194; [paper §4.3, Algorithm 1, lines 7–8](https://arxiv.org/html/2508.09736).",
+      "quote": "data[\"conversations\"].append({\"role\": \"assistant\", \"content\": outputs[i].outputs[0].text})"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Search execution results, including an explicit empty-result status, are obtained after the selected search and retained for subsequent reasoning within the question.",
+      "locator": "m3_agent/control.py:117–131,176–188; [paper §4.3, Algorithm 1, lines 10–16](https://arxiv.org/html/2508.09736).",
+      "quote": "data[\"conversations\"].append({\"role\": \"user\", \"content\": search_result})"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The reported control trajectory links an empty result to its preceding query and changes the search approach to obtain evidence for the answer. This is an in-service correction, independent of benchmark grading.",
+      "locator": "[Paper appendix §14, control-32b-rl trajectory, third assistant turn; also §5.5](https://arxiv.org/html/2508.09736); m3_agent/control.py:128–131.",
+      "quote": "The previous query was about his personality regarding imagination, which didn’t yield results. So I need to approach it from another angle."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "SFT/DAPO are author-run model preparation; runtime graph updates change retained evidence, while no service-written change to parameters, prompts, reusable rules, code, or harness is reported.",
+      "locator": "[Paper §4.4 and appendix §13](https://arxiv.org/html/2508.09736); mmagent/utils/chat_qwen.py:39–58; mmagent/memory_processing_qwen.py:197–243; m3_agent/control.py:79–97,141–199."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Reported runs use trained checkpoints and updated factual memories; no run under a mechanism durably revised by the service itself is identified.",
+      "locator": "[Paper §§5.3–5.5, Tables 6–7](https://arxiv.org/html/2508.09736); m3_agent/control.py:32,141,168–199."
+    }
+  },
+  "notes": "Reviewed the specified QA configuration, not the illustrative household robot or prompted baselines. Functional Memory includes the explicitly reused per-question conversation buffer, so A→M and the first three steps have only within-question scope. External graph writes originate in video perception. GPT-4o benchmark scores and saved evaluation trajectories are not treated as service feedback or self-evolution. No files were modified and no model execution was performed.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 256,
+    "code_commit": "0e3e41939bd8a0b66d756e7b7eb8d5fe9992da5c"
+  }
+}

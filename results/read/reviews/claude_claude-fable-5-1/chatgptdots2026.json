@@ -1,0 +1,80 @@
+{
+  "id": "chatgptdots2026",
+  "configuration": "OpenAI dots as described in the ChatGPT documentation pages 'Meet dots' and 'Tasks and memory' (Markdown versions): an always-on cloud agent with its own saved notes separate from ChatGPT memory, self-timed follow-up (it decides when to pause and wake up), delegated tasks (background agents, cloud threads, and Work/Codex tasks it creates and later checks), saved recurring schedules and event monitoring, and automatic approval checks before actions that affect accounts or share information.",
+  "sources_read": [
+    "https://learn.chatgpt.com/docs/dots (read as the Markdown version at https://learn.chatgpt.com/docs/dots.md, fetched 2026-10-07; case version: Markdown documentation page fetched 2026-10-05)",
+    "https://learn.chatgpt.com/docs/dots/tasks-and-memory (read as the Markdown version at https://learn.chatgpt.com/docs/dots/tasks-and-memory.md, fetched 2026-10-07; case version: Markdown documentation page fetched 2026-10-05)",
+    "cases/dot/case.yaml (configuration and source list; no code repository)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-supplied evidence from conversation (new decisions, changing priorities) is written into the dot's own saved notes, and information sensed during proactive research of connected sources is retained as private notes. Both are sensed or user-supplied evidence admitted into the service's cross-conversation memory, not a static profile.",
+      "locator": "Tasks and memory > Context and memory > Persistent memory; Tasks and memory > Proactive research; Meet dots > Memory and context",
+      "quote": "As you work together, your dot can update these notes to reflect new decisions and changing priorities. [...] Alongside assigned work, your dot can research information it has permission to read and keep private notes about useful findings."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The dot's saved notes about preferences, decisions, and ongoing work, together with relevant ChatGPT memory, are explicitly used in later conversations to shape its work and replies across channels (for example, using a privately shared deadline to prepare an update), and saved schedules and delivery preferences govern when and where later actions and notifications happen.",
+      "locator": "Tasks and memory > Context and memory > Persistent memory; Tasks and memory > Across messaging channels; Meet dots > Memory and context; Tasks and memory > Recurring tasks",
+      "quote": "It also keeps its own notes about preferences, decisions, and ongoing work so it can use them in later conversations. [...] Information you share through one contact method can inform its work and replies through another."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action-side plans and execution state direct what the service observes: the dot delegates work and its background agents report back to it; it checks the results of tasks it created (an expected-effect check on its own actions) before sending follow-up instructions; it decides itself when to wake up and look again rather than following a fixed schedule; it researches connected information to find next steps; and before an action affects accounts it turns to the user to acquire a decision or approval. These are in-system flows, not an external grader.",
+      "locator": "Tasks and memory > Assigned work; Meet dots > Tasks and conversations; Meet dots > How dots work; Meet dots > Permissions and approvals",
+      "quote": "Your dot can divide work among background agents that run in parallel and report back to it. [...] Your dot can check results and send follow-up instructions to tasks it created. [...] Your dot can decide when to pause and wake up to continue work; you don't need a fixed schedule for every follow-up."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained records of earlier work are used to interpret newly acquired information: background research connects new information to earlier work, for example recognising that a newly observed release decision conflicts with a draft retained from the previous week; conversation context is used to connect a new request to work already underway; and saved watch criteria guide which events are attended to. This is interpretation of current observations under retained priors, performed in the background without a user query, so it is more than answer-time retrieval and more than a memory-guided action that merely requests a new observation. The pages do not detail the mechanism, but the flow is described.",
+      "locator": "Tasks and memory > Proactive research; Tasks and memory > Context and memory > Conversation context; Tasks and memory > Recurring tasks > Event monitoring",
+      "quote": "This background research can connect new information to earlier work. For example, your dot might flag that a release decision conflicts with a draft you shared last week."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The service retains its own plans and execution state: it saves schedules for recurring work that it can later list, change, or cancel and can confirm what it saved; it keeps notes on ongoing work and tracks progress so assigned work continues between conversations without restarting; and it keeps track of tasks it created so it can later check their results. These are action-side records (plans, task state, execution records) written to memory, distinct from feedback supplied by Sensing.",
+      "locator": "Tasks and memory > Recurring tasks; Tasks and memory > Context and memory > Persistent memory; Meet dots > How dots work; Meet dots > Tasks and conversations",
+      "quote": "Work that repeats at fixed times needs a saved schedule. [...] Ask your dot to confirm what it saved. Use **Scheduled** to review recurring work, or ask your dot to list, change, or cancel its scheduled tasks."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The dot itself keeps notes on decisions and ongoing work for use in later conversations, retains the schedules it saved (which it can list on request), and keeps track of the tasks it created so it can report what it is working on and check their results later. These are records of its own decisions and actions kept by the service for later use, not author-only trial logs.",
+      "locator": "Tasks and memory > Context and memory > Persistent memory; Tasks and memory > Recurring tasks; Meet dots > Tasks and conversations; Meet dots > Review and redirect",
+      "quote": "It also keeps its own notes about preferences, decisions, and ongoing work so it can use them in later conversations."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Task results from delegated work and background agents are obtained by the dot (they report back to it and it checks results of tasks it created), such results form part of the context it works with and remain inspectable under Activity, and user corrections after reviewing its output are received and folded into its notes as new decisions and priorities. The pages do not detail how long individual outcomes are kept beyond the notes on ongoing work.",
+      "locator": "Tasks and memory > Assigned work; Tasks and memory > Context and memory > Conversation context; Meet dots > Work with your dot > Give it a responsibility; Tasks and memory > Context and memory > Persistent memory",
+      "quote": "Context is the information available to your dot while it responds or works: messages, instructions, relevant source material, and results from its tools or delegated work."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The result of a task is checked against the specific task the dot created and used to issue corrective follow-up instructions to that task, an immediate check linked to the decision it concerns; user corrections are likewise applied to the work already underway. The documentation cautions that a completed run does not by itself confirm the result was achieved or delivered and asks the user to review output, which limits the service's own verification but does not negate the stated check.",
+      "locator": "Meet dots > Tasks and conversations; Tasks and memory > Assigned work (table row 'Task your dot created'); Meet dots > Review and redirect",
+      "quote": "Your dot can check results and send follow-up instructions to tasks it created."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The only durable changes described are to the dot's notes (preferences, decisions, ongoing work, research findings) and saved schedules, which are content and task state consumed by a fixed mechanism, and to instructions and custom rules, which are written by the user. Neither page states that the dot itself changes its model, prompts, skills, reusable rules, code, or harness.",
+      "locator": "Tasks and memory > Context and memory > Persistent memory; Meet dots > Permissions and approvals",
+      "quote": "You can add instructions for how you want your dot to work, such as asking it to show you drafts before sending them. Custom rules are optional controls for more specific ongoing boundaries.",
+      "what": "None. Only notes and schedules (content and task state) and user-authored instructions and custom rules are described."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No self-made revision to the mechanism is described, so no later run under a revised mechanism is reported; later conversations use updated notes, which is content use by a fixed mechanism.",
+      "locator": "Both pages in full; Tasks and memory > Context and memory > Persistent memory"
+    }
+  },
+  "notes": "Judged the chatgptdots2026 configuration (dots as described in the two listed ChatGPT documentation pages; no code repository). Both pages were read in their Markdown (.md) forms through a fetch tool on 2026-10-07; the case lists snapshots fetched 2026-10-05. Every quoted sentence was confirmed word-for-word identical across at least two independent extractions of the .md text, so quotes are treated as verbatim; the sha256 values listed in case.yaml could not be recomputed because shell access was unavailable, so byte-level identity with the 2026-10-05 snapshot is unverified. Linked pages (Controls, Messaging, Getting started, Computers and apps) are not listed sources and were not read. Modules were assigned by function: Sensing = user messages across ChatGPT, calls, Slack, and Teams, connected-app and channel data, event monitoring, and tool and delegated-task results; Memory = the dot's own saved notes, private research notes, relevant ChatGPT memory, and saved schedules; Action = deciding when to wake, follow up, delegate, draft, notify, stay silent, or seek approval. The basic S->A path was not reviewed.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 378,
+    "code_commit": null
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "id": "pahf2026",
+  "configuration": "Full pre-action plus post-action PAHF with GPT-4o and default SQLite per-user memory during feedback-enabled initial learning and adaptation (Phases 1 and 3).",
+  "sources_read": [
+    "https://arxiv.org/html/2602.16173v1 — Sections 3.1–3.4, 4.1–4.2, 5, and Appendices B–E.",
+    "https://github.com/facebookresearch/PAHF/tree/7a11213360a82d5f437a035e3a31c92d6307f8cf — checked-out commit verified; README.md and run_agent.py.",
+    "agents/base.py:27–164; agents/shopping_agent.py:61–455, 538–750.",
+    "agents/embodied_agent.py:140–327.",
+    "memory/banks.py:143–400; memory/utils.py:15–84.",
+    "prompts/shopping_prompts.py:54–310, 365–492.",
+    "utils/agent_utils.py:69–125; utils/llm.py:14–130.",
+    "cases/pahf/case.yaml; halo/read/schema.json."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Clarification answers are summarized and stored; informative post-action feedback is summarized and added or merged into existing per-user notes. SQLite commits these writes.",
+      "locator": "agents/base.py:126–143; agents/shopping_agent.py:247–303, 430–435; memory/banks.py:270–291, 309–332.",
+      "quote": "Check whether feedback contains new preference info and store it in memory."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved user notes are summarized into context appended to the action-selection prompt, informing whether to clarify, which product to select, or whether to abstain.",
+      "locator": "Paper §3.2, Action Execution, and §3.4, Reading: https://arxiv.org/html/2602.16173v1; agents/base.py:45–79; agents/shopping_agent.py:369–387; prompts/shopping_prompts.py:70–95.",
+      "quote": "return f\"Context: {summary}\""
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Selecting Ask human triggers generation and delivery of a targeted clarification question, which determines what user information is acquired. This establishes the route independently of benchmark grading.",
+      "locator": "Paper §3.2, Pre-Action Interaction: https://arxiv.org/html/2602.16173v1; agents/shopping_agent.py:400–415; agents/base.py:109–133; prompts/shopping_prompts.py:210–221.",
+      "quote": "When faced with unclear product preferences, you must generate a precise question that directly addresses the missing information."
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "The described retrieval and summarization prepare action-selection context. Memory can influence the decision to ask, but that is M->A->S. The clarification generator receives the scenario without retrieved notes; no other direct retained-prior input to sensing is established.",
+      "locator": "Paper §3.4, Reading: https://arxiv.org/html/2602.16173v1; agents/base.py:66–79, 109–132; agents/shopping_agent.py:376–415."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The agent's generated clarification question is included with the answer in the Q&A supplied to the memory summarizer, whose output is persisted. This establishes action-origin conversational context entering memory integration without requiring retention of the original utterance.",
+      "locator": "agents/base.py:112–143; prompts/shopping_prompts.py:365–366.",
+      "quote": "summ = f\"{qa}\\n\\nAccording to this Q&A, please summarize the personalized information of {name} in one brief sentence.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "Action/transcript records are written as research results and used for metrics; retention of the service's own actions for subsequent assistance is not established by preference summaries or transient prompts.",
+      "locator": "agents/shopping_agent.py:398–416, 444–452, 625–653, 692–717; agents/base.py:135–143; agents/embodied_agent.py:315–325."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Post-action corrective feedback is obtained, and its informative preference content is retained in SQLite for subsequent assistance; retention does not depend on the research result logs.",
+      "locator": "agents/shopping_agent.py:161–245, 247–303, 418–435; memory/banks.py:270–291, 309–332.",
+      "quote": "Check whether feedback contains new preference info and store it in memory."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Feedback identifies why the actual selected option fails the user's preferences and is immediately fed into memory correction for later decisions. This is the online feedback loop, separate from the authors' accuracy calculation.",
+      "locator": "agents/shopping_agent.py:121–159, 161–245, 265–303, 418–435.",
+      "quote": "return f\"Option {action} won't work for me because I don't want {disliked_features[0]}.\""
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service revises user preference content under fixed prompts and update procedures; no service-authored durable change to model parameters, prompts, reusable procedural rules, skills, code, or harness is reported.",
+      "locator": "agents/base.py:27–39, 135–143; agents/shopping_agent.py:247–303; prompts/shopping_prompts.py:418, 457–464; utils/llm.py:83–99."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Later iterations use updated preference memory, but neither the reported runs nor the code establish a run under a revised mechanism.",
+      "locator": "Paper §§4.2–5: https://arxiv.org/html/2602.16173v1; agents/shopping_agent.py:625–639, 692–704; agents/base.py:45–79."
+    }
+  },
+  "notes": "Reviewed independently without modifying files or running experiments. Simulated feedback counts where it enters the agent's online update loop. Preference adaptation is not classified as mechanism revision. README.md:179 notes that this code release contains developer-made shopping prompt and feedback refinements relative to the paper; those are not agent self-revision.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 276,
+    "code_commit": "7a11213360a82d5f437a035e3a31c92d6307f8cf"
+  }
+}

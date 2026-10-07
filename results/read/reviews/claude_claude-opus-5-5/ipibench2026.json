@@ -1,0 +1,82 @@
+{
+  "id": "ipibench2026",
+  "configuration": "Variant ipibench2026: full IPI-Agent on base MLLM Qwen3-VL-8B. The Interaction-Control Policy is the Intent Router plus the Memory Tool (Proactive Memory and Interaction Memory). The Temporal-Gating Mechanism is the Response Tool plus the Gating Tool, with Qwen3-VL-Embedding-2B as the embedder. It runs on IPIBench, streamed at 1 FPS. This is the reference row 'IPI-Agent (Qwen3-VL-8B)' of the Table 5 component ablation, with the same numbers as that row in Table 4. Judged from the paper text, because the pinned repository does not contain IPI-Agent code.",
+  "sources_read": [
+    "https://arxiv.org/html/2605.27074v1 (arXiv v1 HTML, read through WebFetch, which summarises pages; §4 IPI-Agent, §5.1, §5.4, §5.5, §6, figure and table captions)",
+    "https://arxiv.org/pdf/2605.27074v1 (same v1; full 13-page PDF text layer and page images, used to confirm verbatim wording of §3.1, §4.1–4.3, §5.1, §5.4–5.5, §6, the text inside Fig. 3, and Tables 4–5; the paper has no appendix)",
+    "github.com/lijinzhao30/IPI @ 2c96ea86180a979c472207c6ca0fe0c2f1d31383: README.md (IPI-Agent section and Repository status, lines 116-126)",
+    "repo assets/IPI-Agent.png (architecture figure, same as paper Fig. 3) and assets/Ablation.png (Table 5)",
+    "repo Src/Qwen3_VL_8B/Proactive_Monitoring/Proactive_Timing.py, Src/Qwen3_VL_8B/Interleaved_Reactive_Proactive/Reactive_after_Proactive.py, Src/Qwen3_VL_8B/Proactive_Task_Management/Task_Cancellation.py, Evaluate/Proactive_Task_Management/Task_Cancellation.py; regex search of all 18 .py files for memory/gating/embedding/router/proposal/threshold/similarity/agent (no matches)",
+    "HALO cases/ipi-agent/case.yaml (variant definition); cases/ipi-agent/README.md was also opened (run-mode note, not used as evidence)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-supplied instructions are written to Memory for admission and correction. The Intent Router turns a proactive instruction into a structured task and stores it in Proactive Memory (admission). A management instruction updates that stored task by modify or cancel (correction). User turns are also kept in Interaction Memory: Fig. 3 lists '[t1] Please remind me when you see the knife.' and '[t2] Where is the apple?'.",
+      "locator": "arXiv 2605.27074v1 §4.2, bullets 2–3; Fig. 3 Memory Tool panel ('Add/Edit/Cancel', 'Retrieval/Update', legend 'Memory Write')",
+      "quote": "For proactive instructions, IPI-Agent converts the instruction into a structured proactive task and stores it in the Proactive Memory for continuous monitoring. | For management instructions, IPI-Agent accesses the Proactive Memory and updates the corresponding proactive task through modify or cancel operations."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Stored information drives Action decisions about content and timing. For reactive queries, interaction history from Interaction Memory conditions the Response Tool's answer. In continuous monitoring, the active tasks kept in Proactive Memory, with instructions enhanced from Interaction Memory, drive the Response Tool's trigger decision and the text of the proactive response. The Gating Tool also uses the task-derived proposals to suppress or force a response.",
+      "locator": "§4.2 bullet 1 and closing sentence; §4.3 paras 1–3; Fig. 3 (Continuous Monitoring: Proactive Memory + Recent Frames → Response Tool / Gating Tool; Response Tool inputs: Query, Interaction Memory, Recent Frames)",
+      "quote": "For reactive queries, IPI-Agent retrieves relevant interaction history from the Interaction Memory and invokes the Response Tool using recent frames to generate an immediate response. | During streaming inference, the Response Tool first enhances task instructions using the Interaction Memory to resolve ambiguous references, and then generates proactive responses conditioned on recent video frames."
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "No flow is described in which Action output steers Sensing. No decision, response, plan or execution state changes what is sampled or how it is interpreted. Frames always come from a recent sliding window at a fixed 1 FPS. The Gating Tool computes the temporal change score per active task in parallel with the Response Tool ('parallel processing' in Fig. 3), not conditioned on its tentative trigger ri(t). It then combines ri(t) with that score to suppress or activate the response. That is an Action-side arbitration over sensed evidence, not an expected-effect check on an executed action. The monitoring targets (task proposals) come from tasks stored in Proactive Memory, which I counted under M->S. The paper does not exclude an A->S route either, so the label is insufficient, not absent.",
+      "locator": "§4.3 paras 2–3; §5.1 (1 FPS streaming protocol); Fig. 3 Temporal-Gating / Gating Tool panels",
+      "quote": "Different proactive tasks are processed independently and in parallel for efficient streaming inference. | The Gating Tool regulates triggering using two thresholds."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Stored task information shapes how the visual stream is interpreted. When a proactive instruction enters Proactive Memory, the agent generates M textual proposals for that task. At every later step these proposals are embedded (Qwen3-VL-Embedding-2B) and compared with the embedding of the recent frame window, and their change over time is computed. This task-conditioned reading of the current observations runs over the maintained set of active tasks Tt and comes before the gate's respond/silence decision. The proposals persist for the task's lifetime, so they are retained priors. This is continuous perception, not answer-time retrieval, and no Action request for a new observation sits in between. A secondary instance: the Response Tool resolves ambiguous references in task instructions using Interaction Memory before generating.",
+      "locator": "§4.3 paras 1–2 (proposal generation, embeddings, similarity, temporal variation); §5.4 (embedding model for the Gating Tool); Fig. 3 Gating Tool panel (text-embedding vs visual-embedding similarity curves)",
+      "quote": "Whenever a new proactive instruction is added into the Proactive Memory, the agent automatically generates M candidate textual proposals [...] for the corresponding task τi. Using an embedding model, we compute proposal embeddings [...] and the visual embedding of recent sliding-window frames [...]. For each proposal, we compute the similarity score [...] and its temporal variation [...] | The Gating Tool further regulates whether these proactive responses should be activated according to temporal similarity variations between proactive task proposals and recent visual observations."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Interaction Memory stores 'historical interactions', and the paper's Fig. 3 example of its contents includes the assistant's own reply. The user's '[t2] Where is the apple?' is followed by the agent's answer '[t2] In the fridge.', under 'Retrieval/Update' with 'Memory Write' arrows. So the assistant's utterances are delivered to Memory and later retrieved to enhance queries and resolve references. Storage of proactive alerts, trigger history or gating outcomes is not stated.",
+      "locator": "§4.2 sentence 2; §4.3 para 1; Fig. 3 Memory Tool → Interaction Memory panel (source of the last two quote segments) and legend (Memory Write / Memory Read)",
+      "quote": "an Interaction Memory for storing historical interactions to enhance current user queries with contextual information | [t2] Where is the apple? | [t2] In the fridge."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps its past exchanges in Interaction Memory, including what it delivered: Fig. 3 shows its answer '[t2] In the fridge.' stored after the user's question. The record is used later, retrieved for reactive queries and used to resolve ambiguous references in later instructions. Only these conversational records are stated; a log of proactive triggers or gating decisions is not.",
+      "locator": "arXiv 2605.27074v1 §4.2 (sentence 2, bullet 1); §4.3 para 1; Fig. 3 Interaction Memory panel (source of the last two quote segments)",
+      "quote": "Specifically, the Memory Tool contains a Proactive Memory for proactive monitoring and task management, and an Interaction Memory for storing historical interactions to enhance current user queries with contextual information. | [t2] Where is the apple? | [t2] In the fridge."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "The paper never describes getting or keeping evidence about how its responses turned out (reply-as-feedback, rating, dismissal, correction, receipt, task result). Later user turns (follow-up queries, modify/cancel instructions) are processed as new queries or task updates, not as outcomes of earlier responses. Correctness is scored only offline by the authors.",
+      "locator": "§4.2 (management instructions update tasks); §5.1 (author-side scoring protocol); Evaluate/Proactive_Task_Management/Task_Cancellation.py:47-70"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No outcome is linked back to the decision it concerns. The Gating Tool checks the Response Tool's tentative trigger against the concurrent visual-change score before anything is emitted. That score describes the scene, not the result of a delivered action, so this is a pre-emission check, not outcome attribution. Benchmark scoring of trigger windows and answers is offline author evaluation, which does not count.",
+      "locator": "§4.3 para 3; §5.1",
+      "quote": "the response is suppressed to avoid premature activation | the Gating Tool activates the corresponding proactive response to recover missed triggers"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "IPI-Agent is training-free. The developers set the gating thresholds empirically for each base model, and no service-made durable change to weights, prompts, skills, reusable rules, code or harness is described. Structured tasks, per-task proposals and Interaction Memory entries are task-state and context content used by a fixed mechanism, so they are not revisions.",
+      "locator": "§4 intro; §4.3 para 3; §6; README.md:118",
+      "quote": "θlow and θhigh are chosen empirically according to the capability of the base model.",
+      "what": "Nothing is revised by the service. The only tunable mechanism parameters (θlow, θhigh) are chosen by the developers."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revision is described, so no later run under a revised mechanism is reported. All reported runs (Tables 4–5) use a fixed configuration, and the released code does not include the agent.",
+      "locator": "§5.4–5.5, Tables 4–5; README.md:126"
+    }
+  },
+  "notes": "Configuration judged: the IPI-Agent (Qwen3-VL-8B) reference row of Table 5. The pinned repo has only plain Qwen3-VL-8B baseline inference scripts and offline scorers. README.md:126 says '🚧 **IPI-Agent code**: coming soon.', and no .py file implements memory, routing or gating, so the labels rest on the paper text and Fig. 3. Quotes were checked word-for-word against the arXiv v1 PDF text layer (same version as the listed HTML); inline math is elided as [...]. Main judgement calls: (1) the Gating Tool's proposals come from tasks retained in Proactive Memory and are used to interpret the frame stream, so M->S; no Action-originated plan or execution state steers sampling or interpretation, so A->S is insufficient. (2) A->M and Record rest on Interaction Memory storing 'historical interactions', with Fig. 3 showing the agent's own answer stored. Storage of proactive alerts is not stated.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 734,
+    "code_commit": "2c96ea86180a979c472207c6ca0fe0c2f1d31383"
+  }
+}

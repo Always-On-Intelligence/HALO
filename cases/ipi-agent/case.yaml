@@ -1,0 +1,18 @@
+id: ipi-agent
+name: "IPI-Agent"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2605.27074
+sources:
+  - url: https://arxiv.org/html/2605.27074v1
+    kind: paper
+    version: "2605.27074v1"
+    sha256: 105dc53e99aad6f068e1e9e021f026e62f1efce3e71e42da2ad3ea5478a16032
+code:
+  repo: https://github.com/lijinzhao30/IPI
+  commit: 2c96ea86180a979c472207c6ca0fe0c2f1d31383
+variants:
+  - id: ipibench2026
+    label: "IPI-Agent"
+    configuration: "Full IPI-Agent with Interaction-Control Policy, Memory Tool and Temporal-Gating Mechanism (Qwen3-VL-8B component-ablation configuration)"
+modes: [read, run]

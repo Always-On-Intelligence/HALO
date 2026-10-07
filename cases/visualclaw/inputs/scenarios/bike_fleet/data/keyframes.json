@@ -1,0 +1,38 @@
+{
+  "note": "Text stand-ins for the keyframes that VisualClaw's cascade gate (Cascade-8) forwards from the walkthrough clip. The adapter stages each description as _clip_frames/<MM_SS>.jpg, and the backbone receives it in place of the image attachment.",
+  "clip_seconds": 67,
+  "keyframes": [
+    {
+      "t": "00:04",
+      "description": "Dock A, slots 1-3, morning light. Bike #101: both tyres firm, front light lit, bell on the left grip. Bike #102: tyres firm, front light lit, no bell (a bare clamp on the handlebar where the bell was). Bike #103: rear tyre visibly flat against the rim, front light lit, bell present."
+    },
+    {
+      "t": "00:12",
+      "description": "Dock A, slots 4-6. Bike #104: tyres firm, bell present, front light dark (not lit). Bike #105: tyres firm, front light lit, bell present. Slot 6 is empty."
+    },
+    {
+      "t": "00:20",
+      "description": "Dock B, slots 1-3. Bikes #201 and #202: tyres firm, front lights lit, bells present. Bike #203: front tyre sagging at the contact patch, front light lit, bell present."
+    },
+    {
+      "t": "00:28",
+      "description": "Dock B, slots 4-6. Bike #204: tyres firm, front light lit, bell missing. Bike #205: tyres firm, front light dark, bell missing. Bike #206: tyres firm, front light lit, bell present."
+    },
+    {
+      "t": "00:36",
+      "description": "Dock C, slots 1-3. Bikes #301, #302 and #303: tyres firm, front lights lit, bells present."
+    },
+    {
+      "t": "00:44",
+      "description": "Dock C, slots 4-6. Bike #304: tyres firm, front light lit, no bell. Bike #305: front tyre flat, front light dark, bell present. Slot 6 is empty."
+    },
+    {
+      "t": "00:52",
+      "description": "Dock D, slots 1-3. Bike #401: tyres firm, front light lit, bell present. Bike #402: tyres firm, bell present, front light dark. Bike #403: tyres firm, front light lit, bell present."
+    },
+    {
+      "t": "01:00",
+      "description": "Dock D, slots 4-6. Bike #404: tyres firm, front light lit, bell present. Bike #405: tyres firm, front light lit, no bell. Bike #406: rear tyre flat, front light lit, no bell."
+    }
+  ]
+}

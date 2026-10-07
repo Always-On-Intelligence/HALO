@@ -1,0 +1,82 @@
+{
+  "id": "hobbit",
+  "configuration": "Hobbit PT2 household assistance as described in the 2018 integrated-system paper (Bajones et al., Journal of Robotics 2018, Article ID 1754657). This is the autonomous PT2 robot used in the field trials in 18 households in Austria, Greece and Sweden, about 21 days each. Device mode (days 1–10) and companion (Mutual Care) mode (from day 11) were judged together. Both use the same sensing, memory and behavior-coordination architecture and differ only in dialogue, proactivity and presence.",
+  "sources_read": [
+    "https://doi.org/10.1155/2018/1754657 (302 redirect to https://www.hindawi.com/journals/jr/2018/1754657/, which returned HTTP 403; https://onlinelibrary.wiley.com/doi/10.1155/2018/1754657, https://onlinelibrary.wiley.com/doi/full/10.1155/2018/1754657 and https://downloads.hindawi.com/journals/jr/2018/1754657.pdf also returned 403)",
+    "https://pdfs.semanticscholar.org/bee9/c59447e874401d403165251e11e4e8c93b1c.pdf: the publisher-typeset CC-BY PDF of Bajones et al., 'Hobbit: Providing Fall Detection and Prevention for the Elderly in the Real World', Journal of Robotics vol. 2018, Article ID 1754657, 20 pp., published 3 June 2018. Read in full: pp. 1–20, Tables 1–2, Figures 1–14.",
+    "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1155/2018/1754657 (metadata only; used to find the open-access PDF)",
+    "https://repositum.tuwien.at/handle/20.500.12708/145062 (bibliographic record only; no full text)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "There are implemented write paths from sensing and user input into retained stores. In the teach-object task, the user's object sits on the turntable and the head RGB-D camera learns it visually, so the robot can search for and find it in a later interaction. A later bring-object request depends on this earlier learning step, and 'Teach a new object' was in use during the field trials (Table 2). Other write paths: places reached by tele-operation are stored and automatically assigned to rooms; detected obstacles are kept for a time in the local map; primary users (PU) and secondary users (SU) can edit calendar events and reminders.",
+      "locator": "Sec. 3.3 item (5), p. 4; Sec. 3.4, p. 5; Sec. 3.4.1, p. 5; Sec. 4.2, pp. 7–8; Sec. 4.3, p. 10; Sec. 6.1.4, pp. 15–17; Table 2 ('Teach a new object'), p. 16",
+      "quote": "(5) Learn and bring objects: visual learning of user’s objects to enable the robot to search and find them within the environment [Sec. 3.3] | the arm can grasp a small turntable stored on the right side of the body, which is used to teach the robot unknown objects. [Sec. 3.4] | Places are learned by tele-operating the robot to specific locations and the subsequent association of places to rooms operates automatically [Sec. 4.2] | If obstacles are detected, they are remembered for a certain time in the robot’s local map. [Sec. 4.2]"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information drives Action decisions about timing, content and targets. The PuppetMaster starts behaviors from stored scheduled commands that must run at a specific time of day. Reminders for appointments and drinking water come from a cloud calendar that PU and SU can edit. Navigation tasks (Call Hobbit, move to location) use stored rooms, labeled places and positions linked to call buttons. When approaching the user, the robot takes a safe position from the local map, which holds remembered obstacles. Bringing an object requires an object learned earlier.",
+      "locator": "Sec. 3.3 items (1) and (6), p. 4; Sec. 4.1, p. 7; Sec. 4.2, p. 8; Sec. 4.3, p. 10; Sec. 4.7, p. 12; Sec. 6.1.4, p. 15",
+      "quote": "For this, it collects the input from those ROS nodes that handle gesture and speech recognition, text input via touchscreen, emergency detection (fallen and falling person detection, emergency button on the robot itself, and emergency gesture), and scheduled commands that need to be executed at a specific time of the day. [Sec. 4.1] | An interface to a cloud based calendar was introduced, allowing PU and SU of Hobbit to access and partly to also edit events and reminders. [Sec. 4.3] | First, a safe position to move to is obtained from the local map and the robot moves there. [Sec. 4.7]"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The current task steers what the robot senses and how. Head pan and tilt are adapted to the task; for example, the head is tilted down while navigating or patrolling to detect obstacles and fallen persons. In pick-up, once the pointing gesture is recognized, the robot drives to a viewpoint and looks at the approximate object position. After grasping, it checks the expected effect: whether the object is gone from its previous floor position. Sub-state-machines use only the inputs needed for the current scenario. The emergency detector runs during all tasks except object detection and recognition.",
+      "locator": "Sec. 3.4.1, p. 5; Sec. 4.1, p. 7; Sec. 4.2, p. 7; Sec. 4.6, p. 12; Sec. 4.9, p. 13; Fig. 13 caption, p. 13",
+      "quote": "Since the head can perform pan and tilt movements, the viewing angle of this camera can be dynamically adapted to a particular task at hand. [Sec. 3.4.1] | For obstacle avoidance, the head is tilted down during navigation, so that the head camera partially compensates for the blind spot of the bottom camera. [Sec. 4.2] | If the pointing gesture is recognized, the robot navigates to a position from where it could observe the object. At this position, the robot looks at the approximate position of the object. [Sec. 4.9]"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained priors are passed to perception to interpret observations. Objects the user taught earlier are later used by head-camera object recognition to find those objects: the head camera serves 'object learning and recognition', and the object 'first had to be learned so that it can be found'. The bottom camera does both mapping and localization, and the corridor discussion describes ambiguity when matching detected features to the map. The user-following tracker classifies new 3D points against a progressively built environment model. These are direct uses of stored content by Sensing, not only memory-guided actions that request new observations (M→A→S).",
+      "locator": "Sec. 3.3 item (5), p. 4; Sec. 3.4.1, p. 5; Sec. 4.2, pp. 7–8; Sec. 4.8, pp. 12–13; Sec. 6.1.4, p. 15",
+      "quote": "The head camera is mounted inside the head and used for obstacle avoidance, object learning and recognition, user detection, and gesture recognition and to detect objects to pick up. [Sec. 3.4.1] | As described, for the bring-object task, the object first had to be learned so that it can be found in the apartment. [Sec. 6.1.4] | the bottom camera, used for localization, mapping, and user following [Sec. 3.4.1] | The camera motion is computed by fitting those points to a progressively built model of the environment. [Sec. 4.8]"
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "The only retained record of the robot's actions is trial log data 'automatically recorded by the robot'. The authors and technical partners analysed it (Table 2 functional status, ref. [40], lessons in Sec. 6). The paper does not describe action records, utterances, delivered reminders or their outcomes being written to a store the service itself uses. Within-task state does not show retention across interactions: one grasp retry, up to three 0.15 m 'come closer' steps, and staying 30 minutes in the room of the last interaction. Nothing in the paper explicitly excludes the route, so the label is insufficient rather than absent.",
+      "locator": "Sec. 5, pp. 14–15; Sec. 3.2, p. 4; Sec. 4.7, p. 12; Sec. 4.9, p. 13; Secs. 6.1.2, 6.1.3, 6.1.6, pp. 15–17",
+      "quote": "Moreover, log data was automatically recorded by the robot during the whole trial duration. [Sec. 5] | Reviewing the log data revealed that the behavior coordination system could be trapped in a loop without a way to continue the desired behavior execution. [Sec. 6.1.6]"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "The robot's logs were research data reviewed by the authors and technical partners. The paper does not state that the service keeps records of its own decisions or deliveries for its own later use.",
+      "locator": "Sec. 5, pp. 14–15; Sec. 6.1.6, p. 17",
+      "quote": "Moreover, log data was automatically recorded by the robot during the whole trial duration. [Sec. 5] | (iii) analysis of the log data by technical partners. [Sec. 5]"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "The robot gets immediate signals about its actions: the grasp-success check, the user's reward and cancel gestures, and yes/no answers in confirmation dialogues. The paper never states that the service retains them. Retention appears only in research log data the authors reviewed, such as users cancelling proactive actions (Sec. 6.1.2).",
+      "locator": "Table 1, p. 12; Sec. 3.2, p. 4; Sec. 4.9, p. 13; Sec. 6.1.2, p. 15",
+      "quote": "Rewards the robot for an accomplished action/task [Table 1] | When they did not understand what the robot was doing, they canceled the robot’s action, effectively stopping part of the robot’s benefit to them. [Sec. 6.1.2]"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "During pick-up the robot checks whether its own grasp succeeded: it moves the object and checks whether the previous floor position changed. If the grasp failed, it tries once more. This is an immediate check, tied to the grasp decision, that corrects the assistance.",
+      "locator": "Sec. 4.9, p. 13; Fig. 13 caption, p. 13",
+      "quote": "If it is safe to grasp the object, the robot executes the arm trajectory and subsequently checks if the grasp was successful and will try to do so a second time if it was not. [Sec. 4.9] | The object is lifted and the check if grasp was successful is performed: the object is moved forward to check if something has changed at the previous position of the object on the floor. [Fig. 13 caption]"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No durable change to the mechanism made by the service is reported. Learned objects, places and rooms, calendar entries and remembered obstacles are content used by fixed mechanisms. The researchers made the day-11 switch to Mutual Care mode and the mid-trial cuts to return-of-favor frequency. Developers tuned the gesture recognizer from lab tests before the field trials. Developer changes are not revisions. The abstract's 'adaptive approach' means user-commanded repositioning (up to three 0.15 m steps), not a durable change.",
+      "locator": "Abstract; Sec. 3.2, p. 4; Sec. 4.5, p. 11; Sec. 4.7, p. 12; Sec. 5, p. 15; Sec. 6.3, pp. 17–18",
+      "quote": "Consequently, we changed this implementation during the running trials. The return of favor frequency was reduced; it was no longer offered after the commands Recharge batteries, Go to, Call button, and Surprise. [Sec. 6.3; a developer change, quoted to show why it does not count]",
+      "what": "Nothing is revised by the service. The reported changes were made by developers (Mutual Care mode switch, return-of-favor frequency, gesture-recognizer tuning) or are content taught by users (objects, places)."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "The service makes no revision, so no later run under a revised mechanism is reported. Later trial users did run with the researchers' reduced return-of-favor frequency, but that is a developer change. Reusing learned objects or places later is reuse of content, not of a revised mechanism.",
+      "locator": "Sec. 6.3, pp. 17–18",
+      "quote": "Further feedback from the second and third Austrian and the second and third Swedish users led to further reduction of the return a favor frequency to offering it only after the following three commands: [Sec. 6.3]"
+    }
+  },
+  "notes": "I judged Hobbit PT2 as run autonomously in the field trials (18 PU, 5 robots, 371 days in total), with device mode and companion (Mutual Care) mode together. The DOI and publisher URLs returned 302/403, so I read the full publisher PDF from the Semantic Scholar open-access mirror. I could not check its SHA-256 against case.yaml because shell access was denied. The PDF text layer drops fi/ff/fl/ft ligatures (for example 'frst' for 'first'). Quotes restore these and were checked against the rendered page images; otherwise they are verbatim. There is no code repository. The paper defers detailed trial results and the approach method to other publications, which I did not read because they are not listed sources.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 505,
+    "code_commit": null
+  }
+}

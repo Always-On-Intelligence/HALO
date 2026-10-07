@@ -1,0 +1,15 @@
+# EAIA's LangGraph runtime, pinned to the upstream poetry.lock (commit 758db71) with one exception:
+# langchain-core is 0.3.68, not the lock's 0.3.74. With 0.3.74 (Runnable(ABC, Generic)) the lock's
+# langgraph 0.5.0 fails at import (PregelProtocol: inconsistent MRO); 0.3.68 is the newest that imports.
+# Not installed: langchain-openai, langchain-anthropic (model clients, replaced by the HALO backbone),
+# google-api-python-client and langchain-auth (Gmail/Calendar, replaced by in-memory fakes),
+# langgraph-api/langgraph-cli (the server; the adapter runs the graphs in process), langchain
+# (only find_meeting_time imports it; see README).
+langgraph==0.5.0
+langgraph-prebuilt==0.5.1
+langgraph-checkpoint==4.0.0
+langgraph-sdk==0.3.9
+langchain-core==0.3.68
+langsmith==0.7.6
+pydantic==2.8.2
+pyyaml

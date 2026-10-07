@@ -1,0 +1,88 @@
+{
+  "id": "egocopilot2026",
+  "configuration": "Egocentric Co-Pilot, variant egocopilot2026: a smart-glasses assistant with (a) a unified, timestamped event log that combines VLM narrations of the egocentric stream (1 FPS) with ASR-transcribed spoken user queries, (b) T-CoT plus Hierarchical Context Compression (HCC) for long-horizon QA, (c) an LLM orchestrator that calls tools over MCP (perception, the board-game engine, NutritionAPI, CalendarAPI, MemoTool), and (d) the plug-and-play clarifier with runtime guardrails. Judged from the arXiv 2603.01104v1 text together with the code at commit 4bdc1c49f72d6b20e3daf0d35ce06b6b5ca2ee43 (WebSocket back-end, Android and browser clients, chess tool, Egolife HCC scripts, MCP examples).",
+  "sources_read": [
+    "cases/egocentric-copilot/case.yaml",
+    "https://arxiv.org/html/2603.01104v1 (version 2603.01104v1) via WebFetch; the fetched text was truncated inside the References section",
+    "https://urltomarkdown.herokuapp.com/?url=https%3A%2F%2Farxiv.org%2Fhtml%2F2603.01104v1&links=false (markdown rendering of the same v1 HTML), used to read Sections 1-5, Algorithms 1-2, and Appendices A-E",
+    "https://arxiv.org/pdf/2603.01104v1 (fetch attempted; failed because the file exceeds the 10 MB limit)",
+    "repo@4bdc1c4: README.md",
+    "LLM-Orchestrated-Neuro-Symbolic-Execution/{README.md, main.py, llm_intent.py, chess_engine.py, vision_core.py (full), utils.py, api_providers.py, index.html, Tools/README.md, WebRTC/server.py, WebRTC/README.md}",
+    "LLM-Orchestrated-Neuro-Symbolic-Execution/External-Tools-Support/{README.md, simple-mcp/memory_server.py, simple-mcp/utils/memory_fuc.py, simple-mcp/mcp_client.py, simple-mcp/README.md, mcp-client-examples/find_video.py, mcp-client-examples/README.md, android-mcp/main.py}",
+    "Egocentric-Reasoning-Core/{Readme.md, Egolife/config.py, Egolife/scripts/eval_guide.py, eval_refine.py, generate_captions_native.py, video_captions_contextual.py, generate_asr.py, process_and_concat.py, tools_concat_video.py, HD-EPIC/2-inference_video.py, HD-EPIC/2-thinking-narration.py, HD-EPIC/2-refine-prompt.py, Qwen2.5-VL/qwen-vl-finetune/scripts/sft_7b.sh}",
+    "On-Device-Perception-and-Interaction/{MainActivity.kt, README.md}",
+    "Proactive-Multimodal-Intent-Disambiguation/README.md (points to an external clarifier repo; the clarifier code is not in this commit)",
+    "Repo-wide keyword grep (history, feedback, conversation, dialog, remember, memory, personaliz, self-improv, reflect, lesson, skill)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed and user-supplied evidence is written into retained stores. The paper's event log takes VLM narrations generated from the egocentric video at 1 FPS plus ASR-transcribed spoken user queries and merges them into one time-ordered log, which HCC later compresses. This is the system's own write path, not a static benchmark profile. The code does the same: the Egolife caption scripts write captions 'for future question-answering', and eval_guide.py merges them with ASR into Visual/Spoken events. The live back-end also keeps a rolling 600-frame timestamped buffer of incoming glasses frames. In addition, §4.3 lists a MemoTool for creating notes, and the simple-mcp memory server exposes a create_memory tool.",
+      "locator": "Paper §3.1 and App. A (event-log construction); §4.3 Category 1. Code: Egocentric-Reasoning-Core/Egolife/scripts/generate_captions_native.py:25; Egolife/scripts/eval_guide.py:84-124; LLM-Orchestrated-Neuro-Symbolic-Execution/main.py:418,830; External-Tools-Support/simple-mcp/memory_server.py:68-118",
+      "quote": "Paper §3.1 (UNVERIFIED, tool-extracted): \"unified, chronologically sorted event log ℰ that integrates dense egocentric video narrations and spoken user queries\" | main.py:830 (verbatim): `image_queue.put((frame_base64, frame, timestamp))`"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained history determines what the assistant says and when. HCC picks query-relevant summaries of older log chunks and prepends them to the T-CoT context the MLLM answers from. Fig. 4(d) shows the assistant answering by 'recalling it from memory'. In the code, eval_guide.py answers from hourly relevance summaries plus the 50 most recent events. In main.py's memory-analysis mode, a request such as 'Where did I put my phone?' sends the buffered frames to the VLM and the answer is spoken. The retained board state also controls timing: continuous chess guidance is spoken only when the board changes.",
+      "locator": "Paper §3.1 (HCC), Fig. 4(d), §4.3. Code: Egolife/scripts/eval_guide.py:222-230; main.py:739-747, 595-647; chess_engine.py:248",
+      "quote": "Paper §3.1 (UNVERIFIED): \"HCC then chooses the most relevant summaries and prepends them to the T-CoT context\" | main.py:741 (verbatim): `memory_frames = image_queue.get_all(timestamp_tracking)`"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action-side decisions change how Sensing captures frames. When the intent layer maps a request such as 'Remember the positions of these three pieces.' to high-frame-rate mode, the back-end sends a 200 ms frame interval and JPEG quality 25 to the client. Both the glasses app (MainActivity.kt) and the browser client apply these to frame sending and JPEG encoding. Exiting the mode writes the tracked frames to MP4 and restores 500 ms / 80. In the paper, the orchestrator's plans invoke perception modules as tools; for example, when move suggestions are requested, a perception module maps the board view to a symbolic state. The paper text itself does not mention capture-rate adaptation; this part comes from the code.",
+      "locator": "Code: LLM-Orchestrated-Neuro-Symbolic-Execution/main.py:277-283, 675-684, 749-761; On-Device-Perception-and-Interaction/MainActivity.kt:246-253, 355, 379-387; LLM-Orchestrated-Neuro-Symbolic-Execution/index.html:189-195. Paper §1, §3.2",
+      "quote": "main.py:752 (verbatim): `await send_text_parameters(websocket, 200, 25)` | MainActivity.kt:251 (verbatim): `imageAnalysis_interval = jsonObject.getInt(\"imageAnalysis_interval\")` | Paper §1 (UNVERIFIED): \"generates execution plans by selecting and invoking the most suitable tools like neural perception modules\""
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "A retained state is used as the prior when perception reads new frames. App. A describes a per-cell temporal buffer of board predictions; the committed state comes from a majority vote with a stability threshold and otherwise stays at the previously committed state. That committed board state persists across interactions and serves as the prior for reading each new frame. In the code, ChessboardMemory starts each smoothing pass from previous_smoothed_board and overwrites a cell only when the buffered votes pass the threshold, and the chess tool detects moves by comparing against the retained board. A further, code-only flow: video_captions_contextual.py conditions each clip's narration on the stored previous caption. The paper does not describe this, and the authors' scripts reference the non-contextual captions. T-CoT re-narration around query timestamps happens at answer time (M→A or M→A→S composition) and is not counted here.",
+      "locator": "Paper §3.2 (temporal buffer); App. A (board-state stabilization, P^prev). Code: LLM-Orchestrated-Neuro-Symbolic-Execution/vision_core.py:62-114; chess_engine.py:229-233, 248; Egocentric-Reasoning-Core/Egolife/scripts/video_captions_contextual.py:30-34, 64-69, 152-162",
+      "quote": "vision_core.py:96-97 (verbatim): `if self.previous_smoothed_board is not None:` / `smoothed_board = np.copy(self.previous_smoothed_board)` | Paper App. A (UNVERIFIED): \"where P_{r,c}^{prev} is the previously committed state at (r,c)\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Only a narrow, code-level flow exists. The board-game tool keeps its last recommended move across calls in self.chess_strategy_translate and appends it as 'Last Strategy' to chess_log.txt next to the board FENs before and after the move. On the next board change it re-reads the stored recommendation, both in a hard-coded demo branch and when redrawing the board. The paper's event log stores narrations and user queries only, not assistant outputs or tool calls. Algorithm 1 keeps tool results only in a per-request execution context, and §3.4 logs schema mismatches with no stated retention or later use. The general QA path in main.py builds fresh messages for each request and keeps no history of assistant turns. A fixed policy or fused implementation does not negate a flow, so this is reported, but only for the chess tool.",
+      "locator": "Code: LLM-Orchestrated-Neuro-Symbolic-Execution/chess_engine.py:262, 279-291, 395-401, 403. Contrast: paper §3.1, App. A Algorithm 1, §3.4; main.py:649-673",
+      "quote": "chess_engine.py:285 (verbatim): `log_entry += f\"Last Strategy: {strategy_to_save}\\n\"`"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The code shows the service keeping its own decisions for later use. The chess tool holds its last recommended move in memory and re-reads it when the next board change arrives. It also appends that move with the board FENs to an append-only log, but the service never reads the log, so only the in-memory reuse counts. Paper support is weaker: Algorithm 1 records each tool result in a per-request execution context that is used to synthesize the reply, and §3.4 logs rejected tool calls. The interaction logs in §4.4 were recorded for the authors' offline rating study and do not count. The general assistant keeps no history of its responses.",
+      "locator": "Code: LLM-Orchestrated-Neuro-Symbolic-Execution/chess_engine.py:262, 279-291, 395-396. Paper: App. A Algorithm 1; §3.4; §4.4",
+      "quote": "chess_engine.py:262 (verbatim): `if self.chess_strategy_translate == ['马五进三 (score:29999, winrate:极高（必赢）)']:` | Algorithm 1 (UNVERIFIED): \"Update execution context with result\""
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "After a move suggestion, the chess tool obtains the next committed board state, which is the user's move seen as an observed state change. It keeps it in all_game_states and self.fen_board and logs it as 'FEN Data' beside the 'Last Strategy' it followed. In the paper, Algorithm 1 collects each tool's result into the execution context, and §3.4 requires an explicit user confirmation before side-effect tools run. The human ratings in §4.4 are offline author evaluation and do not count.",
+      "locator": "Code: LLM-Orchestrated-Neuro-Symbolic-Execution/chess_engine.py:248-254, 283-286, 401. Paper: App. A Algorithm 1; §3.4 (runtime guardrails)",
+      "quote": "chess_engine.py:284 (verbatim): `log_entry += f\"FEN Data: {fen_data}\\n\"` | Algorithm 1 (UNVERIFIED): \"result ← MCP.CallTool(Tool_selected, Args)\""
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Outcomes are linked to the decisions that produced them and used to adjust assistance, but only as immediate checks. In the paper, a failed intermediate call in a multi-tool plan stops the remaining calls, and the LLM summarizes the partial result instead of rolling back. In the code, when the stored recommendation is one specific demo move, the next observed board is compared with the expected positions. The user is then told they deviated ('recommended Horse 5 advance 3, you played Horse 5 retreat 3; big disadvantage now'), that the move was invalid, or that they won. This comparison is hard-coded for a single scripted puzzle. Nothing feeds a longer-term evaluation of the service's own decisions, and the benchmark and human scoring are the authors' offline work.",
+      "locator": "Paper §3.4 (Runtime Guardrails and Schema Management). Code: LLM-Orchestrated-Neuro-Symbolic-Execution/chess_engine.py:262-276",
+      "quote": "Paper §3.4 (UNVERIFIED): \"if any intermediate call fails, the remaining calls are skipped and the LLM is instructed to summarize the partial result instead of attempting an automatic rollback\" | chess_engine.py:265 (verbatim): `chess_strategy = \"推荐走法是马五进三，你的走法是马五退三，当前劣势很大\"`"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Neither the paper nor the code reports a durable change the service makes to its own mechanism. The only model update is the developers' offline fine-tuning of Qwen2.5-VL-7B on public egocentric datasets. Everything written at runtime is content used by fixed mechanisms: the event log, frame buffer, committed board state, MCP memos, and the last chess suggestion. Developers fix the HCC/T-CoT constants, intent templates, prompts, thresholds, and tool allowlist. Adaptation appears only as future work (parameter-efficient adaptation, longitudinal studies).",
+      "locator": "Paper App. A (fine-tuning); §5 Limitations and Future Work; App. E.2-E.3. Code: main.py:218-318 (static INTENT_TEMPLATES); Egolife/scripts/eval_guide.py:16-19 (fixed HCC constants); Egocentric-Reasoning-Core/Qwen2.5-VL/qwen-vl-finetune/scripts/sft_7b.sh:24-36 (developer SFT)",
+      "quote": "App. A (UNVERIFIED): \"We freeze the vision tower and projector, update LLM layers with AdamW\" | §5 (UNVERIFIED): \"We plan to explore parameter-efficient adaptation\"",
+      "what": "Nothing is revised by the service itself. The only changes are developer offline SFT of the VLM and runtime content updates."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No self-made revision exists, so no source reports later steps running under a revised mechanism. All evaluations use the fixed fine-tuned models and pipeline.",
+      "locator": "Paper §4.1-4.4, §5; code (nothing loads self-generated rules, prompts, or weights)"
+    }
+  },
+  "notes": "Judged variant egocopilot2026 (event/query log with T-CoT/HCC, MCP tool orchestration, clarifier and guardrails) from arXiv 2603.01104v1 together with the code at 4bdc1c4. Paper access: a direct WebFetch of the arXiv HTML stopped inside the References and the PDF exceeded the fetch limit, so Sections 1-5 and Appendices A-E were read through a urltomarkdown rendering of the same v1 HTML. All paper quotes are tool-extracted and marked UNVERIFIED (most were consistent across repeated fetches); all code quotes are verbatim. The source sha256 in case.yaml was not checked. Caveats: (1) The clarifier's code is not in this commit (the README points to an external repo), so it was judged from §3.4 alone; the paper leaves s_t undefined and states no retention across sessions. (2) External-Tools-Support calls itself 'support material, not a single production integration', and the shipped back-end (main.py) routes requests through embedding-matched intent templates rather than MCP. (3) The event-log/HCC code is offline Egolife evaluation scripts, but the captions and ASR come from the system's own pipeline, not a static profile. (4) A→M, and the code part of Record, Outcome and Attribution, rest on narrow chess-tool logic, including a deviation check hard-coded for one puzzle; the paper's own Algorithm 2 has no such comparison. (5) No self-revision was found anywhere.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 1003,
+    "code_commit": "4bdc1c49f72d6b20e3daf0d35ce06b6b5ca2ee43"
+  }
+}

@@ -1,0 +1,3 @@
+# AiGet's history retrieval and novelty filter (src/Utilities/sentence_similarity.py)
+sentence-transformers
+pyyaml

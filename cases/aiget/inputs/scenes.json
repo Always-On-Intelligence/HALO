@@ -1,0 +1,83 @@
+{
+  "note": "Scripted sensing input for AiGet's pipeline. Each scene stands in for one 5-second first-person clip from the glasses: five text frames that describe the view and the red gaze circle, a location, and a timestamp. The 'design' field records why the scene was chosen; it is for analysis only and is never sent to a model.",
+  "scenes": [
+    {
+      "id": "sports_store",
+      "location": "Decathlon Singapore Lab, Kallang Wave Mall",
+      "timestamp": "2026-09-23 19:05:12",
+      "design": "aligned with exercise/sports and healthy life; focused comparison of two running shoes",
+      "frames": [
+        "Frame 1: A wall display of running shoes under bright white lighting. The red gaze circle is on a turquoise and lime shoe on the middle shelf; its tag reads 'KIPRUN KD900X LD - Carbon plate - S$219'.",
+        "Frame 2: The user holds that shoe close to the camera. The red gaze circle is on the midsole print 'CARBON PLATE / 39 MM STACK / 7 MM DROP'.",
+        "Frame 3: The shoe is back on the shelf. The red gaze circle moves to the neighbouring white shoe tagged 'KIPRUN KS900 LIGHT - Cushioning - S$129'.",
+        "Frame 4: The red gaze circle returns to the outsole of the KD900X, a grey rubber pattern marked 'Rubber: 1.8 mm'.",
+        "Frame 5: Wider view of the aisle end. The red gaze circle is on the KS900 again; at the aisle end, out of focus, stand a bin of 'DOMYOS Foam Roller 500' and a shelf of 'APTONIA Electrolyte Tablets - Lemon'."
+      ]
+    },
+    {
+      "id": "supermarket_yogurt",
+      "location": "FairPrice Finest, Bukit Timah Plaza",
+      "timestamp": "2026-09-23 12:40:03",
+      "design": "aligned with healthy life; focused decision between two yogurts",
+      "frames": [
+        "Frame 1: A chilled dairy aisle. The red gaze circle is on a white tub on the second shelf labelled 'Farmers Union Greek Style Yogurt - Natural - 1 kg'.",
+        "Frame 2: The user turns the tub; the red gaze circle is on its nutrition panel: 'Per 100 g: Protein 9.4 g, Total sugars 4.4 g, Fat 4.9 g'.",
+        "Frame 3: The red gaze circle moves to a pink tub on the same shelf: 'Marigold HL Low Fat Yogurt - Strawberry - 130 g'.",
+        "Frame 4: The red gaze circle is on the Marigold panel: 'Per 100 g: Protein 3.6 g, Total sugars 12.7 g, Fat 1.4 g'.",
+        "Frame 5: The red gaze circle alternates back to the Farmers Union tub. On the shelf below, out of focus, are 'Yakult Light' bottles and 'Emmi Swiss Protein Pudding - Chocolate'."
+      ]
+    },
+    {
+      "id": "campus_corridor",
+      "location": "NUS School of Computing, COM1 Level 2 corridor",
+      "timestamp": "2026-09-23 10:12:47",
+      "design": "a common university setting the profile lists as not interested; saccadic walking",
+      "frames": [
+        "Frame 1: A fluorescent-lit corridor with grey carpet. The red gaze circle is on the floor a few metres ahead.",
+        "Frame 2: The red gaze circle passes over a noticeboard with a poster 'CS Research Seminar: Efficient LLM Inference - 3 Oct, 2pm, SR1'.",
+        "Frame 3: The red gaze circle is on a red vending machine with Coca-Cola, 100PLUS and Pokka Green Tea cans.",
+        "Frame 4: The red gaze circle jumps to a green emergency exit sign and then to a row of grey student lockers.",
+        "Frame 5: The red gaze circle is on a glass door labelled 'COM1-02-10 Lab' at the corridor end."
+      ]
+    },
+    {
+      "id": "botanic_gardens",
+      "location": "Singapore Botanic Gardens, near Swan Lake",
+      "timestamp": "2026-09-23 07:48:30",
+      "design": "novel nature entities; interesting information worth sharing",
+      "frames": [
+        "Frame 1: A wide lawn path in morning light. The red gaze circle is on a huge tree with a broad, dome-shaped crown and deeply fissured dark bark.",
+        "Frame 2: The red gaze circle is on a small signboard at the tree's base: 'Tembusu - Cyrtophyllum fragrans - Heritage Tree'.",
+        "Frame 3: The red gaze circle stays on the signboard; a clump of red and yellow claw-shaped flowers grows beside it.",
+        "Frame 4: The red gaze circle moves to the lake bank, where a large grey-brown lizard, about 1.5 m long with a forked tongue, lies still on the grass.",
+        "Frame 5: The red gaze circle remains on the lizard; in the background, a runner in a blue singlet passes along the lake path."
+      ]
+    },
+    {
+      "id": "hawker_centre",
+      "location": "Maxwell Food Centre, Chinatown",
+      "timestamp": "2026-09-23 12:15:55",
+      "design": "familiar local setting with a healthy-life angle; quick browse along stalls",
+      "frames": [
+        "Frame 1: A busy hawker centre aisle with ceiling fans. The red gaze circle is on a yellow signboard 'Tian Tian Hainanese Chicken Rice' with a small red plate 'MICHELIN Bib Gourmand'.",
+        "Frame 2: The red gaze circle is on the menu board: 'Chicken Rice S$6 / S$8 - Steamed Chicken S$16 / S$26'.",
+        "Frame 3: The red gaze circle moves along the row to a stall selling 'Sugarcane Juice S$2.20' with a sugarcane press machine.",
+        "Frame 4: The red gaze circle is on a drinks stall sticker with a red pyramid logo: 'Healthier Choice - Lower in Sugar'.",
+        "Frame 5: The red gaze circle returns to the chicken rice stall queue sign 'Queue here'."
+      ]
+    },
+    {
+      "id": "park_fitness",
+      "location": "East Coast Park, fitness corner near Area C",
+      "timestamp": "2026-09-23 18:32:10",
+      "design": "aligned with exercise; focused on outdoor fitness equipment",
+      "frames": [
+        "Frame 1: An outdoor fitness station on rubber flooring near the beach. The red gaze circle is on a set of steel parallel bars.",
+        "Frame 2: The red gaze circle is on an instruction sign 'Parallel Bars - Dips: 3 sets of 8-12 reps' with a small QR code labelled 'Healthy 365'.",
+        "Frame 3: The red gaze circle moves to an inclined sit-up bench with a foot hook.",
+        "Frame 4: The red gaze circle returns to the parallel bars; the user's hand grips one bar.",
+        "Frame 5: Wider view: the sea with several container ships anchored offshore, and a cyclist passing on the park connector."
+      ]
+    }
+  ]
+}

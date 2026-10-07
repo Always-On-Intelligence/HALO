@@ -1,0 +1,92 @@
+{
+  "id": "aiget",
+  "configuration": "Variant 'aiget': the full Gemini-based AiGet prototype used in the real-world study (Sec 5-6). Pipeline: LLM request trigger (FPV-difference timer, gaze fixation, ring-button verbal query) -> Context Analysis Agent (FPV with gaze overlay, time, location, query transcript, participant-provided profile) -> Knowledge Generation & Prioritization Agent (profile, focus/familiarity rules, Novelty x (Align+Utility+Unexpectedness) >= 2, 10 most relevant history items, post-generation >= 0.75 similarity filter) -> Output Transformation (Text+Audio agent and Image Reference agent) -> follow-up user actions. The Sec 5.3 ablation baselines (w/o R, w/o RP) are excluded.",
+  "sources_read": [
+    "https://arxiv.org/html/2501.16240v2 (arXiv v2 HTML): Sec 4.5.3 with Fig. 2 caption; Sec 5.1.1-5.1.5; Sec 5.2; Tables 1-2; Fig. 3 caption; Sec 5.3; Sec 6.1-6.4; Sec 6.6.1 (excerpts); Sec 6.6.3; Sec 7.2.1-7.2.4; Sec 8; App. B.1-B.4; App. C.1 (prompt is an image)",
+    "Same v2 HTML read section by section as plain text via https://web.scraper.workers.dev with element-id selectors, because the fetch tool truncated the full page; quoted sentences re-checked for exact wording",
+    "https://github.com/Synteraction-Lab/AiGet @ 92b17f82a4e54965fc40ce9ea21e919a753ab6b7 (local checkout): README.md, main.py, exp_setup.py",
+    "src/Frontend.py",
+    "src/Backend.py",
+    "src/Module/LLM/LLMPipeline.py",
+    "src/Module/LLM/Gemini.py",
+    "src/Module/LLM/task_description/context_description",
+    "src/Module/LLM/task_description/knowledge_generation_filter",
+    "src/Module/LLM/task_description/process_output",
+    "src/Module/LLM/task_description/user_profile",
+    "src/Module/LLM/task_description/daily_activity_learning (unused legacy prompt)",
+    "src/Utilities/sentence_similarity.py",
+    "src/Storage/reader.py, src/Storage/writer.py",
+    "src/Data/SystemData.py, src/Data/UserData.py",
+    "src/UI/live_comments.py; src/UI/device_panel.py, src/Utilities/constant.py, src/Module/Gaze/* (grep only)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Narrow flow, found only in the code. After each delivered response, the frontend copies the Context Analysis Agent's output (\"Last Moment's Context Description\") into last_ai_response, together with the last suggestion. On the user's next verbal query, get_llm_response adds this retained context to the Context Analysis input as \"Previous AI Response\". The prompt then tells the agent to decide whether the question follows up on the previous moment. So sensed context is kept past the interaction that produced it, but only as one slot in RAM that each new response overwrites. Caveats: the paper says real-time gaze and context data is not stored, so nothing sensed is persisted. The participant-provided profile is user-supplied, but it is a static file edited by hand before use (README:166; App. B.2). The service has no way to write to it, so the profile alone would not establish S->M. Updating the profile from feedback or reflection is future work (Sec 7.2.3; Fig. 2 caption). response_log.txt also records context descriptions, but nothing in the service reads that file.",
+      "locator": "src/Frontend.py:457-461 (process_response sets last_ai_response); src/Frontend.py:417-421 (passed as last_response); src/Module/LLM/LLMPipeline.py:34-35; src/Module/LLM/task_description/context_description:23-24; README.md:166; paper Sec 5.1.1 (follow-up questions) and Sec 7.2.4 (not stored)",
+      "quote": "self.last_ai_response[\"Last Moment's Context Description\"] = response_data.get(\"Context Description\")  [src/Frontend.py:461] ... user_request = str(user_request) + str({\"Previous AI Response\": last_response})  [src/Module/LLM/LLMPipeline.py:35]"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information shapes what Action says and whether it says anything. The Knowledge Generation Agent's prompt includes the participant profile, and the agent receives the 10 history items most similar to the current context description as a list of things to avoid. It uses both to choose and tailor knowledge and to score each candidate as Novelty x (AlignUserPreference + Utility + Unexpectedness). Only candidates scoring >= 2 are kept, and an empty list is allowed. After generation, candidates with >= 0.75 similarity to history are removed. If none survive, nothing is shown, so memory can lead to silence. Sec 5.3.5 credits this scoring and filtering with withholding unwanted content.",
+      "locator": "Paper Sec 5.1.3, Table 2 (Novelty row), Sec 5.3.5; code src/Module/LLM/LLMPipeline.py:60-61, 71-72, 95-102, 121-125; src/Module/LLM/Gemini.py:117-118; src/Utilities/sentence_similarity.py:10-81; src/Module/LLM/task_description/knowledge_generation_filter:7-8, 17, 25-39, 47; src/Frontend.py:408-423",
+      "quote": "The knowledge content is required to be novel, useful, and surprising, avoiding repetitive topics by checking history. The agent also fine-tunes content based on user familiarity and interest levels, e.g., offering advanced insights on familiar topics and linking new information to known concepts for unfamiliar ones."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The content Action chose directs a perception step. Once knowledge is generated, the Image Reference Agent is given the primary and peripheral entity names and the AI suggestion. It searches the buffered FPV frames for the frame that shows those entities and returns their bounding boxes, which the frontend then displays. Action's information need sets what Sensing looks for and how it interprets the frames, and the result goes back to Action. A second, smaller path exists only in the code: the timer/FPV-difference and fixation triggers start a new capture-and-analysis cycle only when no request is running, no voice query is being recorded, and no audio is playing. So Action's execution state controls when Sensing acquires. Sec 5.1.1 justifies the 12 s interval as giving users time to process each piece of knowledge.",
+      "locator": "Paper App. B.3 and Sec 5.1.4; code src/Module/LLM/LLMPipeline.py:128-143 (location agent prompt: 'Return the frame number (only one) that matches the mentioned subjects in \"AI suggestions\"...'); src/Frontend.py:425 (frame and box used for display); src/Frontend.py:600-604, 612-631 (trigger gating incl. is_playing_audio)",
+      "quote": "The Image Reference Agent selects the clearest image covering the mentioned entities from 16 FPV frames and returns their bounding boxes."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The Context Analysis Agent fills a Sensing role. It interprets FPV frames with gaze overlay, time, location and any query transcript, and outputs the activity, gaze mode, entity labels and predicted intention. It receives the retained participant profile and uses it in that interpretation. It labels the environment and each entity as familiar or unfamiliar, and it looks for unnoticed peripheral entities that match the user's interests (prompt: 'consider user profile to find the unnoticed entities that align with user interest'). This is memory guiding interpretation and attention, not retrieval at answer time. For verbal follow-up queries, the retained previous response and context are also supplied, so the agent can work out which entity the question refers to.",
+      "locator": "Paper Sec 5.1.2 and Fig. 3 caption ('Analyzes real-time user attention and long-term interests'); code src/Module/LLM/LLMPipeline.py:25-43; src/Module/LLM/task_description/context_description:3, 7, 15-18, 23-26, 40",
+      "quote": "Specifically, the agent recognizes user activity, labels entities, predicts user intentions, and identifies potential unseen or unknown entities and knowledge topics aligned with the user's interests. [...] Using this profile, the LLM assesses the user's familiarity with the current location and surrounding entities"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "What the assistant delivers is written back into memory. For live comments, the shown English suggestions (after filtering) are appended to AI_suggestion_history. For single comments, the displayed text is appended. The last suggestion is also stored in last_ai_response. Later requests use this history for the top-10 retrieval, the avoid-list and the >= 0.75 post-filter. The paper calls it a knowledge or interaction history of topics already mentioned. Sec 6.6.3 reports that the filter kept novelty up when participants revisited a place. At startup the frontend also loads a per-participant ai_suggestions.json if one exists. Nothing in the released code writes that file, so whether history persists across sessions is unclear.",
+      "locator": "Code src/Frontend.py:193, 231-234, 408-421, 457-459, 483, 492; paper Sec 5.2, Table 2 (Novelty row, 'Filtering Mechanism with Chain of Thoughts'), Sec 6.6.3 ('Usage in Same Places')",
+      "quote": "These models were selected due to the support of 1) large context windows, enabling the system to process multiple contextual inputs and maintain a long knowledge history [...] Identify entities/topics already mentioned in concise history."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps a running history of the knowledge it has delivered. Later requests consult it in three ways: retrieval of the 10 most relevant items, an avoid-list in the prompt, and a >= 0.75 similarity filter. So it is a record of the service's own outputs kept for the service's later use, not a trial log. In code this is AI_suggestion_history.extend(...) after each delivery. response_log.txt is for review only and is not counted.",
+      "locator": "Paper Sec 5.2; Sec 5.1.3; Table 2 (Novelty row); code src/Frontend.py:483, 492, 408-421; src/Module/LLM/LLMPipeline.py:60-61, 121-125",
+      "quote": "These models were selected due to the support of 1) large context windows, enabling the system to process multiple contextual inputs and maintain a long knowledge history [...] The knowledge content is required to be novel, useful, and surprising, avoiding repetitive topics by checking history."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No outcome evidence is retained for the service to use. Users can cancel or hide the latest knowledge, mute it, switch the system off, or ask follow-up questions (Sec 5.1.5). The source never says the service keeps a record of how deliveries were received. Cancellation rates were counted by the authors (Sec 6.6.1). In code, a cancel only appends 'Hide Live Comments' or 'Hide Single Comment' to response_log.txt, which the service never reads. The history holds the suggestions, not reactions to them. 'Feedback Collection ... to update their profile' appears only in the proposed framework of Fig. 2, which the caption separates from the implemented system (Sec 5), and in future work (Sec 7.2.3).",
+      "locator": "Paper Sec 5.1.5; Sec 6.6.1; Fig. 2 caption; Sec 7.2.3; code src/Frontend.py:291-319, 543-553",
+      "quote": "pressing the up button cancels the latest knowledge display, stopping audio and hiding visual information (Emojis and Text and Image Reference) when encountering unwanted information."
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No outcome is linked back to the decision that produced it to check or correct the assistance. A cancel is a user command that stops audio and hides the display; it is not used to judge the decision. The novelty and similarity checks compare new candidates with past outputs, not with outcomes. Follow-up queries are matched to the previous response only in order to answer them. Cancellation counts were analysed offline by the authors.",
+      "locator": "Paper Sec 5.1.5, Sec 5.1.3 and Table 2, Sec 6.6.1; code src/Frontend.py:291-319; src/Module/LLM/LLMPipeline.py:121-125"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service never makes a lasting change to its own mechanism. The developers set the prompts, scoring rules and thresholds (score >= 2, 12 s, FPV similarity 0.6, history similarity 0.75) through pilot testing, and they load as static files. The profile is provided by the participant and stays fixed. The accumulated history is content fed to a fixed retrieval and filtering step, not a reusable rule. Adapting rules from interaction history and updating the profile from user reflections appear only as future work.",
+      "locator": "Paper Sec 5.1.3 ('Prompt Improvement Through Iterative Design'), App. B.1, Sec 7.2.3, Fig. 2 caption; code src/Storage/reader.py:18-21, src/Module/LLM/task_description/*",
+      "quote": "To overcome these challenges, we refined multiple prompt strategies through iterative pilot testing, as summarized in Table 2.",
+      "what": "Nothing is revised by the service. The only changes are prompt, rule and threshold edits by the developers (excluded) and accumulated suggestion-history content (not a revision)."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "There is no revision made by the service, so no later step runs under one. Later and repeat sessions (Phase 2, up to 7 days) ran the same fixed prompts and rules, with only more history content. The code that loads ai_suggestions.json at startup reloads content, not a revised mechanism.",
+      "locator": "Paper Sec 6.3, Sec 6.6.3; code src/Frontend.py:231-234"
+    }
+  },
+  "notes": "I judged the full AiGet configuration from the real-world study, not the Sec 5.3 ablation baselines. Roles by function: the Context Analysis Agent is Sensing (interpretation). Knowledge Generation & Prioritization plus delivery and UI is Action. The participant profile and suggestion history are Memory. The Image Reference Agent is a Sensing role that Action invokes during output transformation. The paper names Gemini-1.5-Flash/Pro. The released code instead calls gemini-2.0-flash-exp for context analysis and the output agents, and main.py sets knowledge_generation_model='gemini-1.5-flash'. This does not change any label. The fetch tool truncated the full arXiv v2 page after Sec 5.3, so I read later sections and appendices as per-element text extractions of the same v2 HTML. Quoted sentences were re-checked for exact wording; curly quotes may appear as straight ones. The App. C prompts are images, so prompt content comes from the repo's task_description files. S->M is the weakest 'reported' label. It rests only on a one-slot carry-over of the last context description for follow-up queries, found in the code, and the paper says real-time gaze and context data is not stored. A->S rests on treating the Image Reference Agent's localisation as Sensing targeted by Action, supported by the code's gating of triggers on audio playback.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 1144,
+    "code_commit": "92b17f82a4e54965fc40ce9ea21e919a753ab6b7"
+  }
+}

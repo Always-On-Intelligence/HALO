@@ -1,0 +1,71 @@
+{
+  "note": "Fictional user Alex Rivera (CEO of Lumen) with five rules EAIA is never told. Each item is a learning phase (Alex edits drafts and answers questions; EAIA's own memory path runs its reflection graph) followed by a test phase on new emails (memory switch off, every question gets the same neutral answer, drafts stay pending in the inbox). Rules, user prompts, and emails are those of the EAIA run reported in the survey (Section 7.2).",
+  "rules": [
+    "R1. No greeting line. The reply starts directly with the message.",
+    "R2. At most three sentences before the sign-off.",
+    "R3. The reply ends with exactly \"Thanks, Alex\" on its own line.",
+    "R4. Never commit to a specific date, time, or deadline. Say that Alex will confirm the timeline by Friday.",
+    "R5. Partnership, sponsorship, and co-marketing requests go to Jordan Lee (jordan@lumen.dev), who handles partnerships: add Jordan to the reply and say that Jordan will follow up."
+  ],
+  "rule_checks": {
+    "deadline_asks": [
+      "t1",
+      "t4",
+      "e1"
+    ],
+    "partnership_asks": [
+      "t2",
+      "t5",
+      "e2",
+      "e4"
+    ]
+  },
+  "user": {
+    "edit_system": "You are Alex Rivera, CEO of Lumen. Your assistant drafts email replies for you, and you review each draft in your inbox before it is sent. Edit the draft so that it follows all of your rules. Change as little as possible otherwise and keep the facts the same. If the draft already follows every rule, return it unchanged.\n\nYour rules:\n{rules}\n\nReply with one JSON object only: {{\"edited\": str, \"new_recipients\": list[str]}}. \"edited\" is the full reply text as it should be sent; \"new_recipients\" is the complete list of addresses the reply should add to the thread (keep the ones the assistant added if they are right).",
+    "edit_user": "The email you received:\n<email>\n{email}\n</email>\n\nYour assistant's draft (addresses it adds to the thread: {recipients}):\n<draft>\n{draft}\n</draft>",
+    "answer_system": "You are Alex Rivera, CEO of Lumen. Your assistant is handling an email for you and asks you a question in your inbox. Answer briefly in one or two sentences, in a way that is consistent with your rules.\n\nYour rules:\n{rules}\n\nReply with one JSON object only: {{\"answer\": str}}.",
+    "answer_user": "The email:\n<email>\n{email}\n</email>\n\nThe assistant asks: {question}",
+    "answer_user_without_question": "The email:\n<email>\n{email}\n</email>\n\nThe assistant is waiting for your input on this email, but its question did not reach you.",
+    "test_answer": "I have nothing to add here. Please draft the reply yourself.",
+    "third_question_answer": "Please draft the reply now.",
+    "calendar_answer": "No calendar invite for this one. Please just draft the reply."
+  },
+  "items": [
+    {
+      "id": "order-a",
+      "train": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "test": [
+        "e1",
+        "e2"
+      ]
+    },
+    {
+      "id": "order-b",
+      "train": [
+        "t5",
+        "t4",
+        "t3"
+      ],
+      "test": [
+        "e4",
+        "e3"
+      ]
+    },
+    {
+      "id": "order-c",
+      "train": [
+        "t2",
+        "t4",
+        "t5"
+      ],
+      "test": [
+        "e1",
+        "e3"
+      ]
+    }
+  ]
+}

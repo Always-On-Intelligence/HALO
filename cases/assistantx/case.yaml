@@ -1,0 +1,18 @@
+id: assistantx
+name: "AssistantX"
+domain: physical
+kind: research
+report: https://arxiv.org/abs/2409.17655
+sources:
+  - url: https://arxiv.org/html/2409.17655v3
+    kind: paper
+    version: ""
+    sha256: 074d92ebdc737ecc63eedaa6d9fdfc6551c8cafa11d4d7b4955ca62ac924e401
+code:
+  repo: https://github.com/AssistantX-Agent/AssistantX
+  commit: 35ab2715f7371d935d78907d90dc4131e414fcb7
+variants:
+  - id: assistantx
+    label: "AssistantX"
+    configuration: "PPDR4X office robot with persistent relational graph; transient task buffers excluded from retention evidence"
+modes: [read, run]

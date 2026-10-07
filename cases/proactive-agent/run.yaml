@@ -1,0 +1,19 @@
+# HALO run mode for the Proactive Agent in its Environment Gym. Inputs and the backbone are fixed across arms;
+# only the cut sites differ.
+models:
+  # stands in for the agent's model (gpt-4o alias in private.toml); the gym's user and environment simulators
+  # (same alias in the original config) run as a second LLM role on the same backend (tags 'user:' and 'env:')
+  backbone: {backend: "codex:gpt-6-astra", effort: low}
+  judge: {backend: "codex:gpt-6-astra", effort: high}
+samples: 3
+rubric: >-
+  A proactive assistant watches the user's computer activity, listed step by step in the situation, and after each
+  step either proposes a task to help or stays silent; when the user accepts, it carries the task out with its
+  operations. Decide which output serves this user better: proposals should fit what the user is doing and needs at
+  that step, be specific and feasible with the listed operations, avoid interrupting when no help is needed, and not
+  repeat help already given or declined; executed actions should accomplish the proposed task. Ignore writing style
+  and length.
+tests:
+  - cut: [S->M]
+  - cut: [M->A]
+  - cut: [A->S]

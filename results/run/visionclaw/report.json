@@ -1,0 +1,220 @@
+{
+  "case": "visionclaw",
+  "channels": {
+    "S->M": "what the user says or shows is written to notes (save_note) or, through the action agent, to the connected calendar and Notion",
+    "M->A": "notes (recall_notes), parked results (call-start drain), the task-ledger briefing and connected-app reads reach the voice model and the action agent",
+    "A->M": "delegated tasks and their results go to the task ledger and, when no one is listening, to parked results",
+    "A->S": "the voice model's execute(attach_view=True) sends the current camera frame for the action agent to read"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 9,
+      "modified": 0,
+      "tie": 3,
+      "metrics": {
+        "ledger_entries": {
+          "original": 1.0,
+          "modified": 1.0833
+        },
+        "final_facts_stated": {
+          "original": 0.9375,
+          "modified": 0.4444
+        },
+        "agent_calls": {
+          "original": 2.5,
+          "modified": 2.75
+        },
+        "frames_attached": {
+          "original": 0.8333,
+          "modified": 0.8333
+        },
+        "voice_model_calls": {
+          "original": 7.25,
+          "modified": 7.0833
+        },
+        "notes_saved": {
+          "original": 1.0,
+          "modified": 0.0
+        },
+        "app_writes_attempted": {
+          "original": 0.75,
+          "modified": 0.75
+        },
+        "app_writes_kept": {
+          "original": 0.75,
+          "modified": 0.0
+        },
+        "delegated_turns": {
+          "original": 1.0,
+          "modified": 1.0833
+        },
+        "parked_relayed": {
+          "original": 0.25,
+          "modified": 0.25
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 12,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "ledger_entries": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "final_facts_stated": {
+          "original": 0.9375,
+          "modified": 0.0
+        },
+        "agent_calls": {
+          "original": 2.5,
+          "modified": 2.5833
+        },
+        "frames_attached": {
+          "original": 0.8333,
+          "modified": 0.8333
+        },
+        "voice_model_calls": {
+          "original": 7.25,
+          "modified": 6.5
+        },
+        "notes_saved": {
+          "original": 1.0,
+          "modified": 1.25
+        },
+        "app_writes_attempted": {
+          "original": 0.75,
+          "modified": 0.5
+        },
+        "app_writes_kept": {
+          "original": 0.75,
+          "modified": 0.5
+        },
+        "delegated_turns": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "parked_relayed": {
+          "original": 0.25,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 4,
+      "modified": 0,
+      "tie": 8,
+      "metrics": {
+        "ledger_entries": {
+          "original": 1.0,
+          "modified": 0.0
+        },
+        "final_facts_stated": {
+          "original": 0.9375,
+          "modified": 0.6875
+        },
+        "agent_calls": {
+          "original": 2.5,
+          "modified": 2.5833
+        },
+        "frames_attached": {
+          "original": 0.8333,
+          "modified": 0.8333
+        },
+        "voice_model_calls": {
+          "original": 7.25,
+          "modified": 7.0
+        },
+        "notes_saved": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "app_writes_attempted": {
+          "original": 0.75,
+          "modified": 0.75
+        },
+        "app_writes_kept": {
+          "original": 0.75,
+          "modified": 0.75
+        },
+        "delegated_turns": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "parked_relayed": {
+          "original": 0.25,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->S"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 2,
+      "modified": 0,
+      "tie": 10,
+      "metrics": {
+        "ledger_entries": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "final_facts_stated": {
+          "original": 0.9375,
+          "modified": 0.9375
+        },
+        "agent_calls": {
+          "original": 2.5,
+          "modified": 2.5833
+        },
+        "frames_attached": {
+          "original": 0.8333,
+          "modified": 0.0
+        },
+        "voice_model_calls": {
+          "original": 7.25,
+          "modified": 7.3333
+        },
+        "notes_saved": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "app_writes_attempted": {
+          "original": 0.75,
+          "modified": 0.75
+        },
+        "app_writes_kept": {
+          "original": 0.75,
+          "modified": 0.75
+        },
+        "delegated_turns": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "parked_relayed": {
+          "original": 0.25,
+          "modified": 0.25
+        }
+      }
+    }
+  ]
+}

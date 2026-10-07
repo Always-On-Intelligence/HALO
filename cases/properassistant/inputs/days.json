@@ -1,0 +1,61 @@
+{
+  "note": "Scripted days for ProPerSim's user agent (John Lin). Each item is one ProPerSim persona (a bootstrap folder under core/environment/frontend_server/storage) followed over two simulated days that start on the date in its reverie/meta.json. Each moment stands in for one 150-second simulation step at which the assistant (Eddy Lin) is consulted; the act_description replaces the activity that the Generative Agents planner would give John Lin at that time, in the planner's 'activity (detail)' form, and the detail is what the assistant sees. Day 1 is a learning day: two candidate suggestions per moment, both rated by the simulated user, preference pairs recorded. The update at 00:02:30 of day 2 revises the policy. Day 2 is the test day, with moments that mirror day 1. Moments were chosen where the backbone's decision varies between samples of the same prompt (in a probe with empty memory, one or two of three samples made a suggestion), because the two candidates of a step only form a preference pair when they differ. The 'design' field records the persona's own Timing / Personal Preference text that applies; it is for analysis only and is never sent to a model.",
+  "items": [
+    {
+      "id": "accountant_p9",
+      "persona": "base_the_ville_persona_9",
+      "days": [
+        {
+          "phase": "learn",
+          "moments": [
+            {"time": "07:15:00", "act_description": "starting his morning routine (reviewing his to-do list after morning meditation and choosing something to listen to)",
+             "design": "Timing: recommendations around 7am after meditation are welcome"},
+            {"time": "12:40:00", "act_description": "having his lunch break (deciding what to make for lunch)",
+             "design": "Timing: only around 7am and 8pm, so they do not interfere with the structured work day; silence preferred"},
+            {"time": "20:00:00", "act_description": "winding down with herbal tea (deciding which classical record to play while reading a historical biography)",
+             "design": "Timing: around 8pm with herbal tea; Personal Preference: classical music playlists when reading historical biographies"}
+          ]
+        },
+        {
+          "phase": "test",
+          "moments": [
+            {"time": "07:10:00", "act_description": "starting his morning routine (choosing something calm to listen to while he goes over his to-do list after meditation)",
+             "design": "as day 1, 07:15: a recommendation is welcome"},
+            {"time": "12:45:00", "act_description": "having his lunch break (deciding what to cook for a quick lunch)",
+             "design": "as day 1, 12:40: silence preferred"},
+            {"time": "20:05:00", "act_description": "winding down with herbal tea (deciding which classical record to put on while reading a biography of Queen Victoria)",
+             "design": "as day 1, 20:00: a classical-music recommendation fits"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "journalist_p3",
+      "persona": "base_the_ville_persona_3",
+      "days": [
+        {
+          "phase": "learn",
+          "moments": [
+            {"time": "06:40:00", "act_description": "starting the day with espresso (outlining arguments for an online debate on a trending topic)",
+             "design": "Timing: 6-9am window; Personal Preference: data-driven or contrarian insights when prepping for online debates"},
+            {"time": "11:00:00", "act_description": "working at his desk (transcribing an interview recording)",
+             "design": "Timing: no recommendations during mid-day focus work such as interviews and investigative work"},
+            {"time": "22:30:00", "act_description": "working late (reviewing his research notes for a corruption story)",
+             "design": "Timing: after 9pm, in research and writing mode, recommendations are welcome"}
+          ]
+        },
+        {
+          "phase": "test",
+          "moments": [
+            {"time": "06:45:00", "act_description": "starting the day with espresso (preparing talking points for an online debate about a trending news story)",
+             "design": "as day 1, 06:40: a recommendation is welcome"},
+            {"time": "11:10:00", "act_description": "working at his desk (transcribing a source interview for his story)",
+             "design": "as day 1, 11:00: silence preferred"},
+            {"time": "22:40:00", "act_description": "working late (going through his research notes for an investigative piece)",
+             "design": "as day 1, 22:30: a recommendation is welcome"}
+          ]
+        }
+      ]
+    }
+  ]
+}

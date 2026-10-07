@@ -1,0 +1,19 @@
+id: dot
+name: "Dot"
+domain: digital
+kind: product
+report: https://learn.chatgpt.com/docs/dots
+sources:
+  - url: https://learn.chatgpt.com/docs/dots
+    kind: product_documentation
+    version: "Markdown documentation page fetched 2026-10-05"
+    sha256: 2dd16a1beab72dac1e70eff29e79fee52d27831ef58adc56228e8bc93ecac6eb
+  - url: https://learn.chatgpt.com/docs/dots/tasks-and-memory
+    kind: product_documentation
+    version: "Markdown documentation page fetched 2026-10-05"
+    sha256: 190a71e142ebef3033362ca4ba566664034504e0c05fab5118850314c4e1eff7
+variants:
+  - id: chatgptdots2026
+    label: "Dot"
+    configuration: "OpenAI dots as described in the ChatGPT documentation pages 'Meet dots' and 'Tasks and memory' (Markdown versions fetched 2026-10-05): saved notes, self-timed follow-up, delegated tasks, and approval checks"
+modes: [read]

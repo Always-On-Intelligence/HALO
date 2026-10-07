@@ -1,0 +1,82 @@
+{
+  "id": "pro2bench2026",
+  "configuration": "Full predicted-plan PWR (variant pro2bench2026). A fine-tuned planner and a fine-tuned duplex interaction model run together, and the planner is invoked online at every interrupt to revise the cached plan. This is Table 34 'PWR (ours) Full system (trained planner + interaction)', the FT+PWR rows of Table 2, the 'Pred.' column of Table 3 and the 'trained' row of Table 6. It is not PWR-Oracle, where a ground-truth plan replaces the planner's output.",
+  "sources_read": [
+    "https://arxiv.org/html/2606.04970v1 (v1). Read via WebFetch, which exposed text only up to Figure 4; used to cross-check the wording of §2–§2.5.",
+    "https://arxiv.org/pdf/2606.04970v1 (same arXiv v1). Full 53 pages including appendices A–J, read as extracted text and page images.",
+    "cases/plan-watch-recover/case.yaml",
+    "cases/plan-watch-recover/README.md (opened while locating the case file; it lists another reviewer's labels and was not used for any judgment)",
+    "halo/read/schema.json"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "The session's cached procedural plan is the memory store; the paper says procedural memory lives in the plan. User input and sensed video are written into it. The plan is initialized from the user's spoken query q. At each interrupt, the trained planner reads the latest 8 s clip against the cached plan and writes a revised plan: it advances the step (the finished step is tagged completed) or emits a recovery plan after a deviation. The plan persists across timesteps and turns within a session. No cross-session store is described.",
+      "locator": "arXiv 2606.04970v1 §2.3 Procedural Plan (PDF p.4); §2.4 'Planner input' (p.5); §2.5 'OOP handling without dedicated supervision' (p.5)",
+      "quote": "§2.3: The plan is dynamic: initialized from q at session start and updated at each interrupt timestep as steps complete or the user deviates. | §2.4: So the planner needs only current visual evidence to decide whether to advance the step index or emit a recovery plan. This asymmetry is a direct consequence of the decoupled architecture: procedural memory lives in the plan rather than in raw video"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The retained plan P_{t−1} is injected into the duplex interaction model's context. It conditions both the timing decision (silent vs interrupt) and the utterance content. After a recovery update, the next utterance is grounded in the corrected plan. Reactive answers also draw on the retained conversation history.",
+      "locator": "§2.2 'Duplex Interaction Model' (pp.3–4); §2.3 'Plan representation' (p.4); §2.5 'Plan-conditioned detection' and 'Reactive turn handling' (p.5); Figure 3 caption (p.4)",
+      "quote": "§2.3: P_t is represented as a structured text block injected into the duplex interaction model’s context. | §2.5: The duplex interaction model conditions its interrupt decision on the full plan P_{t−1} | §2.3: ensuring the interaction model’s next utterance is grounded in the corrected plan."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action output decides what Sensing looks for next and where. The planner runs only when the duplex interrupts (Eq. 3). It takes the duplex's decision and utterance (what the user was just told) and emits visual cues for the newly instructed step: the evidence that the step is still in progress or completed. The next duplex pass uses those cues as targets and expected-effect checks in the video. Plan updates happen only at the assistant's own interrupts (its opening response counts as one), and their timestamps pick which past 8 s clips the duplex perceives. The hand-off goes through the shared plan context, which counts as a fused hand-off.",
+      "locator": "§2.2 'Planner' paragraph and Eq. 3 (pp.3–4); §2.3 (p.4); §2.4 Plan-Anchored Clip Selection (pp.4–5); Figure 3 caption (p.4)",
+      "quote": "§2.2: Conditioning on u_t ensures any plan revision is consistent with what the user has just been told. | §2.4: Every session opens with the assistant’s initial response to q, which is treated as a plan update at t = 0; one plan-anchored clip is therefore always available … The planner’s output shapes both what the interaction model looks for and where in the timeline it looks."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained plan state feeds perception as a prior for sampling and interpretation, not just as answer-time context. (1) Sampling: frames are chosen around retained past plan-update timestamps instead of a recency window. (2) Attention: cues in the cached plan P_{t−1} tell the duplex what to look for in the video. (3) Interpretation: the planner reads the current clip against the cached plan to tell step completion from deviation. No Action request for a new observation sits in between, so this is not the M→A→S composition.",
+      "locator": "§2.2 'Duplex Interaction Model' (p.4); §2.4 (pp.4–5); §2.5 'Plan-conditioned detection' and 'OOP handling without dedicated supervision' (p.5)",
+      "quote": "§2.4: Rather than a recency-only sliding window, which would discard long-range procedural context for sessions spanning minutes to hours, we anchor frame selection to the plan itself. | §2.2: The visual cues embedded in P_{t−1} explicitly inform the model what to look for in v_{1:t} | §2.5: the planner resolves the ambiguity by inspecting o_t against P_{t−1} and emitting the appropriate updated plan."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The assistant's own decision and utterance are written into retained memory. At each interrupt the planner takes the duplex's full output (d_t, u_t) with the cached plan and writes a revised plan that agrees with what was just said. Each interrupt's timestamp is kept as a clip anchor. Assistant turns also appear in the dialogue/chat history that later passes condition on (Figure 1 caption; dialog-history rows of Figures 4–10).",
+      "locator": "§2.2 'Planner' paragraph (p.4); §2.4 (p.5); Figure 1 caption (p.2); Figures 4–10 'Dialog history' rows (pp.13–30)",
+      "quote": "§2.2: On interrupt time steps consumes the duplex’s full output (d_t, u_t) together with o_t and the cached plan P_{t−1}, producing a revised plan P_t with visual cues for the new current step (§2.3). Conditioning on u_t ensures any plan revision is consistent with what the user has just been told."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "Within a session, the running system keeps its own past actions for later steps. Its utterances are folded into the cached plan the next pass reads. The times it interrupted (including the opening response) are kept as plan-update anchors for later clip selection. Its turns form part of the dialogue history H_{<t} in every later observation o_t.",
+      "locator": "§2.2 'Planner' paragraph (p.4); §2.4 (p.5); §2 notation (p.3); Figure 1 caption (p.2)",
+      "quote": "§2.2: On interrupt time steps consumes the duplex’s full output (d_t, u_t) together with o_t and the cached plan P_{t−1}, producing a revised plan P_t | §2.4: plus up to 14 additional clips anchored at prior plan-update timestamps … Every session opens with the assistant’s initial response to q, which is treated as a plan update at t = 0 | §2: At time t, let v_{1:t} denote the egocentric video stream sampled at 2 fps up to time t and H_{<t} the dialogue history."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "After guiding a step, the system watches the video for evidence of whether the user carried it out, using cues for 'still in progress' versus 'completed'. The result is kept in the plan: the step is tagged completed and the plan advances, or a recovery plan records the deviation. This is an observed state change after its guidance, retained in session memory.",
+      "locator": "§2.3 and 'Plan representation' (p.4); §2.5 'OOP handling without dedicated supervision' (p.5)",
+      "quote": "§2.3: They give the interaction model an explicit, step-grounded description of two complementary signals: visual evidence that the step is still in progress (Silent) and evidence that the step has completed (Interrupt). | §2.3: Each step s_i carries a status tag, completed, current, or next | §2.5: on step completion it advances the current step index and produces a plan for the next step with updated visual cues; on OOP deviation it produces a recovery plan."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The observed result is checked against the plan that carried the earlier guidance (the expected step and its cues) and used right away to correct the assistance. A detected deviation produces a recovery plan, and the next utterance is grounded in that corrected plan. This is an online check inside the service (contrasted in §2.1 with having no account of expected versus observed), not offline benchmark scoring.",
+      "locator": "§2.5 'OOP handling without dedicated supervision' (p.5); §2.3 'Plan representation' (p.4); §2.1 (p.3)",
+      "quote": "§2.5: the planner resolves the ambiguity by inspecting o_t against P_{t−1} and emitting the appropriate updated plan. | §2.3: When an out-of-plan deviation is detected, the planner produces a revised P_t with updated current and next steps and fresh visual cues, ensuring the interaction model’s next utterance is grounded in the corrected plan."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service itself makes no durable change to its own mechanism. Model weights come only from developer-run SFT. Plan, recovery and cue updates are per-session task state read by fixed models. Training on the planner's own rollouts is named as future work.",
+      "locator": "§2.6 (p.6); §4 'Training Recipe' (p.9); §4.2 'Predicted vs Upper bound oracle plan' (p.11)",
+      "quote": "§2.6: Both models are trained via supervised fine-tuning (SFT) at the single time-step level. | §4.2: Closing it requires exposing the duplex to predicted rather than ground-truth plans, for example through RL on the planner’s own rollouts, which we leave to future work.",
+      "what": "Nothing is revised by the service. Ruled out: duplex/planner weights (set by developer SFT) and plan steps, recovery plans and visual cues (session task state, not reusable rules)."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No service-made revision exists, so no later run under a revised mechanism is reported; later timesteps use the updated plan, which is task-state content.",
+      "locator": "§2.5 Inference (p.5); §4 Experiments & Results (pp.9–12)"
+    }
+  },
+  "notes": "Judged: the full predicted-plan PWR (trained planner + trained duplex, online plan revision at each interrupt), not PWR-Oracle. In the oracle condition the planner's output is replaced by annotations, which would remove the planner-mediated A→S and A→M paths. Sources: the listed v1 HTML was read via WebFetch, but the fetch was truncated at Figure 4. The full v1 PDF of the same arXiv version was therefore read for all sections and appendices. Quotes were checked word for word against the PDF text and, for §2–§2.5, against the HTML fetch. Math is transcribed as plain text (o_t, P_{t−1}, v_{1:t}, H_{<t}). The case-file sha256 could not be checked because a shell download was not permitted. There is no code repository. Memory is session-scoped only: the cached plan, the dialogue history and the plan-update anchors. No cross-session store is described. The paper evaluates offline per decision point on benchmark clips; per the protocol this does not negate the flows it describes for inference in §2.5. One inconsistency does not change any label: §2.5 says OOP handling is supervised by EgoProactive recovery annotations, but §4 and Table 33 say EgoProactive was held out of FT training. The 'Self-Optimized Prompt' ablation in App. G.2 (a model rewrites its own system prompt for a later eval) applies only to the zero-shot third-party baselines, not to PWR, so it was not counted as a revision.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 647,
+    "code_commit": null
+  }
+}

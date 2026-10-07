@@ -1,0 +1,8 @@
+models:
+  backbone: {backend: "mock:echo"}
+  judge: {backend: "mock:A"}
+samples: 2
+rubric: Prefer the reminder that fits the user.
+tests:
+  - cut: [M->A]
+  - cut: [A->M]

@@ -1,0 +1,198 @@
+{
+  "note": "Scripted long videos for M3-Agent. Each video is a few 30-second clips. A clip has the 'video' text that stands in for the mp4 the memorization model watches, the faces seen in it, and the diarized speech. Faces and voices name a person key from 'people'; the adapter turns each sighting into the intermediate outputs that mmagent/face_processing.py and mmagent/voice_processing.py load from disk (a face crop shown to the model as the person's 'face' text, a speech segment with its transcript, and MiniLM embeddings of the 'face' and 'voice' texts in place of ArcFace and ERes2NetV2). Person keys and names are never shown to a model; names reach the system only through what people say. 'design' records why the video was chosen and is used for analysis only.",
+  "videos": [
+    {
+      "id": "kitchen_dinner",
+      "setting": "A home kitchen during dinner preparations, filmed by a camera on the counter.",
+      "design": "Names are said only in clips 0 and 1. In clip 2 two women each say when they will act (six vs seven), and in clip 3 the cardamom location is said by a woman who is not named in that clip, so both questions need the identities kept from earlier clips.",
+      "people": {
+        "sam": {"name": "Sam", "face": "a man in his early forties with short ginger hair, a full red beard, pale skin and blue eyes", "voice": "a deep male voice with a Scottish accent, slow and calm"},
+        "priya": {"name": "Priya", "face": "a woman around thirty with brown skin, long black hair in a braid, round gold-rimmed glasses and a small nose ring", "voice": "a bright female voice with a London accent, fast-paced"},
+        "lena": {"name": "Lena", "face": "a woman in her mid-thirties with pale freckled skin, auburn hair in a bun and green eyes, no glasses", "voice": "a soft, low-pitched female voice with a Scottish accent"}
+      },
+      "clips": [
+        {
+          "video": "A home kitchen seen from a camera on the counter. A bearded man in a grey hoodie stirs a large pot on the stove. A woman with a long braid and round glasses walks in carrying a paper bag of mangoes and a carton of cream and sets them on the counter. The bearded man turns, smiles and shakes her hand. She talks while unpacking the bag; he answers while stirring.",
+          "faces": [{"person": "sam", "frames": [0, 2]}, {"person": "priya", "frames": [1, 3]}],
+          "speech": [
+            {"person": "priya", "start": "00:06", "end": "00:10", "text": "Hi, I'm Priya from next door. Sam said you could use some help tonight."},
+            {"person": "sam", "start": "00:11", "end": "00:16", "text": "Priya, you're a lifesaver. Could you take care of dessert? I'm doing the lamb curry."},
+            {"person": "priya", "start": "00:17", "end": "00:22", "text": "Sure. I brought mangoes, so I'll make kulfi."}
+          ]
+        },
+        {
+          "video": "A second woman with auburn hair in a bun and freckles comes into the kitchen, hangs her coat on a hook and hugs the bearded man. The woman with the braid is cutting mangoes at the island. The freckled woman waves at her, then takes a stack of plates from a cupboard and starts laying the dining table, visible through the doorway.",
+          "faces": [{"person": "sam", "frames": [0, 1]}, {"person": "lena", "frames": [1, 2]}, {"person": "priya", "frames": [3, 4]}],
+          "speech": [
+            {"person": "sam", "start": "00:01", "end": "00:06", "text": "Lena, meet Priya, our neighbour. Priya, this is my sister Lena."},
+            {"person": "lena", "start": "00:07", "end": "00:11", "text": "Nice to meet you, Priya. I'll set the table."},
+            {"person": "lena", "start": "00:15", "end": "00:21", "text": "Oh, and Marco texted. He can't eat cashews, so keep them out of the curry."},
+            {"person": "sam", "start": "00:22", "end": "00:25", "text": "Got it, no cashews."}
+          ]
+        },
+        {
+          "video": "The bearded man has left the kitchen. The woman with the braid and glasses pours a mango and cream mixture into six small metal moulds and slides them into the freezer. The freckled woman with the bun is folding napkins at the island. The two women talk by the fridge, then the woman with the braid puts on a denim jacket and leaves through the front door.",
+          "faces": [{"person": "priya", "frames": [0, 2]}, {"person": "lena", "frames": [1, 3]}],
+          "speech": [
+            {"person": "priya", "start": "00:08", "end": "00:14", "text": "These need four hours to set, so I'll come back at six to take them out."},
+            {"person": "lena", "start": "00:16", "end": "00:22", "text": "And I'll go out at seven for ice and candles, before the guests arrive."},
+            {"person": "priya", "start": "00:24", "end": "00:26", "text": "See you later!"}
+          ]
+        },
+        {
+          "video": "The bearded man is back at the stove, opening and closing cupboards. The freckled woman with the bun points to a high shelf. The bearded man takes down a small jar, adds some of its contents to the pot, then puts the pot into the oven and turns the dial.",
+          "faces": [{"person": "sam", "frames": [0, 2]}, {"person": "lena", "frames": [1, 3]}],
+          "speech": [
+            {"person": "sam", "start": "00:02", "end": "00:05", "text": "Has anyone seen the cardamom?"},
+            {"person": "lena", "start": "00:06", "end": "00:10", "text": "Top shelf, behind the rice."},
+            {"person": "sam", "start": "00:18", "end": "00:24", "text": "Right, oven at one-sixty for two hours."}
+          ]
+        }
+      ],
+      "questions": [
+        {"question": "What time did Priya say she would come back, and what for?", "answer": "At six o'clock, to take the mango kulfi out of the freezer."},
+        {"question": "Where did Lena say the cardamom was?", "answer": "On the top shelf, behind the rice."}
+      ]
+    },
+    {
+      "id": "office_handover",
+      "setting": "An open-plan software office, filmed by a wearable camera worn by a visitor.",
+      "design": "All names are said in clip 0. Two women with similar black bobs appear later; in clip 3 both give Tom an instruction, and in clip 2 the deadline is set between people who are not named there, so both questions need the identities kept from clip 0.",
+      "people": {
+        "daniel": {"name": "Daniel", "face": "a man in his fifties with a shaved head, a grey goatee and dark-framed rectangular glasses", "voice": "a gravelly male baritone with an American accent"},
+        "aiko": {"name": "Aiko", "face": "a woman in her late twenties with a straight black bob, a fringe and small pearl earrings", "voice": "a clear, high female voice with a slight Japanese accent"},
+        "ines": {"name": "Inês", "face": "a woman in her early thirties with a straight black bob without a fringe, silver hoop earrings and a dimpled chin", "voice": "a warm alto female voice with a Portuguese accent"},
+        "tom": {"name": "Tom", "face": "a young man of about twenty with curly blond hair, a few freckles and a thin face", "voice": "a young male tenor voice, hesitant, with an Australian accent"}
+      },
+      "clips": [
+        {
+          "video": "An open-plan office. Four people stand around a whiteboard covered in sticky notes: a bald man with a grey goatee and glasses holding a marker, a woman with a black bob and a fringe holding a laptop, a second woman with a black bob and hoop earrings holding a coffee mug, and a young man with curly blond hair holding a notebook. Each of them speaks in turn.",
+          "faces": [{"person": "daniel", "frames": [0, 1]}, {"person": "aiko", "frames": [1, 2]}, {"person": "ines", "frames": [2, 3]}, {"person": "tom", "frames": [3, 4]}],
+          "speech": [
+            {"person": "daniel", "start": "00:01", "end": "00:08", "text": "Morning, everyone. Aiko, you own the refund bug this week. Tom, you'll shadow her."},
+            {"person": "aiko", "start": "00:09", "end": "00:13", "text": "Got it, Daniel. I think the bug is in the currency conversion."},
+            {"person": "tom", "start": "00:14", "end": "00:17", "text": "Hi, I'm Tom. First day, happy to help."},
+            {"person": "ines", "start": "00:18", "end": "00:24", "text": "And I'm Inês from QA. Ping me when there's a build to test."}
+          ]
+        },
+        {
+          "video": "A desk by the window. The woman with the fringe and pearl earrings types on a laptop while the curly-haired young man sits next to her taking notes. She opens a desk drawer and taps a yellow sticky note inside without taking it out.",
+          "faces": [{"person": "aiko", "frames": [0, 2]}, {"person": "tom", "frames": [1, 3]}],
+          "speech": [
+            {"person": "aiko", "start": "00:03", "end": "00:09", "text": "The staging password is on this note in my drawer. Never write it on your monitor."},
+            {"person": "tom", "start": "00:10", "end": "00:13", "text": "Understood. Should I start with the refund logs?"},
+            {"person": "aiko", "start": "00:14", "end": "00:17", "text": "Yes, the logs from last Tuesday."}
+          ]
+        },
+        {
+          "video": "A small glass-walled meeting room. The bald man with the goatee sits across from the woman with the black bob and the fringe; his laptop shows a calendar. Through the glass wall, the woman with the hoop earrings walks past carrying a tablet.",
+          "faces": [{"person": "daniel", "frames": [0, 1]}, {"person": "aiko", "frames": [1, 2]}, {"person": "ines", "frames": [4]}],
+          "speech": [
+            {"person": "daniel", "start": "00:02", "end": "00:10", "text": "The client moved the review to Thursday at three. Can you send me the fix summary by Friday noon?"},
+            {"person": "aiko", "start": "00:11", "end": "00:16", "text": "Yes. I'll also share the test plan with QA on Wednesday."}
+          ]
+        },
+        {
+          "video": "Back at the whiteboard. The two women with black bobs stand on either side of the curly-haired young man. The one with the hoop earrings writes 'regression suite' on a sticky note; the one with the fringe points at her laptop screen.",
+          "faces": [{"person": "ines", "frames": [0, 2]}, {"person": "aiko", "frames": [1, 3]}, {"person": "tom", "frames": [2, 4]}],
+          "speech": [
+            {"person": "ines", "start": "00:02", "end": "00:08", "text": "Tom, the regression suite takes two hours, so start it before lunch."},
+            {"person": "aiko", "start": "00:09", "end": "00:14", "text": "And after lunch, go through the refund logs from last Tuesday with me."},
+            {"person": "tom", "start": "00:15", "end": "00:18", "text": "Suite before lunch, logs after lunch. Got it."}
+          ]
+        }
+      ],
+      "questions": [
+        {"question": "What did Inês ask Tom to do, and when?", "answer": "To start the regression suite before lunch, because it takes two hours."},
+        {"question": "By when does Daniel want the fix summary from Aiko?", "answer": "By Friday noon."}
+      ]
+    },
+    {
+      "id": "home_glasses",
+      "setting": "A family home, filmed by the camera of a small home robot.",
+      "design": "Leo is named only in clip 0. In clip 2 the boy moves the glasses without saying his name, and in clip 3 the bowl is empty, so the first question needs the boy's identity and the latest location. The second question needs a fact said by the nurse in clip 1.",
+      "people": {
+        "rosa": {"name": "Rosa", "face": "an elderly woman with short white curly hair, deep wrinkles and a mole on her left cheek", "voice": "a frail, high-pitched elderly female voice with a Spanish accent"},
+        "leo": {"name": "Leo", "face": "a teenage boy with dark brown hair, buzz-cut sides and braces on his teeth", "voice": "a cracking teenage male voice that speaks quickly"},
+        "fatima": {"name": "Fatima", "face": "a woman in her forties wearing a navy headscarf, with brown eyes and thin eyebrows", "voice": "a calm, measured female voice with a slight French accent"}
+      },
+      "clips": [
+        {
+          "video": "A living room seen from a home robot's camera at knee height. An elderly woman with white curly hair sits in an armchair and takes off her reading glasses. A teenage boy with braces sits on the sofa playing on a phone. She holds up the glasses, gets up and puts them into a blue ceramic bowl on the shelf beside the TV.",
+          "faces": [{"person": "rosa", "frames": [0, 2]}, {"person": "leo", "frames": [1, 3]}],
+          "speech": [
+            {"person": "rosa", "start": "00:05", "end": "00:12", "text": "Leo, I lose these glasses every day. From now on they live in the blue bowl by the TV."},
+            {"person": "leo", "start": "00:13", "end": "00:15", "text": "Good plan, Grandma."}
+          ]
+        },
+        {
+          "video": "The doorbell rings. A woman in a navy headscarf carrying a medical bag comes in and sits next to the elderly woman. She takes out two pill bottles, one with white pills and one with yellow pills, and lines them up on the coffee table.",
+          "faces": [{"person": "fatima", "frames": [0, 1, 3]}, {"person": "rosa", "frames": [2, 4]}],
+          "speech": [
+            {"person": "fatima", "start": "00:04", "end": "00:10", "text": "Hello Rosa, I'm Fatima, your new nurse. I'll visit every Tuesday morning."},
+            {"person": "fatima", "start": "00:12", "end": "00:17", "text": "The white pill is after breakfast, and the yellow one is before bed."},
+            {"person": "rosa", "start": "00:18", "end": "00:23", "text": "White after breakfast, yellow before bed. Thank you, Fatima."}
+          ]
+        },
+        {
+          "video": "The kitchen. The teenage boy with braces wipes the counter, picks up a pair of reading glasses lying next to the fruit bowl and puts them into the top drawer to the left of the sink. No one else is in the kitchen.",
+          "faces": [{"person": "leo", "frames": [0, 2, 4]}],
+          "speech": [
+            {"person": "leo", "start": "00:09", "end": "00:14", "text": "Grandma left these by the bananas again. I'll put them in the drawer for now."}
+          ]
+        },
+        {
+          "video": "Evening in the living room. The elderly woman looks into the blue bowl by the TV, finds it empty and pats the pockets of her cardigan. Nobody else is in the room.",
+          "faces": [{"person": "rosa", "frames": [1, 3]}],
+          "speech": [
+            {"person": "rosa", "start": "00:06", "end": "00:10", "text": "My glasses are not in the bowl. Where did they go?"}
+          ]
+        }
+      ],
+      "questions": [
+        {"question": "Where are Rosa's reading glasses now, and who put them there?", "answer": "In the top kitchen drawer to the left of the sink; her grandson Leo put them there."},
+        {"question": "Which pill should Rosa take before bed?", "answer": "The yellow pill."}
+      ]
+    },
+    {
+      "id": "bike_shop",
+      "setting": "A small bike repair shop, filmed by a wearable camera worn by the shop owner's assistant.",
+      "design": "The diagnosis is said in clip 1 and the price and pick-up time in clip 2, which also overrides the 'ready by Saturday' said in clip 0. The mechanic's name is said by someone else in clip 1, so the questions need memory across clips but depend less on identity.",
+      "people": {
+        "kofi": {"name": "Kofi", "face": "a man in his sixties with a grey afro, a broad nose and a silver stud in his right ear", "voice": "a booming male bass voice with a Ghanaian accent"},
+        "mei": {"name": "Mei", "face": "a woman in her twenties with long dyed-purple hair, a septum piercing and dark eyeliner", "voice": "a crisp female voice, slightly nasal, with an American accent"},
+        "jonas": {"name": "Jonas", "face": "a man in his thirties with a long blond ponytail, a scar through his left eyebrow and grease on his cheek", "voice": "a quiet male voice with a German accent"}
+      },
+      "clips": [
+        {
+          "video": "A small bike shop with bikes hanging from the ceiling. A woman with purple hair wheels in a green city bike and leans it against the counter. Behind the counter, an older man with a grey afro and an earring writes in a ledger.",
+          "faces": [{"person": "mei", "frames": [0, 2]}, {"person": "kofi", "frames": [1, 3]}],
+          "speech": [
+            {"person": "mei", "start": "00:04", "end": "00:09", "text": "Hi, I'm Mei. My back brake squeaks and the bike feels slow."},
+            {"person": "kofi", "start": "00:10", "end": "00:15", "text": "Welcome, Mei. Leave it with us, it'll be ready by Saturday."}
+          ]
+        },
+        {
+          "video": "The workshop area. The older man hands the green bike to a man with a blond ponytail in a grease-stained apron, who clamps it in a repair stand, spins the back wheel and inspects the brake pads with a flashlight. He squeezes the rear tyre.",
+          "faces": [{"person": "kofi", "frames": [0]}, {"person": "jonas", "frames": [1, 2, 4]}],
+          "speech": [
+            {"person": "kofi", "start": "00:01", "end": "00:04", "text": "Jonas, this green one is Mei's. Back brake."},
+            {"person": "jonas", "start": "00:16", "end": "00:23", "text": "The rear pads are worn down to the metal, and the rear tube has a slow leak."}
+          ]
+        },
+        {
+          "video": "The man with the ponytail stands at the counter talking on the phone while writing a receipt. The older man counts cash at the register.",
+          "faces": [{"person": "jonas", "frames": [0, 2]}, {"person": "kofi", "frames": [3]}],
+          "speech": [
+            {"person": "jonas", "start": "00:02", "end": "00:10", "text": "Hi Mei, it's the shop. New pads and a new tube, forty-five euros in total. You can pick it up Friday afternoon."},
+            {"person": "kofi", "start": "00:14", "end": "00:17", "text": "Tell her we're closed on Monday."}
+          ]
+        }
+      ],
+      "questions": [
+        {"question": "What did the mechanic find wrong with Mei's bike?", "answer": "The rear brake pads were worn down to the metal and the rear tube had a slow leak."},
+        {"question": "When can Mei pick up her bike, and how much will the repair cost?", "answer": "On Friday afternoon; forty-five euros in total for new pads and a new tube."}
+      ]
+    }
+  ]
+}

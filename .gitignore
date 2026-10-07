@@ -1,0 +1,12 @@
+.upstream/
+runs/
+.halo_cache/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.venv/
+.pytest_cache/
+*.egg-info/
+node_modules/
+.work/

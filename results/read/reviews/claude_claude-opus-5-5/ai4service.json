@@ -1,0 +1,80 @@
+{
+  "id": "ai4service",
+  "configuration": "ai4service: the initial Alpha-Service runtime on AI glasses described in arXiv 2510.14359v1 (\"Initial Alpha-Service runtime with task dispatch, visual trigger/streaming models, web search, and JSON memory\"). Input Unit: a fine-tuned Qwen2.5-VL-3B trigger model and a Qwen2.5-VL-7B streaming model. CPU: a Qwen3-8B orchestrator that splits, dispatches and combines tasks. ALU: Google Search API web search. Memory Unit: in its 'initial implementation', a local JSON-based structured file system. Output Unit: LLM summarisation plus pyttsx3 TTS. Judged from Sec. 3.1-3.6 and the Sec. 4 case studies.",
+  "sources_read": [
+    "https://arxiv.org/html/2510.14359v1 (arXiv HTML, version 2510.14359v1): Abstract, Sec. 1, Sec. 2 (2.1-2.3), Sec. 3 (3.1-3.6), Sec. 4 (4.1-4.3 incl. Listings 1-7), Sec. 5, Sec. 6, Sec. 7, Appendices A-B (Listings 8-9)",
+    "https://arxiv.org/html/2510.14359v1/arch.png (Figure 2 architecture diagram, viewed as an image)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "After every interaction the runtime automatically writes the dialogue to a long-term JSON memory. The dialogue includes the user's queries, which are user-supplied input, and the paper says the agent can later recall those past queries. So user-supplied evidence is admitted to Memory and kept across sessions. Figure 2 shows the write going through the CPU ('Writing' arrow to Mem. Bank). That is a fused hand-off, and it still implements the flow.",
+      "locator": "Sec. 3.5 Memory Unit: Long-Term Context Storage (paragraphs on the initial implementation, record fields and write operation); Sec. 1 component list (Memory Unit); Figure 2 'Writing' arrow",
+      "quote": "\"After each interaction, the system automatically extracts key information from the dialogue and stores it in a structured JSON record.\" (Sec. 3.5); \"This allows the agent to recall past queries, actions, and preferences, thereby improving continuity and service quality in dynamic environments.\" (Sec. 3.5)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "At the start of a new task, the agent looks up relevant past memory entries by the query's topic or intent. The retrieved context is injected into the prompt of the language model that writes the response. Sec. 3.3 lists memory retrieval as one of the orchestrator's dispatch targets, and the orchestrator merges the 'relevant past interactions' into its final answer. So retained information shapes the content of Action's output. Figure 2 shows a 'Reading' arrow from Mem. Bank to the CPU.",
+      "locator": "Sec. 3.5 (retrieval paragraph); Sec. 3.3 Decomposition and Dispatch (5th routing bullet) and Synthesis and Response Generation; Figure 2 'Reading' arrow",
+      "quote": "\"When a new task is initiated, the agent parses the current query to identify its topic or intent, and then searches the memory for relevant past entries.\" (Sec. 3.5); \"Retrieved context is selectively injected into the language model's prompt, enabling continuity across sessions and improving the model's grounding and response relevance.\" (Sec. 3.5); \"Instruction to the Memory Unit for retrieval of pertinent historical interaction data.\" (Sec. 3.3)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The CPU orchestrator (Action) decides when and what the sensing models look for. It activates the trigger model to find when a response is needed at a future time step. It invokes the streaming video LLM for task-specific visual descriptions when it needs finer-grained information. In the case studies, the CPU's 'LLM Task Distribution component' hands both models their task-specific prompts (Sec. 4.1, and Sec. 4.2 says the prompts were 'dispatched' the same way). Figure 2 shows an 'Instruction' arrow from the CPU to the Large MLLM. So Action's information needs set what Sensing watches for and how it interprets the scene.",
+      "locator": "Sec. 3.3 Decomposition and Dispatch (routing bullets 2-3); Sec. 4.1 Input Unit - Real-time Event Triggering (opening paragraph and Summary); Sec. 4.2 Input Unit summary; Figure 2 'Instruction' arrow CPU -> Large MLLM",
+      "quote": "\"Activation of a trigger model to identify the optimal timing for responses required at a designated future time step.\" (Sec. 3.3); \"Invocation of a streaming video LLM to produce detailed, task-specific visual descriptions when finer-grained information is necessary.\" (Sec. 3.3); \"A lightweight MLLM scans for critical game events through specialized prompts distributed by the Central Processing Unit's LLM Task Distribution component.\" (Sec. 4.1)"
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "No text says memory is supplied to the trigger or streaming MLLMs to guide what they sample, attend to or how they interpret the scene. Memory lookup is triggered by the current query, and the result is injected into 'the language model's prompt'. Sec. 3.3 shows memory output reaching the orchestrator alongside the video LLM's description, not reaching the video LLM itself. The paper does not name which model's prompt receives the retrieved context, and it never excludes the route. In Figure 2, Memory connects only to the CPU, but a missing arrow does not establish absence. A memory-informed CPU instruction to the Large MLLM would be the M->A->S composition, which does not count as M->S.",
+      "locator": "Sec. 3.2 (Input Unit, no memory input described); Sec. 3.3 Synthesis and Response Generation; Sec. 3.5 retrieval paragraph; Figure 2 (Memory linked only to the CPU)",
+      "quote": "\"For instance, it may receive a detailed visual description from the video LLM, search results from the ALU, and relevant past interactions from the Memory Unit.\" (Sec. 3.3)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Each JSON memory record stores the agent's own final output and a topic tag the agent generated. The paper says this lets the agent recall its past 'actions'. So the assistant's own utterances and action context are delivered to Memory and kept for later sessions. Figure 2 shows a 'Writing' arrow from the CPU to Mem. Bank.",
+      "locator": "Sec. 3.5 (record-fields sentence; 'recall past queries, actions, and preferences'); Figure 2 'Writing' arrow",
+      "quote": "\"Each memory record captures a single interaction episode and contains the following fields: user metadata (e.g., ID, role), a concise summary of the dialogue history, the agent's final output, a unique timestamp, and a high-level topic tag automatically generated by the agent.\" (Sec. 3.5)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps a JSON record per interaction of what it delivered: the agent's final output, a timestamp and an agent-generated topic tag. It keeps these in its own memory to retrieve in later interactions, not only as logs the authors analyse.",
+      "locator": "Sec. 3.5 Memory Unit: Long-Term Context Storage (record fields; write after each interaction)",
+      "quote": "\"Each memory record captures a single interaction episode and contains the following fields: user metadata (e.g., ID, role), a concise summary of the dialogue history, the agent's final output, a unique timestamp, and a high-level topic tag automatically generated by the agent.\" (Sec. 3.5); \"This format enables transparent inspection and efficient retrieval, while maintaining enough semantic abstraction for contextual reuse in future interactions.\" (Sec. 3.5)"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No mechanism is described that obtains and keeps later evidence about the agent's outputs, such as user replies, acceptance, ratings, corrections or task results. Memory stores a dialogue summary and the final output, not evidence about what happened after that output. At 27 s in the Blackjack case, the system sees that the player has bust and gives the player learning advice. It does not treat this as evidence about its own earlier recommendations, and the case does not say it was retained. 'No false positives or misses were logged' (Sec. 4.3) is the authors' own evaluation. Sec. 6 lists user feedback and correction as a future capability.",
+      "locator": "Sec. 3.5 (record fields); Sec. 4.1 CPU 'Trigger service at 27s'; Sec. 4.3 Input Unit summary; Sec. 6 'User Adaptation and Trust Building'",
+      "quote": "\"The system should have an explainable decision-making mechanism in the future and allow users to provide feedback, correct inaccuracies, or disable services during interactions, thereby gradually building trust and promoting human-AI collaboration.\" (Sec. 6)"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No outcome is linked back to the system decision it concerns and used to check or correct the assistance. The 27 s 'Game Outcome Analysis and Learning Recommendation' gives the player generic strategy lessons and does not assess the system's own earlier HIT advice. The ALU's search-or-not decision is made before acting, so it is not an outcome check. Trigger accuracy in Sec. 4 is the authors' assessment of the case studies.",
+      "locator": "Sec. 4.1 CPU 'Trigger service at 27s' (Game Outcome Analysis and Learning Recommendation); Sec. 3.4 search decision mechanism; Sec. 4.3 Input Unit summary; Sec. 6",
+      "quote": "\"The player has busted with 25 points, indicating the round is over.\" (Sec. 4.1, CPU Reasoning at 27s)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service does not make any durable change to its own mechanism. The JSON memory builds up content: dialogue summaries, outputs and topic tags. A fixed retrieval-augmented prompting mechanism injects that content into prompts, so it is content, not a reusable rule. The trigger and orchestrator models are described as already fine-tuned, and no training, prompt, skill or code update made by the service is described. 'Adapt to user-specific patterns over time' (Sec. 3.5) and 'the system can continuously learn user habits and preferences' (Sec. 1, Customization) are generic claims. Sec. 7 leaves improving the Memory Unit's personalisation to future research.",
+      "locator": "Sec. 3.5 (final sentence); Sec. 1 'Customization'; Sec. 3.2-3.3 (fine-tuned Qwen2.5-VL-3B / Qwen3-8B); Sec. 7 future work",
+      "quote": "\"This retrieval-augmented prompting strategy enhances the agent's ability to recall prior knowledge and adapt to user-specific patterns over time.\" (Sec. 3.5); \"In future research, we plan to enhance the personalization capacity of the Memory Unit, broaden the toolset of the Arithmetic Logic Unit, and conduct large-scale user studies to assess the long-term impact of proactive assistance in everyday contexts.\" (Sec. 7)",
+      "what": "Nothing is revised by the service. Only interaction content (JSON memory records) accumulates, and a fixed retrieval-augmented prompting mechanism reuses it."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "There is no revision made by the service, so no later run under a revised mechanism is reported. Later sessions only reuse retrieved memory content through the same unchanged mechanism. None of the three case studies reports using the Memory Unit at all.",
+      "locator": "Sec. 3.5 retrieval paragraph; Sec. 4.1-4.3 (no Memory Unit use in any case); Sec. 7",
+      "quote": "\"Retrieved context is selectively injected into the language model's prompt, enabling continuity across sessions and improving the model's grounding and response relevance.\" (Sec. 3.5)"
+    }
+  },
+  "notes": "Judged the 'initial implementation' runtime of Sec. 3 together with the Sec. 4 demos. All three demos run on video recorded with Xiaomi AI glasses, and none of them exercises the Memory Unit. The memory channels therefore rest on the implementation described in Sec. 3.5, which the protocol accepts without outcome evidence. Shell access was denied, so the paper was read through WebFetch's HTML-to-markdown rendering, and the case.yaml sha256 could not be checked. Every quote was reproduced with identical wording by at least two independent extraction passes of the HTML page; typographic characters such as apostrophes may be normalised. One keyword-search pass returned a phrase that is not in the paper ('continuous learning from user behavior'); a later check confirmed it is absent, and nothing from that pass was used. The PDF (arxiv.org/pdf/2510.14359v1) was downloaded but could not be rendered in this environment. Figure 2 was viewed as an image. It shows 'Scenario Descriptions' from the Large MLLM to the CPU, 'Instruction' from the CPU to the Large MLLM, 'Writing' and 'Reading' between the CPU and Mem. Bank, and 'Tool Calling' and 'Return' with the ALU. It has no arrow from Memory to the Input Unit. The case README, opened while reading the case file, shows one other agent's partial labels. No other review files were read, and these labels come from the primary source alone.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 644,
+    "code_commit": null
+  }
+}

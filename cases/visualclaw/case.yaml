@@ -1,0 +1,21 @@
+id: visualclaw
+name: "VisualClaw"
+domain: digital
+kind: research
+report: https://arxiv.org/abs/2606.16295
+sources:
+  - url: https://arxiv.org/html/2606.16295v1
+    kind: paper
+    version: "2606.16295v1"
+    sha256: 7228e2db34bb62831c15ff893f6eb0816b8bc266e1b50e41e088b0d13108ab44
+code:
+  repo: https://github.com/UCSC-VLAA/VisualClaw
+  commit: f6de05bb8f03e8ba44ec5ee458961cd70002a6d5
+variants:
+  - id: visualclaw2026-claude-code
+    label: "VisualClaw"
+    configuration: "VisualClawArena / Claude Code (Sonnet 4.6), Cascade-8 + FullEvo Cat."
+  - id: visualclaw2026-codex
+    label: "VisualClaw"
+    configuration: "VisualClawArena / Codex (GPT-5.5), Cascade-8 + FullEvo Cat."
+modes: [read, run]

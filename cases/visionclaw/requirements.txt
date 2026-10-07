@@ -1,0 +1,5 @@
+# VisionClaw run mode: the voice worker (agent/main.py) calls the local gateway over HTTP (aiohttp).
+# LiveKit, Gemini, OpenAI and Pillow are replaced by stub modules in the adapter. The gateway runs under
+# node with the packages pinned in package-lock.json (npm ci in this folder).
+pyyaml
+aiohttp

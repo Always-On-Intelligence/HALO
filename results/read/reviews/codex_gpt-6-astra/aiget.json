@@ -1,0 +1,82 @@
+{
+  "id": "aiget",
+  "configuration": "Gemini-based AiGet prototype with participant-provided profile, focus/familiarity rules, and interaction history; AiGet pipeline in glasses mode, excluding ablation baselines and proposed future features.",
+  "sources_read": [
+    "https://arxiv.org/html/2501.16240v2 — version 2501.16240v2, especially §§5–8 and Appendices B–D",
+    "cases/aiget/case.yaml",
+    "https://github.com/Synteraction-Lab/AiGet/tree/92b17f82a4e54965fc40ce9ea21e919a753ab6b7 — verified local checkout",
+    "README.md; main.py; src/Frontend.py; src/Backend.py",
+    "src/Data/SystemData.py; src/Data/UserData.py",
+    "src/Module/LLM/LLMPipeline.py; src/Module/LLM/Gemini.py",
+    "src/Module/LLM/task_description/context_description; src/Module/LLM/task_description/knowledge_generation_filter; src/Module/LLM/task_description/user_profile; src/Module/LLM/task_description/process_output",
+    "src/Utilities/sentence_similarity.py; src/Storage/reader.py; src/Storage/writer.py:1–60",
+    "src/Module/Audio/live_transcriber.py:1–180"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Interpreted observations are retained across interactions: the context-analysis result is copied into last_ai_response and supplied to context analysis on a subsequent verbal query. This establishes a write path independently of the static participant profile.",
+      "locator": "src/Module/LLM/LLMPipeline.py:162–163, 34–43; src/Frontend.py:457–461, 417–420",
+      "quote": "self.last_ai_response[\"Last Moment's Context Description\"] = response_data.get(\"Context Description\")"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Stored suggestions are retrieved by semantic relevance and supplied to knowledge generation; generated items are filtered against this history. The retained profile also conditions content selection and expertise level.",
+      "locator": "src/Frontend.py:408–421, 479–492; src/Module/LLM/LLMPipeline.py:60–72, 95–102, 121–125; src/Utilities/sentence_similarity.py:10–81; src/Module/LLM/task_description/knowledge_generation_filter:5–50"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Selected knowledge and its named entities direct a subsequent visual-interpretation request to locate those subjects in the FPV frames and produce bounding boxes. This is an Action-supplied sensing target, even though implemented inside output transformation.",
+      "locator": "src/Module/LLM/LLMPipeline.py:128–154; [paper Appendix B.3](https://arxiv.org/html/2501.16240v2)",
+      "quote": "The Image Reference Agent selects the clearest image covering the mentioned entities from 16 FPV frames and returns their bounding boxes."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The retained profile is inserted directly into the context-analysis prompt. It guides attention to peripheral entities and interpretation of environmental familiarity; previous context and suggestions also help interpret follow-up questions.",
+      "locator": "src/Module/LLM/LLMPipeline.py:25–43; src/Module/LLM/task_description/context_description:6–26",
+      "quote": "Predict familiar entities based on user profile, e.g., a Chinese Student may not be familiar with Indian brands."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The service appends its generated suggestions to interaction history, retains its latest utterance, and logs responses. The suggestion history is subsequently consumed by the generation/filtering pipeline.",
+      "locator": "src/Frontend.py:408–429, 457–459, 479–492, 543–553; src/Module/LLM/LLMPipeline.py:60–61, 95–102"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The application retains its own suggestions in memory and reuses them on later requests, so the evidence is not limited to researchers' trial logs.",
+      "locator": "src/Frontend.py:483, 492, 408–421; src/Module/LLM/LLMPipeline.py:60–61, 95–102",
+      "quote": "self.AI_suggestion_history.extend(list(response_data.get(\"English AI Suggestion\")))"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "User dismissal of displayed assistance is obtained by the running application and appended to its timestamped response_log.txt. This establishes outcome retention only, not evaluative use.",
+      "locator": "src/Frontend.py:247–251, 291–316, 543–553; README.md:129–133",
+      "quote": "self.log(\"Hide Live Comments\")"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Dismissals control the current display, but no service-side assessment linking later feedback to the quality or correctness of a particular assistance decision is described; research ratings and pre-delivery candidate scoring do not establish this.",
+      "locator": "src/Frontend.py:291–316; src/Module/LLM/task_description/knowledge_generation_filter:25–50; [paper §§5.3.4 and 6.5.1](https://arxiv.org/html/2501.16240v2)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Prompt refinements were authored during pilot design; history accumulation changes content used by fixed prompts and rules, and adaptive interruption rules are proposed future work.",
+      "locator": "src/Storage/reader.py:18–21; src/Module/LLM/LLMPipeline.py:25–33, 71–72; [paper §§5.1.2–5.1.3 and 7.2.3](https://arxiv.org/html/2501.16240v2)",
+      "what": "No service-authored durable change to model parameters, prompts, reusable rules, skills, code, or harness is stated."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Repeated deployments and history reuse are reported, but no later run under a service-revised mechanism is stated.",
+      "locator": "[paper §§6.3 and 6.6.3](https://arxiv.org/html/2501.16240v2); src/Frontend.py:408–421; src/Module/LLM/LLMPipeline.py:60–123"
+    }
+  },
+  "notes": "Reviewed independently without executing the application or modifying files. All code locators refer to commit 92b17f82a4e54965fc40ce9ea21e919a753ab6b7. The paper's §7.2.4 says real-time gaze/context data are not stored, whereas the listed code retains interpreted context across turns; S->M is grounded narrowly in that explicit code path. The paper specifies Gemini 1.5 Flash/Pro; the checkout has different Gemini defaults (main.py:13; LLMPipeline.py:40).",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 284,
+    "code_commit": "92b17f82a4e54965fc40ce9ea21e919a753ab6b7"
+  }
+}

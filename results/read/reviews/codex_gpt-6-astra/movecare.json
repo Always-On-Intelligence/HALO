@@ -1,0 +1,73 @@
+{
+  "id": "movecare",
+  "configuration": "MoveCare platform in the 10-week home pilot: Giraff-X robot, environmental sensors, smart objects, community activity centre, and cloud Virtual Caregiver.",
+  "sources_read": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC8853423/ — indexed article text",
+    "https://link.springer.com/article/10.1007/s12369-021-00843-0 — publisher full text of the same paper",
+    "https://link.springer.com/article/10.1007/s12369-022-00885-y — correction notice"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Environmental observations and CBAC activity reports enter cloud storage.",
+      "locator": "§§4, 4.4; [paper](https://link.springer.com/article/10.1007/s12369-021-00843-0)."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The VC queries historical activity and measurement records to decide reminders.",
+      "locator": "§§4.5, 4.5.1–4.5.2; [paper](https://link.springer.com/article/10.1007/s12369-021-00843-0)."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Intervention plans trigger user searches and targeted questions or repeat measurements.",
+      "locator": "§§4.1.3, 4.5.1; [paper](https://link.springer.com/article/10.1007/s12369-021-00843-0)."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Stored sensor-annotated apartment maps guide interpretation of PIR and door readings.",
+      "locator": "§§4.2, 4.5.4; [paper](https://link.springer.com/article/10.1007/s12369-021-00843-0)."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Generated interventions enter a retained pending queue; help-scenario executions are logged for subsequent reporting.",
+      "locator": "§§4.5.1, 4.5.5; [paper](https://link.springer.com/article/10.1007/s12369-021-00843-0)."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service logs help-scenario executions for its later caregiver reports.",
+      "locator": "§4.5.1, Call for Help; [paper](https://link.springer.com/article/10.1007/s12369-021-00843-0).",
+      "quote": "The Call for Help scenario is then logged as a true positive"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Replies to the robot's spot questions are retained for weekly reporting.",
+      "locator": "§4.5.3; [paper](https://link.springer.com/article/10.1007/s12369-021-00843-0).",
+      "quote": "answer given to the Spot Questions"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Missing answers are linked to the attempted dialogue, triggering repetition and rescheduling.",
+      "locator": "§4.1.2, timeout handling; [paper](https://link.springer.com/article/10.1007/s12369-021-00843-0).",
+      "quote": "the VC reschedules the intervention"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No durable self-modification is specified; pilot software updates were implemented by developers.",
+      "locator": "§§4.2, 4.5.5, 5.2.2–5.2.3; [paper](https://link.springer.com/article/10.1007/s12369-021-00843-0)."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "R2 uses developer updates; execution under a service-authored revision is not reported.",
+      "locator": "§§5.2.3, 5.4.1–5.4.2; [paper](https://link.springer.com/article/10.1007/s12369-021-00843-0)."
+    }
+  },
+  "notes": "Independent text-only review of the with-robot configuration; no repository. Direct PMC access returned a browser check, so indexed PMC text and publisher full text were read.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 246,
+    "code_commit": null
+  }
+}

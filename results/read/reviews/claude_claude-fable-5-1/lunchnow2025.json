@@ -1,0 +1,82 @@
+{
+  "id": "lunchnow2025",
+  "configuration": "PITCH as deployed in the 14-weekday October 2024 Slack field study: GPT-4 via the Slack Bolt/Node.js bot with MongoDB storage, a proactive morning planning check-in and an evening reflection check-in at user-specified times, covering both the fixed-goal version (PITCH-N) and the rotating-goal version (PITCH-R), which each participant used for one week in random order.",
+  "sources_read": [
+    "https://arxiv.org/html/2509.24073v4 (paper, version 2509.24073v4; the direct WebFetch rendering was truncated after Sec. 5.2.1, so Secs. 1, 2.3, 4.1, 4.3.1, 5.1.1-5.1.4, 5.2.1-5.2.3, 6.1-6.3.3, 7, 8, Appendix A.1.1, A.1.2, A.2.1 and Tables 6-7 were read as raw element text of the same URL extracted by section id; key passages were fetched twice and matched exactly)",
+    "https://arxiv.org/abs/2509.24073v4 (submission history: v4 dated 5 Feb 2026)",
+    "https://arxiv.org/pdf/2509.24073v4 (downloaded but could not be rendered in this environment; not used for quotes)",
+    "No code repository listed for this work; cases/pitch/case.yaml read for the configuration (its sha256 could not be verified because no shell was available)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-supplied input is retained across interactions and later admitted to the service's decisions: the user's morning replies (the externalized plan, acceptances, negotiations) are kept after the morning session closes and injected hours later into the evening session via the {$morningConversation} slot; MongoDB stores each day's conversations; and user-typed check-in time settings (set morning HH:MM / set evening HH:MM) are stored and govern subsequent daily check-ins. Retention beyond one day is not used (Sec. 5.2.3), but same-day retention across separate sessions is an implemented write path.",
+      "locator": "Sec. 3.1.2; Sec. 3.1.5; Appendix A.1.2 (evening system prompt); Appendix A.2.1; Sec. 4.1",
+      "quote": "To support self-reflection in the evening, we leveraged the morning conversation history to enable PITCH to ask questions grounded in what the user had planned earlier that day. [Sec. 3.1.2] ... MongoDB was used to store daily conversations and associated metadata. [Sec. 3.1.5] ... You can also change the check-in times according to your preferences by typing in the following command in the chat box: • set morning 10:00 (this would set the morning check-in by the chatbot to a window between 10-11am) [Appendix A.2.1]"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information drives Action content and timing: the evening system prompt receives the stored morning goal and the full stored morning conversation and is instructed to keep its questions within that context, so evening question content is determined by retained same-day memory; and the stored user-specified check-in times determine when PITCH initiates each day's conversations.",
+      "locator": "Appendix A.1.2 (evening system prompt); Sec. 3.1.2; Sec. 4.1",
+      "quote": "Your questions should be within the context of the morning conversation and the goal which was: {$morningGoal}. ... The conversation that you had with the worker in the morning is provided below. <<< {$morningConversation}. >>> [Appendix A.1.2] ... Each day, PITCH initiated check-ins at user-specified times in the morning and evening. [Sec. 4.1]"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The evening check-in is an expected-effect check on the morning plan, including PITCH's own morning suggestions: the retained plan sets which observation the evening session requests and acquires (the user's report on the specific planned or suggested items), i.e., a memory-guided Action decision that requests a new observation (the M->A->S composition). Dialogues show PITCH asking specifically whether its own morning suggestion (mindful breathing between meetings) or the listed morning tasks (tasks 5, 6, and 7) were carried out, and interpreting the reply against that item. The daily survey sent 15 minutes after the evening conversation is a research instrument and was not counted.",
+      "locator": "Sec. 3.1.2 (\"Each question directly referenced the morning plan\"); Sec. 5.1.1 Dialogue 1 (evening conversation); Sec. 5.2.1 Dialogue 13",
+      "quote": "Including the full morning context operationalizes self-reflection in a concrete way: users are asked to revisit the intentions they articulated earlier, compare them with what actually happened, and describe reasons for fulfillment or deviation. [Sec. 3.1.2] ... PITCH Good evening! How did your day go? Were you able to take a few seconds for mindful breathing between meetings? P1 I did, it was really beneficial [Sec. 5.1.1, Dialogue 1]"
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "The only uses of retained information are the injection of the morning conversation and goal into the evening generation prompt (answer-time retrieval, M->A) and the stored check-in time governing when PITCH speaks (Action timing). The evening question that elicits a new report is the M->A->S composition, which the protocol says not to mark as M->S on its own. The paper describes no mechanism by which retained priors steer sampling, attention, compression, or interpretation of incoming messages, and it states that nothing beyond a single day is remembered; it does not, however, explicitly exclude such a route, so the label is insufficient rather than absent.",
+      "locator": "Appendix A.1.2; Sec. 3.1.2; Sec. 5.2.3",
+      "quote": "A common misunderstanding was expecting PITCH to remember details beyond a single day, such as recalling information from a conversation from a few days ago or setting reminders based on earlier chats. [Sec. 5.2.3]"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "PITCH's own morning utterances (its questions and suggestions) and the morning conversation goal it was run with are retained after the morning session and supplied to the evening session: the evening prompt embeds \"the conversation that you had with the worker in the morning\" and {$morningGoal}, and in the evening PITCH refers back to the suggestion it made in the morning (mindful breathing between meetings). MongoDB stores the daily conversations, which the analysis section describes as containing both user and chatbot turns. Retention scope is the same day.",
+      "locator": "Appendix A.1.2 (evening system prompt); Sec. 3.1.5; Sec. 4.3.1; Sec. 5.1.1 Dialogue 1",
+      "quote": "The conversation that you had with the worker in the morning is provided below. <<< {$morningConversation}. >>> [Appendix A.1.2] ... The conversation data was stored in a spreadsheet where each row was the user's or chatbot's turn. [Sec. 4.3.1]"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service stores each day's conversations, including its own turns and the goal it pursued, and re-reads the morning record in the evening session; this is a record kept by the service for its own later use, not only a research log analysed by the authors.",
+      "locator": "Sec. 3.1.5; Appendix A.1.2; Sec. 3.1.2",
+      "quote": "MongoDB was used to store daily conversations and associated metadata. [Sec. 3.1.5] ... The conversation that you had with the worker in the morning is provided below. <<< {$morningConversation}. >>> [Appendix A.1.2]"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later evidence about PITCH's actions is obtained and retained: user replies to its morning suggestions (acceptance, negotiation, refusal with context) are kept in the morning conversation and carried into the evening, and the evening check-in obtains the user's report on whether the planned or suggested actions were done; all conversations are stored. Unsolicited mid-day progress updates are also received and answered.",
+      "locator": "Sec. 3.1.2; Sec. 5.1.1 Dialogue 1; Sec. 5.1.2; Sec. 3.1.5",
+      "quote": "users are asked to revisit the intentions they articulated earlier, compare them with what actually happened, and describe reasons for fulfillment or deviation. [Sec. 3.1.2] ... participants often recounted how their day had unfolded in response to PITCH's evening follow-up questions. [Sec. 5.1.2]"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The outcome is linked to the specific decision it concerns and used to check or adjust assistance: evening questions name the exact morning item or suggestion and PITCH's next turn depends on the answer (an expected-effect check), and within a conversation PITCH immediately replaces a suggestion when the user reports a constraint. These are immediate checks performed by the service, which count even though nothing durable is kept.",
+      "locator": "Sec. 5.1.1 Dialogue 1 and surrounding text; Sec. 3.1.2; Sec. 5.2.1 Dialogue 13",
+      "quote": "P1's conversation (1) illustrates how PITCH provided an alternative suggestion when the user expressed scheduling constraints. This flexibility helped the user agree to incorporate the well-being intervention (i.e., taking deep breaths) into their day and later reflect on it. [Sec. 5.1.1] ... Did you manage to get through tasks 5, 6, and 7 as planned after the interview? [Sec. 5.2.1, Dialogue 13]"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No self-made durable change to prompts, model parameters, rules, skills, or code is described. The two versions and their system prompts are fixed by the designers; PITCH-R draws goals at random from a fixed list; the user-set check-in time is content consumed by a fixed scheduling mechanism; and adaptive or learning behaviour appears only as design recommendations and future work (Secs. 6.3.1, 6.3.2, 8), with the paper itself noting that prompt redesign or fine-tuning were not done.",
+      "locator": "Sec. 3.1.4; Sec. 5.2 (introductory paragraph); Sec. 6.3.1; Sec. 6.3.2; Sec. 8",
+      "quote": "Rather than rotating through goals in a fixed way, the agent could start with a limited set of goals and personalize its interventions from evolving interactions using topics that sustain interest. [Sec. 6.3.1, recommendation, not implemented] ... issues that could potentially be mitigated with more carefully designed system prompts, guardrails, or fine-tuning [Sec. 5.2]",
+      "what": "none; no mechanism is revised by the service"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Because no revision is reported, there is no run under a revised mechanism; the study ran the two preset versions with fixed GPT-4 prompts for one week each.",
+      "locator": "Sec. 3.1; Sec. 4.1",
+      "quote": "We designed two versions of PITCH that participants used each week in random order: a fixed-goal version (PITCH-N) and a rotation-based version (PITCH-R). [Sec. 3.1]"
+    }
+  },
+  "notes": "Judged the deployed Slack configuration (PITCH-N and PITCH-R, morning planning plus evening reflection, Oct 2024 study) from the arXiv v4 text alone; no code was available and the paper defers architecture details to prior work (Abbas et al., 2025), which was not a listed source. Memory in this configuration is same-day only: the morning conversation and goal are stored and injected into the evening prompt, plus stored user check-in times; the paper states PITCH has no memory beyond a single day (Sec. 5.2.3), and the daily survey is a research instrument not described as used by the service. Quotes are taken from the raw text of the v4 HTML page elements and were cross-checked across two independent fetches; an earlier tool-generated paraphrase of Sec. 7 that did not match the page text was discarded. The sha256 listed in case.yaml could not be verified.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 700,
+    "code_commit": null
+  }
+}

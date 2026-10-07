@@ -1,0 +1,30 @@
+{
+  "run": {
+    "models": {
+      "backbone": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "low"
+      },
+      "judge": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "high"
+      }
+    },
+    "samples": 3,
+    "rubric": "Vinci is an assistant on head-mounted glasses. While the user goes about their day it stores a short timestamped description of what the user is doing every few seconds, and after the wake word it answers the user's question from the current view and that history. The service's prompts ask it to answer in Chinese, so answers may be in Chinese. The situation lists what the camera saw and a reference answer for each question. Decide which output answers the questions better. An answer that agrees with the reference beats one that does not, and a specific correct answer beats a vague one. A confident answer that is wrong is worse than one that says it cannot tell. Ignore language, wording and length.",
+    "tests": [
+      {
+        "cut": [
+          "S->M"
+        ]
+      },
+      {
+        "cut": [
+          "M->A"
+        ]
+      }
+    ]
+  },
+  "samples": 3,
+  "items_limit": null
+}

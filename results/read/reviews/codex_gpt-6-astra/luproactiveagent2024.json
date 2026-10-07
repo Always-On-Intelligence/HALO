@@ -1,0 +1,91 @@
+{
+  "id": "luproactiveagent2024",
+  "configuration": "Section 3.4 Proactive Agent in the Environment Gym, including retained event/dialogue history, draft-prediction feedback, and simulated accepted-task execution.",
+  "sources_read": [
+    "https://arxiv.org/html/2410.12361v3 — version 2410.12361v3, especially §§3.2–3.5, §§4.2–4.3, and Appendices A–C",
+    "https://github.com/thunlp/ProactiveAgent — local checkout verified at commit 3fcf9beebe256b86871659fbb12541c41c9381b9",
+    "gym/components/activeagent.py",
+    "gym/components/base.py",
+    "gym/components/environment.py",
+    "gym/components/user.py",
+    "gym/components/reward.py",
+    "gym/channel.py",
+    "gym/config.py",
+    "gym/main.py",
+    "gym/models/env.py",
+    "gym/models/user.py",
+    "gym/example.yaml",
+    "gym/README.md",
+    "README.md",
+    "dataset/README.md",
+    "dataset/run_datagen.py",
+    "dataset/build_agent_trainset.py"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Incoming events update memory. The implementation adds generated observations to the shared event sink and subsequently gathers them as history. Simulated user judgments are also retained for subsequent agent calls.",
+      "locator": "[Paper §3.4](https://arxiv.org/html/2410.12361v3#S3.SS4), first paragraph; gym/components/environment.py:148–154; gym/components/user.py:143–144; gym/components/activeagent.py:111–129.",
+      "quote": "it first updates its memory with the event."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Task prediction receives retained events and previous proposal/dialogue entries. Execution also gathers prior activities, observations, proposals, and available operations before choosing the next action or stopping.",
+      "locator": "gym/components/activeagent.py:32–45, 62–84, 108–129; gym/components/base.py:11–26."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "In simulated execution, the agent posts its selected action to the activity channel. The Gym consumes that action as Latest Activity, uses its source and content to determine the detailed execution observations to generate, and returns those events before the next execution iteration. This implements action-conditioned observation acquisition in the named simulation.",
+      "locator": "[Paper §3.4, Task Execution](https://arxiv.org/html/2410.12361v3#S3.SS4); gym/components/activeagent.py:62–86; gym/components/environment.py:60–61, 121–154."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The agent's fused model call performs observation interpretation as well as action selection: it explicitly infers the purpose of the user's last action using retained event history. The history is supplied directly to that interpretation, without an intervening decision to request another observation.",
+      "locator": "gym/components/activeagent.py:13–28, 108–129; paper Appendix B, agent prompt.",
+      "quote": "- Deduce the user's purpose and whether they need help based on event history."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The agent writes its proposal, including its response, to agent.proactive and writes execution decisions to activity. These records are subsequently gathered into prediction and execution history, establishing retention of action-originated information.",
+      "locator": "gym/components/activeagent.py:15–20, 67–84, 111–129, 174; gym/channel.py:29–32, 60–63; gym/components/base.py:6–26."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "Execution decisions and proposals are retained in the shared event history and read by later agent calls. This establishes service-used records independently of the additional research trace files.",
+      "locator": "gym/components/activeagent.py:67–84, 111–129, 174.",
+      "quote": "self.add(sinkChannels.activity, content=res)"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "After a proposal, the simulated user produces an acceptance judgment and explanation, which are added to the same retained dialogue channel read by the agent. Execution-result observations are also added to the retained events channel.",
+      "locator": "gym/components/user.py:117–144; gym/components/activeagent.py:67–73, 111–129; gym/components/environment.py:148–154.",
+      "quote": "self.add(tags=sinkChannels.agent.proactive,\n                 content=f\"{res.thought}\\nIs Accepted: {res.is_accepted}\")"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Feedback is tied to the particular draft prediction. The implemented feedback branch supplies Previous Prediction, rejection status, and User Feedback to a retry, then checks the replacement prediction. This is an immediate in-loop correction of assistance.",
+      "locator": "[Paper §3.4](https://arxiv.org/html/2410.12361v3#S3.SS4), first paragraph; gym/components/activeagent.py:134–155; gym/components/reward.py:16–32.",
+      "quote": "it also accepts feedback from the user agent on its draft prediction."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Feedback changes the current prediction and temporary retry prompt; no service-made durable change to parameters, reusable rules, skills, or harness is reported. Model fine-tuning is an author-run training procedure.",
+      "locator": "gym/components/activeagent.py:123–155, 169–174; dataset/README.md:96–106; [Paper §4.2](https://arxiv.org/html/2410.12361v3#S4.SS2), Setting.",
+      "what": "No durable service-made mechanism revision is stated."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Later calls reuse interaction history, but no run under a service-revised mechanism is reported; evaluation of author-fine-tuned models does not establish that step.",
+      "locator": "gym/components/activeagent.py:54–56, 108–155; [Paper §4.2](https://arxiv.org/html/2410.12361v3#S4.SS2), Setting and Result."
+    }
+  },
+  "notes": "Judged the enabled Gym agent, rather than the separate desktop implementation. Retention is established across interactions within a simulation; persistence across restarts is not claimed. The paper's draft-feedback flow corresponds to the code branch gated by USE_ACTIVERM. A→S concerns the simulated execution-observation interface; M→S concerns history-conditioned interpretation in the fused model. All quotes were checked against the source text or local code.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 209,
+    "code_commit": "3fcf9beebe256b86871659fbb12541c41c9381b9"
+  }
+}

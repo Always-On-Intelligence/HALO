@@ -1,0 +1,2 @@
+# AssistantX's loop needs only the standard library once its WeChat, robot and model clients are stubbed.
+pyyaml

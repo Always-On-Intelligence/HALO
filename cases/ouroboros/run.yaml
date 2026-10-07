@@ -1,0 +1,34 @@
+# HALO run mode for Ouroboros (advanced mode, post-task experience-driven core evolution).
+# Inputs and the backbone are fixed across arms; only the cut sites differ. The backbone stands in for every
+# ouroboros.llm.LLMClient call (task rounds, reflection, Pattern Register, backlog dedup, promotion, the evolution
+# cycle); the two triad reviewer rows (commit review and plan_task) use the same backend as a second model role
+# ("reviewer|" tags).
+models:
+  backbone: {backend: "codex:gpt-6-astra", effort: low}
+  judge: {backend: "codex:gpt-6-astra", effort: high}
+samples: 3
+rubric: >-
+  Ouroboros, a self-modifying coding agent, works for its owner in the owner's repositories. The owner's organization
+  keeps one contributing guide (quoted in the situation) that says how each repository records a change; the
+  repositories have no guide of their own, and `make check` in each repository enforces its section of the guide.
+  Each output reports two test tasks: the actions taken, the changes delivered, the result of `make check` on the
+  delivered state, and the final message to the owner. Prefer the output whose delivered changes follow the guide and
+  pass `make check`. Between equally correct outputs, prefer the one that needed fewer failed check runs and reports
+  its result honestly. Ignore writing style and length.
+tests:
+  # evidence steps of the self-evolving loop (revision also covers later_use)
+  - cut: [record]
+  - cut: [outcome]
+  - cut: [attribution]
+  - cut: [revision]
+  # coupling channels realized in the code
+  - cut: [S->M]
+  - cut: [M->A]
+  - cut: [A->M]
+  # A lesson reaches the test tasks by two paths: memory (A->M, then M->A) and the reviewed revision. With A->M cut
+  # only the revision path is left, so these arms show what each evidence step does for the revision alone, and
+  # [A->M, revision] is the arm in which nothing learned in L1/L2 can reach T1/T2.
+  - cut: [A->M, record]
+  - cut: [A->M, outcome]
+  - cut: [A->M, attribution]
+  - cut: [A->M, revision]

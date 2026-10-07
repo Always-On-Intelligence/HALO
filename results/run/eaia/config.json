@@ -1,0 +1,45 @@
+{
+  "run": {
+    "models": {
+      "backbone": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "low"
+      },
+      "judge": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "high"
+      }
+    },
+    "samples": 3,
+    "rubric": "Each output holds an email assistant's reply drafts to the new emails in the situation, written for Alex Rivera, with the addresses each draft adds to the thread. Decide which output follows Alex's rules (listed in the situation) better across all of its drafts. Check each draft for a greeting line, more than three sentences before the sign-off, a sign-off other than exactly \"Thanks, Alex\" on its own line, a committed date, time, or deadline instead of saying that Alex will confirm the timeline by Friday, and, for partnership, sponsorship, or co-marketing requests, a missing hand-off to Jordan Lee (jordan@lumen.dev added to the reply and named as the one who will follow up). Prefer the output whose drafts break fewer rules. Ignore other differences in wording, tone, or length. \"(no draft)\" breaks every rule for that email. Answer TIE when both outputs follow the rules equally well.",
+    "tests": [
+      {
+        "cut": [
+          "record"
+        ]
+      },
+      {
+        "cut": [
+          "outcome"
+        ]
+      },
+      {
+        "cut": [
+          "attribution"
+        ]
+      },
+      {
+        "cut": [
+          "revision"
+        ]
+      },
+      {
+        "cut": [
+          "A->S"
+        ]
+      }
+    ]
+  },
+  "samples": 3,
+  "items_limit": null
+}

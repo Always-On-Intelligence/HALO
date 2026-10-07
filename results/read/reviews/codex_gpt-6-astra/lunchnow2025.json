@@ -1,0 +1,71 @@
+{
+  "id": "lunchnow2025",
+  "configuration": "Slack morning planning and evening reflection, fixed-goal PITCH-N and rotating-goal PITCH-R.",
+  "sources_read": [
+    "https://arxiv.org/html/2509.24073v4"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User messages enter stored daily conversations, reused that evening.",
+      "locator": "[§3.1.5; §3.1.2](https://arxiv.org/html/2509.24073v4)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Morning history and goal enter the evening prompt, shaping follow-up questions.",
+      "locator": "[§3.1.2; Appendix A.1.2](https://arxiv.org/html/2509.24073v4)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Goal-directed questions acquire users' plans, constraints, and results of suggested activities.",
+      "locator": "[§3.1.1–3.1.2; §5.1.1, Dialogue 1](https://arxiv.org/html/2509.24073v4)"
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "History-guided questioning establishes M→A→S; direct memory guidance of sensing is unspecified.",
+      "locator": "[§3.1.2; Appendix A.1.2](https://arxiv.org/html/2509.24073v4)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Stored conversations include PITCH's utterances, subsequently supplied as morning context.",
+      "locator": "[§3.1.5; Appendix A.1.2](https://arxiv.org/html/2509.24073v4)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "PITCH retains its utterances and reuses morning history for evening assistance.",
+      "locator": "[§3.1.5; §3.1.2](https://arxiv.org/html/2509.24073v4)",
+      "quote": "store daily conversations and associated metadata."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Replies reporting benefits from PITCH's suggestions enter stored conversations.",
+      "locator": "[§5.1.1, Dialogue 1; §3.1.5](https://arxiv.org/html/2509.24073v4)",
+      "quote": "I did, it was really beneficial"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Scheduling feedback corrects PITCH's preceding mindfulness recommendation immediately.",
+      "locator": "[§5.1.1, Dialogue 1 and preceding paragraph](https://arxiv.org/html/2509.24073v4)",
+      "quote": "PITCH provided an alternative suggestion when the user expressed scheduling constraints."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Random goal rotation selects predefined content; no durable service-authored mechanism change is reported.",
+      "locator": "[§3.1.4; §6.3.1–6.3.2](https://arxiv.org/html/2509.24073v4)"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No execution under a self-revised mechanism is reported.",
+      "locator": "[§4.1; §6.3.1–6.3.2](https://arxiv.org/html/2509.24073v4)"
+    }
+  },
+  "notes": "Independent text-only review; no code repository supplied.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 177,
+    "code_commit": null
+  }
+}

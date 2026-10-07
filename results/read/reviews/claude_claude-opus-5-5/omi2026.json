@@ -1,0 +1,86 @@
+{
+  "id": "omi2026",
+  "configuration": "omi2026: wearable capture with an enrolled speech profile, a retained personal backend, authorized agentic chat tools and a proactive-notification app; rollout-gated desktop JIT features excluded. Judged at commit 5a46ab0 as the default server path: /v4/listen capture with include_speech_profile (default true) and stored person profiles; conversation finalization in process_conversation (notes with related open tasks, canonical memory extraction, Pinecone vector); agentic chat with the non-JIT core tools (conversations, memories, action items, Google Calendar, Gmail, Apple Health, fetch_url, Perplexity, save_user_preference, manage_daily_summary) plus device tools that the client declares; proactive notifications from the built-in mentor (MENTOR_PIPELINE default 'legacy') and from third-party proactive_notification apps.",
+  "sources_read": [
+    "cases/omi/case.yaml (variant omi2026)",
+    "https://docs.omi.me/doc/developer/apps/Notifications (live page checked 2026-10-07; full text read from docs/doc/developer/apps/Notifications.mdx @5a46ab0 via git show)",
+    "https://docs.omi.me/doc/developer/backend/StoringConversations (live page checked; full text from docs/doc/developer/backend/StoringConversations.mdx @5a46ab0)",
+    "https://docs.omi.me/doc/developer/backend/chat_system (live page checked; full text from docs/doc/developer/backend/chat_system.mdx @5a46ab0)",
+    "https://docs.omi.me/doc/developer/backend/transcription (live page checked; full text from docs/doc/developer/backend/transcription.mdx @5a46ab0)",
+    "code @5a46ab0467ce594c35fd04d72131421afd747259: backend/utils/app_integrations.py; backend/utils/llm/proactive_notification.py; backend/utils/mentor_notifications.py (located); backend/utils/llms/memory.py; backend/database/chat.py; backend/models/chat.py; backend/routers/chat.py; backend/routers/chat_sessions.py",
+    "backend/utils/retrieval/agentic.py; backend/utils/retrieval/tools/{calendar_tools,memory_tools,action_item_tools,preference_tools,notification_settings_tools,knowledge_ledger_write_tools,web_tools}.py; backend/utils/device_tools.py; backend/utils/jit_rollout.py; backend/utils/observability/langsmith_prompts.py",
+    "backend/routers/listen/speakers.py; backend/routers/listen/transcripts.py; backend/utils/conversations/process_conversation.py; backend/utils/conversations/notes_task_context.py; backend/utils/llm/working_observations.py; backend/utils/memory/rejected_memory_feedback.py; backend/utils/memory/memory_use.py",
+    "backend/utils/feedback.py; backend/utils/chat_rating_triage.py; backend/jobs/feedback_daily_report.py; backend/routers/feedback_admin.py; backend/docs/proactivity_v2/CONTRACT.md"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Captured audio is transcribed. After the silence timeout the conversation is saved and processed: an LLM extracts title, overview, action items and events, extracts memories that link back to the source conversation, and the conversation is embedded into Pinecone. Enrolling the owner's voice or naming another speaker writes a voice profile or person record. Each human chat turn is stored before the agent runs.",
+      "locator": "transcription.mdx L112-115 (conversation_timeout), L445-449 (Teaching another person's voice); StoringConversations.mdx L150-161, L240-257 (Memory Extraction Process); code backend/utils/conversations/process_conversation.py:2053 (replace_conversation_memories); backend/routers/chat.py:513 (chat_db.add_message for the human turn)",
+      "quote": "After this timeout, the conversation is saved and LLM processing begins. | Saves to `memories` collection with a link back to the source conversation"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The mentor decides whether to notify and what to say from retained data: user facts, goals, past conversations from vector and recency search, and its own earlier notifications. A third-party proactive app's template is filled with stored facts, retrieved conversation context and recent app chat. The agentic chat answers from memories, conversations and tasks it retrieves itself, plus the last chat messages.",
+      "locator": "Notifications.mdx L174-180 (How It Works), L201-208 (Available Scopes); chat_system.mdx L188, L385; code backend/utils/app_integrations.py:785-875 (get_prompt_memories, get_user_goals, get_app_messages, query_vectors_by_metadata), :1018-1048 (scope substitution); backend/utils/llm/proactive_notification.py:76-91, 144-157; backend/routers/chat.py:525-537",
+      "quote": "Omi fills in user context (name, facts, etc.) and generates the notification"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "In the agentic chat the action-selecting LLM chooses which tools to call and with what parameters, and keeps calling them when it needs more context. Integration tools then acquire current external observations: live Google Calendar and Gmail API queries on the user's authorized integrations (agent-chosen start_date/end_date/search_query), Perplexity web search, URL fetch, and on-device contact search. Action's information needs set the acquisition targets. The device tool propose_message also sets an expected-effect check: its sent/cancelled result is read before the agent reports.",
+      "locator": "chat_system.mdx L152-172 (How Tool Calling Works), L177, L202-226 (Calendar and Integration tools); code backend/utils/retrieval/agentic.py:265-300, 1741-1743, 1818-1822, 1857-1870; backend/utils/retrieval/tools/calendar_tools.py:483-560 (googleapis calendar/v3); backend/utils/retrieval/tools/web_tools.py:265-294; backend/utils/device_tools.py:97-115",
+      "quote": "LLM autonomously decides which tool(s) to call based on question intent | Agent synthesizes response OR makes additional tool calls if more context needed | Fetch events by date/person"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "At session start the stored owner speaker embedding (or the stored profile WAV) and the stored embeddings of taught people are loaded. Live speaker clusters are compared against them, which sets is_user or the person label on transcript segments. Stored open tasks and stored people are also supplied to the notes extraction that interprets each new transcript.",
+      "locator": "transcription.mdx L105-109 (include_speech_profile), L406-441 (Speech Profile & Speaker Embedding), L462-463; code backend/routers/listen/speakers.py:160-208 (_load_profiles), :459-465 (compare_embeddings against person_embeddings); backend/routers/listen/transcripts.py:1345-1352; backend/utils/conversations/process_conversation.py:758 (existing_action_items), :1737 (get_people_by_ids)",
+      "quote": "Enable speaker identification using the user's stored speech profile. When enabled, the system extracts a speaker embedding from the user's speech profile and uses it to identify the user's voice via biometric matching. | New live sessions load stored profiles"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Assistant answers are saved to the chat store with their citations and run IDs and are reread as history. Mentor and third-party proactive notifications are written as AI messages into the app's chat thread and read back later as recent notifications or user_chat. Chat tool executions write tasks (create/update action item) and agent-learned preferences into Memory.",
+      "locator": "chat_system.mdx L193-199 (Action Item Tools), L517-519 (Post-Processing); code backend/routers/chat.py:568-595; backend/utils/app_integrations.py:1185-1191, 1310-1316 (add_app_message); backend/database/chat.py:168-198; backend/utils/retrieval/tools/action_item_tools.py:467; backend/utils/retrieval/tools/preference_tools.py:166-301",
+      "quote": "Save message to Firestore"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps its own delivered outputs for later use. Each chat answer is persisted, with langsmith_run_id and prompt_commit, and reread as context. Each mentor or app notification is stored in the app chat and reread by the next mentor evaluation as RECENT NOTIFICATIONS, so the mentor avoids repeating itself.",
+      "locator": "chat_system.mdx L380-388 (Context Window), L517-519; code backend/routers/chat.py:568-595; backend/utils/app_integrations.py:802, 1187; backend/utils/llm/proactive_notification.py:90, 156",
+      "quote": "Save message to Firestore | recent_notifications = get_app_messages(uid, 'mentor', limit=20) | == RECENT NOTIFICATIONS (do not repeat) =="
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Users can rate AI chat messages, including app/mentor thread messages, thumbs up or down with an optional reason code and comment. The rating is stored on the message, in a rating-score record, and in a feedback ledger keyed to the message's langsmith_run_id and prompt_commit. Users can also approve or reject extracted memories (user_review), and device tools return the user's send-or-cancel result.",
+      "locator": "code backend/routers/chat.py:2176-2243 (rate_message), :578; backend/routers/chat_sessions.py:284-320; backend/utils/feedback.py:33-89; StoringConversations.mdx L273-275 (reviewed, user_review, edited)",
+      "quote": "Rate a chat message (thumbs up/down). Used by desktop client. | # Unified feedback ledger — the daily thumbs-down report reads from here."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "There are two kinds of evidence. Immediate checks: the agent must read the result of its own tool action before reporting it. The propose_message result (status=sent or cancelled) decides whether the agent may say a message was sent and stops retries. A memory write may be claimed only on a confirming tool result, which the loop also parses. Retained correction: memories the owner rejected are put into later extraction prompts as negative examples, so the same memory is not extracted again. Chat ratings are linked to message, run and prompt, but they only reach an admin daily thumbs-down report and LangSmith; that is offline developer review and is not counted.",
+      "locator": "code backend/utils/device_tools.py:97-106; backend/utils/retrieval/agentic.py:1857-1863, 1813-1814, 605-613; backend/utils/llm/working_observations.py:265-274 with backend/utils/conversations/process_conversation.py:1675-1678, 1774; not counted: backend/jobs/feedback_daily_report.py:1-10, backend/routers/feedback_admin.py",
+      "quote": "Only report a message as sent when the tool result says status=sent. If it says cancelled, the user chose not to send; acknowledge that rather than retrying. | Say a memory was updated only when the tool reports \"Preference updated\"; an additional save is not an update. Do not claim a write after a tool error. | The owner explicitly rejected the following prior memories. Do not emit an identical or substantially similar memory from this source."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "In this configuration every durable write the service makes is content read by fixed prompts and matchers: memories, agent-learned preferences, tasks, chat and notification history, speaker embeddings, goal progress, and rejected-memory examples. The protocol treats preferences and facts as content, not revisions. Settings changes made through chat tools are user-requested. The agent-authored reusable playbooks (save_playbook) and standing triggers are JIT-only tools withheld outside the JIT rollout, so they are excluded. The agent system prompt comes from a developer-managed LangSmith prompt. The proactivity v2 producer-kill latch is rollout-gated and off by default.",
+      "locator": "code backend/utils/retrieval/agentic.py:302-323, 1741-1743; backend/utils/retrieval/tools/knowledge_ledger_write_tools.py:1-12, 148-150; backend/utils/retrieval/tools/preference_tools.py:166-198; backend/utils/observability/langsmith_prompts.py:1-8; backend/docs/proactivity_v2/CONTRACT.md L619-621; backend/utils/jit_rollout.py:1-18",
+      "quote": "# JIT-only tools: schemas must not reach the model for users outside the JIT",
+      "what": "Nothing is revised in this configuration; only content changes (memories, preferences, tasks, speaker embeddings, chat/notification history). The JIT-only save_playbook (reusable agent-written workflows) and the gated proactivity-v2 kill latch are excluded."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No service-made revision exists in the judged configuration, so no later runs under a revised mechanism are reported.",
+      "locator": "The four doc pages and the backend code at 5a46ab0 (same paths as for revision); no such statement found."
+    }
+  },
+  "notes": "Excluded from this judgment: (1) JIT-only chat tools, which are withheld unless the server-side PostHog JIT rollout admits the user: look_at_frame, get_entity_timeline, search_knowledge, read_playbook, search_historical_facts, save_playbook, create_standing_trigger, close_fact. (2) The proactivity v2 spine; its rollout defaults are off (proactivity_v2 flag false, MENTOR_PIPELINE=legacy). Its outcome API and automatic producer kill latch would bear on outcome, attribution and revision, but they are not counted. Doc text was read verbatim from docs/*.mdx at the commit via git show, and every quoted doc sentence was checked against the live docs.omi.me pages. Code quotes come from the checked-out backend. Multi-part quotes join verbatim fragments with ' | ', and line breaks inside code strings are collapsed to spaces. The HALO case README was used only for orientation; every judgment was re-derived from primary sources.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 1035,
+    "code_commit": "5a46ab0467ce594c35fd04d72131421afd747259"
+  }
+}

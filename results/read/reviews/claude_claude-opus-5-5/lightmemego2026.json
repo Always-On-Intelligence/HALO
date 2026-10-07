@@ -1,0 +1,106 @@
+{
+  "id": "lightmemego2026",
+  "configuration": "LightMem-Ego, variant lightmemego2026: a phone/glasses client (Rokid Android app or mobile-browser web client) that uploads 1 fps frames and 1 s audio chunks to a FastAPI backend. The backend builds hierarchical memory (M_cur rolling buffer, M_st micro-events, M_lt EM2Mem episodic/semantic) and answers user questions (preset, voice or typed) with retrieved, timestamped evidence. I judged the paper's system together with the code at commit 3c023dfec301bb2f9624f82cee76007ac3ac0646, including its default query path (interaction cache on, and the glasses client sets it explicitly). Demo-video and offline EM2Mem research modes were not judged.",
+  "sources_read": [
+    "cases/lightmem-ego/case.yaml",
+    "https://arxiv.org/html/2607.11487v1 (v1, read through WebFetch: Abstract, Sec. 1-6, Tables 1-4, Limitations, Ethical and Privacy Considerations; the tool limits quotes to short excerpts)",
+    "repo@3c023dfe: README.md; src/backend/README.md",
+    "src/backend/api_server.py (AskRequest defaults; /ask, /stream/{id}/audio_question, /session/{id}/qa_history, /session/{id}/memories/30sec routes)",
+    "src/backend/online_query_worker.py",
+    "src/backend/online_qa_history.py",
+    "src/backend/online_query/query_engine.py (LoadedQueryEngine.query, _finalize_interaction_cache, _answer_current_memory, query_session)",
+    "src/backend/online_query/interaction_cache.py",
+    "src/backend/online_query/coreference_resolver.py",
+    "src/backend/online_query/memory_router.py",
+    "src/backend/online_query/memory_fusion.py (grep)",
+    "src/backend/online_query/evidence_sufficiency.py",
+    "src/backend/online_query/query_cache.py",
+    "src/backend/online_query/stream_query_context.py",
+    "src/backend/online_query/day_prompt_context.py",
+    "src/backend/online_short_term/mst_retriever.py (cache scoring)",
+    "src/backend/online_short_term/micro_event_refiner.py",
+    "src/backend/online_short_term/frame_diff_detector.py",
+    "src/backend/online_short_term/frame_stream_event_builder.py (grep)",
+    "src/backend/online_current/mcur_store.py",
+    "src/backend/online_current/mcur_updater.py",
+    "src/backend/online_pipeline/realtime_ingest.py",
+    "src/backend/online_pipeline/backpressure.py",
+    "src/backend/online_memory_edit/service.py",
+    "src/backend/online_memory_edit/schemas.py",
+    "src/ai_glass_app/app/src/main/java/cn/zjukg/lightmem/glass/activities/lightmem_ego/LightMemEgoGlassViewModel.kt",
+    "src/ai_glass_app/app/src/main/java/cn/zjukg/lightmem/glass/lightmem_ego/LightMemEgoConfig.kt",
+    "src/ai_glass_app/app/src/main/java/cn/zjukg/lightmem/glass/lightmem_ego/LightMemEgoApiClient.kt",
+    "src/frontend/online_web/src/hooks/useRealtimeStream.js (syncBeforeAsk, sendDemoTick)",
+    "src/frontend/online_web/src/hooks/useAskLightMemEgo.js (ask flow)",
+    "Repo-wide greps for feedback, rating, adaptive or learning mechanisms (none found outside vendored VLM2Vec/HippoRAG)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Frames and audio captured by the client are written into memory. The paper says the backend updates M_cur as a rolling buffer, builds M_st from cross-frame changes, and later consolidates into M_lt. In the code, every uploaded frame updates M_cur and the M_st micro-event builder (realtime_ingest.py:104-142). At this commit, users can also correct episodic memory text through PUT /session/{id}/memories/30sec, which is a second, user-supplied write path.",
+      "locator": "Paper Sec. 3.4 and Sec. 3.3; src/backend/online_pipeline/realtime_ingest.py:104-142; src/backend/online_current/mcur_store.py:22-27; src/backend/api_server.py:1260; src/backend/online_memory_edit/schemas.py:19-25",
+      "quote": "Paper (UNVERIFIED, WebFetch extraction): \"The online backend path updates ℳcur as a rolling buffer and builds ℳst from temporal continuity and cross-frame changes\". Code (verbatim): \"mcur_result = MCurStore(session_dir).update_from_frame_stream(\" ... \"frame_mst_result = FrameStreamMicroEventBuilder(session_dir).process_frame(\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Stored memory is what the answers are built from. A router picks M_cur, M_st, M_lt or the interaction cache for each query, and the retrieved evidence goes into answer generation. For current-scene questions, the answer prompt is built from the M_cur rolling buffer and the frames it holds.",
+      "locator": "Paper Sec. 3.5 and Sec. 3.4; src/backend/online_query/memory_router.py:106-237; src/backend/online_query/query_engine.py:3803-3895 (_answer_current_memory)",
+      "quote": "Paper (UNVERIFIED, WebFetch extraction): \"Given a user query q, LightMem-Ego first routes the query to appropriate memory sources and then generates an answer from retrieved evidence.\" Code (verbatim): \"Answer current-perception questions using only the current rolling video memory and attached frames.\""
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "I found no flow from Action to Sensing, but no source explicitly rules one out. The paper describes capture as lightweight forwarding. The glasses client captures a frame every 1 s and an audio chunk every 1 s, and its frame gate depends only on streaming state, upload in progress and the interval. No query, routing decision or answer changes what is captured or how it is interpreted. The web client's syncBeforeAsk only syncs demo-video playback or fetches Rokid status. Optional backpressure reacts to pipeline queue load, is off by default, and does not come from Action.",
+      "locator": "Paper Sec. 3.1; src/ai_glass_app/.../LightMemEgoConfig.kt:12,15; LightMemEgoGlassViewModel.kt:657-663, 728-771; src/frontend/online_web/src/hooks/useRealtimeStream.js:1944-1967; src/backend/online_pipeline/backpressure.py:59",
+      "quote": "Paper (UNVERIFIED, WebFetch extraction): \"The capture layer is lightweight: it collects, normalizes, and timestamps raw inputs\". Code (verbatim): \"const val FRAME_INTERVAL_MS = 1_000L\""
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "This rests on the code only; the paper does not describe it. Context retained from earlier turns (entities, time ranges, memory ids) is used to interpret the user's current question. The rule-based CoreferenceResolver rewrites a follow-up such as \"where did it go\" into a resolved question that names the earlier entities and time range. That resolved question then drives M_cur frame selection and the answer prompt (query_engine.py:1763-1766, 3853-3883). I count this as Sensing because it interprets user input, not just retrieval. The cache's direct effect on routing and retrieval scores is counted under M→A. Event segmentation compares each frame with the previous one, which is the pipeline's own transient state, so I did not count it.",
+      "locator": "src/backend/online_query/coreference_resolver.py:27-121; src/backend/online_query/query_engine.py:1761-1766, 3883; src/backend/online_query/interaction_cache.py:52-57; Paper Sec. 3.2 (segmentation from cross-frame change signals, no memory priors)",
+      "quote": "Code (verbatim): \"Lightweight rule-based follow-up/coreference resolver.\" ... \"cache_context = CoreferenceResolver().resolve(question, self.interaction_cache)\" ... f\"Using the previous context\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "This rests on the code only. After each successful query, the turn record (question, resolved question, answer, query type, route decision, time ranges, entities, retrieved memory ids, evidence frames) is written to a persistent per-session interaction_cache.json, capped at 20 turns. Later queries read it back as memory source \"M_cache\" in the router, short-term retrieval scoring and memory fusion. The query worker also appends every question, answer and status to qa_history.jsonl. The paper does not mention either store.",
+      "locator": "src/backend/online_query/query_engine.py:2548-2568 (_finalize_interaction_cache), 4801-4804; src/backend/online_query/interaction_cache.py:177-214; src/backend/online_query/memory_router.py:176-181; src/backend/online_query/memory_fusion.py:278-289; src/backend/online_short_term/mst_retriever.py:422-447; src/backend/online_query_worker.py:584-596",
+      "quote": "Code (verbatim): \"cache_update = self.interaction_cache.update_from_query_result(\" ... \"\\\"answer\\\": result.get(\\\"answer\\\", \\\"\\\"),\" ... \"\\\"route_decision\\\": result.get(\\\"route_decision\\\", {}),\" ... \"Follow-up/coreference query uses interaction cache plus short/long-term context.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of its own actions (answers, route decisions, retrieved evidence ids) and uses them in later turns for follow-up resolution, routing, retrieval scoring and fusion. It also logs every Q/A turn with its status to qa_history.jsonl, which the API serves back. The paper does not state this; the evidence is the code.",
+      "locator": "src/backend/online_query/interaction_cache.py:52-57, 193-208; src/backend/online_qa_history.py:42-79; src/backend/online_query_worker.py:584-596; src/backend/api_server.py:2583-2600",
+      "quote": "Code (verbatim, interaction_cache.py docstring): \"Session-level interaction and retrieval cache.\" ... \"It stores recent dialogue, entities, hot time ranges, and hot memories for follow-up resolution.\""
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No later evidence about delivered answers (rating, reply-as-feedback, correction, dismissal, task result) is collected. The cache 'confidence' is a heuristic computed from the answer itself. The QA-history status only says whether the pipeline produced an answer or failed. The paper reports none, and its LLM-judge and human accuracy scores are offline scoring by the authors.",
+      "locator": "src/backend/online_query/interaction_cache.py:360-370 (_estimate_confidence); Paper Sec. 5.1-5.3; Paper Sec. 4 (purely reactive QA; no feedback)"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No outcome of an answer is linked back to the decision that produced it to check or correct assistance. EvidenceSufficiencyEvaluator only checks retrieved short-term evidence before answering, to decide whether to escalate to M_lt. The coreference resolver links a new question to the previous turn's context to interpret it, not to judge the earlier answer.",
+      "locator": "src/backend/online_query/evidence_sufficiency.py:318-442; src/backend/online_query/coreference_resolver.py:46-121"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service never changes its own mechanism (prompts, router rules or keywords, thresholds, models, code). Semantic memory (routines, preferences), M_st and M_lt records, and the interaction cache are content used by fixed mechanisms. Memory edits and rollbacks are user-initiated content changes. The paper treats ASR, VLM and LLM as fixed upstream APIs and says the memory update mechanism is preliminary. Greps of the backend found no adaptive, learning or prompt-optimisation code.",
+      "locator": "Paper Limitations; Paper Sec. 5.1; src/backend/online_query/memory_router.py (static keyword rules); src/backend/online_memory_edit/service.py:85-89",
+      "quote": "Paper (UNVERIFIED, WebFetch extraction): \"The memory update mechanism is also preliminary: it lacks a principled policy for revising,\"",
+      "what": "Nothing is revised; only memory content (M_cur, M_st, M_lt records, interaction cache) changes."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revision exists, so no later run under a revised mechanism is reported. The paper's future work (\"adaptive memory lifecycle management\") is not implemented.",
+      "locator": "Paper Limitations / Future work"
+    }
+  },
+  "notes": "Paper quotes come from WebFetch, which would only return short excerpts, so they are labelled UNVERIFIED. Two extractions matched each other, but the wording was not confirmed against the raw page. Code quotes were checked verbatim against the checked-out commit. The paper and code differ: A→M, M→S and Record rest only on the code's InteractionCache, CoreferenceResolver and QA history, which the paper does not mention. The glasses client explicitly sends use_interaction_cache=true, and the backend default is also true. The code also has features the README dates after the paper (2026-09): online memory editing, multi-session support and streaming answers. The paper lists user-controlled memory editing as future work. Memory editing only strengthens S→M. M→S is a judgement call: if query coreference resolution is classed as part of answer-time retrieval rather than interpretation of user input, M→S would fall to 'insufficient'. A→S is 'insufficient' rather than 'absent' because no source explicitly excludes it, although the client and backend code show fixed-rate capture with no path from Action.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 562,
+    "code_commit": "3c023dfec301bb2f9624f82cee76007ac3ac0646"
+  }
+}

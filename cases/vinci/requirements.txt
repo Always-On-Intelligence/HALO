@@ -1,0 +1,7 @@
+# Vinci run mode, CPU only. The model client is replaced (see README.md).
+pyyaml
+torch                 # vl_open.py and internvl.py build pixel tensors (CPU)
+torchvision           # vl_open.build_transform
+transformers          # vl_open.py imports AutoModel, AutoTokenizer, TextIteratorStreamer
+pillow
+numpy

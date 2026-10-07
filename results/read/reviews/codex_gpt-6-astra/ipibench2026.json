@@ -1,0 +1,76 @@
+{
+  "id": "ipibench2026",
+  "configuration": "Full IPI-Agent with Interaction-Control Policy, Memory Tool and Temporal-Gating Mechanism (Qwen3-VL-8B component-ablation configuration).",
+  "sources_read": [
+    "https://arxiv.org/html/2605.27074v1 — version 2605.27074v1, especially §§3.1, 4.1–4.3, 5.1, 5.4–5.5 and Table 5.",
+    "https://github.com/lijinzhao30/IPI/tree/2c96ea86180a979c472207c6ca0fe0c2f1d31383 — local checkout; README.md, especially lines 71–126.",
+    "assets/IPI-Agent.png at commit 2c96ea86180a979c472207c6ca0fe0c2f1d31383 — architecture figure, including Interaction Memory text.",
+    "Src/Qwen3_VL_8B/Proactive_Monitoring/Proactive_Timing.py at the specified commit.",
+    "Src/Qwen3_VL_8B/Proactive_Task_Management/Task_Modification.py:40–175 at the specified commit.",
+    "Src/Qwen3_VL_8B/Interleaved_Reactive_Proactive/Reactive_after_Proactive.py at the specified commit.",
+    "Src/Qwen3_VL_8B/Interleaved_Reactive_Proactive/Reactive_under_Proactive.py at the specified commit.",
+    "Evaluate/Proactive_Monitoring/Proactive_Timing.py and Evaluate/Interleaved_Reactive_Proactive/Reactive_after_Proactive.py at the specified commit."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Incoming proactive instructions become stored tasks; subsequent user management instructions update or cancel those tasks.",
+      "locator": "[Paper §4.2](https://arxiv.org/html/2605.27074v1#S4.SS2), proactive and management instruction paragraphs."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved interaction history informs responses, while retained proactive tasks govern continuing notification behavior.",
+      "locator": "[Paper §§4.2–4.3](https://arxiv.org/html/2605.27074v1#S4), reactive retrieval and continuous monitoring."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Agent-generated task proposals supply monitoring targets to visual-similarity interpretation, directing what incoming frames are checked for.",
+      "locator": "[Paper §4.3](https://arxiv.org/html/2605.27074v1#S4.SS3), candidate proposals and proposal–frame embedding comparisons."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Interaction Memory resolves ambiguous instruction references before frame-conditioned generation: retained context informs interpretation of user input within the fused Response Tool.",
+      "locator": "[Paper §4.3](https://arxiv.org/html/2605.27074v1#S4.SS3), opening paragraph describing reference resolution."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Agent-created monitoring tasks and assistant answers enter Proactive Memory and Interaction Memory, respectively.",
+      "locator": "[Paper §4.2](https://arxiv.org/html/2605.27074v1#S4.SS2); assets/IPI-Agent.png, Memory Tool panel, including the retained answer at t2."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "Interaction Memory retains assistant answers for subsequent contextual use.",
+      "locator": "[Paper §4.2](https://arxiv.org/html/2605.27074v1#S4.SS2); assets/IPI-Agent.png at the specified commit, Interaction Memory panel.",
+      "quote": "Section 4.2: \"an Interaction Memory for storing historical interactions to enhance current user queries with contextual information.\" Architecture figure, Interaction Memory: \"[t2] In the fridge.\""
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No retained feedback or consequences of delivered assistance are specified; follow-up queries alone do not establish outcomes.",
+      "locator": "[Paper §§3.1, 4.2–4.3](https://arxiv.org/html/2605.27074v1); README.md:71–99 distinguishes inference outputs from subsequent benchmark scoring."
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Gating checks pending triggers against current visual evidence, without linking an assistance outcome to its decision; benchmark evaluators operate externally.",
+      "locator": "[Paper §§4.3, 5.1](https://arxiv.org/html/2605.27074v1); Evaluate/Interleaved_Reactive_Proactive/Reactive_after_Proactive.py:48–99; Evaluate/Proactive_Monitoring/Proactive_Timing.py:93–135."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "User-directed task edits change task state; no autonomous durable revision of the assistance mechanism is reported.",
+      "locator": "[Paper §§4.2–4.3](https://arxiv.org/html/2605.27074v1#S4), task management and empirically chosen gating thresholds."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Reported runs evaluate configured components, without identifying runs under a service-revised mechanism.",
+      "locator": "[Paper §§5.4–5.5, Tables 4–5](https://arxiv.org/html/2605.27074v1#S5); README.md:124–126."
+    }
+  },
+  "notes": "The checkout matches the specified commit. README.md:124–126 identifies the released scripts as reference evaluation code and lists IPI-Agent code as coming soon. Full-agent judgments therefore rely on the paper and architecture text; baseline scripts and offline scoring are not treated as the full implementation. Retention is established within streaming interactions; cross-session persistence is unspecified.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 330,
+    "code_commit": "2c96ea86180a979c472207c6ca0fe0c2f1d31383"
+  }
+}

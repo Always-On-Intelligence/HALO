@@ -1,0 +1,91 @@
+{
+  "id": "vinci2",
+  "configuration": "EgoMemo streaming proactive configuration on EgoServe, with GPT-5-mini reasoning; full memory and caption-reconstruction pathways.",
+  "sources_read": [
+    "https://arxiv.org/html/2607.11523v1 — version 2607.11523v1, main text and appendices A–C.",
+    "https://github.com/SitongGong/EgoMemo — checked-out commit verified as 0029a33fd83bb93cb6a7bb012bbdd3477b4c6b35.",
+    "README.md",
+    "captioncook4d_processing_parallel.py",
+    "captioncook4d_online_retrieval_parallel_.py",
+    "videorag/egograph_retrieval_optimize_.py — memory construction, proactive processing, history formatting and checkpoint paths.",
+    "videorag/ego_op.py — prompt routing and streaming retrieval/reconstruction paths.",
+    "videorag/_videoutil/caption.py",
+    "videorag/ego_prompt_.py — EgoLife proactive and reconstruction prompts.",
+    "videorag/egoextra_prompt.py — CaptainCook4D proactive prompts.",
+    "videorag/holoassist_prompt_.py — proactive and reconstruction prompts.",
+    "videorag/_storage/kv_json.py",
+    "videorag/streaming_op.py and videorag/streaming_op_fast.py — inspected excerpts; benchmark caller imports ego_op.py instead.",
+    "evaluation/README.md",
+    "evaluation/llm_score.py",
+    "../../cases/vinci2/case.yaml",
+    "../../halo/read/schema.json"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Video-derived captions and sampled frames enter persistent segment storage; captions feed temporal summaries, entity/relationship extraction and text indexes, while frames feed the visual archive. These are implemented observation write paths.",
+      "locator": "[Paper §4.1](https://arxiv.org/html/2607.11523v1); videorag/egograph_retrieval_optimize_.py:1834–1842, 1888–1912, 2830–2914; videorag/_storage/kv_json.py:12–22, 42–43.",
+      "quote": "These captions and keyframes are the atomic inputs from which three complementary memory representations are incrementally constructed."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved historical evidence is supplied to the reasoner to finalize or suppress a service. Recent activity summaries also inform EgoLife decisions. The general proactive path supplies retained service history to enforce cooldowns.",
+      "locator": "[Paper §4.2 and Appendix B.2](https://arxiv.org/html/2607.11523v1); videorag/egograph_retrieval_optimize_.py:3127–3155, 3232–3256, 3501–3509, 3610–3629; videorag/egoextra_prompt.py:665–667, 865–887, 1186–1205.",
+      "quote": "Use this ONLY to suppress overly frequent or redundant interventions."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The reasoner's information need becomes a retrieval query whose extracted keywords guide a VLM's renewed inspection of selected video frames. This directs perceptual evidence extraction, beyond merely returning stored text; it does not establish adaptive live-camera sampling.",
+      "locator": "[Paper §4.2, caption reconstruction](https://arxiv.org/html/2607.11523v1); videorag/egograph_retrieval_optimize_.py:3538–3593; videorag/ego_op.py:1554–1583; videorag/_videoutil/caption.py:247–276; videorag/holoassist_prompt_.py:409–420.",
+      "quote": "In the same caption, explicitly include the most relevant observable evidence\nconnected to:\n\n• the retrieval keywords, and"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "During visual reconstruction, the stored original caption is passed directly alongside frames to the VLM and used to resolve visual ambiguities and preserve previously identified objects and states. This is retained information guiding interpretation, not solely memory informing an Action query.",
+      "locator": "videorag/ego_op.py:56–66, 1554–1583, 2140–2167; videorag/_videoutil/caption.py:252–276; videorag/holoassist_prompt_.py:354–364; videorag/ego_prompt_.py:1497–1509.",
+      "quote": "resolve ambiguities in the frames,"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Generated service messages, types, trigger windows, evidence and confidence are appended to service history and checkpointed. The general proactive path reuses recent entries in later decisions; EgoLife additionally retains its previous retrieval probe for subsequent calls.",
+      "locator": "videorag/egograph_retrieval_optimize_.py:3432–3449, 3501–3509, 3683–3718, 4298–4306, 4501–4507.",
+      "quote": "'proactive_service_history': proactive_service_history,"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service records its generated assistance in checkpointed history and supplies the last five entries to later proactive decisions, so these records serve the running service rather than only external evaluation.",
+      "locator": "videorag/egograph_retrieval_optimize_.py:3695–3702 (quoted), 3706–3718 (persistence), 3435–3449 (restore), 3501–3509 (subsequent use).",
+      "quote": "proactive_service_history.append({\n                            'service_main_type': service.get('service_main_type', ''),\n                            'service_sub_type': service.get('service_sub_type', ''),\n                            'user_prompt': service.get('user_prompt', ''),"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Prompts mention optional acceptance/ignore/rejection information, but the benchmark path does not obtain and retain such outcomes of its interventions; saved trigger evidence and external judge scores do not establish this step.",
+      "locator": "videorag/egoextra_prompt.py:665–672; videorag/egograph_retrieval_optimize_.py:374–385, 3695–3718; evaluation/llm_score.py:34–57, 60–89; [Paper §3.5 and Appendix C.3](https://arxiv.org/html/2607.11523v1)."
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Retrieval checks a proposed intervention against earlier scene evidence and history suppresses repetition, but no outcome of the service's own assistance is linked back and used to assess or correct it; benchmark matching is external.",
+      "locator": "videorag/egoextra_prompt.py:1181–1205; videorag/egograph_retrieval_optimize_.py:3574–3678; evaluation/llm_score.py:34–57; [Paper §3.5 and Appendix C.3](https://arxiv.org/html/2607.11523v1)."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The reported updates concern observational memory and service history; no service-generated durable change to parameters, prompts, reusable rules, skills, code or harness is described.",
+      "locator": "videorag/egograph_retrieval_optimize_.py:2830–2914, 3109–3127, 3683–3718; videorag/egoextra_prompt.py:862–887; [Paper §§4.1, 6](https://arxiv.org/html/2607.11523v1).",
+      "what": "None reported; growing captions, graph content and histories are state updates under fixed mechanisms."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Later decisions use accumulated memory and service history, but no run under a service-revised mechanism is reported.",
+      "locator": "videorag/egograph_retrieval_optimize_.py:3435–3509, 4298–4306; [Paper §5.2](https://arxiv.org/html/2607.11523v1)."
+    }
+  },
+  "notes": "Judged the full EgoServe proactive configuration, not offline QA, other benchmarks or the separate demo. Code locators refer to the verified commit. A->S and M->S concern visual reinspection during caption reconstruction. The released benchmark scripts separate memory construction from chronological proactive replay. Optional user-response wording in prompts is not evidence of an implemented outcome collector.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 327,
+    "code_commit": "0029a33fd83bb93cb6a7bb012bbdd3477b4c6b35"
+  }
+}

@@ -1,0 +1,15 @@
+id: socialmind
+name: "SocialMind"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2412.04036
+sources:
+  - url: https://arxiv.org/html/2412.04036v1
+    kind: paper
+    version: "2412.04036v1"
+    sha256: b09815d669287ee5e1f1fcc5cf9cc7df3d604f26d12c60cea31114966717b4ce
+variants:
+  - id: socialmind
+    label: "SocialMind"
+    configuration: "RayNEO X2 SocialMind with identity-indexed persona database and multi-tier suggestion generation"
+modes: [read]

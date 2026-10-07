@@ -1,0 +1,421 @@
+{
+  "note": "Scripted streams for PASK's LatentNeeds-Bench protocol. Each stream is one long conversation, already transcribed and attributed to speakers (the format bench/03b_rewrite.py produces), split into an earlier part and a later part the way bench/02_build_turns.py splits sessions into parts. The memory writer (bench/03c_memory.py) reads the earlier part at the part boundary; demand detection (eval/prompts.py) runs on every turn of the later part. 'need_turns' (0-based, later part) marks where something said only in the earlier part makes a need detectable; 'cues' are case-insensitive regular expressions for facts stated only in the earlier part (not in the scene or the later part); 'design' says why the stream was chosen. need_turns, cues and design are for analysis only and are never sent to a model.",
+  "streams": [
+    {
+      "id": "launch_meeting",
+      "subcategory": "W1",
+      "language": "en",
+      "design": "work meeting; a compliance constraint stated before a break is contradicted when the plan is locked after it",
+      "scene": {
+        "scene": "A product team's launch-planning meeting for version 3.0 of a note-taking app. The meeting resumes after a ten-minute break.",
+        "characters": [
+          {
+            "name": "Alex Chen",
+            "role": "product manager",
+            "background": "owns the 3.0 launch plan and its sign-off"
+          },
+          {
+            "name": "Priya Nair",
+            "role": "legal counsel",
+            "background": "covers legal questions for the product team"
+          },
+          {
+            "name": "Marco Rossi",
+            "role": "marketing lead",
+            "background": "runs the launch campaign and customer emails"
+          },
+          {
+            "name": "Jin Park",
+            "role": "engineering manager",
+            "background": "leads the team that built 3.0"
+          }
+        ],
+        "primary_user": {
+          "name": "Alex Chen",
+          "reason": "as product manager he has to lock the launch plan before the meeting ends"
+        }
+      },
+      "earlier": [
+        {
+          "speaker": "Alex Chen",
+          "text": "Okay, first item is the 3.0 launch. Marco, where is the campaign?"
+        },
+        {
+          "speaker": "Marco Rossi",
+          "text": "Assets are done. We're targeting October 14 for both the US and the EU, and the press embargo lifts that morning."
+        },
+        {
+          "speaker": "Jin Park",
+          "text": "Engineering is on track. Voice Notes, the new recording feature, is code-complete and passed QA last night."
+        },
+        {
+          "speaker": "Priya Nair",
+          "text": "One flag from me. Voice Notes records other people in meetings, so in the EU it can't go live until our DPIA is signed off."
+        },
+        {
+          "speaker": "Alex Chen",
+          "text": "When do you expect the sign-off?"
+        },
+        {
+          "speaker": "Priya Nair",
+          "text": "The external reviewer says October 21 at the earliest. Until then Voice Notes has to stay off for EU accounts."
+        },
+        {
+          "speaker": "Marco Rossi",
+          "text": "Noted. Let's take ten minutes and then do the pricing page."
+        }
+      ],
+      "later": [
+        {
+          "speaker": "Marco Rossi",
+          "text": "Pricing page is final: three tiers, and the annual plan gets two months free."
+        },
+        {
+          "speaker": "Jin Park",
+          "text": "Also, every 3.0 feature sits behind a feature flag, and flags can be set per region in the admin console."
+        },
+        {
+          "speaker": "Alex Chen",
+          "text": "Great. Then let's lock it: on October 14 we go live in the US and the EU with the full 3.0 feature set, Voice Notes included."
+        },
+        {
+          "speaker": "Marco Rossi",
+          "text": "Perfect. I'll schedule the launch emails for 8 a.m. local time in each region."
+        }
+      ],
+      "need_turns": [
+        2
+      ],
+      "cues": [
+        "\\bdpia\\b",
+        "impact assessment",
+        "\\boct(ober)?\\.? 21",
+        "\\b21(st)?\\b"
+      ]
+    },
+    {
+      "id": "stats_tutoring",
+      "subcategory": "L2",
+      "language": "en",
+      "design": "learning session; the data structure explained early (repeated measures) makes the planned test invalid later",
+      "scene": {
+        "scene": "An online tutoring session in which a master's student plans the analysis of her thesis study with a statistics tutor.",
+        "characters": [
+          {
+            "name": "Sofia Alvarez",
+            "role": "master's student",
+            "background": "kinesiology student writing her thesis on a stretching program"
+          },
+          {
+            "name": "Ben Okafor",
+            "role": "statistics tutor",
+            "background": "helps graduate students with study design and analysis"
+          }
+        ],
+        "primary_user": {
+          "name": "Sofia Alvarez",
+          "reason": "she decides how to analyse her thesis data and will report the result"
+        }
+      },
+      "earlier": [
+        {
+          "speaker": "Ben Okafor",
+          "text": "Before we pick a test, walk me through how the data were collected."
+        },
+        {
+          "speaker": "Sofia Alvarez",
+          "text": "Forty participants, twenty in the stretching group and twenty controls. Each person did the balance test three times, at week 0, 4 and 8."
+        },
+        {
+          "speaker": "Ben Okafor",
+          "text": "So every participant gives you three scores, and the scores from one person are correlated. They are not independent observations."
+        },
+        {
+          "speaker": "Sofia Alvarez",
+          "text": "Right, the same person tends to score about the same each time."
+        },
+        {
+          "speaker": "Ben Okafor",
+          "text": "Exactly. Keep that in mind. Students often treat repeated scores as separate people, and their p-values come out far too small."
+        },
+        {
+          "speaker": "Sofia Alvarez",
+          "text": "Got it. Can we look at my figures for a bit? My advisor hated the colors."
+        }
+      ],
+      "later": [
+        {
+          "speaker": "Ben Okafor",
+          "text": "These plots look much better with the colorblind-safe palette."
+        },
+        {
+          "speaker": "Sofia Alvarez",
+          "text": "Thanks! For the main result I put everything in one sheet: 120 rows, one per balance score, with a column for the group."
+        },
+        {
+          "speaker": "Sofia Alvarez",
+          "text": "So I'll run an independent-samples t-test on all 120 scores, stretching versus control, and report that as my main finding."
+        },
+        {
+          "speaker": "Ben Okafor",
+          "text": "Let's also make sure the write-up says which software and version you used."
+        }
+      ],
+      "need_turns": [
+        2
+      ],
+      "cues": [
+        "\\b(40|forty)\\b",
+        "\\b(three|3) (times|scores|measurements|sessions|tests)\\b",
+        "\\bweeks? 0\\b",
+        "\\bweek 4\\b",
+        "\\bweek 8\\b"
+      ]
+    },
+    {
+      "id": "dinner_order",
+      "subcategory": "D2",
+      "language": "en",
+      "design": "daily life; a guest's allergy mentioned in the afternoon matters when dinner is ordered in the evening",
+      "scene": {
+        "scene": "Three friends spend a Saturday together and in the evening order dinner for the group, which now includes a fourth guest.",
+        "characters": [
+          {
+            "name": "Jordan Lee",
+            "role": "host",
+            "background": "is organising and paying for tonight's dinner"
+          },
+          {
+            "name": "Mia Torres",
+            "role": "friend",
+            "background": "her partner is joining the group for dinner"
+          },
+          {
+            "name": "Kai Brooks",
+            "role": "friend",
+            "background": "a regular at the local restaurants"
+          }
+        ],
+        "primary_user": {
+          "name": "Jordan Lee",
+          "reason": "he is ordering dinner for everyone tonight"
+        }
+      },
+      "earlier": [
+        {
+          "speaker": "Mia Torres",
+          "text": "Sam's coming tonight after his shift. He's excited to finally meet everyone."
+        },
+        {
+          "speaker": "Jordan Lee",
+          "text": "Great, then I'll order dinner for four."
+        },
+        {
+          "speaker": "Mia Torres",
+          "text": "Just so you know, Sam has a severe peanut allergy. Even food cooked in the same pan can set it off, and he carries an EpiPen."
+        },
+        {
+          "speaker": "Jordan Lee",
+          "text": "Good to know, thanks."
+        },
+        {
+          "speaker": "Kai Brooks",
+          "text": "Did anyone see the match last night? That last-minute goal was unreal."
+        },
+        {
+          "speaker": "Mia Torres",
+          "text": "I missed it, we were at his sister's birthday."
+        }
+      ],
+      "later": [
+        {
+          "speaker": "Kai Brooks",
+          "text": "I'm starving. Can we order already?"
+        },
+        {
+          "speaker": "Jordan Lee",
+          "text": "Yeah, the Thai place on Elm Street delivers in about thirty minutes."
+        },
+        {
+          "speaker": "Jordan Lee",
+          "text": "Let's get the chicken satay platter with extra peanut sauce, a big pad thai and a green curry for everyone to share."
+        },
+        {
+          "speaker": "Kai Brooks",
+          "text": "Add the spring rolls too, they're great there."
+        }
+      ],
+      "need_turns": [
+        2
+      ],
+      "cues": [
+        "\\bsam\\b",
+        "epi-?pen",
+        "\\bsevere\\b",
+        "same pan"
+      ]
+    },
+    {
+      "id": "migration_planning",
+      "subcategory": "W2",
+      "language": "en",
+      "design": "technical planning; a maintenance window announced early conflicts with the time chosen later",
+      "scene": {
+        "scene": "An engineering team's planning call for a schema change on the orders service.",
+        "characters": [
+          {
+            "name": "Lena Fischer",
+            "role": "tech lead",
+            "background": "owns the orders service and schedules its migrations"
+          },
+          {
+            "name": "Omar Haddad",
+            "role": "database administrator",
+            "background": "runs the production databases"
+          },
+          {
+            "name": "Tom Becker",
+            "role": "site reliability engineer",
+            "background": "is on call this week"
+          }
+        ],
+        "primary_user": {
+          "name": "Lena Fischer",
+          "reason": "she decides when the migration runs"
+        }
+      },
+      "earlier": [
+        {
+          "speaker": "Lena Fischer",
+          "text": "Quick round of updates before we plan the orders migration."
+        },
+        {
+          "speaker": "Omar Haddad",
+          "text": "Heads-up: the provider moved our orders database maintenance. It's now this Thursday, 02:00 to 04:00 UTC, and the primary fails over during it."
+        },
+        {
+          "speaker": "Tom Becker",
+          "text": "During failover, writes pause for a few minutes and any long-running schema change gets killed."
+        },
+        {
+          "speaker": "Omar Haddad",
+          "text": "So nothing heavy on the orders database in that window, please."
+        },
+        {
+          "speaker": "Lena Fischer",
+          "text": "Understood. Tom, anything else from on-call?"
+        },
+        {
+          "speaker": "Tom Becker",
+          "text": "Just the usual noisy disk alerts on the analytics boxes. I'm tuning them."
+        }
+      ],
+      "later": [
+        {
+          "speaker": "Lena Fischer",
+          "text": "Okay, the migration itself: we add the delivery_window column and backfill it."
+        },
+        {
+          "speaker": "Omar Haddad",
+          "text": "The backfill touches about forty million rows, so expect around ninety minutes."
+        },
+        {
+          "speaker": "Lena Fischer",
+          "text": "Then let's run it this Thursday at 02:30 UTC, when traffic is lowest."
+        },
+        {
+          "speaker": "Tom Becker",
+          "text": "Works for me, I'll be up anyway."
+        }
+      ],
+      "need_turns": [
+        2
+      ],
+      "cues": [
+        "maintenance",
+        "fail-? ?over",
+        "\\b0?2:00\\b",
+        "\\b0?4:00\\b"
+      ]
+    },
+    {
+      "id": "investor_update",
+      "subcategory": "W3",
+      "language": "en",
+      "design": "business; a one-off revenue item explained early makes the headline claim drafted later misleading",
+      "scene": {
+        "scene": "A startup's CEO and CFO prepare talking points for an investor update call that starts in an hour.",
+        "characters": [
+          {
+            "name": "Grace Kim",
+            "role": "CEO",
+            "background": "will present on the investor call"
+          },
+          {
+            "name": "Victor Lin",
+            "role": "CFO",
+            "background": "prepared the quarterly numbers"
+          }
+        ],
+        "primary_user": {
+          "name": "Grace Kim",
+          "reason": "she will say these talking points to investors"
+        }
+      },
+      "earlier": [
+        {
+          "speaker": "Grace Kim",
+          "text": "Victor, give me the Q3 numbers before we write the talking points."
+        },
+        {
+          "speaker": "Victor Lin",
+          "text": "Revenue was 3.4 million, up from 2.4 million in Q2."
+        },
+        {
+          "speaker": "Victor Lin",
+          "text": "But 1.2 million of that is the one-time licensing deal with Helios. Subscription revenue alone was flat at about 2.2 million."
+        },
+        {
+          "speaker": "Grace Kim",
+          "text": "Okay. And churn?"
+        },
+        {
+          "speaker": "Victor Lin",
+          "text": "Monthly churn ticked up to 3.1 percent, mostly small teams on the starter plan."
+        },
+        {
+          "speaker": "Grace Kim",
+          "text": "Fine. Let me grab a coffee, then we write the script."
+        }
+      ],
+      "later": [
+        {
+          "speaker": "Grace Kim",
+          "text": "Alright, opening: thank everyone for joining, then a quick recap of hiring."
+        },
+        {
+          "speaker": "Victor Lin",
+          "text": "We closed four engineering hires this quarter and have two more offers out."
+        },
+        {
+          "speaker": "Grace Kim",
+          "text": "Then the headline: revenue grew over forty percent quarter on quarter, and we expect that growth rate to continue into Q4."
+        },
+        {
+          "speaker": "Victor Lin",
+          "text": "Sounds strong. Should we mention the new office too?"
+        }
+      ],
+      "need_turns": [
+        2
+      ],
+      "cues": [
+        "helios",
+        "licens",
+        "\\b2\\.2\\b",
+        "\\b1\\.2\\b",
+        "\\bflat\\b"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "case": "assistantx",
+  "channels": {
+    "M->S": "persistent relational graph (priori_knowledge) in the perception prompt",
+    "M->A": "persistent relational graph (priori_knowledge) in the planning and action prompts",
+    "A->S": "robot's own messages in the perception prompt; Send QR code arguments labelling the locker event"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "M->S"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 8,
+      "modified": 1,
+      "tie": 3,
+      "metrics": {
+        "stopped": {
+          "original": 0.8333,
+          "modified": 0.5833
+        },
+        "task_success": {
+          "original": 1.0,
+          "modified": 0.5833
+        },
+        "qr_codes_unused": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "steps": {
+          "original": 3.9167,
+          "modified": 4.4167
+        },
+        "moves": {
+          "original": 2.25,
+          "modified": 1.6667
+        },
+        "qr_codes_sent": {
+          "original": 2.25,
+          "modified": 1.6667
+        },
+        "undelivered": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "messages_sent": {
+          "original": 3.0833,
+          "modified": 3.4167
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 5,
+      "modified": 0,
+      "tie": 7,
+      "metrics": {
+        "stopped": {
+          "original": 0.8333,
+          "modified": 0.75
+        },
+        "task_success": {
+          "original": 1.0,
+          "modified": 0.9167
+        },
+        "qr_codes_unused": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "steps": {
+          "original": 3.9167,
+          "modified": 4.3333
+        },
+        "moves": {
+          "original": 2.25,
+          "modified": 2.1667
+        },
+        "qr_codes_sent": {
+          "original": 2.25,
+          "modified": 2.1667
+        },
+        "undelivered": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "messages_sent": {
+          "original": 3.0833,
+          "modified": 3.5833
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A",
+        "M->S"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 11,
+      "modified": 1,
+      "tie": 0,
+      "metrics": {
+        "stopped": {
+          "original": 0.8333,
+          "modified": 0.6667
+        },
+        "task_success": {
+          "original": 1.0,
+          "modified": 0.6667
+        },
+        "qr_codes_unused": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "steps": {
+          "original": 3.9167,
+          "modified": 4.75
+        },
+        "moves": {
+          "original": 2.25,
+          "modified": 1.8333
+        },
+        "qr_codes_sent": {
+          "original": 2.25,
+          "modified": 1.8333
+        },
+        "undelivered": {
+          "original": 0.0,
+          "modified": 0.3333
+        },
+        "messages_sent": {
+          "original": 3.0833,
+          "modified": 3.4167
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->S"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 9,
+      "modified": 0,
+      "tie": 3,
+      "metrics": {
+        "stopped": {
+          "original": 0.8333,
+          "modified": 0.75
+        },
+        "task_success": {
+          "original": 1.0,
+          "modified": 0.8333
+        },
+        "qr_codes_unused": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "steps": {
+          "original": 3.9167,
+          "modified": 4.5
+        },
+        "moves": {
+          "original": 2.25,
+          "modified": 2.0833
+        },
+        "qr_codes_sent": {
+          "original": 2.25,
+          "modified": 2.0833
+        },
+        "undelivered": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "messages_sent": {
+          "original": 3.0833,
+          "modified": 3.75
+        }
+      }
+    }
+  ]
+}

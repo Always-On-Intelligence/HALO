@@ -1,0 +1,76 @@
+{
+  "id": "metamuse2026",
+  "configuration": "September 2026 launch configuration with persistent user VM memory, goals/background work, browser sub-agent and Sentinel controls.",
+  "sources_read": [
+    "https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/ — content snapshot; version not displayed.",
+    "https://introducing.muse.ai/ — content snapshot; version not displayed.",
+    "https://research.meta.ai/blog/security-and-safety-for-ai-agents-our-approach-with-muse — content snapshot; version not displayed."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Conversational details enter persistent memory: Muse remembers information mentioned once, and users can request deletion of learned information.",
+      "locator": "[Launch documentation](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/), How It Works and Built to be Private, Safe, and Secure, lines 262 and 279."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Remembered personal details guide unsolicited suggestions and task execution, including considering friends’ dietary restrictions before sending invitations.",
+      "locator": "[Launch documentation](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/), How It Works, line 262."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Muse delegates tasks to its browser sub-agent, which reads pages and traverses sites; Action therefore determines subsequent observation targets.",
+      "locator": "[Safety documentation](https://research.meta.ai/blog/security-and-safety-for-ai-agents-our-approach-with-muse), Browser, lines 112–113."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The retained harmful-site list is matched inside the VM to interpret browser destinations as known threats, before the navigation decision.",
+      "locator": "[Safety documentation](https://research.meta.ai/blog/security-and-safety-for-ai-agents-our-approach-with-muse), Browser, line 121.",
+      "quote": "match against that list inside the user’s VM"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Plans and completed actions are retained in the audit trail and activity log.",
+      "locator": "[Launch documentation](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/), Built to be Private, Safe, and Secure, line 275; [Design documentation](https://introducing.muse.ai/), Background work and transparency and Goals and tracking, lines 47–52."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps a user-accessible history of its actions and plans.",
+      "locator": "[Launch documentation](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/), Built to be Private, Safe, and Secure, line 275.",
+      "quote": "Muse shows people a complete audit trail of everything it has done and plans to do."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Replies to delivered approval requests update retained approval state, including permissions extending beyond one invocation.",
+      "locator": "[Safety documentation](https://research.meta.ai/blog/security-and-safety-for-ai-agents-our-approach-with-muse), Human in the Loop, lines 66–68.",
+      "quote": "updates its authoritative approval state"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Sentinel binds each reply to the proposed operation and permits or rejects it accordingly, providing an immediate in-service check.",
+      "locator": "[Safety documentation](https://research.meta.ai/blog/security-and-safety-for-ai-agents-our-approach-with-muse), Human in the Loop, lines 66–68.",
+      "quote": "allows the operation to proceed or rejects it as appropriate."
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "Muse builds its own executable tools and custom connectors; generated code is kept in its persistent VM, constituting a tool-code mechanism extension.",
+      "locator": "[Design documentation](https://introducing.muse.ai/), Muse Is an Agent That Can Actually Do Things, line 30; [Safety documentation](https://research.meta.ai/blog/security-and-safety-for-ai-agents-our-approach-with-muse), introduction, line 17; Connectors, line 38; Our Policy Around Data, lines 136–137.",
+      "quote": "write its own code and build the tools a task needs.",
+      "what": "Agent-authored executable tool and custom-connector code."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No later run is explicitly identified as using an agent-authored mechanism revision; general self-editing and code-execution capabilities do not establish this.",
+      "locator": "[Design documentation](https://introducing.muse.ai/), line 30; [Safety documentation](https://research.meta.ai/blog/security-and-safety-for-ai-agents-our-approach-with-muse), lines 17, 28, 38 and 42."
+    }
+  },
+  "notes": "Text-only review; no code repository. Future Confidential VM is excluded. M→S concerns harmful-site priors. Outcome and attribution concern approval replies, not demonstrated post-execution success.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 260,
+    "code_commit": null
+  }
+}

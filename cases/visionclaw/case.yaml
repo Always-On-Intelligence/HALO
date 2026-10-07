@@ -1,0 +1,18 @@
+id: visionclaw
+name: "VisionClaw"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2604.03486
+sources:
+  - url: https://arxiv.org/html/2604.03486v2
+    kind: paper
+    version: "2604.03486v2"
+    sha256: 146424d0c07c73526440ed19b61b661bd0ce2528e3a743c9a4fcd80c093ade52
+code:
+  repo: https://github.com/Intent-Lab/VisionClaw
+  commit: 82699eca917c0062516c14b99affa34ea230ecd7
+variants:
+  - id: visionclaw2026
+    label: "VisionClaw"
+    configuration: "Composed Gemini Live + OpenClaw system with connected personal stores and delegated tools"
+modes: [read, run]

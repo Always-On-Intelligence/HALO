@@ -1,0 +1,78 @@
+{
+  "note": "Scripted egocentric streams for Vinci. Each stream is a sequence of moments seen through the head-mounted camera. At every moment the backend calls the inference service in silent mode with four frames, written here as text, and the model's one-line description is stored with its timestamp. At the end the user says the wake word and asks questions while looking at the current scene. 'time' is seconds since the session started; the adapter sets the service clock to it. 'design' records why the stream was chosen and is never sent to a model.",
+  "streams": [
+    {
+      "id": "morning_keys",
+      "setting": "A weekday morning at home before leaving for work.",
+      "design": "The keys go to an unusual place at 24 s and the pill is taken at 48 s; at question time the camera shows only the empty key hook and the door, so both answers need the stored history.",
+      "moments": [
+        {"time": 0, "frames": ["A kitchen counter seen from eye level; my right hand places a white mug under the spout of a black coffee machine.", "My hand lets go of the mug; the coffee machine's display shows 'READY'.", "My left hand puts my phone face down on the counter next to the machine.", "The window behind the machine shows a grey, rainy street."]},
+        {"time": 12, "frames": ["My finger presses the large round button on the coffee machine.", "Coffee starts pouring into the white mug.", "I glance at a wall calendar showing Tuesday 14 October.", "The coffee machine display shows a progress bar."]},
+        {"time": 24, "frames": ["My right hand holds a set of car keys with a red leather tag.", "I turn toward the kitchen island, where a wooden fruit bowl holds three apples and a banana.", "My hand drops the keys into the fruit bowl, between the apples.", "The keys lie in the fruit bowl; the red tag hangs over the rim."]},
+        {"time": 36, "frames": ["A small watering can in my hand, tilted over a basil plant on the windowsill.", "Water soaks into the soil of the basil pot.", "I set the watering can down next to the sink.", "Raindrops run down the window glass."]},
+        {"time": 48, "frames": ["A seven-day pill organiser on the counter, lids labelled MON to SUN.", "My thumb flips open the lid marked TUE; one small blue pill is inside.", "I tip the blue pill into my palm.", "I swallow the pill with a glass of water."]},
+        {"time": 60, "frames": ["The fridge door is open; my hand takes a carton of oat milk from the door shelf.", "I pour oat milk into the white mug of coffee.", "I put the carton back on the fridge door shelf.", "The fridge door swings shut."]},
+        {"time": 72, "frames": ["I walk down a narrow hallway holding the mug.", "A navy raincoat hangs on a hook; I take it down.", "My arms go into the raincoat sleeves.", "I zip the raincoat up to the chest."]},
+        {"time": 84, "frames": ["The front door with a small row of hooks beside it; the hook labelled KEYS is empty.", "My hand pats the raincoat pockets.", "I look down at an empty shoe rack tray where keys sometimes lie.", "My hand rests on the door handle."]}
+      ],
+      "questions": [
+        {"time": 90, "frames": ["The front door and the empty KEYS hook beside it.", "My hand pats the raincoat pockets again.", "I look back down the hallway toward the kitchen.", "The hallway light is on."], "question": "Where did I leave my car keys?", "answer": "In the wooden fruit bowl on the kitchen island, among the apples (at about 24 s)."},
+        {"time": 96, "frames": ["The front door, seen from close up.", "My hand holds the door handle.", "I glance at my wristwatch showing 08:12.", "Rain is visible through the door's small window."], "question": "Did I take my pill this morning?", "answer": "Yes. At about 48 s I took the blue pill from the TUE compartment of the pill organiser and swallowed it with water."}
+      ]
+    },
+    {
+      "id": "pasta_salt",
+      "setting": "Cooking dinner alone in a small kitchen, with an interruption at the door.",
+      "design": "The salt goes in at 20 s and the timer is set at 40 s; after the parcel delivery at 60-70 s the pot alone does not show whether it was salted, so both answers need the stored history.",
+      "moments": [
+        {"time": 0, "frames": ["A large steel pot under the kitchen tap; water is running into it.", "The pot is about two-thirds full.", "My hands carry the pot toward the stove.", "The stove has four gas burners; all are off."]},
+        {"time": 10, "frames": ["I set the pot on the back-left burner.", "My hand turns the back-left knob; a blue flame appears.", "I turn the knob to the highest setting.", "Small bubbles start to form at the bottom of the pot."]},
+        {"time": 20, "frames": ["My hand takes a red box of coarse sea salt from the shelf above the stove.", "I scoop one heaped tablespoon of salt out of the box.", "I tip the tablespoon of salt into the pot of water.", "I put the red salt box back on the shelf above the stove."]},
+        {"time": 30, "frames": ["A wooden chopping board with three garlic cloves.", "I crush a clove with the flat of a knife.", "I chop the garlic finely.", "I push the chopped garlic to the side of the board."]},
+        {"time": 40, "frames": ["The water in the pot is boiling hard.", "I drop a handful of spaghetti into the pot.", "My phone in my hand shows a timer set to 9:00.", "I tap Start; the timer shows 8:59."]},
+        {"time": 50, "frames": ["I stir the spaghetti with a wooden spoon.", "The spaghetti softens and sinks under the water.", "Steam rises from the pot.", "I lean the wooden spoon on the edge of the pot."]},
+        {"time": 60, "frames": ["I walk out of the kitchen toward the front door.", "I open the door; a courier holds a small cardboard parcel.", "I sign on the courier's handheld screen.", "I take the parcel and close the door."]},
+        {"time": 70, "frames": ["Back in the kitchen, I put the parcel on the table.", "The pot is still boiling on the back-left burner.", "My phone on the counter shows the timer at 6:51.", "I look at the red salt box on the shelf above the stove."]}
+      ],
+      "questions": [
+        {"time": 78, "frames": ["The boiling pot of spaghetti on the back-left burner.", "The red salt box on the shelf above the stove.", "My hand hovers over the salt box.", "The phone timer on the counter shows 6:43."], "question": "Did I already salt the pasta water?", "answer": "Yes. At about 20 s one heaped tablespoon of coarse sea salt from the red box went into the water, before the pasta."},
+        {"time": 84, "frames": ["The pot of spaghetti, boiling.", "The parcel on the kitchen table.", "The phone on the counter, screen dark.", "My hand reaches for the wooden spoon."], "question": "How long did I set the pasta timer for?", "answer": "Nine minutes, started at about 40 s when the spaghetti went in."}
+      ]
+    },
+    {
+      "id": "grocery_list",
+      "setting": "A weekly shop at a supermarket with a list on the phone.",
+      "design": "The list is shown at 45 s and the items are picked at different moments; the question at the checkout asks what is still missing, and a second question asks for a detail read earlier.",
+      "moments": [
+        {"time": 0, "frames": ["The sliding doors of a supermarket open in front of me.", "My hand takes a red plastic basket from a stack.", "A sign above reads 'Fruit and Vegetables'.", "Rows of crates with apples, lemons and limes."]},
+        {"time": 15, "frames": ["My hand puts lemons into a paper bag.", "I count three lemons in the bag.", "I fold the bag closed.", "I put the bag of lemons into the red basket."]},
+        {"time": 30, "frames": ["The dairy fridge; cartons of oat milk on a shelf.", "My hand turns a carton of Oatly Barista oat milk to read the top.", "The printed date reads 'BEST BEFORE 14 OCT'.", "I put the oat milk carton into the basket."]},
+        {"time": 45, "frames": ["My phone shows a note titled 'Shopping'.", "The note lists: lemons, oat milk, eggs, basil, dish soap.", "I scroll; nothing else is on the list.", "I lower the phone."]},
+        {"time": 60, "frames": ["An egg shelf; my hand opens a box of twelve free-range eggs.", "All twelve eggs are intact.", "I close the box.", "I put the egg box on top of the other items in the basket."]},
+        {"time": 75, "frames": ["The household aisle; bottles of washing-up liquid.", "My hand takes a green bottle of dish soap.", "I put the dish soap into the basket.", "The basket holds lemons, oat milk, eggs and dish soap."]},
+        {"time": 90, "frames": ["I walk past the bakery counter.", "Signs over the checkouts read 1 to 6.", "I join the queue at checkout 4.", "The person in front of me unloads a trolley."]}
+      ],
+      "questions": [
+        {"time": 100, "frames": ["The conveyor belt at checkout 4.", "My red basket on the end of the belt.", "The cashier scans someone else's items.", "A rack of chewing gum beside the belt."], "question": "Is there anything on my shopping list that I haven't picked up yet?", "answer": "Yes, the basil. Lemons, oat milk, eggs and dish soap are in the basket."},
+        {"time": 106, "frames": ["My hand lifts the oat milk carton out of the basket.", "The carton is turned so the top is not visible.", "The cashier's screen shows the total so far.", "My other hand holds the phone."], "question": "What was the best-before date on the oat milk I picked?", "answer": "14 October."}
+      ]
+    },
+    {
+      "id": "office_drawer",
+      "setting": "An afternoon at an office desk.",
+      "design": "The calendar entry is visible at 0 s, the USB drive goes into the drawer at 12 s; at question time the user is at the printer, so both answers need the stored history.",
+      "moments": [
+        {"time": 0, "frames": ["A laptop on a desk; the calendar app is open.", "The calendar shows '15:00 Design review - Room 4B'.", "A second entry reads '17:30 Gym'.", "My hand scrolls back to today's view."]},
+        {"time": 12, "frames": ["A colleague's hand holds out a small black USB drive with a label 'Q3 data'.", "I take the USB drive.", "I open the top drawer of my desk.", "I put the USB drive in the top drawer and close it."]},
+        {"time": 24, "frames": ["A yellow sticky note pad and a pen.", "I write 'Call Anna re: invoice 4471' on a sticky note.", "I peel off the note.", "I stick the note on the lower edge of my monitor."]},
+        {"time": 36, "frames": ["I pick up an empty water bottle.", "I walk to a water dispenser by the window.", "Water fills the bottle.", "I screw the cap back on."]},
+        {"time": 48, "frames": ["Back at the desk, I press Windows+L; the laptop shows the lock screen.", "I stand up and push the chair in.", "I pick up my badge from the desk.", "I walk toward the corridor."]},
+        {"time": 60, "frames": ["A large office printer in a corner; a stack of pages in the tray.", "I lift the printed pages.", "The top page is titled 'Design review agenda'.", "I hold the pages against my chest."]}
+      ],
+      "questions": [
+        {"time": 72, "frames": ["The office printer and a recycling bin.", "The pages in my hands.", "A colleague walks past in the corridor.", "A wall clock shows 14:41."], "question": "Which room is my design review in, and at what time?", "answer": "Room 4B at 15:00."},
+        {"time": 78, "frames": ["The corridor leading back to the desks.", "The pages in my hands.", "A fire exit sign.", "My badge clipped to my belt."], "question": "Where did I put the USB drive with the Q3 data?", "answer": "In the top drawer of my desk."}
+      ]
+    }
+  ]
+}

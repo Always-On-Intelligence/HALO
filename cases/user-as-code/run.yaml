@@ -1,0 +1,29 @@
+# HALO run mode for User as Code. Inputs and the backbone are fixed across arms; only the cut sites differ.
+models:
+  backbone: {backend: "codex:gpt-6-astra", effort: low}    # stands in for GPT-5.6 Luna through Krill
+  judge: {backend: "codex:gpt-6-astra", effort: high}
+samples: 3
+rubric: >-
+  The assistant keeps an executable memory of what the user tells it. After each update it runs its stored
+  constraint checks, which may raise an alert without being asked, and afterwards it answers the user's
+  question. Using the updates and the reference in the situation, decide which output serves the user better:
+  an alert at the last update that names the real conflict or deadline with its evidence and consequence,
+  silence when nothing is actionable yet, and a correct answer grounded in what the user said earlier. A
+  missing alert or answer is worse than a correct one; a wrong or premature alert is worse than silence.
+  Ignore writing style and length.
+tests:
+  - cut: [S->M]
+  - cut: [M->A]
+    field: output_answer
+    rubric: >-
+      The assistant answers the user's question from its memory of earlier updates. Using the updates in the
+      situation, prefer the answer that is correct and grounded in what the user said earlier; an answer that
+      lacks the needed fact is worse than a correct one. Ignore writing style and length.
+  - cut: [revision]
+    field: output_alerts
+    rubric: >-
+      After each update the assistant runs its stored constraint checks, which may raise an alert without
+      being asked. Using the updates and the reference in the situation, prefer the output whose alerts
+      surface the real conflict or deadline at the last update with its evidence and consequence, and that
+      stays silent before anything is actionable. A wrong or premature alert is worse than silence; a missing
+      alert at the last update is worse than a correct one. Ignore writing style and length.

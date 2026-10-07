@@ -1,0 +1,18 @@
+{
+  "id": "site_safety",
+  "learning_rounds": [
+    "q1",
+    "q2",
+    "q3",
+    "q4",
+    "q5"
+  ],
+  "test_rounds": [
+    "q6",
+    "q7",
+    "q8",
+    "q9"
+  ],
+  "expected_for_judge": "PPE-compliant means hard hat, hi-vis vest and safety glasses worn, plus hearing protection in the crusher zone; gloves do not count. Correct results for the later requests: q6 ppe_part2.json = #24 (no glasses) and #27 (no hard hat), nothing else. q7 = B (1 worker). q8 ppe_summary_morning.json = gate: compliant 1, non_compliant #12; scaffold base: compliant 1, non_compliant #14 #15; crusher zone: compliant 1, non_compliant #17. q9 = A (8 workers).",
+  "design": "Learning rounds expose the workspace rule only through the answer keys: AGENTS.md states it, but the Codex bridge drops AGENTS.md and IDENTITY.md from the workspace snapshot (codex_cli.py TEXT_SNAPSHOT_SKIP_NAMES). Test rounds q6-q7 apply the rule to new areas with the clip attached; q8-q9 cite no clip, so the facts must come from memory of the earlier rounds (or from keyframes attached because retained text names _clip_frames/). Not sent to any model."
+}

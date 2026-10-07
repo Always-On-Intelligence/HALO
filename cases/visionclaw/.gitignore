@@ -1,0 +1,2 @@
+# npm ci output for the gateway (see README); like .venv, not part of the case sources
+node_modules/

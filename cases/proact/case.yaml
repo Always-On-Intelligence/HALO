@@ -1,0 +1,18 @@
+id: proact
+name: "ProAct"
+domain: digital
+kind: research
+report: https://arxiv.org/abs/2605.25971
+sources:
+  - url: https://arxiv.org/html/2605.25971v2
+    kind: paper
+    version: "2605.25971v2"
+    sha256: 1650d3b03c69974218b91fc262d4abd1a54015b67dad303647abc9c52ceba2b4
+code:
+  repo: https://github.com/AgentACE-AI/ProAct
+  commit: 7ac78fde0524443ebeb9d3173b78498c25625f57
+variants:
+  - id: proact2026
+    label: "ProAct"
+    configuration: "Directed Idle: full Future-State Prediction plus Idle-Time Acquisition and delivery policy with the persistent memory layer"
+modes: [read, run]

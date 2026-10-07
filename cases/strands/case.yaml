@@ -1,0 +1,18 @@
+id: strands
+name: "STRANDS"
+domain: physical
+kind: research
+report: https://arxiv.org/abs/1604.04384
+sources:
+  - url: https://arxiv.org/pdf/1604.04384v2
+    kind: paper
+    version: ""
+    sha256: 571a0f602fe83cbec1713f1722e4819a4a2e5b9ea239daa980f8151ce3e6732e
+code:
+  repo: https://github.com/strands-project
+  commit: null  # not cloned
+variants:
+  - id: strands
+    label: "STRANDS"
+    configuration: "STRANDS core system with the 2015 HdB care deployment; no security-only activity-learning evidence combined into the row"
+modes: [read]

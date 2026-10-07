@@ -1,0 +1,86 @@
+{
+  "id": "proact2026",
+  "configuration": "Directed Idle (variant proact2026): the full ProAct system, with Future-State Prediction, Idle-Time Acquisition and the utility-aware push/queue/store delivery policy over the persistent memory layer. This is the runtime condition 'Full-single-idle' in the paper (arXiv 2605.25971v2 App. F/S) and in code (experiments/ProactiveBench/eval/ablation_config.py:63: fsp_enabled=True, ite_enabled=True, at most one idle tick per turn). It was run on ProActEval with gpt-4o / gpt-4o-mini. Reviewed at repo commit 7ac78fde0524443ebeb9d3173b78498c25625f57.",
+  "sources_read": [
+    "https://arxiv.org/html/2605.25971v2 (fetched with WebFetch; that tool paraphrases, so it was used only for orientation)",
+    "https://arxiv.org/pdf/2605.25971v2 (same version v2, dated 26 May 2026; full text pp. 1-26 read from the downloaded PDF; every paper quote was checked against this text)",
+    "README.md, RUN_COMMANDS.md, ARTIFACT_MANIFEST.json",
+    "experiments/ProactiveBench/eval/runner.py, adapter.py, ablation_config.py, fsp_module.py, ite_module.py, benchmark_search.py",
+    "server/handlers/chat_handler.py; server/tasks/proactive_tasks.py; server/app.py (L640-668); server/websocket/ws_handler.py (push_response handling, via grep)",
+    "memory/memory_system.py, memory/memory_update_agent.py, memory/profile_store.py (L100-210)",
+    "services/search_service.py; services/proactive/item_service.py, decision_service.py; services/deep_research/orchestrator.py (L80-497), searcher.py (L180-376)",
+    "agents/memory_critic.py, research_predictor.py, research_evaluator.py, push_score.py, planning_agent.py, assistant_agent.py, search_planner.py, topic_monitor.py",
+    "core/prompts.py (full); core/config.py (thresholds and flags, via grep)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User input and acquired evidence are written into persistent memory. The paper says foreground interactions update memory. After each turn, an incremental extraction pipeline writes profile updates, a rolling summary, key info, sentiment labels and extracted facts. New knowledge passes hash, vector and LLM-arbitrated deduplication before it is stored (App. U). The code for this configuration matches. ChatHandler.handle adds the user message to the session. _incremental_extract_and_save then submits UPDATE_PROFILE requests, calls add_facts, and saves the turn to conversations.json through append_interaction_to_topic. SearchService._store_results submits every retrieved source as ADD_KNOWLEDGE, and MemoryUpdateAgent._add_knowledge handles it (hash dedup, then vector similarity, then an LLM skip/replace/merge decision). The label does not rest on the seeded scenario profile; it rests on these per-turn write paths.",
+      "locator": "arXiv 2605.25971v2 §3.1, App. J, App. U (Alg. 1); code server/handlers/chat_handler.py:236, 849-953; services/search_service.py:158-159, 301-353; memory/memory_update_agent.py:112-209",
+      "quote": "Figure 2 summarizes this loop: foreground interactions update memory, which then conditions prediction, acquisition, and delivery decisions in the following idle interval. (§3.1) | The incremental extraction pipeline produces structured updates after each turn, including profile_updates for user attributes such as interests, goals, traits, and demographics; updated_summary for a rolling summary that merges historical and new interaction highlights; key_info for factual items from the current turn; user_sentiment for the emotion label and intensity score; and extracted_facts for entities with type, attribute, and relationship annotations. (App. J)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Stored memory shapes what is prepared, whether to search, what is pushed, and what the reply says. In the paper, Future-State Prediction draws candidates from Mt (profiles, conversation summaries, stored artifacts, unresolved goals). Candidates are deduplicated against stored artifacts. The value score includes incremental value beyond existing memory. Prepared artifacts are queued or stored for reuse in later responses. Memory is described as the shared state that links prediction, acquisition, delivery and response generation. In the code, BenchmarkFSP runs MemoryCriticAgent over memory.format_context_for_query, runs ResearchTopicPredictor over the stored profile and recent topics, and passes memory.search_knowledge results to ResearchValueEvaluator. BenchmarkITE scores pushes using the stored profile interests and the session messages. PlanningAgent decides memory_sufficient from retrieved memory, and AssistantAgent answers from the memory context.",
+      "locator": "arXiv 2605.25971v2 §3.1; §3.2 (S(z), vz); §3.3 Candidate generation, Memory-gap augmentation, Filtering and prioritization; §3.4 Memory update; code experiments/ProactiveBench/eval/fsp_module.py:315-423; ite_module.py:258-310; agents/planning_agent.py:45-81; agents/assistant_agent.py:44-84; server/handlers/chat_handler.py:240-276",
+      "quote": "Second, related expansion proposes adjacent topics grounded in Mt, including user profiles, conversation summaries, stored artifacts, and unresolved goals. (§3.3) | Thus, memory serves as the shared state that couples prediction, acquisition, delivery, and future response generation. (§3.4)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The predicted needs the policy selects, with their retrieval plans, decide what evidence is acquired. This prediction-directed acquisition is exactly what separates Directed Idle from Undirected Idle. In the code, FSP intents that pass the value evaluator go into a priority queue. BenchmarkITE.explore pulls the top intents within the idle budget and calls SearchService.search(topic=intent.topic, purpose=intent.reason). That call plans queries and searches the external fact store. The reactive path has the same flow: PlanningAgent's search_queries trigger search_for_query.",
+      "locator": "arXiv 2605.25971v2 §3.2 (z=(qz,ez,cz,ρz)), §3.4 opening paragraph, §5.1 Ablation Study, App. O Search direction failure; code experiments/ProactiveBench/eval/adapter.py:426-544; ite_module.py:70-110, 220-245; services/search_service.py:105-159; server/handlers/chat_handler.py:240-255",
+      "quote": "where qz is the anticipated need, ez is the grounding rationale from Ht or Mt, cz is the prediction confidence, and ρz is the retrieval plan used if the candidate is selected for acquisition. (§3.2) | These results suggest that the gains do not come from Idle-Time Acquisition alone, but from directing that acquisition toward predicted needs; undirected background compute adds cost but yields only limited proactive benefit. (§5.1)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The evaluated code has direct flows from memory into sensing. These are separate from the chain memory → prediction/value gate → search, which is M→A→S and is not counted here. (1) Interpretation: on every user turn, ChatHandler calls TopicMonitorAgent with memory.current_topic, the stored session messages and memory.get_all_topics(). The TOPIC_MONITOR prompt classifies the new message as continuing the current topic, returning to an earlier topic, or starting a new one, and the label re-files memory. (2) Sampling: SearchService.search loads the stored user profile and passes it to SearchPlannerAgent as 'User background'; the planner writes the acquisition queries from it. The paper's memory-aware acquisition also fits: memory coverage decides whether to reuse stored evidence or search only the missing subtopics. Caveat: the paper places this coverage check inside policy π, and the Full-single-idle path does not run it, because the coverage-gated reuse/incremental logic lives in services/deep_research, which the adapter disables. The label therefore rests mainly on (1) and (2).",
+      "locator": "code server/handlers/chat_handler.py:221-233; agents/topic_monitor.py:37-125; core/prompts.py:12-37 (TOPIC_MONITOR), 392-415 (SEARCH_PLANNING); services/search_service.py:130-137; arXiv 2605.25971v2 §3.4 Memory-aware acquisition; services/deep_research/orchestrator.py:115-136; experiments/ProactiveBench/eval/adapter.py:684",
+      "quote": "You are a topic monitoring assistant. Your task is to determine whether the user's new message is related to the current topic, or whether it returns to a previously discussed topic. (core/prompts.py:12) | For accepted candidates, the module first checks whether the existing memory state Mt already contains sufficient evidence. If memory coverage is high, the system reuses stored evidence and avoids redundant search. If coverage is partial, it searches only for missing subtopics. (§3.4)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "What the service prepares and says is written back to memory. In the paper, each generated artifact records the candidate need it supports, a preparation note and provenance, and is written back into memory after the acquisition and delivery decisions ('store' means silent storage in memory). The dialogue history Ht also includes the assistant's own responses at. In the code, ChatHandler stores each reply in the session and saves it with the user message to conversations.json; the rolling-summary extraction also reads the reply. The runner writes each direct push into memory through adapter.record_direct_push. BenchmarkITE keeps the fact IDs and source URLs of facts it has pushed.",
+      "locator": "arXiv 2605.25971v2 §3.2 (Ht), §3.4 Artifact generation, Utility-aware delivery, Memory update; code server/handlers/chat_handler.py:279, 879-943; experiments/ProactiveBench/eval/runner.py:266-268; adapter.py:614-619; ite_module.py:419-438",
+      "quote": "Each artifact contains the candidate need it supports, a preparation note, and provenance linking it to remembered or retrieved evidence. | After acquisition and delivery decisions, each artifact and its provenance are written back into memory, allowing later predictions and responses to reuse grounded preparation. (§3.4)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps runtime records of what it prepared and delivered, and uses them later. Prepared artifacts carry the need they serve and their provenance, and are written back to memory after the delivery decision so later predictions and responses can reuse them. In the code, replies and direct pushes go into the memory session (adapter docstring: 'Record a direct push in the active memory session.'). ITE._record_direct_push keeps the fact IDs and URLs it has delivered, and later pushes are gated on them (no_undelivered_facts, recent_push_overlap, novelty ratio). These are records the service uses at runtime, not trial logs that only the authors analyse.",
+      "locator": "arXiv 2605.25971v2 §3.4 Memory update; code experiments/ProactiveBench/eval/adapter.py:614-619; ite_module.py:360-389, 419-438, 440-489; server/handlers/chat_handler.py:279",
+      "quote": "After acquisition and delivery decisions, each artifact and its provenance are written back into memory, allowing later predictions and responses to reuse grounded preparation."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Neither the paper nor the code describes the service collecting and keeping evidence of how its pushes, queued or stored artifacts, or predictions turned out. The paper says downstream benefit is not observed at idle time: the service estimates it beforehand with the value score, and it is measured only by the ProActEval coverage judge, which is offline scoring by the authors. Later user turns are kept as dialogue history, but they are never treated as feedback on earlier actions. In the production server, the push_response handler only logs and acknowledges the option the user picked; no on_push_response callback is connected, and the evaluated benchmark path does not use this handler.",
+      "locator": "arXiv 2605.25971v2 §3.2 (value score rationale), App. C Benefit and cost, §4.3; code server/websocket/ws_handler.py:426-447; server/app.py:651-655",
+      "quote": "Downstream benefit is not observed at idle time. ProAct approximates it through the value score S(z) above, and the ProActEval experiments measure it through end-to-end outcomes"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Nothing ties the result of a delivered or prepared action back to the decision that produced it in order to check or correct assistance. The closest text is a passing mention of 'iterative search, evidence extraction, and coverage checking' for low-coverage acquisition. That checks whether gathered evidence is sufficient before any assistance is delivered. It also does not run in the evaluated Full-single-idle path: ITE makes one SearchService.search call per intent, and the iterative/coverage logic lives in services/deep_research, which the adapter disables. ITE's push gates compare new search results with records of earlier pushes and assistant turns; they do not use outcomes. The judge's coverage scoring happens offline.",
+      "locator": "arXiv 2605.25971v2 §3.4 Memory-aware acquisition; code experiments/ProactiveBench/eval/ite_module.py:220-245, 360-417; adapter.py:684; services/deep_research/orchestrator.py:166-202",
+      "quote": "If coverage is low, it decomposes the candidate into sub-questions and performs iterative search, evidence extraction, and coverage checking."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service never changes its own mechanism. Prompts, models (gpt-4o / gpt-4o-mini, used through the API with no fine-tuning), scoring weights and thresholds are fixed implementation defaults. Memory updates change only content that a fixed mechanism uses: profile, facts, summaries, artifacts, research history and the intent queue. Figure 2's label 'τ: adaptive threshold' is diagram text only; App. C and the code use constants (PUSH_THRESHOLD=70, INLINE_THRESHOLD=40, EVALUATOR_THRESHOLD=40). The introduction's phrase that the agent 'continuously evolves' is framing, not a described mechanism.",
+      "locator": "arXiv 2605.25971v2 App. C (implementation defaults), Fig. 2, §1; code experiments/ProactiveBench/eval/ite_module.py:34-43; fsp_module.py:33; core/prompts.py",
+      "quote": "All thresholds and weights below correspond to the implementation defaults: confidence filter θconf = 0.6, value gate θval = 60 on a 0–100 scale (dividing by 100 gives the normalized score in Section 3.2), scoring weights wr = wg = wv = wτ = 0.25, push-notification threshold 40, and high-priority push threshold 70.",
+      "what": "Nothing. Only memory content (profile, facts, summaries, artifacts, research history) changes, and the mechanism that uses it stays fixed."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revision is reported, so no later run under a revised mechanism can be stated. Later turns do reuse stored artifacts and profile content, but through the same fixed mechanism.",
+      "locator": "arXiv 2605.25971v2 §3.4 Memory update, §5; code experiments/ProactiveBench/eval/runner.py:233-407"
+    }
+  },
+  "notes": "The configuration came from the assignment text; the HALO case.yaml was not readable from this sandbox. Directed Idle maps to the runtime condition Full-single-idle (App. F). The benchmark adapter (adapter.py:667-689) disables the in-conversation NeedPredictor path (proactive.in_conversation_enabled=False) and deep research (deep_research.enabled=False). Scenario facts live in an ExternalFactStore that the system can reach only through search, and system memory starts empty apart from the seeded scenario profile. In the evaluated path, ITE acquires through SearchService.search (1 query per search) and stores results in MemorySystem. Delivery uses PushScoreAgent with fixed thresholds: a direct push needs score ≥70 and must pass the novelty/overlap gates, and 'inline' needs ≥40. Inline results reach replies only through ordinary memory retrieval. Gaps between paper and code: the coverage-gated reuse/incremental acquisition in §3.4 exists only in services/deep_research, which is disabled here; the code's FSP value gate is 40 (fsp_module.EVALUATOR_THRESHOLD), while the paper states θval=60. I read the production server path (server/tasks, websocket) for context, but it is not the configuration judged. All paper quotes were checked against the full v2 text from the PDF; the HTML page itself was only seen through a paraphrasing tool.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 818,
+    "code_commit": "7ac78fde0524443ebeb9d3173b78498c25625f57"
+  }
+}

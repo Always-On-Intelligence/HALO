@@ -1,0 +1,10 @@
+# M3-Agent run mode, CPU only. The model clients are replaced (see README.md).
+pyyaml
+sentence-transformers   # all-MiniLM-L6-v2 stands in for text-embedding-3-large and the face/voice embedders
+openai                  # control.py and utils/chat_api.py build Azure clients at import; they are never called
+scikit-learn            # videograph.py: cosine_similarity, DBSCAN
+matplotlib              # memory_processing*.py and videograph.py import pyplot
+pillow
+numpy
+tqdm
+pydub                   # voice_processing.py imports AudioSegment

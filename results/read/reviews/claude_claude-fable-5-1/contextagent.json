@@ -1,0 +1,121 @@
+{
+  "id": "contextagent",
+  "configuration": "Variant `contextagent`: the ContextAgentBench / CAB-Lite evaluated context-aware reasoner (ICL prompt or LoRA-SFT LLM) that receives, per benchmark sample, a pre-extracted sensory-context string plus a supplied persona string, outputs thought traces, a proactive score and a planned tool chain; the chain is then executed by execute_tools_with_memory (scripts default to --mode sandbox with canned tool returns; live mode calls real APIs) and the tool results are summarized into a response. Judged from paper v2 (Sec 3.1, 3.2, 4.1, 4.2, 5.1) and the repository at commit f4674bf.",
+  "sources_read": [
+    "https://arxiv.org/html/2505.14668v2 (read via WebFetch in targeted passes; tool returns short quotes, so paper quotes are labeled UNVERIFIED; Appendix F Limitations could not be reached because the page was truncated before it)",
+    "https://arxiv.org/pdf/2505.14668v2 (fetched; local PDF rendering unavailable, so not read)",
+    "README.md",
+    "src/icl/README.md",
+    "src/sft/README.md",
+    "src/cab_lite/README.md",
+    "src/icl/inference.py",
+    "src/icl/inference_api.py",
+    "src/sft/inference.py",
+    "src/sft/agent_server.sh",
+    "src/config.py",
+    "src/tool_registry.py",
+    "src/utils.py",
+    "src/calculate_scores.py",
+    "src/tools/__init__.py",
+    "src/tools/config.py",
+    "src/tools/add_meeting.py",
+    "src/tools/add_to_agenda.py",
+    "src/tools/check_agenda_time_conflict.py",
+    "src/tools/send_email.py",
+    "src/tools/play_music.py",
+    "src/tools/set_timer.py",
+    "src/tools/get_health_data.py",
+    "src/tools/get_current_gps_coordinates.py",
+    "src/tools/vllm.py",
+    "prompt/prompt_sys.txt",
+    "prompt/prompt_summarize.txt",
+    "prompt/baselines/icl_fs.txt",
+    "prompt/baselines/icl_fs_wo_t.txt",
+    "prompt/baselines/icl_zs.txt",
+    "scripts/icl/run_infer_api.sh",
+    "scripts/icl/run_infer_local.sh",
+    "scripts/sft/run_sft_eval.sh",
+    "scripts/sft/run_sft_exp.sh",
+    "src/cab_lite/icl/icl_infer.sh",
+    "src/cab_lite/icl/icl_infer_api.sh",
+    "src/cab_lite/sft/eval_sft.sh",
+    "src/cab_lite/sft/sft_exp.sh",
+    "LLaMA-Factory/experiments/cab_lora_train.sh",
+    "LLaMA-Factory/experiments/configs/cab/train/qwen_lora_sft.yaml",
+    "data/cab/cab.json (first 120 lines)",
+    "data/cab/cab_train_sft.json (first 40 lines)",
+    "data/cab_lite/cab_lite.json (first 160 lines)",
+    "data/tools/last_song.json",
+    "data/tools/meetings_db.json",
+    "data/tools/outbox.json",
+    ".gitignore"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "absent",
+      "rationale": "The only retained user information is the persona context, and in this configuration it is a fixed per-sample benchmark field: the paper states that this work uses the personas contained in ContextAgentBench and defers persona updating from historical sensory data to 'in practice'. The code reads personas_str = '.'.join(sample.get('Personas', [])) and never writes personas or any cross-sample store. The dict named memory used during tool execution is created fresh in run_tools for every sample (memory = {\"now_iso\": datetime.now().isoformat()}) and discarded afterwards, so sensed tool results are not retained across interactions. The gitignored src/persona_retrieval/ directory is not part of the commit.",
+      "locator": "Paper Sec 4.1 'Persona Context' paragraph; src/icl/inference.py:111,150; src/sft/inference.py:109,171; src/utils.py:441-453; .gitignore:15",
+      "quote": "UNVERIFIED (tool transcription, identical in two independent fetches): \"In this work, we use persona contexts within ContextAgentBench for experiments. In practice, these contexts can be continuously updated by utilizing LLMs to extract insights from historical sensory data like daily conversations.\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained user information (persona context: identity, preferences, historical behaviors) is delivered to the Action decisions: the reasoner takes sensory context C and persona P as input to produce the proactive score (compared against threshold theta to decide service vs. silence) and the planned tool chain, and the summarizer also receives the persona. The code concatenates the persona string into the planning message and into the summarizer content, and the paper ablates with/without personas. Retention scope in this configuration is a static per-sample benchmark profile (no runtime write path, see S->M), which does not negate the read path.",
+      "locator": "Paper Sec 3.1 (persona P definition), Sec 4.1 'Persona Context', Sec 4.2 reasoner equation; src/icl/inference.py:150-160 and 126-132; src/sft/inference.py:84-89; prompt/prompt_sys.txt:1",
+      "quote": "Code (verbatim, src/icl/inference.py:157): \"Sensory Context:\\n\" + contextual_info + \"\\nPersona Context:\\n\" + personas_str. Paper UNVERIFIED: \"The context reasoner is an LLM that integrates both sensory context 𝒞 and personas 𝒫 as input to generate thought traces 𝒯, proactive scores 𝒫𝒮, and tool chains 𝒯𝒞.\""
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The reasoner's planned tool chain (its information needs) determines which observations are acquired next and how they are interpreted: get_current_gps_coordinates (geocoder/LocationIQ), get_health_data (wearable Fitbit data), vllm (a VLM query over the camera image with an Action-chosen prompt such as 'Detect the freshness of the vegetable.'), check_agenda_time_conflict, get_current_datetime; outputs of earlier acquisitions parameterize later ones through $RESULT(tool.field) placeholders resolved by execute_tools_with_memory, and the acquired results are fed to response generation. The paper states the planned tools are executed sequentially and their results integrated. In the default sandbox mode the acquisition returns canned values, which is a simulation and does not negate the implemented flow; live mode performs real acquisition.",
+      "locator": "Paper Sec 4.2 (tool execution sentence); src/utils.py:393-405 (resolve_placeholder), 455-527 (execute_tools_with_memory); src/tools/vllm.py:5-35; src/tools/get_health_data.py:4-93; src/tools/get_current_gps_coordinates.py:61-84; data/cab/cab.json example-3 'Tools' field",
+      "quote": "UNVERIFIED (identical in two independent fetches): \"ContextAgent will execute the planned tools sequentially and integrate their results with the sensory context, persona context, and thought traces into the LLM to generate final responses.\" Code (verbatim, src/utils.py:458-459): \"1) Run no-parameter tools -> write to memory (raw & norm) 2) Run parameterized tools -> resolve placeholders/time phrases -> call -> write to memory\""
+    },
+    "M->S": {
+      "label": "absent",
+      "rationale": "In this configuration sensing is a pre-extracted dataset string: get_contextual_info returns sample['Context information'] (CAB) or sample['Rawdata Context'] (CAB-Lite), fields produced offline from Qwen2-VL summaries and Whisper transcription, and the evaluation code runs no perception. The paper defines extraction on raw sensor streams with a fixed ICL prompt, C=[C_V, C_A, N], and persona P enters only at the reasoner, (T, PS, TC) = AS(C, P); no retained prior is supplied to sampling, attention, compression, or interpretation. Tool-chain acquisitions are Action-driven (A->S), not memory-guided. The src/context_extraction/ directory is gitignored and absent from the commit.",
+      "locator": "Paper Sec 4.1 (visual/audio/notification extraction, C=[C_V,C_A,N]) and Sec 4.2 equation; src/icl/inference.py:93-98; src/sft/inference.py:70-75; data/cab_lite/cab_lite.json fields 'Qwen2-VL-7B-Instruct Summary' and 'Rawdata Context'; .gitignore:9",
+      "quote": "UNVERIFIED: \"Finally, ContextAgent integrate these contexts into the final context information 𝒞=[𝒞𝒱,𝒞𝒜,𝒩], which includes visual contexts 𝒞𝒱, audio contexts 𝒞𝒜, and textual information from smartphone notifications 𝒩.\" Code (verbatim, src/icl/inference.py:96-97): if dataset_name == \"cab_lite\": return sample[\"Rawdata Context\"]"
+    },
+    "A->M": {
+      "label": "absent",
+      "rationale": "No module retains the reasoner's decisions, plans, utterances, or outcomes for later use by the service. Per-sample predictions are dumped to results/<dataset>/predictions/... solely for offline scoring by calculate_scores.py. The per-sample memory dict is discarded after each sample. The only persistent writes are effector mocks that execute in live mode only and are disabled by the sandbox default used by the evaluation scripts: add_meeting appends to data/tools/meetings_db.json and send_email appends to data/tools/outbox.json, and a repository-wide search shows no code reads either file back; last_song.json is read by play_music but never written. The paper describes a single-pass pipeline and does not mention memory.",
+      "locator": "src/icl/inference.py:111,199-209; src/sft/inference.py:240-247; src/tools/add_meeting.py:17-20,34-35,65-67; src/tools/send_email.py:16-25,39-40,56; src/tools/play_music.py:7-16; scripts/icl/run_infer_local.sh:16; scripts/sft/run_sft_eval.sh:46; paper Sec 4.2",
+      "quote": "Code (verbatim, src/tools/add_meeting.py:34-35): if config.is_sandbox():\n        return \"success: 1.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "The paper reports no retention of the agent's own decisions. The code writes each sample's thoughts, proactive score, tools, tool results and response to results/<dataset>/predictions/pred_*.json only so that calculate_scores.py can compute benchmark metrics, i.e., a research log the authors analyse; the live-mode effector mocks (meetings_db.json, outbox.json) are write-only, never consulted later, and inactive in the default sandbox configuration.",
+      "locator": "src/icl/inference.py:199-209; src/sft/inference.py:240-247; src/calculate_scores.py:31-43,179-181; src/tools/add_meeting.py:34-35"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Each sample ends when the response is produced; no later evidence about a delivered service (user reply, rating, dismissal, state change) is obtained or retained. The only comparison is offline benchmark scoring against ground-truth proactive scores and tool chains.",
+      "locator": "src/icl/inference.py:145-196; src/calculate_scores.py:202-337; paper Sec 5.1 metrics"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Predictions are matched to ground truth per sample by the authors' scoring script after the run (accuracy, miss/false detection, RMSE, tool P/R/F1, argument accuracy); the service itself never links an outcome to a decision or corrects assistance. Offline benchmark scoring by the authors does not count.",
+      "locator": "src/calculate_scores.py:227-295; paper Sec 5.1 'Evaluation metrics'"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The only change to the mechanism is author-run offline LoRA supervised fine-tuning of the reasoner on distilled thought traces (LLaMA-Factory, cab_train_sft, 5 epochs) before evaluation; prompts are fixed files and nothing in the service modifies weights, prompts, rules, or code at runtime. Developer-performed training is not a self-revision.",
+      "locator": "LLaMA-Factory/experiments/configs/cab/train/qwen_lora_sft.yaml:6-16,34; LLaMA-Factory/experiments/cab_lora_train.sh; scripts/sft/run_sft_exp.sh:4-10; paper Sec 4.2 training scheme",
+      "quote": "UNVERIFIED: \"The thought traces 𝒯 divided by <think> and </think>, are distilled from advanced LLMs, enabling ContextAgent to 'think before acting'.\"",
+      "what": "None by the service. Only offline developer LoRA-SFT of the reasoner LLM (Qwen2.5-7B / Llama-3.1-8B) on cab_train_sft."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No service-made revision exists, so no later run under a revised mechanism is reported; evaluation loads a fixed SFT checkpoint via llamafactory-cli api or a fixed few-shot prompt sampled once with seed 42.",
+      "locator": "scripts/sft/run_sft_eval.sh:12-18,27-31; src/icl/inference.py:18,75-88"
+    }
+  },
+  "notes": "Judged the benchmark-evaluated reasoner configuration (sandbox default). Paper text was accessible only through WebFetch's summarizing model, which refused bulk reproduction; key sentences were requested in two independent passes and matched, but are still labeled UNVERIFIED because the raw page was not seen. Appendix F (Limitations) was truncated out of every fetch and could not be read; the fetched PDF could not be rendered locally. Bash was denied, so the repository was read with file tools only. Directories src/persona_retrieval/ and src/context_extraction/ are listed in .gitignore and are not present at commit f4674bf, so no judgment relies on them. The per-sample dict named 'memory' in src/utils.py is transient within-episode working state, not cross-interaction retention.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 508,
+    "code_commit": "f4674bf2a1385ce829c6a7f2ea9c53871dd1a8ce"
+  }
+}

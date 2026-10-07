@@ -1,0 +1,268 @@
+{
+  "case": "properassistant",
+  "channels": {
+    "S->M": "John's observed activity written into the assistant's evaluation memory (evaluation.py:157-198,240)",
+    "M->A": "retrieved memory and summaries in the [MEMORY] block of the suggestion prompt (suggestion.py:108)",
+    "A->M": "the assistant's suggestion written into its own memory record at level AS (evaluation.py:193-194)"
+  },
+  "steps": {
+    "record": "the assistant's own two candidates enter the preference data (reverie.py:462, agent.py:294-305)",
+    "outcome": "the user agent's ratings decide chosen/rejected (reverie.py:453-461)",
+    "attribution": "each rating is linked to the candidate it rated (reverie.py:462)",
+    "revision": "the nightly DPO update writes the new policy into the model (agent.py:457); prompt-level here"
+  },
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 6,
+      "original": 1,
+      "modified": 2,
+      "tie": 3,
+      "metrics": {
+        "learn_preference_pairs": {
+          "original": 0.6667,
+          "modified": 0.6667
+        },
+        "test_recommendations": {
+          "original": 1.5,
+          "modified": 1.5
+        },
+        "backbone_calls": {
+          "original": 22.8333,
+          "modified": 24.5
+        },
+        "pairs_in_policy": {
+          "original": 0.6667,
+          "modified": 0.6667
+        },
+        "test_mean_rating": {
+          "original": 3.3334,
+          "modified": 3.3334
+        },
+        "learn_mean_rating": {
+          "original": 3.1111,
+          "modified": 3.2778
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 6,
+      "original": 3,
+      "modified": 2,
+      "tie": 1,
+      "metrics": {
+        "learn_preference_pairs": {
+          "original": 0.6667,
+          "modified": 1.5
+        },
+        "test_recommendations": {
+          "original": 1.5,
+          "modified": 2.1667
+        },
+        "backbone_calls": {
+          "original": 22.8333,
+          "modified": 24.0
+        },
+        "pairs_in_policy": {
+          "original": 0.6667,
+          "modified": 1.5
+        },
+        "test_mean_rating": {
+          "original": 3.3334,
+          "modified": 3.4445
+        },
+        "learn_mean_rating": {
+          "original": 3.1111,
+          "modified": 3.0556
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M"
+      ],
+      "field": "output",
+      "pairs": 6,
+      "original": 1,
+      "modified": 3,
+      "tie": 2,
+      "metrics": {
+        "learn_preference_pairs": {
+          "original": 0.6667,
+          "modified": 1.1667
+        },
+        "test_recommendations": {
+          "original": 1.5,
+          "modified": 2.1667
+        },
+        "backbone_calls": {
+          "original": 22.8333,
+          "modified": 25.5
+        },
+        "pairs_in_policy": {
+          "original": 0.6667,
+          "modified": 1.1667
+        },
+        "test_mean_rating": {
+          "original": 3.3334,
+          "modified": 3.3889
+        },
+        "learn_mean_rating": {
+          "original": 3.1111,
+          "modified": 3.2222
+        }
+      }
+    },
+    {
+      "cut": [
+        "record"
+      ],
+      "field": "output",
+      "pairs": 6,
+      "original": 1,
+      "modified": 2,
+      "tie": 3,
+      "metrics": {
+        "learn_preference_pairs": {
+          "original": 0.6667,
+          "modified": 0.6667
+        },
+        "test_recommendations": {
+          "original": 1.5,
+          "modified": 1.0
+        },
+        "backbone_calls": {
+          "original": 22.8333,
+          "modified": 22.0
+        },
+        "pairs_in_policy": {
+          "original": 0.6667,
+          "modified": 0.0
+        },
+        "test_mean_rating": {
+          "original": 3.3334,
+          "modified": 3.1667
+        },
+        "learn_mean_rating": {
+          "original": 3.1111,
+          "modified": 3.1111
+        }
+      }
+    },
+    {
+      "cut": [
+        "outcome"
+      ],
+      "field": "output",
+      "pairs": 6,
+      "original": 1,
+      "modified": 2,
+      "tie": 3,
+      "metrics": {
+        "learn_preference_pairs": {
+          "original": 0.6667,
+          "modified": 0.6667
+        },
+        "test_recommendations": {
+          "original": 1.5,
+          "modified": 1.0
+        },
+        "backbone_calls": {
+          "original": 22.8333,
+          "modified": 22.0
+        },
+        "pairs_in_policy": {
+          "original": 0.6667,
+          "modified": 0.0
+        },
+        "test_mean_rating": {
+          "original": 3.3334,
+          "modified": 3.1667
+        },
+        "learn_mean_rating": {
+          "original": 3.1111,
+          "modified": 3.1111
+        }
+      }
+    },
+    {
+      "cut": [
+        "attribution"
+      ],
+      "field": "output",
+      "pairs": 6,
+      "original": 3,
+      "modified": 0,
+      "tie": 3,
+      "metrics": {
+        "learn_preference_pairs": {
+          "original": 0.6667,
+          "modified": 0.6667
+        },
+        "test_recommendations": {
+          "original": 1.5,
+          "modified": 0.6667
+        },
+        "backbone_calls": {
+          "original": 22.8333,
+          "modified": 21.0
+        },
+        "pairs_in_policy": {
+          "original": 0.6667,
+          "modified": 0.6667
+        },
+        "test_mean_rating": {
+          "original": 3.3334,
+          "modified": 3.0556
+        },
+        "learn_mean_rating": {
+          "original": 3.1111,
+          "modified": 3.1111
+        }
+      }
+    },
+    {
+      "cut": [
+        "revision"
+      ],
+      "field": "output",
+      "pairs": 6,
+      "original": 1,
+      "modified": 2,
+      "tie": 3,
+      "metrics": {
+        "learn_preference_pairs": {
+          "original": 0.6667,
+          "modified": 0.6667
+        },
+        "test_recommendations": {
+          "original": 1.5,
+          "modified": 1.0
+        },
+        "backbone_calls": {
+          "original": 22.8333,
+          "modified": 22.0
+        },
+        "pairs_in_policy": {
+          "original": 0.6667,
+          "modified": 0.0
+        },
+        "test_mean_rating": {
+          "original": 3.3334,
+          "modified": 3.1667
+        },
+        "learn_mean_rating": {
+          "original": 3.1111,
+          "modified": 3.1111
+        }
+      }
+    }
+  ]
+}

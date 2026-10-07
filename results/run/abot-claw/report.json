@@ -1,0 +1,303 @@
+{
+  "case": "abot-claw",
+  "channels": {
+    "S->M": "sensed frames, detections and robot poses admitted to SpatialMemory",
+    "M->A": "SpatialMemory query results returned to the OpenClaw agent",
+    "A->S": "the agent's task description conditioning the VLAC critic",
+    "M->S": "a memory evidence image used as the VLAC reference image",
+    "A->M": "the agent's action context written to SpatialMemory, and the robots' execution history"
+  },
+  "steps": {
+    "attribution": "VLAC compares the frame that follows an action with the reference"
+  },
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 2,
+      "modified": 0,
+      "tie": 10,
+      "metrics": {
+        "task_success": {
+          "original": 0.75,
+          "modified": 0.75
+        },
+        "replied": {
+          "original": 1.5,
+          "modified": 1.5
+        },
+        "memory_writes": {
+          "original": 1.3333,
+          "modified": 1.3333
+        },
+        "memory_queries": {
+          "original": 3.0,
+          "modified": 3.0833
+        },
+        "critic_calls": {
+          "original": 0.5,
+          "modified": 0.5
+        },
+        "failed_requests": {
+          "original": 1.5833,
+          "modified": 1.5833
+        },
+        "observations": {
+          "original": 7.0,
+          "modified": 7.4167
+        },
+        "robot_actions": {
+          "original": 6.75,
+          "modified": 7.1667
+        },
+        "turns": {
+          "original": 10.5,
+          "modified": 10.5
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 6,
+      "modified": 2,
+      "tie": 4,
+      "metrics": {
+        "task_success": {
+          "original": 0.75,
+          "modified": 0.4167
+        },
+        "replied": {
+          "original": 1.5,
+          "modified": 1.5
+        },
+        "memory_writes": {
+          "original": 1.3333,
+          "modified": 1.3333
+        },
+        "memory_queries": {
+          "original": 3.0,
+          "modified": 4.0833
+        },
+        "critic_calls": {
+          "original": 0.5,
+          "modified": 0.25
+        },
+        "failed_requests": {
+          "original": 1.5833,
+          "modified": 1.8333
+        },
+        "observations": {
+          "original": 7.0,
+          "modified": 5.3333
+        },
+        "robot_actions": {
+          "original": 6.75,
+          "modified": 4.5833
+        },
+        "turns": {
+          "original": 10.5,
+          "modified": 9.4167
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->S"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 0,
+      "modified": 4,
+      "tie": 8,
+      "metrics": {
+        "task_success": {
+          "original": 0.75,
+          "modified": 0.75
+        },
+        "replied": {
+          "original": 1.5,
+          "modified": 1.5
+        },
+        "memory_writes": {
+          "original": 1.3333,
+          "modified": 1.3333
+        },
+        "memory_queries": {
+          "original": 3.0,
+          "modified": 3.0
+        },
+        "critic_calls": {
+          "original": 0.5,
+          "modified": 0.5833
+        },
+        "failed_requests": {
+          "original": 1.5833,
+          "modified": 1.5833
+        },
+        "observations": {
+          "original": 7.0,
+          "modified": 6.75
+        },
+        "robot_actions": {
+          "original": 6.75,
+          "modified": 6.5833
+        },
+        "turns": {
+          "original": 10.5,
+          "modified": 10.5
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->S"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 0,
+      "modified": 2,
+      "tie": 10,
+      "metrics": {
+        "task_success": {
+          "original": 0.75,
+          "modified": 0.75
+        },
+        "replied": {
+          "original": 1.5,
+          "modified": 1.5
+        },
+        "memory_writes": {
+          "original": 1.3333,
+          "modified": 1.3333
+        },
+        "memory_queries": {
+          "original": 3.0,
+          "modified": 3.0
+        },
+        "critic_calls": {
+          "original": 0.5,
+          "modified": 0.5833
+        },
+        "failed_requests": {
+          "original": 1.5833,
+          "modified": 1.5833
+        },
+        "observations": {
+          "original": 7.0,
+          "modified": 7.0
+        },
+        "robot_actions": {
+          "original": 6.75,
+          "modified": 6.4167
+        },
+        "turns": {
+          "original": 10.5,
+          "modified": 10.5
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 0,
+      "modified": 0,
+      "tie": 12,
+      "metrics": {
+        "task_success": {
+          "original": 0.75,
+          "modified": 0.75
+        },
+        "replied": {
+          "original": 1.5,
+          "modified": 1.5
+        },
+        "memory_writes": {
+          "original": 1.3333,
+          "modified": 1.3333
+        },
+        "memory_queries": {
+          "original": 3.0,
+          "modified": 3.0
+        },
+        "critic_calls": {
+          "original": 0.5,
+          "modified": 0.5
+        },
+        "failed_requests": {
+          "original": 1.5833,
+          "modified": 1.5833
+        },
+        "observations": {
+          "original": 7.0,
+          "modified": 7.0
+        },
+        "robot_actions": {
+          "original": 6.75,
+          "modified": 6.75
+        },
+        "turns": {
+          "original": 10.5,
+          "modified": 10.5
+        }
+      }
+    },
+    {
+      "cut": [
+        "attribution"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 0,
+      "modified": 2,
+      "tie": 10,
+      "metrics": {
+        "task_success": {
+          "original": 0.75,
+          "modified": 0.75
+        },
+        "replied": {
+          "original": 1.5,
+          "modified": 1.5
+        },
+        "memory_writes": {
+          "original": 1.3333,
+          "modified": 1.3333
+        },
+        "memory_queries": {
+          "original": 3.0,
+          "modified": 3.0
+        },
+        "critic_calls": {
+          "original": 0.5,
+          "modified": 0.5
+        },
+        "failed_requests": {
+          "original": 1.5833,
+          "modified": 1.5833
+        },
+        "observations": {
+          "original": 7.0,
+          "modified": 7.1667
+        },
+        "robot_actions": {
+          "original": 6.75,
+          "modified": 6.5
+        },
+        "turns": {
+          "original": 10.5,
+          "modified": 10.5833
+        }
+      }
+    }
+  ]
+}

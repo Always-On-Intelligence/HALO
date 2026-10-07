@@ -1,0 +1,119 @@
+{
+  "id": "omi2026",
+  "configuration": "Omi wearable capture pipeline with an enrolled speech profile (include_speech_profile default true), the retained per-user backend (Firestore conversations/memories, Pinecone vectors, chat message store), the authorized agentic chat tools exposed on the OpenAI/Luna chat-agent lane, and the proactive-notification app path (legacy mentor pipeline, MENTOR_PIPELINE default 'legacy', plus third-party proactive_notification webhooks). Rollout-gated desktop JIT features (look_at_frame, knowledge-ledger read/write verbs, entity timeline) and the flag-off proactivity v2 spine were treated as outside the configuration.",
+  "sources_read": [
+    "https://docs.omi.me/doc/developer/apps/Notifications (fetched via WebFetch; tool paraphrases, so doc quotes are UNVERIFIED)",
+    "https://docs.omi.me/doc/developer/backend/StoringConversations (WebFetch, UNVERIFIED wording)",
+    "https://docs.omi.me/doc/developer/backend/chat_system (WebFetch, UNVERIFIED wording)",
+    "https://docs.omi.me/doc/developer/backend/transcription (WebFetch, UNVERIFIED wording; the docs/ directory is absent from this backend-only checkout)",
+    "repo BasedHardware/omi @ 5a46ab0467ce594c35fd04d72131421afd747259: backend/utils/conversations/process_conversation.py",
+    "backend/utils/conversations/memories.py",
+    "backend/utils/llm/memories.py (rejected_memory_examples parameter)",
+    "backend/utils/memory/ARCHITECTURE.md",
+    "backend/utils/memory/rejected_memory_feedback.py",
+    "backend/utils/memory/memory_use.py",
+    "backend/utils/memory/belief_model.py (memory_use_suppressed)",
+    "backend/utils/retrieval/agentic.py (CORE_TOOLS, JIT_ONLY_TOOL_NAMES, system prompt assembly, tool loading)",
+    "backend/utils/retrieval/tools/__init__.py",
+    "backend/utils/retrieval/tools/memory_tools.py",
+    "backend/utils/retrieval/tools/preference_tools.py",
+    "backend/utils/retrieval/tools/gmail_tools.py",
+    "backend/utils/retrieval/tools/frame_request_tools.py",
+    "backend/utils/retrieval/tools/knowledge_ledger_tools.py",
+    "backend/utils/retrieval/tools/knowledge_ledger_write_tools.py",
+    "backend/utils/llm/proactive_notification.py",
+    "backend/utils/llm/ARCHITECTURE.md",
+    "backend/utils/llm/ai_user_profile.py",
+    "backend/utils/llms/memory.py (get_prompt_memories)",
+    "backend/utils/app_integrations.py (mentor pipeline, third-party proactive notifications, realtime webhook)",
+    "backend/utils/mentor_notifications.py (process_mentor_notification)",
+    "backend/utils/notification_dispatch.py / backend/utils/notifications.py (dispatch functions)",
+    "backend/routers/chat.py (send_message, message persistence, rating endpoint)",
+    "backend/routers/users.py (POST /v1/users/analytics/chat_message)",
+    "backend/routers/memories.py (review endpoints)",
+    "backend/routers/speech_profile.py (upload_profile)",
+    "backend/routers/listen/speakers.py (SpeakerMatcher)",
+    "backend/routers/listen/runtime.py (speaker_id_enabled)",
+    "backend/utils/stt/speaker_embedding.py",
+    "backend/utils/stt/speaker_match.py",
+    "backend/utils/stt/voiceprints.py",
+    "backend/utils/stt/ARCHITECTURE.md",
+    "backend/config/speaker_prior.py",
+    "backend/database/chat.py (add_message, add_app_message, get_app_messages, update_message_rating)",
+    "backend/database/users.py (set_chat_message_rating_score)",
+    "backend/database/notifications.py (function inventory)",
+    "backend/database/proactivity_producers.py (record_mentor_reply)",
+    "backend/docs/proactivity_v2/CONTRACT.md"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed wearable audio is transcribed and, when the conversation finalizes, process_conversation runs extract_memories, which feeds the transcript to the LLM extractor and writes resulting memories into the user's canonical memory store (MemoryService). The same path persists the conversation itself and its Pinecone vector. User-supplied evidence also writes to Memory: the speech-profile upload extracts a voiceprint and stores it with set_user_speaker_embedding, and the memory review endpoint writes user_review onto the stored memory. The StoringConversations page describes memories as facts extracted from conversations and saved with a link back to the source conversation.",
+      "locator": "backend/utils/conversations/process_conversation.py:1155-1216 (extract_memories -> _extract_memories_inner); backend/routers/speech_profile.py:112-151 (upload_profile -> set_user_speaker_embedding); backend/routers/memories.py:1065-1076 (review_memory -> service.review); docs StoringConversations 'Part 2: Extracting & Storing Memories'",
+      "quote": "def extract_memories(uid: str, conversation: Conversation) -> None:\n    \"\"\"Extract one conversation's memories through the selected memory system. (process_conversation.py:1155-1156). Doc, UNVERIFIED: \"Memories - Secondary storage for extracted facts/learnings FROM conversations\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information is delivered to Action decisions on two paths. (1) The agentic chat path exposes get_memories_tool / search_memories_tool / get_conversations_tool / search_conversations_tool so the agent's answer is built from stored memories and conversations, and the prior chat history is loaded into the turn (get_cache_aligned_messages). (2) The proactive mentor pipeline fills its gate, generate and critic prompts with retained user facts (get_prompt_memories), goals, past conversations from vector search, and the last 20 stored mentor notifications, and these decide whether to interrupt and what to send; third-party proactive apps likewise get {{user_facts}}, {{user_context}} and {{user_chat}} substituted from the store.",
+      "locator": "backend/utils/retrieval/tools/memory_tools.py:87-142; backend/routers/chat.py:525-537; backend/utils/llm/proactive_notification.py:56-91 (GATE_PROMPT_STABLE/VOLATILE); backend/utils/app_integrations.py:785-821 and 1020-1048; docs chat_system 'Conversation & Memory Tools'",
+      "quote": "Retrieve structured FACTS and PREFERENCES about the user (NOT events/incidents). (memory_tools.py:98); == {user_name}'S FACTS ==\n{user_facts} ... == RECENT NOTIFICATIONS (do not flag similar topics) == (proactive_notification.py:76-77, 90)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The chat agent's information needs drive acquisition of fresh external observations inside the service: the LLM chooses tool calls and parameters, and the tool modules then fetch current external state (Gmail messages via the Gmail API with the agent-chosen query, Google Calendar events, Apple Health data, web pages, Perplexity search). The system prompt mandates that any URL the user shares be fetched before answering. These are Action-originated sensing targets, distinct from retrieval of the service's own stored conversations (counted under M->A). The JIT-gated look_at_frame screen-frame request was not relied on because it is withheld from users outside the rollout.",
+      "locator": "backend/utils/retrieval/agentic.py:1817-1822 (url_fetching_instructions) and 1741-1748 (core tools + load_app_tools); backend/utils/retrieval/tools/gmail_tools.py:31-96 (get_gmail_messages -> googleapis.com); backend/utils/retrieval/tools/__init__.py:24-59; docs chat_system 'The Agentic Tool System' / 'Integration Tools'",
+      "quote": "You have fetch_url_tool available. When the user shares any URL (starting with http:// or https://), you MUST call fetch_url_tool to read its content before responding. Never say you cannot browse, visit, or read a URL. Always attempt to fetch it first. (agentic.py:1821). Doc, UNVERIFIED: \"Decide Tools - LLM autonomously decides which tool(s) to call based on question intent\""
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained priors guide interpretation of the live audio stream. SpeakerMatcher._load_profiles reads the owner's stored speaker embedding (enrolled speech profile) and taught people's stored embeddings from the user document, and _match_unmapped embeds clips of the live ring-buffer audio and compares them with those stored voiceprints (compare_embeddings, select_speaker_match, arbitrate_owner_matches) to label diarized speakers as the user or a known person; the STT architecture note names this 'enrolled voiceprint matching'. The listen socket enables this by default (include_speech_profile: bool = True) when a profile exists. The transcription page describes real-time identification of the user's voice by speaker-embedding comparison.",
+      "locator": "backend/routers/listen/speakers.py:160-208 (_load_profiles), 459-465 and 525-568 (match and publish); backend/routers/listen/runtime.py:596-599 (speaker_id_enabled); backend/routers/transcribe.py:84 (include_speech_profile default); backend/utils/stt/ARCHITECTURE.md:16, 85-88; docs transcription 'Speech Profile & Speaker Embedding'",
+      "quote": "embedding = await self.host.persistence.call(user_db.get_user_speaker_embedding, self.host.request.uid) (speakers.py:163); distances = { person_id: compare_embeddings(centroid, value['embedding']) for person_id, value in self.person_embeddings.items() } (speakers.py:460-463); '-> routers/listen/speakers.py   enrolled voiceprint matching' (stt/ARCHITECTURE.md:16). Doc, UNVERIFIED: \"uses speaker embedding comparison to identify the user's voice in real-time\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Action outputs are written to Memory for later use. The assistant's reply is persisted to the user's messages collection and later reloaded as chat context; mentor and third-party proactive notifications are stored as app chat messages (add_app_message) and read back as 'recent notifications' for later gate decisions; proactive send timestamps and daily counts are recorded (set_proactive_noti_sent_at, incr_daily_notification_count). The agent can also write what it learned during a conversation into the memory store through save_user_preference_tool (tagged 'agent-learned', not JIT-gated), and create action items via create_action_item_tool.",
+      "locator": "backend/routers/chat.py:595; backend/utils/app_integrations.py:948-954 and 1314; backend/database/chat.py:168-193 (add_app_message); backend/utils/retrieval/tools/preference_tools.py:124-163, 166-198; backend/utils/retrieval/agentic.py:290, 311-323 (not in JIT_ONLY_TOOL_NAMES); docs chat_system 'Step 5: Post-Processing'",
+      "quote": "chat_db.add_message(uid, ai_message.model_dump()) (chat.py:595); messages.append(await run_blocking(db_executor, add_app_message, message, key, uid)) (app_integrations.py:1314); \"\"\"Save a learned user preference or personal detail for future conversations. (preference_tools.py:174); \"tags\": [\"agent-learned\"], (preference_tools.py:145)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of its own delivered actions for later use: every AI chat reply is written to Firestore messages, each proactive notification it sent is stored as an app message and later read back (get_app_messages(uid, 'mentor', limit=20) feeds the dedupe section of the gate prompt), and send timestamps/daily counts are stored in memcache/Redis for rate limiting.",
+      "locator": "backend/routers/chat.py:595; backend/utils/app_integrations.py:802, 948-954, 1314; backend/database/chat.py:154-165, 168-193; docs chat_system 'Step 5: Post-Processing' (UNVERIFIED: \"Save message to Firestore\")",
+      "quote": "recent_notifications = get_app_messages(uid, 'mentor', limit=20) (app_integrations.py:802); mem_db.set_proactive_noti_sent_at(uid, app_id='mentor', ts=ts, ttl=MENTOR_RATE_LIMIT_SECONDS) (app_integrations.py:952)"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later user evidence about the service's actions is obtained and retained: thumbs up/down ratings on chat messages are stored on the message document (update_message_rating) and in an analytics collection (set_chat_message_rating_score) plus a feedback ledger; user acceptance/rejection of an extracted memory is stored as user_review on the memory item through the review endpoint. (The v2 mentor 'replied' outcome hook exists but requires the flag-off proactivity v2 spine.)",
+      "locator": "backend/routers/users.py:786-830 (POST /v1/users/analytics/chat_message); backend/database/chat.py:664-687; backend/database/users.py:1457-1502; backend/routers/memories.py:1065-1076 (POST /v3/memories/{memory_id}/review)",
+      "quote": "Submit feedback rating for a chat message. ... value: Rating value (1 = thumbs up, -1 = thumbs down, 0 = user cleared) (users.py:796-800); service.review(uid, memory_id, value) (memories.py:1076)"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The user's rejection is linked to the specific memory the service decided to extract (user_review=False on that item) and is used to correct assistance: rejected memories are skipped when memory tools build chat context, and the package architecture states that owner rejections are read back as negative examples by L1 extraction and consolidation (passed as rejected_memory_examples into the extractor). Chat-message thumbs ratings, by contrast, are routed to analytics and LangSmith for the authors and are not consumed by the service.",
+      "locator": "backend/utils/memory/ARCHITECTURE.md:155-167; backend/utils/memory/rejected_memory_feedback.py:86-115; backend/utils/conversations/process_conversation.py:1675-1680, 1766-1775; backend/utils/llm/memories.py:169, 212; backend/utils/retrieval/tools/memory_tools.py:253-261",
+      "quote": "Owner rejection closes the feedback loop through `rejected_memory_feedback.py`. L1 extraction and each consolidation batch read at most eight newest active or terminally hidden owner rejections from active sources in the last 30 days. (utils/memory/ARCHITECTURE.md:155-158); or getattr(memory, 'user_review', None) is False (memory_tools.py:255)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No in-configuration mechanism is described in which the service itself durably changes its model parameters, prompts, rules, code, or harness. Rejected-memory examples, agent-saved preferences, goals and the synthesized user profile are content consumed by fixed prompt-assembly mechanisms. The agent-authored playbooks and standing triggers (save_playbook, create_standing_trigger) are JIT-only tools withheld unless the server-owned JIT rollout admits the user, which the configuration excludes, and the code states standing triggers are no longer executed. The proactivity v2 producer kill latch requires the proactivity_v2 flag, which defaults off. Chat ratings go to analytics/LangSmith for developers.",
+      "locator": "backend/utils/retrieval/agentic.py:302-323, 1737-1743; backend/utils/retrieval/tools/knowledge_ledger_write_tools.py:60-62; backend/docs/proactivity_v2/CONTRACT.md:619-621; backend/routers/users.py:832-857",
+      "quote": "# Core tools (fixed order). JIT-only tools are withheld unless the\n# server-owned rollout admitted this user; order is preserved. (agentic.py:1737-1738); # The legacy desktop watchlist no longer executes these records. (knowledge_ledger_write_tools.py:61); The rollout defaults remain off: `proactivity_v2` absent/false, `MENTOR_PIPELINE=legacy`, and empty commitment queue bindings. (CONTRACT.md:619-620)",
+      "what": "None identified for this configuration; the only self-written reusable artifacts (ledger playbooks/triggers) are JIT-gated and excluded."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revision is reported for this configuration, so no later run under a revised mechanism is reported. read_playbook code that would load agent-written playbooks exists but is JIT-gated and no run under it is described in the sources.",
+      "locator": "backend/utils/retrieval/tools/knowledge_ledger_tools.py:405-436; backend/utils/retrieval/agentic.py:1741-1743"
+    }
+  },
+  "notes": "Judged the omi2026 configuration: wearable capture with enrolled speech profile, retained personal backend, authorized agentic chat tools, and the proactive-notification app (legacy mentor pipeline and third-party proactive_notification webhooks). Excluded: JIT-only tools (look_at_frame, search_knowledge, read_playbook, search_historical_facts, save_playbook, create_standing_trigger, close_fact, get_entity_timeline), the flag-off proactivity v2 spine, and the dev-only STT_LEARNED_LANGUAGE_PROFILE / PINNED_SPEAKER_PRIOR_ENABLED switches. The checkout contains only the backend tree (no docs/, app/, desktop/), and Bash was denied, so the four documentation pages were read via WebFetch, which paraphrases; all doc quotes are therefore labeled UNVERIFIED, while code and in-repo markdown quotes were confirmed by direct file reads at commit 5a46ab0.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 517,
+    "code_commit": "5a46ab0467ce594c35fd04d72131421afd747259"
+  }
+}

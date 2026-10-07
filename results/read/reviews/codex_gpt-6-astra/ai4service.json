@@ -1,0 +1,75 @@
+{
+  "id": "ai4service",
+  "configuration": "Initial Alpha-Service runtime with task dispatch, visual trigger/streaming models, web search, and JSON memory.",
+  "sources_read": [
+    "https://arxiv.org/html/2510.14359v1 — version 2510.14359v1, sections 1–7 and appendices A–B",
+    "cases/alpha-service/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User dialogue information is automatically extracted after interactions and retained in JSON memory.",
+      "locator": "[Section 3.5, paragraph 3](https://arxiv.org/html/2510.14359v1#S3.SS5)",
+      "quote": "key information from the dialogue"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved interaction history informs the orchestrator’s response synthesis.",
+      "locator": "[Section 3.3, Synthesis and Response Generation](https://arxiv.org/html/2510.14359v1#S3.SS3)",
+      "quote": "relevant past interactions"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The orchestrator activates future-timing triggers and requests finer visual analysis according to task needs.",
+      "locator": "[Section 3.3, Decomposition and Dispatch](https://arxiv.org/html/2510.14359v1#S3.SS3)",
+      "quote": "task-specific visual descriptions"
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Response-time retrieval is described; supplying retained priors directly to perceptual sampling or interpretation is not established.",
+      "locator": "[Sections 3.2–3.5](https://arxiv.org/html/2510.14359v1#S3)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Episode records retain the assistant’s output for subsequent retrieval.",
+      "locator": "[Section 3.5, paragraphs 2–3](https://arxiv.org/html/2510.14359v1#S3.SS5)",
+      "quote": "the agent’s final output"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "Persistent episode memory records delivered assistance.",
+      "locator": "[Section 3.5, paragraph 2](https://arxiv.org/html/2510.14359v1#S3.SS5)",
+      "quote": "the agent’s final output, a unique timestamp"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Dialogue retention does not explicitly establish retained subsequent feedback or results concerning assistance.",
+      "locator": "[Section 3.5](https://arxiv.org/html/2510.14359v1#S3.SS5)"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No outcome-linked checking or correction of assistance is described.",
+      "locator": "[Sections 4 and 6](https://arxiv.org/html/2510.14359v1#S4)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Retrieved episode content changes context; no service-authored durable change to parameters, prompts, rules, or code is described.",
+      "locator": "[Sections 3.2–3.5](https://arxiv.org/html/2510.14359v1#S3)",
+      "what": "None reported."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "The demonstrations do not report execution under a service-revised mechanism.",
+      "locator": "[Section 4](https://arxiv.org/html/2510.14359v1#S4)"
+    }
+  },
+  "notes": "Independent text-only review of the named initial implementation. No repository was supplied. Conceptual aspirations and future work were excluded.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 66,
+    "code_commit": null
+  }
+}

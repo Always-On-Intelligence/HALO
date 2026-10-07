@@ -1,0 +1,18 @@
+id: lightmem-ego
+name: "LightMem-Ego"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2607.11487
+sources:
+  - url: https://arxiv.org/html/2607.11487v1
+    kind: paper
+    version: "2607.11487v1"
+    sha256: eda6af85af4283a16a5439848d5f03e8174b67bcdeb3c39bc4f395156132b557
+code:
+  repo: https://github.com/zjunlp/LightMem-Ego
+  commit: 3c023dfec301bb2f9624f82cee76007ac3ac0646
+variants:
+  - id: lightmemego2026
+    label: "LightMem-Ego"
+    configuration: "Phone/glasses client with hierarchical event memory and experience QA"
+modes: [read, run]

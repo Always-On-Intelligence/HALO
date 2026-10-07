@@ -1,0 +1,14 @@
+# visualclaw run-mode report
+
+4 items x 3 samples; backbone codex:gpt-6-astra (low); judge codex:gpt-6-astra (high)
+
+| cut | judged output | pairs | prefer original | prefer cut | tie | metrics (original -> cut) |
+|---|---|---|---|---|---|---|
+| M->A | output | 12 | 6 | 2 | 4 | evolved_skill_injections_test: 3.0 -> 4.3333; evolver_calls_learning: 0.5833 -> 0.75; learn_pass_rate: 0.7 -> 0.6667; memory_hits_test: 20.0 -> 20.0; skills_written_learning: 0.9167 -> 1.25; test_pass_rate: 0.7917 -> 0.625; test_rounds_with_frames_from_retained_text: 0.25 -> 0.5 |
+| A->M | output | 12 | 5 | 3 | 4 | evolved_skill_injections_test: 3.0 -> 3.6667; evolver_calls_learning: 0.5833 -> 0.6667; learn_pass_rate: 0.7 -> 0.6667; memory_hits_test: 20.0 -> 20.0; skills_written_learning: 0.9167 -> 1.0833; test_pass_rate: 0.7917 -> 0.6875; test_rounds_with_frames_from_retained_text: 0.25 -> 0.1667 |
+| S->M | output | 12 | 4 | 1 | 7 | evolved_skill_injections_test: 3.0 -> 3.5; evolver_calls_learning: 0.5833 -> 0.6667; learn_pass_rate: 0.7 -> 0.7167; memory_hits_test: 20.0 -> 10.0833; skills_written_learning: 0.9167 -> 1.0833; test_pass_rate: 0.7917 -> 0.7083; test_rounds_with_frames_from_retained_text: 0.25 -> 0.3333 |
+| M->S | output | 12 | 0 | 2 | 10 | evolved_skill_injections_test: 3.0 -> 3.0; evolver_calls_learning: 0.5833 -> 0.5833; learn_pass_rate: 0.7 -> 0.7; memory_hits_test: 20.0 -> 20.0; skills_written_learning: 0.9167 -> 0.9167; test_pass_rate: 0.7917 -> 0.7917; test_rounds_with_frames_from_retained_text: 0.25 -> 0.25 |
+| record | output | 12 | 2 | 3 | 7 | evolved_skill_injections_test: 3.0 -> 3.0; evolver_calls_learning: 0.5833 -> 0.5833; learn_pass_rate: 0.7 -> 0.7; memory_hits_test: 20.0 -> 20.0; skills_written_learning: 0.9167 -> 0.8333; test_pass_rate: 0.7917 -> 0.7917; test_rounds_with_frames_from_retained_text: 0.25 -> 0.5 |
+| outcome | output | 12 | 3 | 3 | 6 | evolved_skill_injections_test: 3.0 -> 2.9167; evolver_calls_learning: 0.5833 -> 0.5833; learn_pass_rate: 0.7 -> 0.7; memory_hits_test: 20.0 -> 20.0; skills_written_learning: 0.9167 -> 0.9167; test_pass_rate: 0.7917 -> 0.7708; test_rounds_with_frames_from_retained_text: 0.25 -> 0.25 |
+| attribution | output | 12 | 2 | 3 | 7 | evolved_skill_injections_test: 3.0 -> 1.9167; evolver_calls_learning: 0.5833 -> 0.5833; learn_pass_rate: 0.7 -> 0.7; memory_hits_test: 20.0 -> 20.0; skills_written_learning: 0.9167 -> 0.5833; test_pass_rate: 0.7917 -> 0.7083; test_rounds_with_frames_from_retained_text: 0.25 -> 0.1667 |
+| revision | output | 12 | 2 | 3 | 7 | evolved_skill_injections_test: 3.0 -> 0.0; evolver_calls_learning: 0.5833 -> 0.5833; learn_pass_rate: 0.7 -> 0.7; memory_hits_test: 20.0 -> 20.0; skills_written_learning: 0.9167 -> 0.0; test_pass_rate: 0.7917 -> 0.75; test_rounds_with_frames_from_retained_text: 0.25 -> 0.0 |

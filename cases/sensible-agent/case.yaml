@@ -1,0 +1,15 @@
+id: sensible-agent
+name: "Sensible Agent"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2509.09255
+sources:
+  - url: https://arxiv.org/html/2509.09255v2
+    kind: paper
+    version: "2509.09255v2"
+    sha256: bf8393268e1dbfec5191c632b7c14b2163c5fc7bbda578312411756df1d6570e
+variants:
+  - id: sensibleagent2025
+    label: "Sensible Agent"
+    configuration: "WebXR prototype with context-conditioned prompts and response modalities"
+modes: [read]

@@ -1,0 +1,18 @@
+id: user-as-code
+name: "User as Code"
+domain: digital
+kind: research
+report: https://arxiv.org/abs/2606.16707
+sources:
+  - url: https://arxiv.org/html/2606.16707v1
+    kind: paper
+    version: "2606.16707v1"
+    sha256: 53c0c08f39f50f9f2d90ec9150ca29f4be488937a80c57cec00e5b55652b049c
+code:
+  repo: https://github.com/19PINE-AI/user-as-code
+  commit: 3d473617a27e7ace8cbbde531b667d515864c21e
+variants:
+  - id: userascode2026
+    label: "User as Code"
+    configuration: "Two-phase executable personal memory with Active Service constraint pipeline"
+modes: [read, run]

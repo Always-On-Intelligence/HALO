@@ -1,0 +1,70 @@
+{
+  "id": "socialmind",
+  "configuration": "RayNEO X2 SocialMind with identity-indexed persona database and multi-tier suggestion generation",
+  "sources_read": [
+    "https://arxiv.org/html/2412.04036v1 (arXiv:2412.04036v1)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Conversation-derived persona cues are stored, merged, or replaced by identity; runtime observations also enter the cache.",
+      "locator": "[Paper v1, §§4.3.1–4.3.2 and 4.5.1](https://arxiv.org/html/2412.04036v1)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved personas condition suggestions; cached suggestions support response selection.",
+      "locator": "[Paper v1, §§4.3.3 and 4.5.1](https://arxiv.org/html/2412.04036v1)"
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "No described flow carries service plans or execution state into sensing; periodic recognition alone is insufficient.",
+      "locator": "[Paper v1, §§4.2 and 4.5.2–4.5.3](https://arxiv.org/html/2412.04036v1)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Stored location images guide interpretation of current camera observations during proactive perception.",
+      "locator": "[Paper v1, §4.2.3](https://arxiv.org/html/2412.04036v1)",
+      "quote": "mapping it with the pre-stored images"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Generated suggestions are retained with utterances, nonverbal cues, and social factors for cache reuse.",
+      "locator": "[Paper v1, §4.5.1, Runtime Routing and Cache Management](https://arxiv.org/html/2412.04036v1)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains its suggestions for subsequent retrieval.",
+      "locator": "[Paper v1, §4.5.1, Runtime Routing and Cache Management](https://arxiv.org/html/2412.04036v1)",
+      "quote": "it continuously records their utterances, conversational partners’ utterances, nonverbal cues, and the corresponding social suggestions."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Retention of later evidence about assistance outcomes is unspecified; questionnaires are research evaluations.",
+      "locator": "[Paper v1, §§4.5.1 and 5.4.2](https://arxiv.org/html/2412.04036v1)"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Utterance comparison controls refresh without assessing prior assistance; LLM judging is external evaluation.",
+      "locator": "[Paper v1, §§4.5.3 and 5.1.4](https://arxiv.org/html/2412.04036v1)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Persona and cache updates change content; no service-authored revision of rules, prompts, models, or code is stated.",
+      "locator": "[Paper v1, §§4.3.2, 4.4.2 and 4.5.1](https://arxiv.org/html/2412.04036v1)"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No execution under a service-revised mechanism is reported.",
+      "locator": "[Paper v1, §§5.2–5.4](https://arxiv.org/html/2412.04036v1)"
+    }
+  },
+  "notes": "Independent text-only review of the named configuration; no code repository was provided.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 153,
+    "code_commit": null
+  }
+}

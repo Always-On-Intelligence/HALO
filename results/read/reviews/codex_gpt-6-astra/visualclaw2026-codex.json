@@ -1,0 +1,84 @@
+{
+  "id": "visualclaw2026-codex",
+  "configuration": "VisualClawArena / Codex (GPT-5.5), Cascade-8 + FullEvo Cat.; the paper's matched core configuration, excluding Claude Code, live-glasses deployment, and static video-QA.",
+  "sources_read": [
+    "https://arxiv.org/html/2606.16295v1 — especially §§3.2–3.4, 4.2, 5.1, 5.3, Tables 7 and 15, and Appendices A.2–A.5.",
+    "cases/visualclaw/case.yaml and halo/read/schema.json in ..",
+    "https://github.com/UCSC-VLAA/VisualClaw at f6de05bb8f03e8ba44ec5ee458961cd70002a6d5 (checked-out HEAD verified): README.md; docs/visualclawarena.md; scripts/run_visualclawarena_self_evolve.sh.",
+    "Same commit: benchmark/visualclawarena/runner.py; benchmark/visualclawarena/engines/codex_cli.py; benchmark/visualclawarena/cascade_frames.py; benchmark/skill_wire.py.",
+    "Same commit: visualclaw/modules/memory/manager.py; visualclaw/modules/skill/evolver.py; visualclaw/modules/skill/manager.py; relevant defaults in visualclaw/config.py.",
+    "Same commit: visualclaw/skills_seed/seed_universal_mc/{video-context-grounding,visual-detail-matching,video-action-identification}/SKILL.md, read as source evidence."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Each round's supplied question and obtained pass/fail evidence enter a scenario-scoped episodic MemoryUnit. The manager persists those units for retrieval across rounds, establishing an implemented admission path.",
+      "locator": "benchmark/visualclawarena/runner.py:752–797, 1015–1025, 1490–1499; visualclaw/modules/memory/manager.py:320–346.",
+      "quote": "Store one round's outcome as an episodic memory unit for later rounds."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The runner retrieves retained skill cards and prepends their bodies to the Codex prompt, influencing answers and emitted file operations. Its enabled episodic-memory path also retrieves prior-round conclusions. This establishes the channel independently of the Cat. memory-to-evolver discrepancy noted below.",
+      "locator": "benchmark/visualclawarena/runner.py:847–942; visualclaw/modules/skill/manager.py:701–727; benchmark/visualclawarena/engines/codex_cli.py:192–204, 254–264.",
+      "quote": "Reasoning skills relevant to this round"
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "Codex receives snapshots and images before invocation, is prohibited from issuing acquisition commands, and emits writes applied after exit. External grading does not establish this channel. No implemented action-plan or execution-state feedback guiding perception is identified; the acquisition restriction alone does not explicitly exclude every interpretation-level route.",
+      "locator": "benchmark/visualclawarena/engines/codex_cli.py:104–112, 159–204, 254–264; benchmark/visualclawarena/runner.py:981–1002; [paper v1 §4.2](https://arxiv.org/html/2606.16295v1#S4.SS2).",
+      "quote": "Do not invoke shell, exec, or filesystem-read commands in this backend."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained skill cards are injected into the fused vision/reasoning call and explicitly direct visual interpretation: visual-detail-matching specifies which image attributes to extract. This supplies evidence about the receiving sensing function beyond answer-time retrieval alone. It does not establish memory-guided cascade sampling.",
+      "locator": "visualclaw/skills_seed/seed_universal_mc/visual-detail-matching/SKILL.md:9–13; scripts/run_visualclawarena_self_evolve.sh:59, 126–127; benchmark/visualclawarena/runner.py:1344–1376, 862–907; visualclaw/modules/skill/manager.py:701–713.",
+      "quote": "Identify concrete details from images—object types, colors, materials, tools, locations (sink, floor, cup, etc.)."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Assistant conclusions are retained in episodic memory. Complete answers and prompt context are also logged and subsequently read into failure samples for evolution; these are service-consumed action records.",
+      "locator": "benchmark/visualclawarena/runner.py:769–797, 945–959, 1015–1025, 1793–1828.",
+      "quote": "We keep the full question + the tail of the answer (the conclusion)."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains its delivered conclusions in memory and saves complete answers. The evolution loop rereads those answer logs, establishing later service use.",
+      "locator": "benchmark/visualclawarena/runner.py:752–797, 945–959, 1793–1818.",
+      "quote": "We keep the full question + the tail of the answer (the conclusion)."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "After each response or applied workspace write, scoring produces a task result. The corresponding episodic unit retains that result as passed or failed alongside the round identifier and conclusion.",
+      "locator": "benchmark/visualclawarena/runner.py:756–765, 779–795, 981–1025.",
+      "quote": "Store one round's outcome as an episodic memory unit for later rounds."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Failed round identifiers select the associated saved answer, prompt context, and available reference. These linked samples enter the automatic evolver to generate corrective instructions. Although scoring is external to Codex, its results are consumed by the service's correction loop.",
+      "locator": "benchmark/visualclawarena/runner.py:1785–1874; visualclaw/modules/skill/evolver.py:1–2, 414–440, 467–482.",
+      "quote": "Skill Evolver: analyze failed samples and generate new skills via LLM."
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The LLM evolver generates reusable behavioral instructions, adds accepted skills to the live bank, and persists their SKILL.md files. This changes instructions used by subsequent decisions rather than merely accumulating task facts.",
+      "locator": "visualclaw/modules/skill/evolver.py:197–269, 467–482; visualclaw/modules/skill/manager.py:782–823, 894–920; benchmark/visualclawarena/runner.py:1865–1874.",
+      "quote": "if self._manager.add_skill(skill_obj, write_to_disk=True):",
+      "what": "The persistent natural-language skill bank and the reusable prompt instructions retrieved from it; model weights remain frozen."
+    },
+    "later_use": {
+      "label": "stated",
+      "rationale": "The paper reports completed Codex Cat. runs and attributes later-round behavior to accumulated context and evolved skills. Table 7 includes mid/late results. This supplies reported execution beyond code that merely exposes new skills to subsequent rounds.",
+      "locator": "[Paper v1 §5.3, Temporal Trends on VisualClawArena, Table 7](https://arxiv.org/html/2606.16295v1#S5.SS3); benchmark/visualclawarena/runner.py:1719–1740, 1774–1777, 1865–1884.",
+      "quote": "After this adaptation period, VisualClaw benefits from both accumulated scenario context and self-evolved skills"
+    }
+  },
+  "notes": "Read-only source review; no experiment was run. M->S concerns injected visual-interpretation rules, not frame selection. A reproduction discrepancy remains: [paper v1 §3.4 and Appendix A.5](https://arxiv.org/html/2606.16295v1#S3.SS4) describe Cat. concatenation, but runner.py:1506–1512 returns empty memory context unless the mode is related_prefix, despite simple_concat callers at 1840–1844 and 1960–1964. The convenience script selects related_prefix (line 137), so it was not treated as the Cat. experiment command. The checkout excludes experiment artifacts (docs/visualclawarena.md:3–5); later-use evidence comes from the paper's reported run.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 384,
+    "code_commit": "f6de05bb8f03e8ba44ec5ee458961cd70002a6d5"
+  }
+}

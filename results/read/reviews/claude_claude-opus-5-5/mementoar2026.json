@@ -1,0 +1,80 @@
+{
+  "id": "mementoar2026",
+  "configuration": "mementoar2026: the Memento prototype on Meta Quest 3 (Passthrough AR) connected to a remote server, as described in Sec. 2.2 and deployed in Sec. 4. It has: RSAM creation at each head-gaze-and-pinch query; storage in an R-tree + HNSW structure; context-triggered proactive resurfacing (Proactive mode); open-vocabulary referent checking (YOLO-World-XL, with Gemini 2.0-Flash as fallback); AR anchoring on the referent; content refresh on each repeat cycle; and the permanent 'Remove' option.",
+  "sources_read": [
+    "https://arxiv.org/html/2601.17622v4 (arXiv HTML, version 2601.17622v4). Read: Abstract, unnumbered Introduction, Sec. 2.1, Sec. 2.2 and 2.2.1-2.2.6, Sec. 3, Sec. 4.1, Sec. 4.2, Sec. 5, captions of Figs. 1-4 and Table 1. Accessed through WebFetch excerpts.",
+    "cases/memento/case.yaml (variant definition)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed and user-supplied evidence is admitted to Memory. At each query interaction, the system builds an RSAM from three inputs: the Whisper-transcribed verbal query, the referent identified from head-gaze and pinch, and the most recent Spatial Activity Profile. The profile comes from a continuous lifelog of the first-person view, latitude/longitude and timestamp, plus the inferred scene descriptor and activity. The RSAM is then stored in the R-tree + HNSW structure. The user's 'Remove' selection is also user input that corrects Memory by permanently removing an RSAM.",
+      "locator": "Sec. 2.2.3 Personal Memory Generation (para. 1); Sec. 2.2.2 Spatial Activity Analysis; Sec. 2.2.5 Content visualization; Fig. 2 caption",
+      "quote": "[Sec. 2.2.3] Upon initial query interaction with a physical referent via Personal assistant, the query and its metadata are recorded in the form of a memory. [Sec. 2.2.3] To generate an RSAM, we first identify the referent in question, and retrieve the most recent Spatial Activity Profile. [Sec. 2.2.2] We lifelog the user's first-person view (via the external camera of the HMD), latitude, longitude, and timestamp, in a continuous manner, and infer the user's current scene and activity."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained RSAMs drive the proactive display decision. Recall filters RSAMs by geographic coordinates and time, retrieves by vector similarity, and checks each dimension (referent, space, time, activity). Only when all dimensions match is an RSAM suggested; otherwise the system stays silent. The suggested memory is AR-anchored on the referent it specifies, and its content is refreshed with new information on each repeat cycle. So retained information shapes the timing, content, placement and silence of Action.",
+      "locator": "Sec. 2.2.4 Context-aware Memory Retrieval; Sec. 2.2.5 Content visualization; Fig. 4 caption",
+      "quote": "[Sec. 2.2.4] Only when all dimensions are satisfied, an RSAM is suggested to the user. [Sec. 2.2.5] A memory is AR-anchored onto the referent specified by an RSAM. [Sec. 2.2.5] Memento also proactively self-update the data of the contents providing newly available information on each repeat cycle."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The Proactive visualizer's plan to place a returned memory directs Sensing. It localizes that memory's referent in the current view with the open-vocabulary detector (Gemini 2.0-Flash is the fallback when confidence is below 0.5, Sec. 4.1). For each referent that is present, the 2D centers go to the HMD, which computes 3D anchor points from the depth map taken at capture time. The display plan therefore sets which object Sensing localizes and where it reads depth. Secondary support: the assistant uses Google Custom Search to answer with live information (Sec. 2.2.1), and content is re-fetched on each repeat cycle. How search queries are formed is not described.",
+      "locator": "Sec. 2.2.5 Proactive Situated Information Display (Referent detection); Sec. 4.1 Technical Evaluation; Sec. 2.2.1 Personal Conversational Assistant",
+      "quote": "[Sec. 2.2.5] Once the K-similar RSAMs–the past memories that align with the user's current spatiotemporal and activity context–return, the Proactive visualizer localizes the referents where the memories were situated previously. [Sec. 2.2.5] If present in the current view, the 2D center points are transmitted to the user's HMD to compute the 3D anchor points using the depth map acquired from the external camera of the HMD, at the time of the image capture."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained RSAM content is supplied to Sensing to interpret the current view. The referents stored in candidate RSAMs set what the open-vocabulary detector looks for. The check that these referents exist in the user's view is the second step of retrieval verification, and it runs before any suggestion is made. Sec. 4.1 confirms that detector false positives caused faulty RSAM retrieval. This is a stored prior guiding attention and interpretation inside the recall step. It is not only a memory-guided Action decision that requests a new observation.",
+      "locator": "Sec. 2.2.4 Context-aware Memory Retrieval; Sec. 2.2.5 Referent detection; Sec. 4.1 Technical Evaluation",
+      "quote": "[Sec. 2.2.4] The proximity of spatiotemporal context is assessed as the first step, then we verify the existence of the RSAM referents in the user's view, and finally fine-grained spatial activity semantics matching. [Sec. 2.2.5] This situating of AR content is done by localizing the referents specified in RSAMs via an open-vocabulary detector. [Sec. 4.1] false positives led to faulty retrieval of RSAM and inconsistent situating of proactive AR visualizations, impacting the user experience."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The assistant's own output is written to Memory. Each RSAM combines the user's query with the assistant's response and the response source. After a response is generated, the answer is permanently stored together with its spatial-activity context.",
+      "locator": "Sec. 2.2.3 Personal Memory Generation; Fig. 2 caption",
+      "quote": "[Sec. 2.2.3] Then, we bring the user's verbal query, its response, and the response source together, and form a memory. [Fig. 2 caption] Upon completion of response generation, the answer is situated onto the referent that the query is initiated to, and is permanently stored along with its spatial activity context as a form of a memory."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps a record of what it delivered: each RSAM holds the response and its source. RSAMs live in the service's own memory store and are used later for proactive resurfacing. The Sec. 4.2 system logs are study data and are not counted here.",
+      "locator": "Sec. 2.2.3 Personal Memory Generation, para. 1",
+      "quote": "[Sec. 2.2.3] It holds the moment of the verbal query, the response, the source of the response, and the context of the spatial activity."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "The only in-service evidence about a resurfacing is the user's 'Remove', a dismissal of unwanted (e.g. mismatched) memories. The paper describes this only as permanently dismissing the memory. It never says the dismissal, or any other outcome such as replies, selections or ratings, is kept. The diaries, Likert ratings and system logs in Sec. 4.2 are research data that only the authors analyse.",
+      "locator": "Sec. 2.2.5 Content visualization; Sec. 4.2 User Evaluation and Feedback",
+      "quote": "[Sec. 2.2.5] The 'Remove' option allows permanent dismissal of unwanted (e.g., mismatched) memories or one-time queries that do not require repeating. [Sec. 4.2] System logs of spatial context, interactions, and resurfaced memories were collected in parallel."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The user's dismissal is tied to the specific resurfaced memory. That memory is shown with the system's alignment reasoning, i.e. the Space, Time and Activity of the match. The dismissal is used at once to correct assistance: the mismatched or one-time memory is permanently removed, so it is not suggested again. Under the protocol, an immediate correction counts even though nothing about the outcome is kept.",
+      "locator": "Sec. 2.2.5 Content visualization; Sec. 2.1 Design Considerations (Proactive Assistance: resurfacing that allows dismissal)",
+      "quote": "[Sec. 2.2.5] users are given the option to view the system reasoning on Spatial Activity contextual alignment. [Sec. 2.2.5] The Space, Time, and Activity of the matched information in a human-readable format is shown for explainability. [Sec. 2.2.5] The 'Remove' option allows permanent dismissal of unwanted (e.g., mismatched) memories or one-time queries that do not require repeating."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The paper reports no lasting change to the service's own mechanism. Removing an RSAM and refreshing content data only change the content that fixed retrieval and display rules use. The recall sensitivity (an interval in days) and the Query/Proactive switch are set by the user through an interface. The phrase about interests learned from prior memories (Introduction, para. 4) refers to stored content. Mixed-initiative and IFTTT-like refinements appear only as future work in Sec. 5.",
+      "locator": "Sec. 2.2.5; Sec. 2.2.6 User Preference and Proactivity Adjustment Interface; Fig. 3 caption; Introduction para. 4; Sec. 5",
+      "quote": "[Sec. 2.2.6] we provide an interface to adjust the memory recall sensitivity [...] that controls the frequency of recall (How often the system recalls), in days.",
+      "what": "Nothing is revised by the service itself. RSAM removal and content refresh change memory content only; the recall sensitivity and the mode are set by the user."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revision by the service is reported, so no later runs under a revised mechanism are reported either. The 2-4-day deployment in Sec. 4.2 runs the same fixed pipeline. Adaptive refinement is framed as future work.",
+      "locator": "Sec. 4.2; Sec. 5 Future Work and Discussion",
+      "quote": "[Sec. 5] This suggests that proactive AR should adopt mixed-initiative mechanisms that remain simple, yet adjustable."
+    }
+  },
+  "notes": "Judged variant mementoar2026: the Quest 3 prototype in Sec. 2.2, deployed in Sec. 4. There is no code repository, so this is a text-only review. Shell access was denied, so the arXiv HTML was read through WebFetch excerpts, and the sha256 in case.yaml could not be checked. Every quote used was extracted in at least two separate fetches with identical wording. Math K is rendered as plain K, typographic quotes are normalized, and [...] marks an omitted figure reference. One open-vocabulary referent check supports two channels. It is M->S because the referents stored in RSAMs set the detector's targets during recall verification, before any suggestion (Sec. 2.2.4, 4.1). It is also A->S because the Proactive visualizer localizes the referent of the memory it is placing and computes 3D anchors from depth (Sec. 2.2.5). The paper does not say whether Query-mode answers use prior RSAMs, whether refreshed content is written back to the RSAM, or how the referent is stored in an RSAM. None of these changes a label.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 1125,
+    "code_commit": null
+  }
+}

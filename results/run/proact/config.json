@@ -1,0 +1,45 @@
+{
+  "run": {
+    "models": {
+      "backbone": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "low"
+      },
+      "judge": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "high"
+      }
+    },
+    "samples": 3,
+    "rubric": "An assistant helps this user through the day. While the user is away it may send an unprompted note, and then it answers the user's next message. Decide which output serves the user better from that point on: the user should get the correct, specific facts they need for what they are doing (the true facts are listed in the situation). Information that reaches the user before they had to ask counts in favour when it is relevant and correct; an irrelevant or wrong unprompted note counts against. Invented or wrong specifics count against. Ignore writing quality and length.",
+    "tests": [
+      {
+        "cut": [
+          "S->M"
+        ]
+      },
+      {
+        "cut": [
+          "M->A"
+        ]
+      },
+      {
+        "cut": [
+          "A->S"
+        ]
+      },
+      {
+        "cut": [
+          "M->S"
+        ]
+      },
+      {
+        "cut": [
+          "A->M"
+        ]
+      }
+    ]
+  },
+  "samples": 3,
+  "items_limit": null
+}

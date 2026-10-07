@@ -1,0 +1,15 @@
+id: speechless
+name: "SpeechLess"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2602.00793
+sources:
+  - url: https://arxiv.org/html/2602.00793v2
+    kind: paper
+    version: "2602.00793v2"
+    sha256: dec6c005276e72df36cc640f01ca5e4cd08f0388be5f592bbd36a5231d8069a9
+variants:
+  - id: speechless2026
+    label: "SpeechLess"
+    configuration: "SpeechLess six-module implementation with per-user spatial memory, low-confidence verification, and Full/Partial/Zero input modes"
+modes: [read]

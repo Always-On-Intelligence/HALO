@@ -1,0 +1,6 @@
+# PAHF's SQLite memory bank (core/memory/banks.py) imports torch and transformers at module level;
+# sentence-transformers runs all-MiniLM-L6-v2 on CPU in place of the DRAGON+ encoders.
+sentence-transformers
+numpy
+tqdm
+pyyaml

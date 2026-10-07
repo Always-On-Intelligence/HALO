@@ -1,0 +1,17 @@
+id: vinci
+name: "Vinci"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2412.21080
+sources:
+  - url: https://arxiv.org/html/2412.21080v1
+    kind: paper
+    version: "2412.21080v1"
+code:
+  repo: https://github.com/OpenGVLab/vinci
+  commit: a3b9dfabc184ded110d5f28daa4f132e5bdcebaa
+variants:
+  - id: vinci
+    label: "Vinci"
+    configuration: "Paper-described wearable/head-mounted wake-word assistant with periodic timestamped activity memory and later history-aware QA; no optional chat-history backend assumed."
+modes: [read, run]

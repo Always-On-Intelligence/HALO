@@ -1,0 +1,82 @@
+{
+  "id": "sensibleagent2025",
+  "configuration": "WebXR prototype with context-conditioned prompts and response modalities. This is the implemented GPT-4o pipeline: context parsing (current frame plus manually injected scenario variables), then few-shot proactive query generation (agent action, query type, presentation modality), then response generation. It includes a UI manager and an input modality manager and runs on an Android XR headset over 360° video or video see-through scenes (§5, user study in §7). Framework components that the paper marks as envisioned or not yet implemented were not credited: context similarity over long-term user history, and the interaction context similarity module.",
+  "sources_read": [
+    "https://arxiv.org/html/2509.09255v2 (paper, version 2509.09255v2). A direct WebFetch of the whole page was truncated partway through §8.1.",
+    "Section-scoped text of the same v2 HTML via https://web.scraper.workers.dev/?url=https://arxiv.org/html/2509.09255v2&selector=<section id>. Covered §1, §3, §4, §5.1, §5.2 (incl. Table 1), §5.3, §6, §7.2–7.3 (incl. footnote 7), §8, §9, §10 and Appendix B (#A2).",
+    "https://arxiv.org/pdf/2509.09255v2: attempted, but it exceeded the 10 MB fetch limit and was not read.",
+    "cases/sensible-agent/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "absent",
+      "rationale": "Nothing sensed or supplied by the user is admitted to a retained store. The framework's 'user context history and prior user actions' (§4.1, introduced with 'In the framework') is not built in the prototype. §9 says the prototype does not model user history. §8.3 says each proactive interaction is treated as a discrete event. §5.1 says the context layer does no computation over historical data. Familiarity and urgency are injected per scenario by the experimenters, not written to memory by the service. The §6 'Learned Preferences' vignette (a dismissal leading to an inferred preference) is hedged ('can infer'), and §9 rules it out for the prototype.",
+      "locator": "§9 Limitations; also §8.3, §5.1 'Context Parsing', §4 intro paragraph",
+      "quote": "First, while our design supports personalization and contextual adaptation, our current prototype does not model user history or longitudinal preferences."
+    },
+    "M->A": {
+      "label": "absent",
+      "rationale": "The framework has two history-based routes into Action, and the paper says neither is implemented in the prototype. The WHAT module's 'user history of similar context' is covered by the §4 intro and §5.1. The HOW module's comparison with prior interaction patterns is 'not yet implemented' (§4.2). §9 adds that the prototype does not model user history or longitudinal preferences. The query-generation prompt holds only a preamble, few-shot examples and the current context (§5.2.2). The few-shot examples were written by hand by the authors from an offline 40-participant annotation study, so they are fixed prompt mechanism, not service memory. Familiarity and urgency enter as 'scenario tags or simulated sensor values' that describe the current situation. The §6 claims of adaptation 'based on interaction history' are hedged vignettes that §9 contradicts for the prototype.",
+      "locator": "§4 intro paragraph; §4.2 'User Input Similarity'; §5.1 'Context Parsing'; §5.2.2 'Prompting Strategy'; §9",
+      "quote": "While our prototype implements the core components of both modules, certain capabilities such as context similarity based on long-term user history are part of the envisioned design and discussed as future directions."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Implemented in the prototype's interaction module. The query-generation layer chooses the output modality (an Action decision about the effector). That choice gates which input recognizers are enabled: for example, gaze is suppressed when a query is audio-only, and input modality constraints are handled after query generation. The type of query presented also sets how sensed signals are read. Nod and shake are read as yes/no for binary prompts. Head tilt, or the spoken words ONE/TWO/THREE, map to the options of the current multi-choice prompt. Gaze dwell selects among the UI targets the agent rendered (§5.3.1–5.3.4). So Action's execution state guides both what Sensing acquires and how it interprets it.",
+      "locator": "§5.1 System Architecture, 'Interaction Module' paragraph; §4.2 'Interaction Modality Adaption'; §5.3.1–5.3.2; Fig. 3 caption",
+      "quote": "Each modality is gated based on two criteria: the inferred contextual appropriateness (e.g., SIIDs (Liu et al., 2024a)) and the feasibility given the chosen output modality."
+    },
+    "M->S": {
+      "label": "absent",
+      "rationale": "The context-parsing layer (Sensing) takes the current frame, scenario variables injected by the experimenters, and fixed few-shot examples. It receives no retained prior from service memory. The paper says this layer does no computation over historical data (§5.1) and that the prototype does not model user history (§9). The injected familiarity and urgency values describe the current scenario ('scenario tags or simulated sensor values', §5.2.2); the service does not retain them across interactions. The few-shot examples are written by the developers and are part of the mechanism, not memory.",
+      "locator": "§5.1 'Context Parsing'; §5.2.2 'Runtime Inference and Output Integration'; §9",
+      "quote": "This layer simulates the role of the context similarity module in our framework, although it does not perform explicit similarity computation across historical data."
+    },
+    "A->M": {
+      "label": "absent",
+      "rationale": "The prototype retains none of its own suggestions, utterances, execution records or their outcomes. §8.3 says the system 'treats each proactive interaction as a discrete event' and offers tracking of dialogue state across turns only as a possible extension. The module that would use prior interaction patterns and 'previously successful input conditions' is 'not yet implemented' (§4.2). §9 states that the prototype does not model user history.",
+      "locator": "§4.2 'User Input Similarity'; §8.3 Modeling Modality Preferences; §9",
+      "quote": "While not yet implemented, INTERACTION CONTEXT SIMILARITY MODULE component would compare current input-related context to prior interaction patterns, helping refine modality decisions based on similarity to previously successful input conditions."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "The service keeps no record of its own suggestions for later use: each interaction is a discrete event and no user history is modelled. The only logging described (interaction time and the modality used for each response) is study data that the authors analysed.",
+      "locator": "§8.3; §7.3 Procedure; §9",
+      "quote": "While Sensible Agent currently treats each proactive interaction as a discrete event, several participants attempted to engage in follow-up utterances or gestures, suggesting a desire for extended, multi-turn exchanges."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "The user's reply to a prompt (confirm, select, or nod/shake) is obtained and used at once to produce the follow-up response. The paper never says the service retains it. The only retained responses are the researchers' study logs, which do not count.",
+      "locator": "§5.1 'Response Generation Layer'; §7.3 Procedure; §9",
+      "quote": "We also logged interaction time (from prompt trigger to system response) and recorded the modality used for each response."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "This is an immediate check, with nothing kept. The user's reply is read against the specific prompt it answers: yes/no for a binary confirmation (§4.1 says a binary query requires explicit user confirmation), or an option index mapped to the current prompt's choices (§5.3.1–5.3.2). Only the confirmed or selected action, together with the context, goes on to the response generator. The reply therefore checks or redirects the proposed assistance before it is delivered.",
+      "locator": "§5.1 System Architecture, 'Response Generation Layer'; §4.1 'Binary Confirmation'; §5.3.2 Head Gestures",
+      "quote": "Once the user confirms or selects an option from the proactive prompt, the system passes both the structured context and the selected action to an LLM to generate a natural language response."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service makes no durable change to its own mechanism. The few-shot examples and chain-of-thought reasoning lines were written by the authors from study data, which is a developer change and does not count. §8.3 places longer-term adaptation (reinforcement learning, implicit feedback tracking) in future work. The §6 vignette ('can infer this preference') is hedged and ruled out by §9. Even if implemented, it would be preference content used by a fixed mechanism, not a mechanism change.",
+      "locator": "§5.2.2 'Prompting Strategy'; §8.3; §9",
+      "quote": "These reasoning lines were manually authored based on design patterns extracted from our user study, and serve as Chain-of-Thought (CoT) scaffolds for the model.",
+      "what": "Nothing is revised by the service itself. Prompts and few-shot examples are written by the developers."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "There is no self-made revision, so no later runs under a revised mechanism are reported. Adaptation on 'subsequent visits' appears only in a hedged §6 application vignette, which §9 rules out for the prototype. §10 lists long-term personalization as a future direction.",
+      "locator": "§6 'Learned Preferences'; §9; §10",
+      "quote": "On subsequent visits to similar venues (Figure 6D), it can prioritize offering translation assistance proactively, adapting the content of its assistance based on interaction history."
+    }
+  },
+  "notes": "Scope: I judged the implemented prototype (§5) as it ran in the user study. Footnote 7 in §7.2 says the Wizard-of-Oz control covered only system activation and that the core agent logic, including context sensing and query generation, was fully functional. Classification choices: (1) The few-shot examples come from the offline 40-participant annotation study, and the authors wrote them and the chain-of-thought lines into the prompt by hand. I treated them as fixed mechanism, not service memory, so they create no M->A or M->S flow and no self-revision. (2) Task familiarity and temporal urgency are 'manually injected user-specific variables', which the paper also calls scenario tags or 'simulated sensor values'. I treated them as stand-in current-context (Sensing) input, not retained memory. (3) The §6 vignettes ('modifies its behavior based on learned routines'; 'Learned Preferences … based on interaction history') are hedged and contradicted by §9, so I treated them as envisioned. The four memory channels are labelled absent because the §4 intro, §4.2, §5.1, §8.3 and §9 say outright that these routes are not implemented in the prototype. Verification: shell access was denied, so I could not check the source sha256. Every quote was extracted at least twice and then confirmed as an exact match against section-scoped scrapes of the v2 HTML. A control check correctly rejected two sentences that an earlier, truncated fetch had invented. The fetch tool passes content through a model, so this is a careful model-based check, not a byte-level comparison. The case README displayed one other reviewer's provisional labels; I did not use them.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 1155,
+    "code_commit": null
+  }
+}

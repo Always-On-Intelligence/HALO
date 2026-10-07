@@ -1,0 +1,72 @@
+{
+  "id": "proagent",
+  "configuration": "Default Qwen3-VL-4B ProAgent with persona updating/retrieval and agent-in-the-loop tiered sensing",
+  "sources_read": [
+    "https://arxiv.org/html/2512.06721v2 (arXiv:2512.06721v2; main text and Appendix A captions)",
+    "cases/proagent/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensory context and verbal feedback enter interaction history; inferred preferences update the persona database.",
+      "locator": "[§4.2.2](https://arxiv.org/html/2512.06721v2#S4.SS2.SSS2), interaction records and database updates."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved personas shape assistance decisions; retained responses support duplicate suppression.",
+      "locator": "[§4.2.3](https://arxiv.org/html/2512.06721v2#S4.SS2.SSS3); §§4.3.1, 4.3.3."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Proactive-need predictions control subsequent high-rate versus low-rate visual sampling.",
+      "locator": "[§4.4.2](https://arxiv.org/html/2512.06721v2#S4.SS4.SSS2), reasoning-driven sampling and scheduler."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Stored object–scene exemplars classify current detections before persona retrieval, directly supporting sensory interpretation.",
+      "locator": "[§4.2.3](https://arxiv.org/html/2512.06721v2#S4.SS2.SSS3), bank B, top-k matching and scenario prediction."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Delivered assistance enters timestamped short-term history and accumulated interaction records used for persona inference.",
+      "locator": "[§§4.2.1–4.2.2](https://arxiv.org/html/2512.06721v2#S4.SS2), history window and interaction record r_i."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains its delivered assistance for persona inference.",
+      "locator": "[§4.2.2](https://arxiv.org/html/2512.06721v2#S4.SS2.SSS2), interaction history H.",
+      "quote": "these records accumulate into an interaction history"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Feedback about delivered assistance is retained alongside it.",
+      "locator": "[§4.2.2](https://arxiv.org/html/2512.06721v2#S4.SS2.SSS2), interaction record r_i=(c_i,a_i,f_i).",
+      "quote": "the user’s verbal feedback as an interaction record"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Paired assistance–feedback records produce contextual preferences that correct unwanted assistance.",
+      "locator": "[§4.2.2](https://arxiv.org/html/2512.06721v2#S4.SS2.SSS2); [§5.6.2](https://arxiv.org/html/2512.06721v2#S5.SS6.SSS2).",
+      "quote": "personas help correct some false detections"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Persona updates change preference content; LoRA training is developer-directed. No service-authored mechanism revision is reported.",
+      "locator": "[§4.2.2](https://arxiv.org/html/2512.06721v2#S4.SS2.SSS2); §§4.3.2, 5.1.2."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Reported subsequent use concerns updated preferences, without a revised mechanism.",
+      "locator": "[§5.6.2](https://arxiv.org/html/2512.06721v2#S5.SS6.SSS2), later encounters and feedback-persona evaluation."
+    }
+  },
+  "notes": "Text-only review; no repository provided. Appendix prompt figures were unavailable in extracted HTML; the PDF fetch failed.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 194,
+    "code_commit": null
+  }
+}

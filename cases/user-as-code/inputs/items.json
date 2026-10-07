@@ -1,0 +1,10 @@
+{
+  "_about": "Each item is one Active Service scenario from core/evaluation/active_service_scenarios.json (user-authored sessions, the last one an unrelated or cue-free update) plus one follow-up question the user asks afterwards, answered by the two-phase memory. `expect` lists answer keywords (alternatives separated by |) for the answer_expected_hits metric only.",
+  "items": [
+    {"scenario": "travel_03", "question": "Can I use the Schengen visa I already have for the Berlin trip?", "expect": ["single", "paris"]},
+    {"scenario": "finance_02", "question": "Is it fine to just put the venue for the team offsite on my corporate card?", "expect": ["3,000|3000", "approval"]},
+    {"scenario": "schedule_07", "question": "What else do I have going on that Saturday, October 26?", "expect": ["wedding|jake"]},
+    {"scenario": "deadline_03", "question": "By when do I have to tell my landlord that I want to renew the lease?", "expect": ["december 2|dec 2|2024-12-02"]},
+    {"scenario": "deadline_07", "question": "When does the home inspection contingency on the house run out?", "expect": ["november 9|nov 9|2024-11-09"]}
+  ]
+}

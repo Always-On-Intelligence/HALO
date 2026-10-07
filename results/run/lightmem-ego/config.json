@@ -1,0 +1,38 @@
+{
+  "run": {
+    "models": {
+      "backbone": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "low"
+      },
+      "judge": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "high"
+      }
+    },
+    "samples": 3,
+    "rubric": "The assistant runs on smart glasses and answers the wearer's questions about what they saw and heard earlier in the same capture session. The situation lists what actually happened. Decide which answer serves the wearer better: correct and specific about the recorded events beats vague; an honest \"I cannot tell\" beats a wrong answer. Ignore writing style and length.",
+    "tests": [
+      {
+        "cut": [
+          "S->M"
+        ]
+      },
+      {
+        "cut": [
+          "M->A"
+        ]
+      },
+      {
+        "cut": [
+          "A->M"
+        ],
+        "field": "output_q2",
+        "context_field": "context_q2",
+        "rubric": "The assistant runs on smart glasses and answers the wearer's questions about what they saw and heard earlier in the same capture session. The situation lists what actually happened and the previous question and answer in this conversation; the new question refers back to that exchange. Decide which answer serves the wearer better: it should resolve the reference correctly and be accurate about the recorded events; an honest \"I cannot tell\" beats a wrong answer. Ignore writing style and length."
+      }
+    ]
+  },
+  "samples": 3,
+  "items_limit": null
+}

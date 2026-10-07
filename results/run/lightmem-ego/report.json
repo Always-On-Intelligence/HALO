@@ -1,0 +1,131 @@
+{
+  "case": "lightmem-ego",
+  "channels": {
+    "S->M": "frames and ASR transcripts admitted into the short-term micro-event store (M_st), the source of M_lt",
+    "M->A": "retrieved M_st/M_lt/interaction-cache evidence delivered to the answer prompt",
+    "A->M": "answered turns written to the interaction cache that resolves and boosts the next question"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 14,
+      "modified": 1,
+      "tie": 0,
+      "metrics": {
+        "q2_followup_resolved": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "mst_refined": {
+          "original": 5.0,
+          "modified": 0.0
+        },
+        "mlt_episodes": {
+          "original": 1.0,
+          "modified": 0.0
+        },
+        "model_calls": {
+          "original": 13.0,
+          "modified": 2.0
+        },
+        "q2_fact_recall": {
+          "original": 0.6,
+          "modified": 0.0
+        },
+        "mst_events": {
+          "original": 5.0,
+          "modified": 0.0
+        },
+        "q1_fact_recall": {
+          "original": 1.0,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 14,
+      "modified": 1,
+      "tie": 0,
+      "metrics": {
+        "q2_followup_resolved": {
+          "original": 1.0,
+          "modified": 0.0
+        },
+        "mst_refined": {
+          "original": 5.0,
+          "modified": 5.0
+        },
+        "mlt_episodes": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "model_calls": {
+          "original": 13.0,
+          "modified": 13.0
+        },
+        "q2_fact_recall": {
+          "original": 0.6,
+          "modified": 0.0
+        },
+        "mst_events": {
+          "original": 5.0,
+          "modified": 5.0
+        },
+        "q1_fact_recall": {
+          "original": 1.0,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M"
+      ],
+      "field": "output_q2",
+      "pairs": 15,
+      "original": 3,
+      "modified": 3,
+      "tie": 9,
+      "metrics": {
+        "q2_followup_resolved": {
+          "original": 1.0,
+          "modified": 0.0
+        },
+        "mst_refined": {
+          "original": 5.0,
+          "modified": 5.0
+        },
+        "mlt_episodes": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "model_calls": {
+          "original": 13.0,
+          "modified": 13.0
+        },
+        "q2_fact_recall": {
+          "original": 0.6,
+          "modified": 0.6
+        },
+        "mst_events": {
+          "original": 5.0,
+          "modified": 5.0
+        },
+        "q1_fact_recall": {
+          "original": 1.0,
+          "modified": 1.0
+        }
+      }
+    }
+  ]
+}

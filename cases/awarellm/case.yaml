@@ -1,0 +1,15 @@
+id: awarellm
+name: "AwareLLM"
+domain: digital
+kind: research
+report: https://arxiv.org/abs/2605.09625
+sources:
+  - url: https://arxiv.org/html/2605.09625v3
+    kind: paper
+    version: "2605.09625v3"
+    sha256: 08dbe95cb3f892629f8d638810ed736e065b5f8ae7787f5437f17c1fdb7bac0c
+variants:
+  - id: awarellm2026
+    label: "AwareLLM"
+    configuration: "Personalized treatment prototype with user-configurable system-prompt preferences, retained chat context and both sensor reasoning loops"
+modes: [read]

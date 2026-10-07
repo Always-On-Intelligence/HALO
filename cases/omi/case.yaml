@@ -1,0 +1,27 @@
+id: omi
+name: "Omi"
+domain: wearable
+kind: product
+report: https://docs.omi.me/doc/developer/apps/Notifications
+sources:
+  - url: https://docs.omi.me/doc/developer/apps/Notifications
+    kind: product_documentation
+    version: ""
+  - url: https://docs.omi.me/doc/developer/backend/StoringConversations
+    kind: product_documentation
+    version: ""
+  - url: https://docs.omi.me/doc/developer/backend/chat_system
+    kind: product_documentation
+    version: ""
+  - url: https://docs.omi.me/doc/developer/backend/transcription
+    kind: product_documentation
+    version: ""
+code:
+  repo: https://github.com/BasedHardware/omi
+  commit: 5a46ab0467ce594c35fd04d72131421afd747259
+  sparse: [backend]
+variants:
+  - id: omi2026
+    label: "Omi"
+    configuration: "Wearable capture with enrolled speech profile, retained personal backend, authorized agentic chat tools and a proactive-notification app; excludes rollout-gated desktop JIT features."
+modes: [read, run]

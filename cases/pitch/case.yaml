@@ -1,0 +1,15 @@
+id: pitch
+name: "PITCH"
+domain: digital
+kind: research
+report: https://arxiv.org/abs/2509.24073
+sources:
+  - url: https://arxiv.org/html/2509.24073v4
+    kind: paper
+    version: "2509.24073v4"
+    sha256: ed61c4fc3dabe9aa241fc557ca890866dda80d750daf681a5c39d9898e5bc938
+variants:
+  - id: lunchnow2025
+    label: "PITCH"
+    configuration: "Slack morning planning and evening reflection, fixed/rotating-goal variants"
+modes: [read]

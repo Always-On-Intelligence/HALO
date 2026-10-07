@@ -1,0 +1,14 @@
+# private.toml for gym/config.py (read through CODELINKER_CFG), following example_config.toml.
+# No request leaves through these keys: the adapter registers its own request function for codelinker's
+# 'openai' request library, so the alias below only satisfies the config loader.
+max_retry_times = 1
+
+[api_keys]
+[[api_keys.gpt-4o]]
+api_key = "unused"
+model = "gpt-4o"
+
+[request]
+default_completions_model = "gpt-4o"
+save_completions = false   # example_config.toml writes every completion to .cache/ in the cwd
+use_cache = false

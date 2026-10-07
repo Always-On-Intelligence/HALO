@@ -1,0 +1,197 @@
+# visualclaw/defaults.yaml
+# 全量默认参数，随包发布。用户 config.yaml 仅需写覆盖项。
+
+gateway:
+  host: "0.0.0.0"
+  port: 30100
+  enabled_modules:
+    - proxy
+    - multimodal_image
+    - multimodal_video
+    - memory
+    - skill
+    - rl
+  session_store_dir: "~/.visualclaw/sessions"
+
+proxy:
+  streaming: true
+  session_id_header: "X-Session-Id"
+  agent_type_header: "X-Agent-Type"
+  turn_type_header: "X-Turn-Type"
+  session_done_header: "X-Session-Done"
+  openclaw_config_path: "~/.openclaw/openclaw.json"
+  openclaw_prompt_cache_path: "records/system_prompt_cache.json"
+  providers:
+    openai:
+      api_base: "https://api.openai.com/v1"
+      api_key: ""
+    anthropic:
+      api_base: "https://api.anthropic.com"
+      api_key: ""
+    openrouter:
+      api_base: "https://openrouter.ai/api/v1"
+      api_key: ""
+      route: ""
+      fallback_models: []
+      data_policy: ""
+      app_name: "VisualClaw"
+      app_url: ""
+    bedrock:
+      region: "us-east-1"
+      access_key: ""
+      secret_key: ""
+
+agent_adapters:
+  copaw_config_path:    "~/.copaw/config.json"
+  ironclaw_env_path:    "~/.ironclaw/.env"
+  picoclaw_config_path: "~/.picoclaw/config.json"
+
+skill:
+  skills_dir: "skills"
+  retrieval_mode: "template"
+  top_k: 6
+  task_specific_top_k: 10
+  embedding_model: "all-MiniLM-L6-v2"
+  embedding_model_path: ""
+  min_relevance: 0.07
+  evolution_history_path: "memory_data/skills/evolution_history.jsonl"
+  evolution:
+    enabled: true
+    success_rate_threshold: 0.4
+    llm_model: "gpt-5.2"
+    max_new_skills_per_run: 5
+
+memory:
+  backend: "sqlite"
+  data_dir: "memory_data/memory"
+  user_memory_path: "memory_data/user_memory.md"
+  scope: "default"
+  use_embeddings: false
+  embedding_mode: "hashing"
+  embedding_model: "all-MiniLM-L6-v2"
+  flush_every: 5
+  auto_consolidate: true
+  retrieval:
+    top_k: 6
+    mode: "keyword"
+  policy:
+    profile: "balanced"
+    max_injected_units: 6
+    max_injected_tokens: 800
+    recent_bonus_hours: 72
+    keyword_weight: 1.0
+    metadata_weight: 0.45
+    importance_weight: 0.5
+    recency_weight: 0.3
+  consolidation:
+    enabled: true
+    similarity_threshold: 0.80
+    decay_after_days: 30
+    decay_factor: 0.05
+    min_importance: 0.15
+    decay_mode: "linear"
+
+rl:
+  enabled: false
+  backend: "tinker"
+  batch_size: 4
+  learning_rate: 1.0e-4
+  max_steps: 1000
+  loss_fn: "importance_sampling"
+  prm:
+    enabled: true
+    provider: "openai"
+    model: "gpt-5.2"
+    api_base: ""
+    majority_votes: 3
+  active_model:
+    name: ""
+    provider: ""
+
+multimodal:
+  image:
+    enabled: true
+    generate_descriptions: false
+    description_model: "gpt-5.2"
+    output_format: "preserve"
+    cache:
+      enabled: true
+      dir: "~/.visualclaw/image_cache"
+      max_entries: 5000
+      ttl_seconds: 86400
+  video:
+    enabled: false
+    vlm_model: "gemini-2.0-flash"
+    state_memory_dir: ""
+    frame_hasher:
+      hamming_threshold: 6
+    lightweight_encoder:
+      output_dim: 128
+    change_gate:
+      tau_minor: 0.08
+      tau_major: 0.20
+      silence_force_major_sec: 10
+      decay_start_sec: 4.0
+      decay_floor: 0.3
+      adaptive: true
+      adaptive_alpha: 0.15
+      adaptive_low: 1.3
+      adaptive_high: 0.7
+    state_memory:
+      max_total: 120
+      max_keyframes: 10
+    context_builder:
+      max_keyframes_in_context: 5
+
+vision_retrieval:
+  enabled: false
+  model: "siglip"
+  model_path: ""
+  cache_dir: "~/.visualclaw/vision_cache"
+  dimension: 768
+  fusion:
+    text_weight: 0.3
+    image_weight: 0.7
+  cache:
+    enabled: true
+    max_entries: 10000
+    ttl_seconds: 86400
+
+governance:
+  enabled: false
+  constitution_path: "constitution.yaml"
+  cost_tracking: true
+  cost_default_model: "gpt-5.2"
+  state_memory_token_budget: 8000
+  audit:
+    enabled: true
+    dir: ".autoharness"
+    retention_days: 30
+
+scheduler:
+  enabled: false
+  mode: "idle"
+  idle_threshold_minutes: 30
+  sleep_start: "23:00"
+  sleep_end: "07:00"
+  min_window_minutes: 15
+  log_path: "~/.visualclaw/scheduler.log"
+  calendar:
+    enabled: false
+    credentials_path: "~/.visualclaw/client_secrets.json"
+    token_path: "~/.visualclaw/calendar_token.json"
+
+live:
+  enabled: false
+  glasses_port: 8765
+  glasses_http_enabled: false  # opt-in /v1/video/frame + /v1/glasses/chat for iOS VisualClawGlasses
+  camera_fps: 4.0
+  jpeg_quality: 50
+  user_memory_path: ""
+  audio:
+    enabled: false
+    sample_rate: 16000
+  gemini_live:
+    enabled: false
+    model: "gemini-2.5-flash"
+    api_key: ""

@@ -1,0 +1,104 @@
+{
+  "id": "abot-claw",
+  "configuration": "ABot-Claw OpenClaw orchestration with shared multi-robot spatial/visual memory and an online VLAC critic, assessed from arXiv:2604.10096v2 and repository commit 39c9ffc94a84f2e6baac431a9bff9771111f8539.",
+  "sources_read": [
+    "https://arxiv.org/html/2604.10096v2",
+    "https://github.com/amap-cvlab/ABot-Claw/tree/39c9ffc94a84f2e6baac431a9bff9771111f8539",
+    "README.md",
+    "openclaw_layer/README.md",
+    "openclaw_layer/MISSION.md",
+    "openclaw_layer/HEARTBEAT.md",
+    "openclaw_layer/setup.sh",
+    "openclaw_layer/skills/abotclaw-memory/SKILL.md",
+    "openclaw_layer/skills/abotclaw-progress-critic/SKILL.md",
+    "openclaw_layer/skills/abotclaw-run-robot-task/SKILL.md",
+    "openclaw_layer/skills/abotclaw-bundle/SKILL.md",
+    "openclaw_layer/skills/abotclaw-bundle/references/usage.md",
+    "service_layer/SpatialMemory/README.md",
+    "service_layer/SpatialMemory/SERVICE_AGENT.md",
+    "service_layer/SpatialMemory/app/api/routes.py",
+    "service_layer/SpatialMemory/app/services/memory_service.py",
+    "service_layer/SpatialMemory/app/services/task_service.py",
+    "service_layer/SpatialMemory/app/storage.py",
+    "service_layer/SpatialMemory/app/embeddings.py",
+    "service_layer/SpatialMemory/pipelines/README.md",
+    "service_layer/SpatialMemory/pipelines/offline_keyframe_pipeline.py",
+    "service_layer/VLAC/README.md",
+    "service_layer/VLAC/SERVICE_AGENT.md",
+    "service_layer/VLAC/main.py",
+    "robot_layer/arm_piper/agent_server/robot_sdk/memory_sdk.py",
+    "robot_layer/arm_piper/agent_server/code_executor.py",
+    "robot_layer/arm_piper/agent_server/execution_recorder.py",
+    "robot_layer/arm_piper/agent_server/routes/code_routes.py"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "The configured workflow captures live camera frames, adds detections or semantic annotations, and writes them into SpatialMemoryHub. Implemented ingestion methods persist images, poses, timestamps, labels, and confidence in image files and SQLite; place ingestion also accepts human labels.",
+      "locator": "openclaw_layer/skills/abotclaw-memory/SKILL.md:134-194; service_layer/SpatialMemory/app/services/memory_service.py:64-148; service_layer/SpatialMemory/app/storage.py:79-102",
+      "quote": "Write it into SpatialMemoryHub."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved object and place memories provide target poses and evidence for navigation or manipulation. The memory skill explicitly directs the runtime to hand retrieved poses to execution, and the query implementation returns these retained fields.",
+      "locator": "openclaw_layer/skills/abotclaw-memory/SKILL.md:208-220,245-247; service_layer/SpatialMemory/app/services/memory_service.py:185-226",
+      "quote": "hand off `target_pose` to navigation or manipulation"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action supplies the intended task to the critic, conditioning interpretation of current visual evidence on the expected result. The workflow selects a camera appropriate to task progress; the service evaluates the supplied task description with reference and current images.",
+      "locator": "openclaw_layer/skills/abotclaw-progress-critic/SKILL.md:75-98; service_layer/VLAC/main.py:122-141",
+      "quote": "task=req.task_description,"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The critic workflow retrieves a prior successful evidence image from memory and supplies it as the reference for interpreting the current scene. This directly conditions visual progress assessment on retained evidence, beyond memory-guided navigation or answer-time retrieval.",
+      "locator": "openclaw_layer/skills/abotclaw-progress-critic/SKILL.md:100-107,166-172; service_layer/VLAC/main.py:129-141",
+      "quote": "use memory to retrieve a prior successful evidence image as `reference_image`"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Action-generated executable scripts are saved to disk, and execution records retain the submitted code and associated results for history retrieval. The paper additionally reports execution traces being fed back into the runtime as retained experience.",
+      "locator": "robot_layer/arm_piper/agent_server/code_executor.py:513-561,641-643,717-725; robot_layer/arm_piper/agent_server/routes/code_routes.py:325-333; [paper v2, §2.4](https://arxiv.org/html/2604.10096v2#S2.SS4)",
+      "quote": "path.write_text(wrapper, encoding=\"utf-8\")"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains executable action scripts and execution histories accessible through its own API. The paper explicitly describes feeding execution records back into the runtime, establishing service use beyond author-only trial analysis.",
+      "locator": "robot_layer/arm_piper/agent_server/code_executor.py:436-442,513-555,717-725; robot_layer/arm_piper/agent_server/routes/code_routes.py:325-333; [paper v2, §2.4](https://arxiv.org/html/2604.10096v2#S2.SS4)",
+      "quote": "Save code to logs/code_executions/ directory"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "The paper explicitly retains critic evaluations with execution traces. Code also retains execution status, errors, output, and execution-linked camera/state recordings.",
+      "locator": "[paper v2, §2.4, Closing the execution loop](https://arxiv.org/html/2604.10096v2#S2.SS4); robot_layer/arm_piper/agent_server/code_executor.py:487-561; robot_layer/arm_piper/agent_server/execution_recorder.py:145-172",
+      "quote": "We log execution traces together with critic scores and feed them back into the runtime as structured experience."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The task-conditioned critic checks the current attempt and its result controls retry, replanning, or termination. The manipulation demonstration also reports detecting a failed grasp and recomputing its pose for another attempt.",
+      "locator": "openclaw_layer/skills/abotclaw-progress-critic/SKILL.md:145-154; service_layer/VLAC/main.py:129-141; [paper v2, §4.2.2](https://arxiv.org/html/2604.10096v2#S4.SS2.SSS2)",
+      "quote": "failure or no change -> retry, replan, or ask for help"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Online replanning, generated task scripts, and skill-development instructions do not establish that this service durably changed a reusable mechanism; no concrete autonomous mechanism revision is reported.",
+      "locator": "[paper v2, §§1, 3.2, 4.2](https://arxiv.org/html/2604.10096v2); openclaw_layer/MISSION.md:32-58; openclaw_layer/HEARTBEAT.md:22-25; robot_layer/arm_piper/agent_server/code_executor.py:717-725",
+      "what": "No qualifying durable change to model parameters, prompts, reusable skills or rules, code, or harness is identified."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "The demonstrations report task execution and immediate correction, but no later run under an identified revised mechanism; instructions to reuse existing skills do not establish such a run.",
+      "locator": "[paper v2, §4](https://arxiv.org/html/2604.10096v2#S4); openclaw_layer/skills/abotclaw-run-robot-task/SKILL.md:34-36; openclaw_layer/skills/abotclaw-bundle/references/usage.md:11-16"
+    }
+  },
+  "notes": "Reviewed independently without modifying files; the checkout HEAD matches the assigned commit. Functional roles determine the labels: visual critic interpretation counts as Sensing, while retry/stop selection counts as Action. M->S is supported by the configured memory-reference critic workflow. The released offline keyframe task runner is a placeholder and its embeddings are simplified; these limitations do not negate the implemented online memory routes. Generic OpenClaw evolution claims and upstream VLAC training descriptions were not treated as evidence of ABot-Claw mechanism revision.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 200,
+    "code_commit": "39c9ffc94a84f2e6baac431a9bff9771111f8539"
+  }
+}

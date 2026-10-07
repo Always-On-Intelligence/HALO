@@ -1,0 +1,77 @@
+{
+  "id": "socialmind",
+  "configuration": "socialmind: RayNEO X2 SocialMind with identity-indexed persona database and multi-tier suggestion generation. Judged the full system of §4 as implemented on RayNEO X2 glasses plus a Python/LLM server (§5.1.1): human-like perception (§4.2), implicit persona adaptation with a face-ID-indexed persona database (§4.3), multi-source knowledge reasoning (§4.4), and multi-tier generation with the social factor-aware cache, intention-infer reasoning and proactive response update (§4.5).",
+  "sources_read": [
+    "https://arxiv.org/html/2412.04036v1 (arXiv v1 HTML, the listed source; read via WebFetch, which paraphrases and cut the page off near §5.3.3; sha256 not checked because shell access was unavailable)",
+    "https://arxiv.org/pdf/2412.04036v1 (same version v1; full PDF text layer, pp. 1–29; used to confirm exact quote wording and to read §5.3.3–§7 and Appendix A, Figs. 24–25)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "After an interaction, an LLM extracts persona cues for both the user and the partner from the captured conversation (App. A Fig. 25 prompt over user–partner conversations) and writes them into the identity-indexed persona database. New partners are registered. For the user and previously met partners, cues are added, merged if similar, or replace contradictory historical cues, which covers admission, integration and correction. During daily use the system also writes recorded user/partner utterances and nonverbal cues, tagged with parsed social factors, into the social factor-aware cache.",
+      "locator": "§4.3.1 Implicit Persona Extraction; §4.3.2 Persona Management; Fig. 5 (Post Interaction: Register/Update Partner Persona, Update User Persona); §4.5.1 Runtime Routing and Cache Management",
+      "quote": "Specifically, the persona extraction occurs during the post-interaction phase, where an LLM extracts the implicit persona cues from the social conversations. … Specifically, for new conversational partners, their persona cues will be directly registered in the persona database. … If the incoming persona cues are semantically similar to existing ones, the two sets of cues are merged. Conversely, if the incoming persona cues are contradictory, the historical cues are removed and replaced by the new incoming ones."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "At conversation start, face-ID matching selects the stored record. The user's and partner's personas (or only the user's if the partner is unknown) are loaded into the runtime prompt of the suggestion LLM and shape suggestion content (App. A Fig. 24 lists User's/Partner's Persona Clues). Each partner utterance is also matched against stored cache keys. A hit at similarity ≥0.95 gives the fast cached response, and a miss sends the request to LLM reasoning (Fig. 6; 50 ms cache vs 2.8 s LLM in §5.4.1).",
+      "locator": "§4.3.3 Persona Retrieval; §4.4.2 Runtime Prompt; §4.5.1 Runtime Routing and Cache Management; Fig. 6; §5.4.1; App. A Fig. 24",
+      "quote": "If the partners are found, the personas of both the user and the partner are loaded and integrated into LLMs as a knowledge source … Otherwise, only the user’s persona will be used. … During live social interactions, SocialMind computes the semantic similarity of the conversational partner’s utterances and the keys in the social factor-aware cache. If the similarity falls below the threshold, it triggers the slow thinking mode in SocialMind, employing LLMs for in-depth reasoning"
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "The paper describes no flow from the suggestion generator's intentions, plans, information needs or display state into what or how SocialMind senses. Acquisition runs on fixed settings or is user-controlled: partial utterances are offloaded every 2 s, vibration is sent every 300 ms, face/pose tracking is capped at 3 fps, and users can activate the system manually. The proactive update compares two consecutive partner utterances to gate display refresh, which is S→A, and nothing checks whether a displayed suggestion was followed. The route is not explicitly excluded, so the label is insufficient rather than absent.",
+      "locator": "§4.2.1–4.2.3; §4.5.2 Intention Infer-based Generation; §4.5.3 Proactive Response Update; §5.4.1 System Performance",
+      "quote": "we set the offloading interval to 2 seconds in SocialMind. … If the semantic similarity between the two utterances is high, SocialMind will not update the social suggestions on the AR glasses."
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Two contact points, and neither establishes the channel. (a) The paper frames face-ID matching as the first step of persona retrieval, used to check whether the partner is in the database, and its result loads personas into the LLM. That is answer-time retrieval (M→A), and the paper never says how face templates are enrolled or kept. (b) Location recognition matches camera frames against images SocialMind 'pre-stores' of generic location types. That is a fixed reference set inside the perception mechanism, not information the service keeps from its interactions. No stored persona or cache content is described as guiding sampling, attention, compression or interpretation. Not explicitly excluded.",
+      "locator": "§4.3.3 Persona Retrieval; Fig. 5 (During Interaction: (Face) ID Matching → Load Personas); §4.2.3 Social Factor Cues Parsing",
+      "quote": "During live social interactions, SocialMind first performs persona retrieval using face ID matching to determine whether the conversational partners are in the database. This facial recognition is executed locally on the glasses to protect privacy."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "SocialMind's own generated suggestions are written into the persistent social factor-aware cache during daily use. Each is paired with the user/partner utterances and nonverbal cues and tagged with social factors. Cache values are defined as suggestions 'generated by SocialMind', and the cache keeps being updated and consulted in later conversations (§5.3.3).",
+      "locator": "§4.5.1 Cache Initialization and Runtime Routing and Cache Management; §5.3.3 Impact of Cache Size and Threshold",
+      "quote": "Additionally, as users continue to use SocialMind in their daily lives, it continuously records their utterances, conversational partners’ utterances, nonverbal cues, and the corresponding social suggestions. These elements are structured as paired samples, marked with the corresponding social factors, and updated into the social factor-aware caches."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps what it delivered. Its generated suggestions are recorded with the triggering partner utterances and stored as cache values, and the fast path reuses them on later similar utterances. This is an in-service store, not an author-only trial log.",
+      "locator": "§4.5.1 Runtime Routing and Cache Management (values defined in §4.5.1 Cache Initialization); §5.3.3",
+      "quote": "it continuously records their utterances, conversational partners’ utterances, nonverbal cues, and the corresponding social suggestions. These elements are structured as paired samples, marked with the corresponding social factors, and updated into the social factor-aware caches."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No evidence about how a suggestion fared (adoption, rating, dismissal, partner reaction) is described as obtained and kept by the service. Recorded user and partner utterances serve as cache context, not as outcomes of specific suggestions. Ratings come from the authors' post-study questionnaire, and quality comes from offline LLM-as-judge scoring.",
+      "locator": "§4.5.1; §5.1.4 Evaluation Metrics; §5.4.2 User Study"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Nothing links an outcome to the suggestion it concerns to check or correct assistance. The proactive update compares consecutive partner utterances. In-depth suggestions refine on the completed utterance, not on evidence about the earlier suggestion. Persona contradiction handling corrects stored facts. LLM-as-judge scoring is offline evaluation by the authors.",
+      "locator": "§4.5.2; §4.5.3; §4.3.2; §5.1.4"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No durable change to the mechanism made by the service is described. Persona cues (user/partner facts) and cache entries (partner utterance → generated suggestion) are content used by a fixed similarity-lookup and prompting mechanism. The static prompt stays fixed, and thresholds and hyperparameters are set by the authors.",
+      "locator": "§4.3.2; §4.4.2 Static Prompt; §4.5.1; §5.3.3",
+      "quote": "This part of the prompt remains fixed and does not update any information during social interactions.",
+      "what": "Nothing in the mechanism. Only content stores change: persona-database cues and social factor-aware cache entries."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "There is no revised mechanism to run later. Reported later use covers stored content only: cache hit ratio rising with cache size, measured offline on simulated conversations split 80/20 for caching and testing (Fig. 15), and stored personas loaded in later conversations.",
+      "locator": "§5.3.1; §5.3.3 Impact of Cache Size and Threshold; Fig. 15"
+    }
+  },
+  "notes": "Verbatim quotes were checked against the v1 PDF text layer. WebFetch excerpts of the v1 HTML matched where available, but the HTML fetch cut off near §5.3.3, so §5.3.3–§7 and Appendix A come from the PDF. The figure numbers used (Figs. 5, 6, 15, 24, 25) match the captions in both. The cache drives A→M and Record: the service stores its own suggestions and reuses them. No outcome, attribution, or mechanism revision is described, so the loop stops at Record. M→S is a judgment call: face-ID matching is treated as answer-time retrieval with an unknown enrollment scope, and pre-stored location images as fixed perception reference data, so neither counts as retained service memory guiding Sensing. The case README showed one other reviewer's preliminary labels. I did not open that review and judged from the paper alone.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 757,
+    "code_commit": null
+  }
+}

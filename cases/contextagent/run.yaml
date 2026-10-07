@@ -1,0 +1,14 @@
+# HALO run mode for ContextAgent. Inputs and the backbone are fixed across arms; only the cut site differs.
+models:
+  backbone: {backend: "codex:gpt-6-astra", effort: low}   # stands in for the LoRA-tuned reasoner and the Azure GPT response model
+  judge: {backend: "codex:gpt-6-astra", effort: high}
+samples: 3
+rubric: >-
+  The assistant runs on the user's smart glasses and earphones and decides on its own whether to offer help.
+  Decide which message serves this user better: help that is specific, correct for the user's actual
+  situation, and useful to this user. The situation lists what the device's sensors and services reported
+  when queried; treat those readings as true, and count claims that contradict them or invent facts against
+  an output. Ignore writing style and length.
+tests:
+  - cut: [A->S]
+    context_field: context

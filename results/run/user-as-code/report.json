@@ -1,0 +1,132 @@
+{
+  "case": "user-as-code",
+  "channels": {
+    "S->M": "user sessions become Phase-1 facts, archive chunks and the retained history the constraint IR is written from",
+    "M->A": "structured code, retrieved facts and archive excerpts delivered to the answer"
+  },
+  "steps": {
+    "revision": "the compiled constraint module (a reusable alert rule) is written to the programs directory; later updates execute the newest stored module (covers later_use)"
+  },
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 15,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "update_errors": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "pretrigger_alerts": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "trigger_rubric_passed": {
+          "original": 1.0,
+          "modified": 0.0
+        },
+        "modules_stored": {
+          "original": 2.4,
+          "modified": 2.4
+        },
+        "answer_expected_hits": {
+          "original": 0.9667,
+          "modified": 0.0
+        },
+        "trigger_alerts": {
+          "original": 1.2,
+          "modified": 0.0
+        },
+        "facts_stored": {
+          "original": 17.8,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output_answer",
+      "pairs": 15,
+      "original": 15,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "update_errors": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "pretrigger_alerts": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "trigger_rubric_passed": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "modules_stored": {
+          "original": 2.4,
+          "modified": 2.4
+        },
+        "answer_expected_hits": {
+          "original": 0.9667,
+          "modified": 0.0
+        },
+        "trigger_alerts": {
+          "original": 1.2,
+          "modified": 1.2
+        },
+        "facts_stored": {
+          "original": 17.8,
+          "modified": 17.8
+        }
+      }
+    },
+    {
+      "cut": [
+        "revision"
+      ],
+      "field": "output_alerts",
+      "pairs": 15,
+      "original": 15,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "update_errors": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "pretrigger_alerts": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "trigger_rubric_passed": {
+          "original": 1.0,
+          "modified": 0.0
+        },
+        "modules_stored": {
+          "original": 2.4,
+          "modified": 0.0
+        },
+        "answer_expected_hits": {
+          "original": 0.9667,
+          "modified": 0.9667
+        },
+        "trigger_alerts": {
+          "original": 1.2,
+          "modified": 0.0
+        },
+        "facts_stored": {
+          "original": 17.8,
+          "modified": 17.8
+        }
+      }
+    }
+  ]
+}

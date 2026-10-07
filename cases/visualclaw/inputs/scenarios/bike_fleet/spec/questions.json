@@ -1,0 +1,291 @@
+{
+  "scenario": "bike_fleet",
+  "rounds": [
+    {
+      "id": "q1",
+      "type": "multi_choice",
+      "question": "Morning inspection: using the walkthrough [clip @ 00:04], how many of the bikes in dock A slots 1-3 are ride-ready?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "2 bikes",
+          "B": "1 bike",
+          "C": "3 bikes",
+          "D": "0 bikes"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:04]: only #101 passes; #102 has no bell and #103 has a flat.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 1,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q2",
+      "type": "multi_choice",
+      "question": "From the walkthrough [clip @ 00:12], which bikes in dock A slots 4-6 go in the van?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "None",
+          "B": "#104",
+          "C": "#104 and #105",
+          "D": "#105"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:12]: #104's front light is dark.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 2,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q3",
+      "type": "exec_check",
+      "question": "Write docs/van_dock_a.json listing every bike in dock A from the walkthrough [clip @ 00:04] and [clip @ 00:12] that goes in the van, as a JSON list of objects with the keys bike and fault.",
+      "update_ids": [],
+      "eval": {
+        "command": "python ${eval_dir}/${agent_id}/scripts/check_van_dock_a.py ${workspace}",
+        "expect_exit": 0,
+        "timeout": 30
+      },
+      "feedback": {
+        "correct": "#102 (bell), #103 (flat), #104 (light).",
+        "incorrect": "Deliverable missing, or it does not apply the workspace's rule."
+      },
+      "meta": {
+        "round": 3,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q4",
+      "type": "multi_choice",
+      "question": "Using the walkthrough [clip @ 00:28], how many bikes in dock B slots 4-6 are ride-ready?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "3 bikes",
+          "B": "2 bikes",
+          "C": "1 bike",
+          "D": "0 bikes"
+        },
+        "answer": [
+          "C"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:28]: only #206 passes all three checks.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Does not follow the workspace's rule.",
+          "C": "Correct.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 4,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q5",
+      "type": "multi_choice",
+      "question": "From the walkthrough [clip @ 00:20], is bike #203 ride-ready?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "Yes",
+          "B": "No",
+          "C": "Yes, a soft tyre is fine for campus rides",
+          "D": "Cannot tell from the clip"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:20]: the front tyre sags.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 5,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q6",
+      "type": "exec_check",
+      "question": "Write docs/van_dock_d.json for dock D in the walkthrough [clip @ 00:52] and [clip @ 01:00]: a JSON list of objects with the keys bike and fault, listing only the bikes that go in the van.",
+      "update_ids": [],
+      "eval": {
+        "command": "python ${eval_dir}/${agent_id}/scripts/check_van_dock_d.py ${workspace}",
+        "expect_exit": 0,
+        "timeout": 30
+      },
+      "feedback": {
+        "correct": "#402 (light), #405 (bell), #406 (flat and bell).",
+        "incorrect": "Deliverable missing, or it does not apply the workspace's rule."
+      },
+      "meta": {
+        "round": 6,
+        "phase": "test",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q7",
+      "type": "multi_choice",
+      "question": "Using the walkthrough [clip @ 00:44], how many bikes in dock C slots 4-6 go in the van?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "1 bike",
+          "B": "2 bikes",
+          "C": "0 bikes",
+          "D": "3 bikes"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:44]: #304 has no bell, #305 has a flat and a dark light; slot 6 is empty.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 7,
+        "phase": "test",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q8",
+      "type": "exec_check",
+      "question": "Write docs/fleet_status.json for docks A and B as inspected earlier this morning: a JSON list of objects with the keys dock (A or B), ride_ready (number of ride-ready bikes) and van (list of the bike numbers that go in the van).",
+      "update_ids": [],
+      "eval": {
+        "command": "python ${eval_dir}/${agent_id}/scripts/check_fleet_status.py ${workspace}",
+        "expect_exit": 0,
+        "timeout": 30
+      },
+      "feedback": {
+        "correct": "Dock A: 2 ready, van #102 #103 #104. Dock B: 3 ready, van #203 #204 #205.",
+        "incorrect": "Deliverable missing, or it does not apply the workspace's rule."
+      },
+      "meta": {
+        "round": 8,
+        "phase": "test",
+        "required_modalities": [
+          "text"
+        ],
+        "depends_on": [
+          "q1",
+          "q2",
+          "q4",
+          "q5"
+        ]
+      }
+    },
+    {
+      "id": "q9",
+      "type": "multi_choice",
+      "question": "Counting every dock inspected this morning, how many bikes go in the van to the shop?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "11 bikes",
+          "B": "7 bikes",
+          "C": "4 bikes",
+          "D": "14 bikes"
+        },
+        "answer": [
+          "A"
+        ]
+      },
+      "feedback": {
+        "correct": "A: #102 #103 #104; B: #203 #204 #205; C: #304 #305; D: #402 #405 #406.",
+        "options": {
+          "A": "Correct.",
+          "B": "Does not follow the workspace's rule.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 9,
+        "phase": "test",
+        "required_modalities": [
+          "text"
+        ],
+        "depends_on": [
+          "q1",
+          "q2",
+          "q3",
+          "q4",
+          "q5",
+          "q6",
+          "q7"
+        ]
+      }
+    }
+  ]
+}

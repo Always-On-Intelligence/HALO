@@ -1,0 +1,15 @@
+id: alpha-service
+name: "Alpha-Service"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2510.14359
+sources:
+  - url: https://arxiv.org/html/2510.14359v1
+    kind: paper
+    version: "2510.14359v1"
+    sha256: 8390b3cd4b9038cd8c6cd9c3e0bb76b667681b289676ef67d23de1d43a675f4b
+variants:
+  - id: ai4service
+    label: "Alpha-Service"
+    configuration: "Initial Alpha-Service runtime with task dispatch, visual trigger/streaming models, web search, and JSON memory"
+modes: [read]

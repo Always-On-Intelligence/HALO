@@ -1,0 +1,18 @@
+id: proactive-agent
+name: "Proactive Agent"
+domain: digital
+kind: research
+report: https://arxiv.org/abs/2410.12361
+sources:
+  - url: https://arxiv.org/html/2410.12361v3
+    kind: paper
+    version: "2410.12361v3"
+    sha256: 798d2eb9d03850ac62ded3caf280711caef1174d5bc17fdee5769ed5f5623658
+code:
+  repo: https://github.com/thunlp/ProactiveAgent
+  commit: 3fcf9beebe256b86871659fbb12541c41c9381b9
+variants:
+  - id: luproactiveagent2024
+    label: "Proactive Agent"
+    configuration: "Section 3.4 Proactive Agent in the Environment Gym, including retained event/dialogue history and simulated accepted-task execution"
+modes: [read, run]

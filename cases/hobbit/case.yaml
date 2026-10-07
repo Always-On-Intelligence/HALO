@@ -1,0 +1,15 @@
+id: hobbit
+name: "Hobbit"
+domain: physical
+kind: research
+report: https://doi.org/10.1155/2018/1754657
+sources:
+  - url: https://doi.org/10.1155/2018/1754657
+    kind: paper
+    version: ""
+    sha256: d9cf4a34db1166f14f0acf0d5d2378f444acab75f92543428eedd8bf301be6b6
+variants:
+  - id: hobbit
+    label: "Hobbit"
+    configuration: "Hobbit PT2 household assistance as described in the 2018 integrated-system paper"
+modes: [read]

@@ -1,0 +1,51 @@
+{
+  "run": {
+    "models": {
+      "backbone": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "low"
+      },
+      "judge": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "high"
+      }
+    },
+    "samples": 3,
+    "rubric": "Omi is a wearable assistant. The output lists what Omi did for Alex over the scripted days: notifications it pushed to his phone during conversations, and its answers to his chat questions. Using the situation (what was actually said on each day), decide which output serves Alex better: answers that are correct and grounded in his earlier conversations, and notifications that catch a real problem for him (a conflict with something he said or was told earlier, a missed deadline) without repeating a notification he already got. A missing or wrong answer is worse than a short correct one; a useless or repeated notification is worse than none. Ignore writing style and length.",
+    "tests": [
+      {
+        "cut": [
+          "S->M"
+        ]
+      },
+      {
+        "cut": [
+          "M->A"
+        ]
+      },
+      {
+        "cut": [
+          "A->M"
+        ]
+      },
+      {
+        "cut": [
+          "A->S"
+        ],
+        "field": "output_tasks",
+        "context_field": "context_tasks",
+        "rubric": "Omi turns each conversation into tasks for Alex. The situation lists the tasks Alex already had open before the last day's conversation; the output lists the tasks Omi created from that conversation. Prefer the output that captures the new commitments from the conversation without creating a second copy of a task Alex already has open. Ignore wording and length."
+      },
+      {
+        "cut": [
+          "M->S"
+        ],
+        "field": "output_capture",
+        "context_field": "context_capture",
+        "rubric": "Omi turns each conversation into notes, tasks and remembered facts about Alex. The situation says what was said and who the speakers are. Prefer the output that gets who said what right: facts about Alex recorded as Alex's, facts about other people attributed to them, named people named, and Alex's own commitments captured. Ignore wording and length."
+      }
+    ]
+  },
+  "samples": 3,
+  "items_limit": null
+}

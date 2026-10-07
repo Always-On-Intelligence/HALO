@@ -1,0 +1,94 @@
+{
+  "id": "ouroboros2026",
+  "configuration": "Hope live deployment with reviewed experience-driven core evolution. This is the persistent multi-surface Hope agent (paper §4), whose core changes come from ordinary work, post-task reflection and social feedback and land through the reviewed commit gate (paper §3 'Two modes of core evolution', called post-task / experience-driven core evolution). The frozen benchmark seeds (Table 3, 'evolution off') and the recursive free-evolution mode were not judged.",
+  "sources_read": [
+    "https://arxiv.org/html/2608.08311v3 (v3, read via WebFetch): Abstract; Introduction; §3 Ouroboros Architecture (paragraphs Commit pipeline, Task outcomes and verification, Operational identity and memory, Two modes of core evolution, Benchmark execution and evidence, Subagents and patch integration); §4 Hope (Multi-channel state, Social-interaction-driven development, Controls on self-directed work, Operator boundary, Evolution during deployment); §6 Trajectory audits incl. Continual-memory failures; §7 Operational safety controls; §8 Conclusion; Appendices A-D; Tables 1, 3, 4; figure captions",
+    "razzant/ouroboros@4b37f96223b4b8248eea80c9be22cf923759cd5a: ouroboros/post_task_evolution.py (full)",
+    "razzant/ouroboros@4b37f96: ouroboros/post_task_synthesis.py (full)",
+    "razzant/ouroboros@4b37f96: ouroboros/reflection.py (1-330, 520-1079)",
+    "razzant/ouroboros@4b37f96: ouroboros/context.py (590-660, 860-915, 1180-1230)",
+    "razzant/ouroboros@4b37f96: ouroboros/improvement_backlog.py (function index and docstrings)",
+    "razzant/ouroboros@4b37f96: ouroboros/presence_runner.py (1-120, 1040-1160)",
+    "razzant/ouroboros@4b37f96: ouroboros/presence_context.py (185-305)",
+    "razzant/ouroboros@4b37f96: ouroboros/presence_admission.py (header); ouroboros/consciousness_wake.py (module docstring); ouroboros/context_compaction.py, ouroboros/focus.py, ouroboros/tools/media.py (headers, searched for memory-to-sensing paths)",
+    "razzant/ouroboros@4b37f96: ouroboros/agent_startup_checks.py (1039-1098; grep 1263)",
+    "razzant/ouroboros@4b37f96: ouroboros/tools/git.py:1493 (commit_reviewed), ouroboros/tools/control.py:206 (request_restart), via grep",
+    "razzant/ouroboros@4b37f96: supervisor/evolution_lifecycle.py (function index, 1166-1600)",
+    "razzant/ouroboros@4b37f96: supervisor/message_bus.py (1360-1590)",
+    "razzant/ouroboros@4b37f96: prompts/SYSTEM.md (210-240, 370-410)",
+    "razzant/ouroboros@4b37f96: BIBLE.md (204-323)",
+    "razzant/ouroboros@4b37f96: docs/ARCHITECTURE.md; docs/architecture/06-agent-core.md (600-769); docs/architecture/07-configuration.md (grep, line 210); docs/architecture/01-high-level-architecture.md and 05-supervisor-loop.md (grep)",
+    "HALO: cases/ouroboros/case.yaml, halo/read/protocol/PROTOCOL.md, halo/read/schema.json"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Inbound messages from every channel are written to a durable ordered log and projected into digests. People's feedback is also written into the durable improvement backlog. In code, log_chat appends each 'in' row to logs/chat.jsonl. Presence (public-channel) turns log the inbound event before the agent runs. memory_view renders the room's open conversation from those rows.",
+      "locator": "arXiv 2608.08311v3 §4 'Multi-channel state' and 'Social-interaction-driven development'; supervisor/message_bus.py:1370-1498 (append to logs/chat.jsonl at 1492-1494); ouroboros/presence_runner.py:1086-1097; docs/architecture/06-agent-core.md:657; prompts/SYSTEM.md:403-404",
+      "quote": "[paper §4 Multi-channel state] \"Channel ingress converges on an ordered message log and is projected into separate rolling, per-person, and per-call digests\" | [paper §4 Social-interaction-driven development] \"These signals enter the same improvement backlog as self-detected faults and internal observations.\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained identity, memory projections and ledgers shape behavior, and all channels share one context. In code, every task context gets identity, the scratchpad, the knowledge index, the Pattern Register and the last 20 execution reflections. Evolution and deep-self-review tasks also get the backlog digest. Presence turns get the declared knowledge topics and previous-turn facts, and choose between replying and staying silent. The post-task promotion decision reads the latest reflection, the backlog and the history of past evolution-cycle outcomes.",
+      "locator": "arXiv 2608.08311v3 §3 'Operational identity and memory'; §4 'Multi-channel state'; ouroboros/context.py:593-647 (Pattern Register header at 598), 866-889, 1189, 1210-1215; ouroboros/presence_context.py:188-291 (254-258); ouroboros/post_task_evolution.py:129-149, 249-320",
+      "quote": "[paper §3 Operational identity and memory] \"These artifacts shape observable behavior across sessions and model routes.\" | [paper §4 Multi-channel state] \"All channels therefore share one context rather than acting as independent agents\" | [code ouroboros/context.py:598] \"## Known error patterns (Pattern Register)\""
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The agent's actions set what it observes next. Verification commands it runs on its own work produce receipts tied to the revision, which is an expected-effect check. The system prompt requires checking a changed deliverable through its real consumer surface, including browser and vision inspection for UI changes. After a self-modification commit, the expected SHA is written to a restart marker and checked against the running revision at boot. All of this happens inside the service, not in an external grader.",
+      "locator": "arXiv 2608.08311v3 §3 'Task outcomes and verification'; prompts/SYSTEM.md:218-223, 230-235; supervisor/evolution_lifecycle.py:1538-1581 (write_pending_restart_marker, request_evolution_restart); ouroboros/agent_startup_checks.py:1039-1098 (verify_restart, _commit_reachable)",
+      "quote": "[paper §3 Task outcomes and verification] \"host-run verification commands create revision-bound receipts\" | [code prompts/SYSTEM.md:218-219] \"Before saying work is done, I verify the changed deliverable through the most authoritative available surface\""
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Neither the paper nor the code I read gives retained memory to sensing for sampling, attention, compression or interpretation. The per-person and per-call digests are written from channel ingress (S->M), and the paper does not say they steer observation. Memory reaches the model at answer time (M->A). Presence admission filters events by binding and capability ceiling, not by memory. The background-consciousness wake observes events after a stored chain position, which is an incremental read cursor, not a retained prior. Memory-guided verification requests are the M->A->S composition. Nothing explicitly excludes the route, so the label is insufficient, not absent.",
+      "locator": "arXiv 2608.08311v3 §4 'Multi-channel state' (digests described only as projections of ingress); ouroboros/presence_admission.py:1-58; ouroboros/consciousness_wake.py:1-21; ouroboros/presence_context.py:188-291; ouroboros/context.py:593-647, 866-889"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The agent's own executions, outcomes and replies are written back to memory. Task completion is recorded on typed axes, and error classes with proposed repairs become durable Pattern Register rows. In code, outgoing replies are logged as 'out' rows. Post-task reflections, carrying trace-derived evidence, review evidence, backlog candidates and memory actions, go to logs/task_reflections.jsonl. They are then applied to the scratchpad, the knowledge notes, the Pattern Register (memory/knowledge/patterns.md) and the improvement backlog. Evolution-cycle outcomes are written to the campaign history.",
+      "locator": "arXiv 2608.08311v3 §3 'Task outcomes and verification' and 'Two modes of core evolution'; Appendix A 'Pattern register'; supervisor/message_bus.py:1553-1568; ouroboros/presence_runner.py:1153-1159; ouroboros/reflection.py:689-724, 727-815, 862-871, 986-1079; ouroboros/post_task_synthesis.py:275-321, 508-556, 696-752; supervisor/evolution_lifecycle.py:1262-1342",
+      "quote": "[paper §3 Two modes of core evolution] \"The agent records these as durable error classes and proposed structural repairs, then decides whether to open maintenance work.\" | [paper Appendix A] \"Recurring failures become durable rows (error class, count, root cause, structural fix)\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps typed records of what each task did and delivered, and it reads them back itself. Reflection entries store task identity, trace-derived evidence, review evidence and lessons, and later contexts show the last 20. Replies stay in the chat log. Evolution campaigns keep each cycle's transaction and outcome. These are working records the service reuses, not author-only trial logs.",
+      "locator": "arXiv 2608.08311v3 §3 'Task outcomes and verification'; docs/architecture/06-agent-core.md:619; ouroboros/reflection.py:689-724, 862-871; ouroboros/context.py:886-889; supervisor/evolution_lifecycle.py:1265-1281",
+      "quote": "[paper §3 Task outcomes and verification] \"Task completion is recorded on separate execution, objective, review, and artifact axes\" | [docs/architecture/06-agent-core.md:619] \"Entries carry task identity, evidence, lessons, backlog candidates and validated memory actions.\""
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later evidence about the agent's actions is collected and kept. Verification commands produce receipts tied to the revision. People in public channels reported that Hope sent duplicate messages, and such signals go into the durable improvement backlog. In code, verification receipts are frozen into the durable completion package that reflection reads. Evolution-cycle outcomes (absorbed, no_op, abandoned) are persisted and fed back to the promotion chooser as solve-capability history.",
+      "locator": "arXiv 2608.08311v3 §3 'Task outcomes and verification'; §4 'Evolution during deployment' and 'Social-interaction-driven development'; ouroboros/post_task_synthesis.py:77-119; supervisor/evolution_lifecycle.py:1282-1314; ouroboros/post_task_evolution.py:137, 258-262",
+      "quote": "[paper §3 Task outcomes and verification] \"host-run verification commands create revision-bound receipts\" | [paper §4 Evolution during deployment] \"First, people in public channels noticed that Hope occasionally sent the same message twice.\""
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The observed outcome (duplicate messages) was traced to the sending path that produced it and used to correct that path. A second fault (aborted deep self-reviews) was traced to review-pack context overflow. In code, the post-task review runs on the task's own trace, errors and sealed outcome. It is asked whether the outcome was appropriate and what caused errors, and to separate its own choices from host or provider termination. Pattern Register rows map each error class to its root cause and structural fix. The backlog item linked to a campaign is closed when the cycle is absorbed.",
+      "locator": "arXiv 2608.08311v3 §4 'Evolution during deployment'; ouroboros/reflection.py:81-92, 954-983; ouroboros/agent_startup_checks.py:1080-1091",
+      "quote": "[paper §4 Evolution during deployment] \"The agent traced the behavior to a duplicate-send path and landed a reviewed verbatim-duplicate guard in the public output pipeline.\""
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The agent itself lands durable, reviewed changes to its own harness code. The paper names two Hope cases: a duplicate-send guard and a replaced review-pack context-assembly path. Table 4 lists 1,085 self-modification commits, 94.2% of them agent-authored. In code, post-task promotion writes a durable request, and the supervisor turns it into a gated evolution cycle that may land one reviewed self-modification commit through commit_reviewed. Memory content (knowledge notes, Pattern Register rows) is not counted as the revision.",
+      "locator": "arXiv 2608.08311v3 §4 'Evolution during deployment'; Table 4 'Hope deployment at a glance'; ouroboros/post_task_evolution.py:1-21, 346-384, 394-548; supervisor/evolution_lifecycle.py:1376-1464 (1456-1457); ouroboros/tools/git.py:1493",
+      "quote": "[paper §4 Evolution during deployment] \"The agent traced the fault to review-pack context overflow and replaced the assembly path\" | [code supervisor/evolution_lifecycle.py:1456] \"Land at most ONE reviewed self-modification commit in this cycle.\"",
+      "what": "Ouroboros's own harness code, changed through reviewed self-modification commits. The two named cases are a verbatim-duplicate guard in the public output pipeline and the review-pack context-assembly path, replaced by a bounded, connectivity-aware context atlas ranked by import-graph centrality. More generally, its tools, prompts and core implementation."
+    },
+    "later_use": {
+      "label": "stated",
+      "rationale": "The paper says both Hope fixes became reviewed structural changes that later interactions used, and that the resulting fix changes how later work is done. In code, a cycle counts as absorbed only after restart verification shows the reviewed commit is the running revision. That code is noted only; the label rests on the paper's statement.",
+      "locator": "arXiv 2608.08311v3 §4 'Evolution during deployment'; Abstract; supervisor/evolution_lifecycle.py:1290-1297, 1484-1490; ouroboros/agent_startup_checks.py:1039, 1263",
+      "quote": "[paper §4 Evolution during deployment] \"Both became durable error classes and reviewed structural changes used by subsequent interactions.\" | [paper §4 Evolution during deployment] \"the resulting fix changes how later work is performed.\""
+    }
+  },
+  "notes": "Judged the Hope deployment (paper §4) operating with experience-driven, or post-task, core evolution through the reviewed commit gate. Benchmark seeds were not judged (Table 3 marks them 'evolution off'). The paper was read through WebFetch, which returns only short exact quotes (125 characters or fewer). Every paper quote above was re-checked with an exact-match prompt. Paragraph headings are cited by name because the HTML's subsection numbering could not be confirmed. Bash was unavailable, so the code was read with Read and Grep. The code at 4b37f96 (v7.6.0) is the public runtime. The paper says Hope runs on a related but separate lineage, so the code shows the mechanisms, not Hope's exact build. In this code, post-task promotion is off by default and enabled by the owner (docs/architecture/07-configuration.md:210; post_task_evolution.py:20). The paper does not state Hope's runtime or context mode. The channel adapters for Hope's seven surfaces are not in this repository; the code has the generic presence runner and context. I also saw the HALO case README, which lists earlier survey labels, and used it only to find code paths. All labels here come from the primary sources.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 638,
+    "code_commit": "4b37f96223b4b8248eea80c9be22cf923759cd5a"
+  }
+}

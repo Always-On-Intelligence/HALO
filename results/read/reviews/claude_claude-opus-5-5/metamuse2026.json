@@ -1,0 +1,80 @@
+{
+  "id": "metamuse2026",
+  "configuration": "Muse (Meta), September 2026 US launch configuration. The Muse agent runs on a per-user Muse Secure VM with persistent memory files and VM storage (backed up continuously). It includes goals and background work (Goals tab, scheduled and event-driven follow-up), a browser sub-agent behind a CDP broker, and a host-side Sentinel agent that controls connector and egress approvals (human-in-the-loop grants, tainted egress). Announced but unreleased items were excluded: Muse Confidential VM ('plan to deliver this capability later this year') and AI-glasses support ('coming soon').",
+  "sources_read": [
+    "https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/ (content snapshot; version not displayed; fetched 2026-10-07; sections Takeaways, How It Works, Built to be Private, Safe, and Secure, Looking Ahead)",
+    "https://introducing.muse.ai/ ('How We Designed Muse', Mona Sarantakos with Christine Awad; content snapshot; version not displayed; fetched 2026-10-07; sections Muse Is an Agent That Can Actually Do Things, Evolving From an Assistant to an Agent, Getting Things Done With Muse, Where We Go From Here)",
+    "https://research.meta.ai/blog/security-and-safety-for-ai-agents-our-approach-with-muse ('How We Built Safety Into Muse'; content snapshot; version not displayed; fetched 2026-10-07; opening, The Lay of the Land, Muse Secure VM, A Built-In Sentinel, Network egress, Human in the Loop, Least Privilege, Defense in Depth, Browser, Purchases, Bug Bounties, Coming Soon: Muse Confidential VM, Our Policy Around Data, Conclusion)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-supplied details from conversations go into a persistent memory that lasts across conversations. Users can correct it by telling Muse to forget things or by editing their Memory files directly. The data policy says Muse's memory about the user is stored as files in the VM. The user's answers to approval requests are also written into Sentinel's approval state.",
+      "locator": "about.fb.com post, 'How It Works' and 'Built to be Private, Safe, and Secure'; introducing.muse.ai, 'Evolving From an Assistant to an Agent' and 'Getting Things Done With Muse'; research.meta.ai blog, 'Our Policy Around Data' and 'Human in the Loop'",
+      "quote": "Muse also remembers what matters to a person, so it can make suggestions unprompted and act on details that person only mentioned once. [about.fb.com, How It Works] | Its memory persists across your conversations, and can manage lots of context. [introducing.muse.ai, Evolving From an Assistant to an Agent] | they can always tell it to \"forget\" specific things it's learned [about.fb.com, Built to be Private, Safe, and Secure]"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information shapes what Muse says and does. It makes unprompted suggestions, generates ideas from the user's goals, patterns and what it has learned, and acts on details mentioned once (for example, remembered dietary restrictions before sending invites). Goals and plans kept in the Goals tab drive scheduled next steps. Sentinel's stored, user-set connector policy and earlier approval grants decide whether later actions are allowed, denied or sent to the user.",
+      "locator": "about.fb.com post, 'How It Works'; introducing.muse.ai, 'Getting Things Done With Muse'; research.meta.ai blog, 'A Built-In Sentinel' and 'Human in the Loop'",
+      "quote": "So we designed Muse to always think about what it can do for you, generating ideas based on your goals, your patterns, and what it's learned in conversation. [introducing.muse.ai, Getting Things Done With Muse] | Sentinel decides which grant types to present for the user to choose between and ensures that subsequent invocations match the granted scope exactly. [research.meta.ai, Human in the Loop]"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Muse's tasks and goals decide what it observes. The main agent hands each browser task to a browser sub-agent, which reads and moves through pages to reach the user's goal; the data policy also mentions 'subagent handoffs'. In one example, a delegated task (back-to-school prep) set which sources Muse watched: school emails and the district website. Goals and tasks also trigger scheduled and event-driven follow-up. The browser egress classifier checks outgoing data against 'the task at hand'.",
+      "locator": "research.meta.ai blog, 'Browser' and 'Our Policy Around Data'; introducing.muse.ai, 'Muse Is an Agent That Can Actually Do Things'",
+      "quote": "Driving the web browser to achieve the user's goal is something the Muse Spark 1.3 model is particularly good at. Muse uses a special browser sub-agent to complete each task — reading the pages, traversing the site, filling forms, etc. [research.meta.ai, Browser] | I had Muse managing my kids' back-to-school prep — watching the flood of school emails and the district website, pulling key dates onto our family calendar [introducing.muse.ai, Muse Is an Agent That Can Actually Do Things]"
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "No source says retained memory (user facts, goals, earlier results) is fed to the sensing stage to guide sampling, attention or interpretation. Two behaviors come close: goal-driven follow-up 'in response to relevant events', and notifying only when something is 'meaningfully new'. Both are described as Action behavior with no mechanism given, so at most they show the composition M→A→S. The sensing-side filters that are described are fixed, developer-built mechanisms, not priors retained from interactions. These are the email-connector filtering of one-time tokens and reset links, untrusted-input labeling, the prompt-injection classifiers, and Meta's external malicious-site list. Nothing explicitly excludes the route either.",
+      "locator": "introducing.muse.ai, 'Muse Is an Agent That Can Actually Do Things'; research.meta.ai blog, 'Least Privilege', 'Defense in Depth', 'Browser'",
+      "quote": "Once you've set a goal or a task, Muse continues to work on a schedule and in response to relevant events, taking the next step and following up, alongside whatever you ask it in conversation. [introducing.muse.ai]"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Muse keeps what it produces across interactions. The goal plans it writes are kept in the Goals tab and drive later work. It keeps a full activity log and audit trail of what it has done and plans to do. Everything it generates or uses is stored in the VM. Trajectories (conversations, tool calls, subagent handoffs) are kept for training.",
+      "locator": "introducing.muse.ai, 'Getting Things Done With Muse'; about.fb.com post, 'Built to be Private, Safe, and Secure'; research.meta.ai blog, 'Our Policy Around Data'",
+      "quote": "In fact, Muse is quite good at breaking down goals and giving you actionable plans to reach them. So, we needed more than just an activity tab — we needed a clear view of everything Muse was tracking for us, and its plan to get there. The Goals tab is where Muse keeps track of all this for you, and you can interact directly there or talk to it about these tasks in chat. [introducing.muse.ai] | All the files you put in your VM and everything Muse generates or uses on your behalf is stored there. [research.meta.ai, Our Policy Around Data]"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The product keeps a user-facing activity log and audit trail of its own past and planned actions, plus the permissions the user has approved. These are logs the service keeps for later review, not research trial logs that only the authors analyse.",
+      "locator": "introducing.muse.ai, 'Getting Things Done With Muse'; about.fb.com post, 'Built to be Private, Safe, and Secure'",
+      "quote": "Tapping on your Muse avatar will show you its full activity log as well as permissions you've approved. [introducing.muse.ai] | Muse shows people a complete audit trail of everything it has done and plans to do. [about.fb.com]"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "When Sentinel decides to ask the user about a proposed action, the user's approve-or-reject answer on that specific action goes back to Sentinel. Sentinel stores it in its authoritative approval state, and approved permissions stay visible in the activity view. Muse also gets other evidence, such as results of background work and noticing 'when something changes', but the sources do not say it is retained.",
+      "locator": "research.meta.ai blog, 'Human in the Loop'; introducing.muse.ai, 'Getting Things Done With Muse'",
+      "quote": "A dialog is presented to the user directly within the client UI — not via their conversation with Muse — and their answer is routed directly back to Sentinel, which acts on the user's decision. Sentinel then updates its authoritative approval state and allows the operation to proceed or rejects it as appropriate."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The user's decision is tied to the exact action it concerns, bound to a connector or destination and a use case. It is used immediately to let that action proceed or block it. Later, Sentinel checks that subsequent invocations stay within the granted scope. Muse also checks the result of its own background work before deciding whether to tell the user.",
+      "locator": "research.meta.ai blog, 'Human in the Loop'; introducing.muse.ai, 'Muse Is an Agent That Can Actually Do Things'",
+      "quote": "Sentinel sends that request directly to the Muse client, describing the exact action to be approved. ... They're bound to the particular connector/destination and use case. ... Sentinel decides which grant types to present for the user to choose between and ensures that subsequent invocations match the granted scope exactly. [research.meta.ai, Human in the Loop] | When it completes its background work, it evaluates whether the result is worth surfacing, and notifies you only when something is meaningfully new or needs your input. [introducing.muse.ai]"
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The launch sources say Muse itself makes lasting additions to its own tooling. It writes custom connectors (code) for new services and develops custom skills in its persistent VM, where everything it generates is stored and backed up. The blog's opening also says the agent 'builds its own tools, and edits itself'. Not counted as revisions: Meta training new model checkpoints on trajectories (a developer change), the user-chosen Sentinel grants and connector policy (user changes), and memory files, goal plans and artifacts (content used by a fixed mechanism).",
+      "locator": "research.meta.ai blog, opening paragraph and 'The Lay of the Land' (subsections 'An agent in your own cloud computer' and 'Connectors'); introducing.muse.ai, 'Muse Is an Agent That Can Actually Do Things'",
+      "quote": "Muse can also write its own custom connectors for other services you care about if they have their own APIs or CLIs. [research.meta.ai, The Lay of the Land > Connectors] | like compiling code the agent writes, developing custom skills and handling concurrent sub-agents and crons [research.meta.ai, The Lay of the Land > An agent in your own cloud computer] | an agent that knows you, actually does things, works in the background, launches swarms of subagents, builds its own tools, and edits itself. [research.meta.ai, opening paragraph]",
+      "what": "Muse's own tool layer: custom connectors and tool code it writes itself, and custom skills (instructions), stored in the user's VM next to the harness. The sources do not say what 'edits itself' changes."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No source reports a later step that ran with a connector, skill, tool or self-edit that Muse wrote. These appear only as capabilities or as a general observation from internal use. New checkpoints trained by Meta are a developer revision, not one made by the service.",
+      "locator": "research.meta.ai blog, opening paragraph, 'The Lay of the Land', 'Our Policy Around Data'; introducing.muse.ai, 'Muse Is an Agent That Can Actually Do Things'"
+    }
+  },
+  "notes": "Judged only the metamuse2026 launch configuration; there is no code repository, so this review is from the text alone. Excluded the future Muse Confidential VM and AI-glasses support. The pages were read through WebFetch, which summarizes, so the text was pulled section by section. Every quote used here was confirmed with exact-match checks against the fetched page text; curly apostrophes and quotation marks were normalized to ASCII. In the quote fields, '|' separates quotes from different places and '...' marks text left out between sentences. Without shell access I could not check the case file's sha256 snapshot hashes, so the live pages read on 2026-10-07 may differ from the snapshots. The weakest calls are revision, which rests on capability statements about agent-written custom connectors and skills, and outcome/attribution, which rest on Sentinel's human-in-the-loop approvals rather than on post-action task results.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 756,
+    "code_commit": null
+  }
+}

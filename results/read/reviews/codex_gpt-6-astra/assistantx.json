@@ -1,0 +1,80 @@
+{
+  "id": "assistantx",
+  "configuration": "PPDR4X office robot with persistent relational graph; transient task buffers excluded from retention evidence",
+  "sources_read": [
+    "https://arxiv.org/html/2409.17655v3 — version 3, especially §§IV-A–IV-D and V-C",
+    "https://github.com/AssistantX-Agent/AssistantX/tree/35ab2715f7371d935d78907d90dc4131e414fcb7 — verified checkout commit",
+    "README.md",
+    "OfficeAssistant/main.py",
+    "OfficeAssistant/prompt_test.py",
+    "OfficeAssistant/prompt.py — memory-loading, perception and planning functions",
+    "OfficeAssistant/chat.py",
+    "OfficeAssistant/api.py — inference_chat",
+    "common/wechat.py — message reception, sending and logging",
+    "common/LockApi.py — locker-feedback code"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "The paper describes incorporating observed environmental changes into persistent graph relations and human availability through reflection.",
+      "locator": "[Paper v3](https://arxiv.org/html/2409.17655v3), §IV-A, long-term-memory paragraph; §IV-D, incremental-information integration",
+      "quote": "update the edges and human node states during task execution"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained environmental knowledge conditions planning and action selection. The code supplies priori_knowledge to both prompts.",
+      "locator": "[Paper v3](https://arxiv.org/html/2409.17655v3), §IV-C, equations (3)–(4); OfficeAssistant/main.py:221–239; OfficeAssistant/prompt_test.py:20–22,451–463"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Previous plans and executed tasks guide perceptual focus; action expectations also guide interpretation of execution feedback.",
+      "locator": "[Paper v3](https://arxiv.org/html/2409.17655v3), §IV-B and §IV-D, equation (5); OfficeAssistant/main.py:405–411; OfficeAssistant/prompt_test.py:175–210"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Stored item and person distributions directly condition scene interpretation. Perception receives these priors alongside current robot state and messages.",
+      "locator": "[Paper v3](https://arxiv.org/html/2409.17655v3), §§IV-A–IV-B; OfficeAssistant/main.py:189–194; OfficeAssistant/prompt_test.py:391–435"
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "Explicit action and utterance records enter excluded task buffers. Persistent graph updates do not clearly establish admission of action context. The code appends inferred item locations to priori_knowledge, but reloads that variable on the next loop without writing the update back.",
+      "locator": "[Paper v3](https://arxiv.org/html/2409.17655v3), §§IV-A and IV-D; OfficeAssistant/main.py:165,277–306,359–397,458–460; OfficeAssistant/prompt_test.py:385–388,500–532"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "Action histories are cleared after each instruction; neither console logging nor the empty result-file write establishes retained action records for subsequent service use.",
+      "locator": "OfficeAssistant/main.py:32,372–397,458–462; common/wechat.py:104–105,279; [Paper v3](https://arxiv.org/html/2409.17655v3), §IV-A"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Post-action feedback is obtained, but its retention beyond excluded task buffers is unspecified; persistent environmental updates do not explicitly identify which action outcomes survive.",
+      "locator": "[Paper v3](https://arxiv.org/html/2409.17655v3), §§IV-A and IV-D; OfficeAssistant/main.py:394–397,405–455"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Reflection compares execution results with the action's expected effects and produces a judgment guiding subsequent assistance; immediate checking qualifies.",
+      "locator": "[Paper v3](https://arxiv.org/html/2409.17655v3), §IV-D, paragraph following equation (5); OfficeAssistant/prompt_test.py:175–218",
+      "quote": "whether the results of the executed action align with the expected outcomes"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Reported changes concern environmental facts and task progress, not service-generated durable changes to reusable rules, prompts, parameters, skills or code.",
+      "locator": "[Paper v3](https://arxiv.org/html/2409.17655v3), §§IV-A and IV-D; OfficeAssistant/main.py:367–370,447–455; OfficeAssistant/prompt_test.py:197–218",
+      "what": "No durable mechanism revision identified."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No reported subsequent execution is identified as running under a service-revised mechanism.",
+      "locator": "[Paper v3](https://arxiv.org/html/2409.17655v3), §§IV-D and V-C; OfficeAssistant/main.py:162–239"
+    }
+  },
+  "notes": "Judged the specified persistent-graph configuration. Paper descriptions support reported flows where the checkout provides incomplete corroboration. Resettable histories, commented code and researcher survey results were not counted as persistent service retention or mechanism evolution. Repository code was inspected without execution or modification.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 215,
+    "code_commit": "35ab2715f7371d935d78907d90dc4131e414fcb7"
+  }
+}

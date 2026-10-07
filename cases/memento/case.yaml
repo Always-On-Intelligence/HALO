@@ -1,0 +1,15 @@
+id: memento
+name: "Memento"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2601.17622
+sources:
+  - url: https://arxiv.org/html/2601.17622v4
+    kind: paper
+    version: "2601.17622v4"
+    sha256: 1c76dc50bb12e02fe4c28d5cf3322ce426c0b18aeea4816ff781bbae125f8c99
+variants:
+  - id: mementoar2026
+    label: "Memento"
+    configuration: "Quest 3 prototype with RSAM storage, context-triggered resurfacing, referent checking, and permanent removal"
+modes: [read]

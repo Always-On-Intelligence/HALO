@@ -1,0 +1,84 @@
+{
+  "id": "visionclaw2026",
+  "configuration": "VisionClaw as deployed in arXiv 2604.03486v2 (Sec. 3 System Design and Sec. 6 deployment study): Meta Ray-Ban glasses stream audio plus ~1 fps JPEG frames from a phone app to Gemini Live (gemini-2.5-flash-native-audio-preview) over a persistent WebSocket; Gemini issues a single execute(task) tool call that the client routes to a participant-configured OpenClaw gateway whose skills reach personal stores (memory retrieval, Notion, calendar, email, messaging, files, browser). The repository at commit 82699ec was read alongside; see notes on its divergence from the paper's backend.",
+  "sources_read": [
+    "https://arxiv.org/html/2604.03486v2 (v2, 8 Apr 2026) via WebFetch extraction: Abstract, Sec. 1, 3.1-3.4, 4.2, 4.4, 5.1-5.2, 6.1-6.4, 7, 8, 9; Appendices B/C not retrievable (page truncated by the tool)",
+    "https://arxiv.org/abs/2604.03486v2 (submission history: v1 3 Apr 2026, v2 8 Apr 2026)",
+    "repo @ 82699eca917c0062516c14b99affa34ea230ecd7 (.git/refs/heads/main): README.md",
+    "repo: CHANGELOG.md, samples/CLAUDE.md, gateway/README.md, gateway/public/guide.html (grep)",
+    "repo: gateway/src/server.ts, turn.ts, store.ts, trace.ts, notify.ts, provision.ts, apps.ts, browse.ts, config.ts, cma.ts",
+    "repo: agent/main.py",
+    "repo: samples/CameraAccess/CameraAccess/Gemini/GeminiConfig.swift, OpenClaw/OpenClawBridge.swift, OpenClaw/LiveKitSession.swift, OpenClaw/NudgeScheduler.swift, Settings/SettingsManager.swift, Settings/RecentTasksView.swift (GeminiLiveService.swift, ToolCallRouter.swift, ToolCallModels.swift named in README/paper no longer exist at this commit)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "The deployment study describes camera-sensed and user-dictated evidence being written into retained stores through the delegated agent: meals photographed for a lifelog, grocery receipts saved by looking at them, research posters saved to Notion, a hotel sheet extracted into a retrievable entry, and a meal diary assembled from captured logs that was later queried. The code at the listed commit implements the same role: the voice model's save_note tool writes dictated or camera-read items into a persisted per-user notes store on the gateway.",
+      "locator": "Paper Sec. 6.3 'Save: Hands-Free Document and Memory Capture' and Sec. 6.4 'Always-On Allows Opportunistic Capture and Contextual Recall'; code agent/main.py:80-85 and 560-577; gateway/src/server.ts:529-548",
+      "quote": "UNVERIFIED (WebFetch extraction), Sec. 6.3: \"participants saved meals by photographing food trays for a lifelog and nutrition check, saved grocery receipts by looking at them, and created calendar events from event posters\". Code (verbatim), agent/main.py:83-84: \"When the user asks to note something they are showing on camera, save what you SEE as text -- one item per save_note call.\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information is delivered into the spoken response and task content: OpenClaw skills include memory retrieval; participants recalled 'What have I eaten this week?' from the meal diary and reviewed earlier delegated tasks through accumulated memory logs; pre-meeting briefings drew on calendar, email and lab notes. In the code, recall_notes reads the notes store into the model's reply, and the gateway briefs each fresh action-agent session from the persisted task ledger so earlier outcomes shape the next answer.",
+      "locator": "Paper Sec. 3.4; Sec. 6.3 'Recall: Context-Triggered Memory Recall'; Sec. 6.4 'Interaction Evolves with More Personal Data'; code agent/main.py:580-599; gateway/src/server.ts:84-93 and 429-435",
+      "quote": "UNVERIFIED (WebFetch extraction), Sec. 6.3: \"Recall served as externalized memory at multiple time scales.\"; Sec. 6.4: \"as skills, integrations, and memory logs grew, interactions increasingly drew on accumulated data\". Code (verbatim), gateway/src/server.ts:91: \"Background from the user's recent sessions (use only if they refer back to it):\""
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Execution state from Action is fed back for interpretation and expected-effect checking: the client tracks in-flight tool calls with timeouts and returns OpenClaw's execution result to Gemini as the tool response for that call, which Gemini interprets to confirm completion to the user. In the code at the listed commit the voice model's delegation decision can set attach_view so the current camera frame is acquired and attached to the task, and the relay loop checks the assistant's own subsequent speech against the delivered result to verify the action was actually relayed. Sensing targets (frame rate, compression) are otherwise fixed; this is execution-state feedback, not attention steering.",
+      "locator": "Paper Sec. 3.4 and Sec. 4.4 'Tool Call Routing'; code agent/main.py:822-845 and 777-811; gateway/src/turn.ts:60-63",
+      "quote": "UNVERIFIED (WebFetch extraction), Sec. 4.4: \"It tracks in-flight tasks and handles timeouts. Results are formatted as tool response messages and sent back to Gemini over the WebSocket connection.\" Code (verbatim), gateway/src/turn.ts:60-63: \"the voice layer attaches the current camera frame when the task refers to something visible, so the agent reads pixels instead of a lossy verbal description\""
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Sensing is described as a fixed pipeline: glasses video throttled to about 1 fps and JPEG-compressed at 50% quality, audio streamed continuously. No retained prior is described as steering sampling, attention, compression or frame interpretation; memory (OpenClaw memory, Notion, calendar) is reached only through Gemini tool calls at answer time, which is M->A, and the Discussion treats what to keep from the frame stream as an open question. The code's video sampler keys on voice activity (1 fps while speaking, 0.3 fps otherwise), not on memory. The route is neither described nor explicitly excluded.",
+      "locator": "Paper Sec. 3.2 'Sensory Input Layer', Sec. 3.4, Sec. 7 'Memory of Entire Life', Sec. 8 'Proactive Always-On AI Agents'; code agent/main.py:166-188",
+      "quote": "UNVERIFIED (WebFetch extraction), Sec. 7: \"First, compression: we cannot store every raw frame, so the question is what to keep and how\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Records of the agent's own delegated tasks and their results are retained and later retrievable by the service: participants reviewed past decisions and delegated tasks, and retrieved results from earlier sessions, through the agent's accumulated memory logs. In the code at the listed commit every finished delegated task (prompt plus result) is appended to a persisted per-user ledger that feeds the next session's briefing and the Recent Tasks view, and results that finish after a call ends are parked for delivery at the next call.",
+      "locator": "Paper Sec. 6.3 'Recall: Context-Triggered Memory Recall'; code gateway/src/server.ts:69-82, 215, 278, 289; gateway/src/store.ts:47-50; gateway/src/notify.ts:59-71",
+      "quote": "UNVERIFIED (WebFetch extraction), Sec. 6.3: \"reviewed past decisions or delegated tasks through accumulated memory logs\". Code (verbatim), gateway/src/server.ts:69-71: \"Append a finished task to the user's rolling ledger. Sessions are rotated per call, so this ledger -- not session history -- is what carries \\\"did you find it?\\\" across calls, and it feeds the app's Recent Tasks view.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of its own delegated tasks for later use by the user, not only study logs: the paper reports participants reviewing past delegated tasks via the agent's accumulated memory logs, and the gateway code persists a per-user task ledger that serves the Recent Tasks view and briefs later sessions. The separate study trace (POST /trace; 'All interactions were automatically logged') is author-analysed and was not counted.",
+      "locator": "Paper Sec. 6.3 'Recall'; code gateway/src/server.ts:69-82; gateway/src/store.ts:47-50",
+      "quote": "Code (verbatim), gateway/src/server.ts:69: \"Append a finished task to the user's rolling ledger.\" Paper UNVERIFIED (WebFetch extraction), Sec. 6.3: \"reviewed past decisions or delegated tasks through accumulated memory logs\""
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Task results are obtained and retained: OpenClaw's execution result is returned to Gemini as the tool response, participants retrieved results of earlier task executions through memory logs, and the code ledger stores each task's result text alongside its prompt. Only task results are retained; user ratings or corrections are not described as retained.",
+      "locator": "Paper Sec. 3.4 and Sec. 6.3; code gateway/src/server.ts:72-82 and 289",
+      "quote": "Code (verbatim), gateway/src/server.ts:289: \"if (!result.deferred && result.text) void recordTask(userId, lastUser, result.text);\" Paper UNVERIFIED (WebFetch extraction), Sec. 3.4: \"The execution result is returned to the VisionClaw client, which sends it back to Gemini as a tool response.\""
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Outcomes are tied to the specific action and used to check assistance immediately: the tool response for a tracked in-flight call drives Gemini's spoken confirmation that the action was carried out (paper); in the code each delegated task's result is paired with its task in the agent_action_result event, and the relay loop verifies that the result was actually spoken (keyword hits in the assistant's later utterances), re-prompts once, and re-parks the result for the next call when it was not. No cross-session evaluation of whether past assistance was correct is described.",
+      "locator": "Paper Sec. 3.4 and Sec. 4.4; code agent/main.py:681-694, 777-811, 1302-1325",
+      "quote": "Code (verbatim), agent/main.py:690-691: \"verifying it was actually spoken, and parking it for the next call if the user hung up or the model never said it.\" Paper UNVERIFIED (WebFetch extraction), Sec. 3.4: \"the user perceives real-world objects, speaks a request, and receives spoken confirmation that the action has been carried out.\""
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No durable self-change to prompts, skills, rules, code or parameters by the service is described. Growth in skills and integrations during the deployment came from participants configuring their own OpenClaw instances (user changes); the Discussion states the LLM does not adapt over time; notes, the task ledger and memory logs are content consumed by a fixed mechanism. In the code the voice and action-agent prompts are constants, agent configuration is reconciled from developer settings, and the managed-agent memory store is explicitly not mounted.",
+      "locator": "Paper Sec. 6.1, Sec. 6.4 'Interaction Evolves with More Personal Data', Sec. 7 'Models and Continual Learning for Always-on AI Agents'; code agent/main.py:53-95; gateway/src/provision.ts:6-16 and 145-153",
+      "quote": "UNVERIFIED (WebFetch extraction), Sec. 7: \"current AI agents typically store personal data, such as memory and skills, as external text\" ... \"and the LLM itself does not adapt over time.\" Code (verbatim), gateway/src/provision.ts:148: \"Memory stores are deliberately NOT provisioned or mounted (2026-08-06)\"",
+      "what": "None. Only content stores (OpenClaw memory logs, Notion entries, gateway notes and task ledger) and developer or participant configuration change; no mechanism is revised by the service."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "With no service-made revision reported, no later run under a revised mechanism is stated.",
+      "locator": "Paper Sec. 6-8; code gateway/src/provision.ts"
+    }
+  },
+  "notes": "Judged the paper's deployment configuration (Gemini Live plus participant-configured OpenClaw, Sec. 3 and 6). The repository at the listed commit 82699ec has moved past the paper: the phone no longer talks to Gemini directly (GeminiLiveService, ToolCallRouter and ToolCallModels are gone; OpenClawBridge.swift is a remnant that only parses gateway errors), voice runs in a LiveKit worker (agent/main.py) with Gemini Live or OpenAI Realtime, and the default 'cloud' backend is a custom gateway over Anthropic Managed Agents with MCP-connected Google Calendar, Gmail, Notion and Slack, a notes store, a task ledger, parked results and a text-only study trace. 'Self-hosted' OpenClaw remains a settings option, but the app now needs a /livekit-token endpoint, so the OpenClaw path is not exercised by this code. Code evidence therefore comes from the same system at a later revision with a different action backend; the paper alone supports S->M, M->A, A->M and the tool-response A->S loop, and the Record and Outcome steps via 'accumulated memory logs'. Paper quotes were obtained through a fetch tool that may paraphrase and are marked UNVERIFIED; two fetches gave differing surrounding wording for the 'accumulated memory logs' sentence, so only the shared fragment is relied on. Appendices B and C (Gemini prompts) could not be retrieved. The study trace and 'All interactions were automatically logged' describe author-analysed logs and were not used for Record. NudgeScheduler fires fixed-schedule local notifications and is not memory-driven. Gemini's in-session context was not treated as Memory.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 614,
+    "code_commit": "82699eca917c0062516c14b99affa34ea230ecd7"
+  }
+}

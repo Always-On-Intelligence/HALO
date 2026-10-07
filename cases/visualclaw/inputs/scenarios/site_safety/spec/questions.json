@@ -1,0 +1,291 @@
+{
+  "scenario": "site_safety",
+  "rounds": [
+    {
+      "id": "q1",
+      "type": "multi_choice",
+      "question": "Today's PPE walk: using the walkthrough [clip @ 00:07], how many of the two workers at the site gate are PPE-compliant?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "2 workers",
+          "B": "1 worker",
+          "C": "0 workers",
+          "D": "Cannot tell from the clip"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:07]: #12 has no safety glasses.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 1,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q2",
+      "type": "multi_choice",
+      "question": "From the walkthrough [clip @ 00:15], how many workers at the scaffold base are PPE-compliant?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "3 workers",
+          "B": "2 workers",
+          "C": "1 worker",
+          "D": "0 workers"
+        },
+        "answer": [
+          "C"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:15]: only #13; #14 has no hat on and #15's glasses are pushed up.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Does not follow the workspace's rule.",
+          "C": "Correct.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 2,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q3",
+      "type": "exec_check",
+      "question": "Write docs/ppe_part1.json listing the workers who are not PPE-compliant in the walkthrough [clip @ 00:07], [clip @ 00:15] and [clip @ 00:23], as a JSON list of objects with the keys vest and missing.",
+      "update_ids": [],
+      "eval": {
+        "command": "python ${eval_dir}/${agent_id}/scripts/check_ppe_part1.py ${workspace}",
+        "expect_exit": 0,
+        "timeout": 30
+      },
+      "feedback": {
+        "correct": "#12 glasses, #14 hard hat, #15 glasses, #17 hearing protection.",
+        "incorrect": "Deliverable missing, or it does not apply the workspace's rule."
+      },
+      "meta": {
+        "round": 3,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q4",
+      "type": "multi_choice",
+      "question": "Using the walkthrough [clip @ 00:39], how many of the three workers at the concrete pour are PPE-compliant?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "3 workers",
+          "B": "2 workers",
+          "C": "1 worker",
+          "D": "0 workers"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:39]: #22 has no safety glasses.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 4,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q5",
+      "type": "multi_choice",
+      "question": "From the walkthrough [clip @ 00:23], is worker #17 in the crusher zone PPE-compliant?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "Yes",
+          "B": "No",
+          "C": "Yes, hearing protection is optional",
+          "D": "Cannot tell from the clip"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:23]: no hearing protection inside the crusher zone.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 5,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q6",
+      "type": "exec_check",
+      "question": "Write docs/ppe_part2.json for the crusher zone second pass, the office ramp and the loading bay in the walkthrough [clip @ 00:47], [clip @ 00:55] and [clip @ 01:03]: a JSON list of objects with the keys vest and missing, listing only the workers who are not PPE-compliant.",
+      "update_ids": [],
+      "eval": {
+        "command": "python ${eval_dir}/${agent_id}/scripts/check_ppe_part2.py ${workspace}",
+        "expect_exit": 0,
+        "timeout": 30
+      },
+      "feedback": {
+        "correct": "#24 glasses, #27 hard hat.",
+        "incorrect": "Deliverable missing, or it does not apply the workspace's rule."
+      },
+      "meta": {
+        "round": 6,
+        "phase": "test",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q7",
+      "type": "multi_choice",
+      "question": "Using the walkthrough [clip @ 00:31], how many workers in the rebar yard are PPE-compliant?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "2 workers",
+          "B": "1 worker",
+          "C": "0 workers",
+          "D": "Cannot tell from the clip"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:31]: #19 has no hi-vis vest.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 7,
+        "phase": "test",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q8",
+      "type": "exec_check",
+      "question": "Write docs/ppe_summary_morning.json for the site gate, the scaffold base and the first crusher-zone pass as checked earlier today: a JSON list of objects with the keys area (gate, scaffold base or crusher zone), compliant (number of compliant workers) and non_compliant (list of vest numbers).",
+      "update_ids": [],
+      "eval": {
+        "command": "python ${eval_dir}/${agent_id}/scripts/check_ppe_summary.py ${workspace}",
+        "expect_exit": 0,
+        "timeout": 30
+      },
+      "feedback": {
+        "correct": "Gate 1 [#12]; scaffold base 1 [#14, #15]; crusher zone 1 [#17].",
+        "incorrect": "Deliverable missing, or it does not apply the workspace's rule."
+      },
+      "meta": {
+        "round": 8,
+        "phase": "test",
+        "required_modalities": [
+          "text"
+        ],
+        "depends_on": [
+          "q1",
+          "q2",
+          "q3",
+          "q5"
+        ]
+      }
+    },
+    {
+      "id": "q9",
+      "type": "multi_choice",
+      "question": "Across the whole walk, how many workers need a PPE correction before the afternoon shift?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "8 workers",
+          "B": "3 workers",
+          "C": "5 workers",
+          "D": "18 workers"
+        },
+        "answer": [
+          "A"
+        ]
+      },
+      "feedback": {
+        "correct": "#12, #14, #15, #17, #19, #22, #24 and #27.",
+        "options": {
+          "A": "Correct.",
+          "B": "Does not follow the workspace's rule.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 9,
+        "phase": "test",
+        "required_modalities": [
+          "text"
+        ],
+        "depends_on": [
+          "q1",
+          "q2",
+          "q3",
+          "q4",
+          "q5",
+          "q6",
+          "q7"
+        ]
+      }
+    }
+  ]
+}

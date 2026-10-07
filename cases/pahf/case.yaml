@@ -1,0 +1,18 @@
+id: pahf
+name: "PAHF"
+domain: digital
+kind: research
+report: https://arxiv.org/abs/2602.16173
+sources:
+  - url: https://arxiv.org/html/2602.16173v1
+    kind: paper
+    version: "2602.16173v1"
+    sha256: a4cc1d72e8524e8a448bb1d2abc2e7b41535af6d0c0349af7e8cf489dbfd0d4e
+code:
+  repo: https://github.com/facebookresearch/PAHF
+  commit: 7a11213360a82d5f437a035e3a31c92d6307f8cf
+variants:
+  - id: pahf2026
+    label: "PAHF"
+    configuration: "Full pre-action plus post-action PAHF with GPT-4o and the default SQLite per-user memory, in feedback-enabled learning/adaptation phases"
+modes: [read, run]

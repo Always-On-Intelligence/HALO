@@ -1,0 +1,80 @@
+{
+  "id": "bee2026",
+  "configuration": "bee2026: the shipped Bee wearable as documented in the Amazon article dated September 22 by the case file (capture via button press, personal facts/conversation store, Daily Insights, Actions, Voice Notes) plus the retained to-do suggestions, facts, todos, insights and daily summaries exposed by the Bee CLI MCP server and local API proxy. The Templates feature, described in future tense (\"Templates will deliver...\"), is excluded. External assistants (Claude, Codex) connected over MCP are treated as outside the Bee service.",
+  "sources_read": [
+    "https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features (product_description; fetched 2026-10-07; no dateline visible on page; byline \"Written by Maria de Lourdes Zollo, Co-Founder of Bee\")",
+    "https://docs.bee.computer/docs/mcp (product_documentation; page footer \"Last updated on June 7, 2026\"; fetched 2026-10-07)",
+    "https://docs.bee.computer/docs/proxy (product_documentation; page footer \"Last updated on June 7, 2026\"; fetched 2026-10-07)",
+    "no code repository listed for this work"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed and user-supplied evidence is written into retained stores: captured conversations build a growing picture of the user (retained conversations, transcripts and facts, with new utterances arriving as `new-utterance` events into the conversation store), voice notes become part of Bee's understanding, and the user can supply corrections to memory by creating facts or confirming a fact via `bee_update_fact` / PUT /v1/facts/:id with `confirmed: true`. This is a write path into a live store, not a static profile.",
+      "locator": "Amazon article, intro paragraph 2 and 'Accelerating with Amazon' Voice Notes bullet; docs/mcp 'Tool catalog' (rows bee_create_fact, bee_update_fact) and the paragraph following the table; docs/proxy 'API Reference > Facts' and 'Streaming'",
+      "quote": "\"it captures your conversations, understands your commitments, and builds a picture of your life that grows richer over time\" ... \"They all become part of Bee's understanding of you, easily accessible whenever you need them.\" ... \"To confirm a fact over MCP, call `bee_update_fact` with `confirmed: true`; `text` can be omitted and Bee preserves the existing fact text.\" ... proxy Facts block: \"# Update a fact\\nPUT /v1/facts/:id\\nContent-Type: application/json\\n{\\\"text\\\": \\\"Updated fact\\\", \\\"confirmed\\\": true}\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information drives Bee's communication decisions: Daily Insights analyses months of stored conversations, emails, calendar data and HealthKit metrics to surface patterns and recommend personalized goals, and to-do suggestions and insights are produced from the retained record. Timing/content of these outputs is determined from memory, not from the current input alone.",
+      "locator": "Amazon article, 'What we've learned' paragraph 2 and 'Accelerating with Amazon' Daily Insights bullet; docs/mcp 'Tool catalog' rows bee_get_insights, bee_get_todo_suggestions",
+      "quote": "\"Bee surfaces insights across months of conversations, emails, calendar data, and health metrics from HealthKit\" ... \"Daily Insights surfaces patterns you'd never catch yourself: trends in how you're feeling, shifts in your relationships, themes that recur across weeks and recommends personalized goals to help you act on what matters.\" ... \"Bee learns from your daily patterns continuously to provide personalized insights\""
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "The only in-system action described is Actions (drafting an email, creating an invite), and no source describes the plan or execution state guiding what Bee senses, e.g. reading the calendar to place the invite or checking that the email was sent. Capture is started and stopped by the user's button press, not by Action. The `since` parameter on bee_get_conversation_transcript and the `?types=` filter on GET /v1/stream are requests made by external MCP/HTTP clients (Claude, Codex, developer tools) outside the Bee service, so they are not an in-system Action-to-Sensing flow. No source explicitly excludes the route, so it is insufficient rather than absent.",
+      "locator": "Amazon article, 'Accelerating with Amazon' Actions bullet and intro paragraph 2 (button/LED); docs/mcp paragraph after 'Tool catalog' table; docs/proxy 'Streaming'",
+      "quote": "\"When you mention needing to send an email or schedule a meeting, Bee can draft the email, create the invite, and handle it for you.\" ... \"A single press of the button starts and stops capturing, with a green LED to indicate when the device is recording.\""
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "No source states that retained facts, conversations or patterns are supplied to real-time capture, attention, compression or interpretation of new conversations. 'Bee processes conversations in real-time' and 'understands your commitments' describe interpretation without saying memory guides it. Templates, which would format summaries from a retained notion of the user's setting, is stated in future tense and is excluded from this configuration. Insights, related-conversation lookup and summaries retrieved later are answer-time retrieval (M->A). The docs pages do not describe how facts, suggestions, insights or summaries are generated. Not explicitly excluded, so insufficient.",
+      "locator": "Amazon article, privacy paragraph ('Bee processes conversations in real-time') and 'Accelerating with Amazon' Templates bullet; docs/mcp 'Tool catalog' (bee_get_related_conversations, bee_get_conversation_transcript); docs/proxy 'Streaming' (update-conversation-summary)",
+      "quote": "\"Bee processes conversations in real-time and no audio is ever stored.\" ... \"Templates will deliver intelligent summaries tailored to your specific needs\" ... \"Bee automatically formats the summary in the structure that works best for that moment, so you get exactly what you need, when you need it.\" (future feature, excluded)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Bee's own outputs are retained in configured stores: service-generated to-do suggestions ('suggested actions') persist as entities that can later be listed, accepted or dismissed (`bee_get_todo_suggestions`, `bee_accept_todo_suggestion`, `bee_dismiss_todo_suggestion`; `todoSuggestions` endpoint), and delivered insights and daily summaries are retained and retrievable (`bee_get_insights`, GET /v1/daily). A shared store implements the flow without a separate message. Execution records for Actions (sent emails, created invites) are not described, but the retained suggestions and insights establish the channel.",
+      "locator": "Amazon article, 'Key takeaways' bullet 1; docs/mcp 'Tool catalog' rows bee_get_todo_suggestions / bee_accept_todo_suggestion / bee_dismiss_todo_suggestion / bee_get_insights / bee_list_daily_summaries; docs/proxy 'API Reference' intro paragraph and 'Daily Summaries'",
+      "quote": "\"Bee learns from conversations, emails, and other information you choose to share to provide personalized insights and suggested actions.\" ... \"`bee_get_todo_suggestions` | `bee todos suggestions`\", \"`bee_accept_todo_suggestion` | `bee todos accept-suggestion`\", \"`bee_dismiss_todo_suggestion` | `bee todos dismiss-suggestion`\", \"`bee_get_insights` | `bee insights list`\" ... \"additional developer endpoints (for example `insights`, `locations`, `photos`, `todoSuggestions`, `conversations/:id/related`, `search/conversations`, `journals`, and `todayBrief`) are forwarded the same way\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps its own proposals and deliveries as retrievable production records: to-do suggestions it has made remain listable until accepted or dismissed, and the insights and daily summaries it delivered are stored and retrievable by id or date through the CLI, MCP and /v1 API. These are user-facing stores kept for later use, not research trial logs.",
+      "locator": "docs/mcp 'Tool catalog' (rows bee_get_todo_suggestions, bee_get_insights, bee_get_insight, bee_get_daily_summary, bee_list_daily_summaries) and the sentence introducing the table; docs/proxy 'API Reference' intro paragraph and 'Daily Summaries' block",
+      "quote": "\"Every read, search, and manage capability in the CLI is exposed as an MCP tool, so the CLI and your assistant work from the same data.\" ... \"`bee_get_todo_suggestions` | `bee todos suggestions`\" ... \"`bee_get_insights` | `bee insights list`\" ... \"# List daily summaries\\nGET /v1/daily\\n\\n# Get a specific daily summary\\nGET /v1/daily/:id\""
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "The accept/dismiss tools show the service obtains the user's response to a suggestion, and facts carry a stored `confirmed` flag, but no source states that acceptance or dismissal is retained as evidence about the suggestion (rather than simply removing it), and no outcome of Actions (whether the email was sent or the invite created) is described as obtained or retained. The confirmed flag corrects memory content (a fact), not an action. The Amazon article contains no mention of feedback, rating, correction or accuracy.",
+      "locator": "docs/mcp 'Tool catalog' rows bee_accept_todo_suggestion / bee_dismiss_todo_suggestion and the paragraph after the table; docs/proxy 'Facts' block; Amazon article 'Accelerating with Amazon' Actions bullet",
+      "quote": "\"`bee_dismiss_todo_suggestion` | `bee todos dismiss-suggestion`\" (no statement of what is retained after dismissal)"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No source states that the service links any outcome to the decision it concerns and uses it to check or correct its assistance. Accepting or dismissing a suggestion and confirming a fact are user operations on the stored record; nothing describes Bee using them to verify or adjust what it does. No immediate expected-effect check for Actions is described.",
+      "locator": "docs/mcp 'Tool catalog' and following paragraph; Amazon article (no text on feedback, correction, rating or accuracy)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Everything retained (facts, todos, conversations, voice notes, daily summaries, insights, to-do suggestions) is content consumed by a fixed mechanism. 'Bee learns from your daily patterns continuously' is a marketing phrase about accumulating content, and the article states there is no training. Templates would be a developer-shipped future feature, not a self-made revision. No change by the service to model parameters, prompts, skills, reusable rules, code or harness is described.",
+      "locator": "Amazon article, intro paragraph 2 and 'Accelerating with Amazon' Templates bullet; docs/mcp and docs/proxy (content CRUD only)",
+      "quote": "\"There's no setup, no training, no manual input. Bee learns from your daily patterns continuously to provide personalized insights that can empower you throughout your daily life.\"",
+      "what": "none described; only content stores (facts, todos, conversations, summaries, insights, suggestions) change"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No self-made revision of the mechanism is described, so no later run under a revised mechanism is reported.",
+      "locator": "all three sources; no relevant text"
+    }
+  },
+  "notes": "Judged configuration bee2026 (shipped Bee: capture, facts/conversation store, Daily Insights, Actions, Voice Notes, retained to-do suggestions; Templates excluded as future tense). Sources: the Amazon article by Maria de Lourdes Zollo (the fetched page displays no dateline; the case file dates it September 22; the text says 'After joining Amazon last year'), and the Bee developer docs pages for MCP and the local API proxy, both footer-dated June 7, 2026. No code repository exists. Bash was unavailable in this session, so pages were read through WebFetch; every quote marked verbatim was confirmed by a second targeted extraction that compared the candidate against the page text character by character, and the one quote reported as differing only in missing backticks was corrected. The docs pages do not describe how facts, to-do suggestions, insights or daily summaries are generated; the Amazon article attributes 'personalized insights and suggested actions' to Bee itself, which is the basis for treating suggestions and insights as retained Action outputs (A->M, Record). External assistants connected via MCP (Claude, Codex) and developer HTTP clients were treated as outside the Bee service, so their `since`/`?types=` requests were not counted as A->S.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 435,
+    "code_commit": null
+  }
+}

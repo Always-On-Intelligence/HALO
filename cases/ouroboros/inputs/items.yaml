@@ -1,0 +1,1587 @@
+# Scripted environment for Ouroboros run mode (see ../README.md).
+#
+# Each item is one owner who talks to Ouroboros in its Main room and keeps four small repositories under ~/src.
+# The owner's organization keeps its default contribution guide in its organization-level `.github` repository,
+# checked out at ~/src/.github (`org_guide` below becomes ~/src/.github/CONTRIBUTING.md). GitHub applies that file
+# to every repository without a CONTRIBUTING file of its own, and none of these repositories has one, so exploring
+# a repository does not reveal the rules. `make check` in each repository enforces its section of the guide; the
+# adapter simulates it from `rules` (fail-fast: the first failing rule is reported and names the guide section).
+# Nothing is executed. Every repository has at least one organization rule that tool defaults and the existing
+# files do not reveal (several were introduced recently, so older files predate them).
+#
+# Phases: two learning tasks (L1, L2) before the evolution cycle, two test tasks (T1, T2) after it. The test
+# repositories follow other sections of the same guide, so the lesson "read the organization guide first"
+# transfers, while copying the learning repositories' rules does not.
+#
+# Fields `design` and `reference` are for analysis and validation only and are never sent to a model.
+
+world: |
+  # WORLD.md — Environment Profile
+
+  This is where I currently exist. It defines my hardware, OS, and local constraints.
+
+  ## System
+  - **OS**: Linux 6.8 (x86_64)
+  - **CPU**: 8 vCPU
+  - **RAM**: 16.0 GB
+  - **User**: owner
+  - **Current Directory**: /home/owner
+
+  ## Available Tools
+  The following binaries are available in my PATH:
+  `git, python3, make, node, npx`
+
+  ## File System Rules
+  My human's repositories live in `~/src`. My own repository and data live in my installation folder.
+
+  *(Generated automatically on first boot)*
+
+items:
+  # ------------------------------------------------------------------------------------------------
+  - id: release_notes
+    owner: Mara Ilić, who maintains four small open-source libraries in the mara-libs organization
+    org: mara-libs
+    date: "2026-10-12"
+    design: >-
+      Four libraries record user-visible changes four ways, all in the organization guide. L1 (towncrier fragments
+      named by the pull request number, Markdown, organization types) and L2 (scriv entry files with a category
+      heading) fail for an agent that only explores the repository. T1 (changesets whose summary starts with the rule
+      name) needs the guide; T2 (Keep a Changelog by hand, no entry files, a credit for outside contributors) needs
+      the guide and punishes copying L1/L2's rule.
+    org_guide: |
+      # Contributing to mara-libs projects
+
+      This is the default contributing guide of the mara-libs organization. It applies to every repository that has
+      no CONTRIBUTING file of its own, which is all of them. `make check` in each repository enforces its section.
+
+      ## Recording changes
+
+      Every pull request records its user-visible change in the same pull request. Each project does it its own way.
+
+      ### tidyconf: news fragments (towncrier)
+
+      - Add one file `newsfragments/<pull request number>.<type>.md`. Use the pull request number, not the issue number.
+      - `<type>` is one of `added`, `changed`, `fixed`, `removed`.
+      - The file is one sentence on one line that starts with a past-tense verb and ends with a period. Do not mention
+        the issue or the pull request in the text: towncrier adds the link.
+      - Never edit `CHANGES.rst`; it is assembled when a release is cut.
+
+      ### fastslug: entry files (scriv)
+
+      - Add one file `changelog.d/<pull request number>.md`.
+      - It holds a level-3 heading with the category (`### Added`, `### Changed`, `### Fixed` or `### Removed`), a blank
+        line, and one bullet: ``- `<function>`: <the change in the past tense> (#<pull request>)``.
+      - Never edit `CHANGELOG.md`; scriv collects the entries when a release is made.
+
+      ### lintkit: changesets
+
+      - Add one changeset `.changeset/<three or more lowercase words joined by hyphens>.md`.
+      - Front matter: `"lintkit": patch` for fixes, `minor` for new rules or options, `major` for breaking changes.
+      - The summary is one line: the affected rule in backticks, a colon, and the change in the past tense, for example
+        `` `no-floating-promises`: Fixed a crash on optional call chains.``
+      - Never edit `CHANGELOG.md`; `changeset version` generates it.
+
+      ### pyretry: Keep a Changelog
+
+      - Edit `CHANGELOG.md` by hand in the same pull request. Do not add fragment or entry files.
+      - Put the line under `## [Unreleased]`, in the matching subsection; subsections appear in the order `### Added`,
+        `### Changed`, `### Fixed`, `### Removed`, and you create one when it is missing.
+      - Line format: `- <the change in the past tense> ([#<PR>](https://github.com/mara-libs/pyretry/pull/<PR>))`
+      - Since 2026-10-01 a change contributed from outside the organization credits its author inside the parentheses:
+        `([#<PR>](https://github.com/mara-libs/pyretry/pull/<PR>), thanks @<GitHub user>)`. Older entries predate this.
+    tasks:
+      - {id: L1, phase: learn, repo: tidyconf, request: "Morning! Issue #41 in tidyconf (load() crashed with a TypeError when a config file was empty) is fixed by PR #57, which I merged an hour ago. Could you record the change in ~/src/tidyconf? Please run `make check` before you report back."}
+      - {id: L2, phase: learn, repo: fastslug, request: "Next one: PR #88 in fastslug added a `max_length` option to `slugify()` (it trims the slug at a word boundary). It's merged. Please record the change in ~/src/fastslug and run `make check` before you report back."}
+      - {id: T1, phase: test, repo: lintkit, request: "PR #312 in lintkit fixed false positives in the `no-unused-vars` rule for destructured function parameters; it's merged. Please record the change in ~/src/lintkit and run `make check` before you report back."}
+      - {id: T2, phase: test, repo: pyretry, request: "PR #19 in pyretry, contributed by @kenji-sato, fixed `retry()` ignoring the `jitter` argument whenever `max_delay` was set; it's merged. Please record the change in ~/src/pyretry and run `make check` before you report back."}
+    repos:
+      tidyconf:
+        guide: "tidyconf: news fragments (towncrier)"
+        checker: release-lint
+        rules:
+          - {id: NF1, type: unchanged, path: CHANGES.rst, msg: "CHANGES.rst is assembled when a release is cut and must not be edited by hand (organization guide ~/src/.github/CONTRIBUTING.md, 'tidyconf: news fragments (towncrier)')."}
+          - {id: NF2, type: new_file, glob: 'newsfragments/57.*', msg: "no news fragment for pull request #57: expected newsfragments/57.<type>.md (organization guide ~/src/.github/CONTRIBUTING.md, 'tidyconf: news fragments (towncrier)')."}
+          - {id: NF3, type: path_regex, glob: 'newsfragments/*', regex: 'newsfragments/\d+\.(added|changed|fixed|removed)\.md', msg: "fragments are named newsfragments/<pull request>.<type>.md with type added, changed, fixed or removed (organization guide ~/src/.github/CONTRIBUTING.md, 'tidyconf: news fragments (towncrier)')."}
+          - {id: NF4, type: content, glob: 'newsfragments/57.*', regex: '[A-Z][a-z]+ed\b[^\n]*\.', msg: "a fragment is one sentence on one line that starts with a past-tense verb and ends with a period (organization guide ~/src/.github/CONTRIBUTING.md, 'tidyconf: news fragments (towncrier)')."}
+          - {id: NF5, type: forbid, glob: 'newsfragments/57.*', regex: '#\s*\d+|\b(41|57)\b|:issue:|:pr:', msg: "a fragment does not mention the issue or the pull request; towncrier adds the link (organization guide ~/src/.github/CONTRIBUTING.md, 'tidyconf: news fragments (towncrier)')."}
+        reference: {newsfragments/57.fixed.md: "Fixed `load()` raising a TypeError on an empty configuration file.\n"}
+        files:
+          README.md: |
+            # tidyconf
+
+            Load layered TOML configuration files with environment-variable overrides.
+
+                pip install tidyconf
+
+            ```python
+            from tidyconf import load
+
+            cfg = load("app.toml", "app.local.toml", env_prefix="APP_")
+            print(cfg["server"]["port"])
+            ```
+
+            Later files override earlier ones; `APP_SERVER__PORT=9000` overrides `server.port`.
+
+            ## License
+
+            MIT
+          CHANGES.rst: |
+            Changelog
+            =========
+
+            1.4.0 (2026-08-02)
+            ------------------
+
+            Added
+            ~~~~~
+
+            - Added ``env_prefix`` to ``load()`` so environment variables can override keys. (`#52 <https://github.com/mara-libs/tidyconf/pull/52>`_)
+
+            Fixed
+            ~~~~~
+
+            - Fixed a crash when two layers defined the same table. (`#49 <https://github.com/mara-libs/tidyconf/pull/49>`_)
+
+
+            1.3.1 (2026-06-11)
+            ------------------
+
+            Fixed
+            ~~~~~
+
+            - Fixed ``load()`` ignoring files that start with a UTF-8 byte order mark. (`#44 <https://github.com/mara-libs/tidyconf/pull/44>`_)
+          Makefile: |
+            check:
+            	mara-release-lint
+          pyproject.toml: |
+            [project]
+            name = "tidyconf"
+            version = "1.4.0"
+            description = "Layered TOML configuration with environment overrides"
+            requires-python = ">=3.11"
+            license = "MIT"
+
+            [project.optional-dependencies]
+            dev = ["pytest", "towncrier", "mara-dev-tools"]
+          newsfragments/.gitkeep: ""
+          tidyconf/__init__.py: |
+            from .loader import load
+
+            __all__ = ["load"]
+            __version__ = "1.4.0"
+          tidyconf/loader.py: |
+            """Load layered TOML files and apply environment overrides."""
+            import os
+            import tomllib
+
+
+            def _merge(base, extra):
+                for key, value in extra.items():
+                    if isinstance(value, dict) and isinstance(base.get(key), dict):
+                        _merge(base[key], value)
+                    else:
+                        base[key] = value
+                return base
+
+
+            def load(*paths, env_prefix=None):
+                config = {}
+                for path in paths:
+                    with open(path, "rb") as fh:
+                        data = fh.read().decode("utf-8-sig")
+                    if not data.strip():
+                        continue
+                    _merge(config, tomllib.loads(data))
+                if env_prefix:
+                    for name, value in os.environ.items():
+                        if name.startswith(env_prefix):
+                            keys = name[len(env_prefix):].lower().split("__")
+                            node = config
+                            for key in keys[:-1]:
+                                node = node.setdefault(key, {})
+                            node[keys[-1]] = value
+                return config
+          tests/test_loader.py: |
+            from tidyconf import load
+
+
+            def test_empty_file_is_an_empty_layer(tmp_path):
+                path = tmp_path / "empty.toml"
+                path.write_text("")
+                assert load(str(path)) == {}
+      fastslug:
+        guide: "fastslug: entry files (scriv)"
+        checker: changelog-lint
+        rules:
+          - {id: CL1, type: unchanged, path: CHANGELOG.md, msg: "CHANGELOG.md is collected by scriv when a release is made; pull requests must not edit it (organization guide ~/src/.github/CONTRIBUTING.md, 'fastslug: entry files (scriv)')."}
+          - {id: CL2, type: new_file, glob: 'changelog.d/88*', msg: "no changelog entry for pull request #88: expected changelog.d/88.md (organization guide ~/src/.github/CONTRIBUTING.md, 'fastslug: entry files (scriv)')."}
+          - {id: CL3, type: path_regex, glob: 'changelog.d/*', regex: 'changelog\.d/\d+\.md', msg: "entry files are named changelog.d/<pull request>.md (organization guide ~/src/.github/CONTRIBUTING.md, 'fastslug: entry files (scriv)')."}
+          - {id: CL4, type: content, glob: 'changelog.d/88*', regex: '### (Added|Changed|Fixed|Removed)\n\n- `[a-z_]+`: [A-Z][a-z]+ed\b[^\n]* \(#88\)', msg: "an entry is a '### <category>' heading, a blank line, and one bullet: - `function`: <change in the past tense> (#88) (organization guide ~/src/.github/CONTRIBUTING.md, 'fastslug: entry files (scriv)')."}
+        reference: {changelog.d/88.md: "### Added\n\n- `slugify`: Added a `max_length` option that trims the slug at a word boundary (#88)\n"}
+        files:
+          README.md: |
+            # fastslug
+
+            URL slugs from arbitrary text, fast.
+
+            ```python
+            from fastslug import slugify
+
+            slugify("Héllo, Wörld!")                    # 'hello-world'
+            slugify("A very long title", max_length=10)  # 'a-very'
+            ```
+          CHANGELOG.md: |
+            # Changelog
+
+            ## 2.1.0 — 2026-07-20
+
+            ### Added
+
+            - `slugify`: Accepted a custom `separator` (#71)
+
+            ### Fixed
+
+            - `slugify`: Kept digits next to Unicode letters (#69)
+
+            ## 2.0.0 — 2026-05-02
+
+            ### Changed
+
+            - `slugify`: Lowercased the output by default (#60)
+          Makefile: |
+            check:
+            	scriv-lint changelog.d
+          changelog.d/.gitkeep: ""
+          fastslug/__init__.py: |
+            from .core import slugify
+
+            __all__ = ["slugify"]
+          fastslug/core.py: |
+            import re
+            import unicodedata
+
+            _NON_WORD = re.compile(r"[^a-z0-9]+")
+
+
+            def slugify(text, separator="-", max_length=None):
+                """Return a lowercase ASCII slug for ``text``."""
+                ascii_text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
+                slug = _NON_WORD.sub(separator, ascii_text.lower()).strip(separator)
+                if max_length is not None and len(slug) > max_length:
+                    cut = slug[: max_length + 1]
+                    slug = cut.rsplit(separator, 1)[0] if separator in cut else slug[:max_length]
+                return slug
+      lintkit:
+        guide: "lintkit: changesets"
+        checker: changeset-check
+        rules:
+          - {id: CS1, type: unchanged, path: CHANGELOG.md, msg: "CHANGELOG.md is generated by `changeset version`; do not edit it in a pull request (organization guide ~/src/.github/CONTRIBUTING.md, 'lintkit: changesets')."}
+          - {id: CS2, type: new_file, glob: '.changeset/*.md', msg: "no changeset found: add one file under .changeset/ (organization guide ~/src/.github/CONTRIBUTING.md, 'lintkit: changesets')."}
+          - {id: CS3, type: path_regex, glob: '.changeset/*.md', regex: '\.changeset/[a-z]+(-[a-z]+){2,}\.md', msg: "changeset names are three or more lowercase words joined by hyphens (organization guide ~/src/.github/CONTRIBUTING.md, 'lintkit: changesets')."}
+          - {id: CS4, type: content, glob: '.changeset/*.md', regex: '---\n["'']lintkit["'']: patch\n---\n\n?[^\n]+', msg: "a fix is released as a patch: front matter \"lintkit\": patch, then one summary line (organization guide ~/src/.github/CONTRIBUTING.md, 'lintkit: changesets')."}
+          - {id: CS5, type: content, glob: '.changeset/*.md', regex: '---\n[^\n]+\n---\n\n?`no-unused-vars`: [A-Z][a-z]+ed\b[^\n]*', msg: "the summary is the affected rule in backticks, a colon, and the change in the past tense: `no-unused-vars`: Fixed ... (organization guide ~/src/.github/CONTRIBUTING.md, 'lintkit: changesets')."}
+        reference: {.changeset/quiet-params-settle.md: "---\n\"lintkit\": patch\n---\n\n`no-unused-vars`: Fixed false positives for destructured function parameters.\n"}
+        files:
+          README.md: |
+            # lintkit
+
+            A small set of ESLint rules for TypeScript services.
+
+            ```js
+            // eslint.config.js
+            import lintkit from "lintkit";
+            export default [lintkit.configs.recommended];
+            ```
+
+            Rules: `no-unused-vars`, `no-floating-promises`, `prefer-early-return`.
+          package.json: |
+            {
+              "name": "lintkit",
+              "version": "3.2.0",
+              "type": "module",
+              "main": "src/index.js",
+              "scripts": {"test": "vitest run"},
+              "devDependencies": {"@changesets/cli": "^2.29.0", "vitest": "^3.2.0"}
+            }
+          CHANGELOG.md: |
+            # lintkit
+
+            ## 3.2.0
+
+            ### Minor Changes
+
+            - 4f1c2aa: Added the `prefer-early-return` rule.
+
+            ## 3.1.2
+
+            ### Patch Changes
+
+            - 9b0d7e1: Fixed `no-floating-promises` crashing on optional call chains.
+          .changeset/config.json: |
+            {"$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json", "baseBranch": "main", "changelog": "@changesets/cli/changelog", "access": "public"}
+          Makefile: |
+            check:
+            	npx changeset status --since=origin/main
+          src/index.js: |
+            import noUnusedVars from "./rules/no-unused-vars.js";
+            import noFloatingPromises from "./rules/no-floating-promises.js";
+            import preferEarlyReturn from "./rules/prefer-early-return.js";
+
+            export default {
+              rules: {"no-unused-vars": noUnusedVars, "no-floating-promises": noFloatingPromises, "prefer-early-return": preferEarlyReturn},
+            };
+          src/rules/no-unused-vars.js: |
+            // Reports variables that are declared but never read.
+            // Destructured parameters count as used when any binding of the pattern is read (#312).
+            export default {
+              meta: {type: "problem", docs: {description: "disallow unused variables"}},
+              create(context) {
+                return {};
+              },
+            };
+      pyretry:
+        guide: "pyretry: Keep a Changelog"
+        checker: changelog-check
+        rules:
+          - {id: KC1, type: changed, path: CHANGELOG.md, msg: "CHANGELOG.md has no entry for this change; pyretry edits it by hand in the same pull request (organization guide ~/src/.github/CONTRIBUTING.md, 'pyretry: Keep a Changelog')."}
+          - {id: KC2, type: no_new_file, glob: '*', msg: "do not add fragment or entry files; edit CHANGELOG.md (organization guide ~/src/.github/CONTRIBUTING.md, 'pyretry: Keep a Changelog')."}
+          - {id: KC3, type: added_line, path: CHANGELOG.md, section: ['## [Unreleased]', '### Fixed'], regex: '- [A-Z][a-z]+ed\b.* \(\[#19\]\(https://github\.com/mara-libs/pyretry/pull/19\), thanks @kenji-sato\)', msg: "the line belongs under '## [Unreleased]' > '### Fixed' as: - <change in the past tense> ([#19](https://github.com/mara-libs/pyretry/pull/19), thanks @<GitHub user>) for an outside contribution (organization guide ~/src/.github/CONTRIBUTING.md, 'pyretry: Keep a Changelog')."}
+          - {id: KC4, type: content, glob: CHANGELOG.md, regex: '(?s).*\n## \[Unreleased\]\n\n### Added\n.*\n### Fixed\n.*\n## \[0\.9\.0\].*', msg: "inside '## [Unreleased]' the subsections come in the order Added, Changed, Fixed, Removed (organization guide ~/src/.github/CONTRIBUTING.md, 'pyretry: Keep a Changelog')."}
+        reference:
+          CHANGELOG.md: |
+            # Changelog
+
+            All notable changes to this project are documented here.
+            The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
+
+            ## [Unreleased]
+
+            ### Added
+            - Added an `on_retry` callback for logging each retry ([#17](https://github.com/mara-libs/pyretry/pull/17))
+
+            ### Fixed
+            - Fixed `retry()` ignoring `jitter` whenever `max_delay` was set ([#19](https://github.com/mara-libs/pyretry/pull/19), thanks @kenji-sato)
+
+            ## [0.9.0] - 2026-08-01
+
+            ### Changed
+            - Raised the default `max_delay` to 30 seconds ([#12](https://github.com/mara-libs/pyretry/pull/12))
+
+            ### Fixed
+            - Stopped retrying on `KeyboardInterrupt` ([#11](https://github.com/mara-libs/pyretry/pull/11))
+
+            [Unreleased]: https://github.com/mara-libs/pyretry/compare/v0.9.0...HEAD
+            [0.9.0]: https://github.com/mara-libs/pyretry/releases/tag/v0.9.0
+        files:
+          README.md: |
+            # pyretry
+
+            Retry decorator with exponential backoff and jitter.
+
+            ```python
+            from pyretry import retry
+
+            @retry(attempts=5, max_delay=8.0, jitter=0.5)
+            def fetch():
+                ...
+            ```
+          CHANGELOG.md: |
+            # Changelog
+
+            All notable changes to this project are documented here.
+            The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
+
+            ## [Unreleased]
+
+            ### Added
+            - Added an `on_retry` callback for logging each retry ([#17](https://github.com/mara-libs/pyretry/pull/17))
+
+            ## [0.9.0] - 2026-08-01
+
+            ### Changed
+            - Raised the default `max_delay` to 30 seconds ([#12](https://github.com/mara-libs/pyretry/pull/12))
+
+            ### Fixed
+            - Stopped retrying on `KeyboardInterrupt` ([#11](https://github.com/mara-libs/pyretry/pull/11))
+
+            [Unreleased]: https://github.com/mara-libs/pyretry/compare/v0.9.0...HEAD
+            [0.9.0]: https://github.com/mara-libs/pyretry/releases/tag/v0.9.0
+          Makefile: |
+            check:
+            	keepachangelog-lint CHANGELOG.md
+          pyretry/__init__.py: |
+            import functools
+            import random
+            import time
+
+
+            def retry(attempts=3, base_delay=0.5, max_delay=30.0, jitter=0.0, on_retry=None):
+                def decorate(fn):
+                    @functools.wraps(fn)
+                    def wrapper(*args, **kwargs):
+                        for attempt in range(1, attempts + 1):
+                            try:
+                                return fn(*args, **kwargs)
+                            except KeyboardInterrupt:
+                                raise
+                            except Exception:
+                                if attempt == attempts:
+                                    raise
+                                delay = min(base_delay * 2 ** (attempt - 1), max_delay)
+                                delay += random.uniform(0, jitter)
+                                if on_retry:
+                                    on_retry(attempt, delay)
+                                time.sleep(delay)
+                    return wrapper
+                return decorate
+  # ------------------------------------------------------------------------------------------------
+  - id: db_migrations
+    owner: Tomás Okafor, backend lead at Ledgerly, a small invoicing company (GitHub organization ledgerly)
+    org: ledgerly
+    date: "2026-10-19"
+    design: >-
+      Four services with four migration tools, all covered by the organization guide. Since 2026-09-15 every new
+      migration starts with a ticket line, which no existing migration shows; each service adds tool-specific rules
+      (Alembic revision ids from the file name, CONCURRENTLY index pairs, a Knex column comment, a Django help_text).
+      An agent that mimics the existing files fails L1 and L2; the test services need sections it has not seen.
+    org_guide: |
+      # Contributing to Ledgerly services
+
+      This is the default contributing guide of the ledgerly organization. It applies to every service repository
+      without a CONTRIBUTING file of its own, which is all of them. `make check` in each repository enforces its section.
+
+      ## Database migrations
+
+      Every schema change ships as a migration in the same pull request.
+
+      - Since 2026-09-15 the first line of every new migration file names the ticket of the change:
+        `# Ticket: LED-<number>` in Python, `-- Ticket: LED-<number>` in SQL, `// Ticket: LED-<number>` in JavaScript.
+        Older migrations predate this rule; never edit a merged migration to add it.
+      - Columns added to existing tables are nullable.
+
+      ### invoices-api (Alembic)
+
+      - File `migrations/versions/<YYYYMMDD>_<HHMM>_<snake_case_slug>.py` from the current UTC time.
+      - `revision` is the file name without `.py`; `down_revision` is the current head (the newest file's `revision`).
+      - `downgrade()` reverts `upgrade()` exactly; `pass` is not allowed.
+      - Update `app/models.py` in the same change.
+
+      ### ledger-core (golang-migrate)
+
+      - A pair `db/migrations/<6-digit sequence>_<snake_case_name>.up.sql` and `.down.sql`; the sequence is the
+        highest existing number plus one.
+      - Index changes use `CONCURRENTLY` in both directions with one statement per file:
+        `CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_<table>_<columns> ON <table> (<columns>);` and
+        `DROP INDEX CONCURRENTLY IF EXISTS idx_<table>_<columns>;`
+
+      ### notify-svc (Knex)
+
+      - File `migrations/<YYYYMMDDHHMMSS>_<snake_case_name>.js`, CommonJS: `exports.up = ...` and `exports.down = ...`.
+      - Change existing tables with `knex.schema.alterTable(...)`; never use `knex.raw`.
+      - Every new column carries a column comment: `.comment("<what it stores>")`.
+      - `down` drops what `up` added.
+
+      ### reports-worker (Django)
+
+      - `reports/migrations/<4-digit number>_<name>.py`, the number being the latest plus one; `dependencies` points
+        at the latest migration.
+      - A field added to `Report` (a large table) has `null=True`, a `help_text`, and no `default`.
+      - Update `reports/models.py` in the same change.
+    tasks:
+      - {id: L1, phase: learn, repo: invoices-api, request: "For the payments work (ticket LED-2210) we need a nullable `paid_at` timestamp (with time zone) on the `invoices` table. Could you add it in ~/src/invoices-api? Please run `make check` before you report back."}
+      - {id: L2, phase: learn, repo: ledger-core, request: "Posting lookups by account are slow in ledger-core (ticket LED-2214). Please add an index on `entries(account_id, posted_at)` in ~/src/ledger-core and run `make check` before you report back."}
+      - {id: T1, phase: test, repo: notify-svc, request: "We need to store when a notification was read (ticket LED-2231). Please add a nullable `read_at` timestamp column to the `notifications` table in ~/src/notify-svc and run `make check` before you report back."}
+      - {id: T2, phase: test, repo: reports-worker, request: "Reports should remember who requested them (ticket LED-2240). Please add a nullable `requested_by` CharField (max_length=150) to the `Report` model in ~/src/reports-worker, with its migration, and run `make check` before you report back."}
+    repos:
+      invoices-api:
+        guide: "invoices-api (Alembic)"
+        checker: migration-lint
+        rules:
+          - {id: M1, type: unchanged, paths: [migrations/versions/20260815_0940_create_invoices.py, migrations/versions/20260902_1130_add_due_date.py], msg: "merged migrations must not be edited (organization guide ~/src/.github/CONTRIBUTING.md, 'Database migrations')."}
+          - {id: M2, type: new_file, glob: 'migrations/versions/*.py', msg: "no new revision in migrations/versions/ (organization guide ~/src/.github/CONTRIBUTING.md, 'invoices-api (Alembic)')."}
+          - {id: M3, type: content, glob: 'migrations/versions/*.py', regex: '(?s)# Ticket: LED-2210\n.*', msg: "the first line of a new migration names its ticket: # Ticket: LED-<number> (organization guide ~/src/.github/CONTRIBUTING.md, 'Database migrations')."}
+          - {id: M4, type: path_regex, glob: 'migrations/versions/*.py', regex: 'migrations/versions/\d{8}_\d{4}_[a-z0-9]+(_[a-z0-9]+)*\.py', msg: "revision files are named <YYYYMMDD>_<HHMM>_<snake_case_slug>.py (organization guide ~/src/.github/CONTRIBUTING.md, 'invoices-api (Alembic)')."}
+          - {id: M5, type: contains, glob: 'migrations/versions/*.py', regex: '(?m)^revision\b[^=\n]*=\s*["'']{stem}["'']', msg: "`revision` must equal the file name without .py (organization guide ~/src/.github/CONTRIBUTING.md, 'invoices-api (Alembic)')."}
+          - {id: M6, type: contains, glob: 'migrations/versions/*.py', regex: '(?m)^down_revision\b[^=\n]*=\s*["'']20260902_1130_add_due_date["'']', msg: "`down_revision` must be the current head: the revision of the newest file (organization guide ~/src/.github/CONTRIBUTING.md, 'invoices-api (Alembic)')."}
+          - {id: M7, type: contains, glob: 'migrations/versions/*.py', regex: 'add_column\(\s*["'']invoices["'']\s*,\s*(sa\.)?Column\(\s*["'']paid_at["'']', msg: "upgrade() must add the column invoices.paid_at."}
+          - {id: M8, type: forbid, glob: 'migrations/versions/*.py', regex: 'nullable\s*=\s*False', msg: "columns added to existing tables are nullable (organization guide ~/src/.github/CONTRIBUTING.md, 'Database migrations')."}
+          - {id: M9, type: contains, glob: 'migrations/versions/*.py', regex: '(?s)def downgrade\(.*drop_column\(\s*["'']invoices["'']\s*,\s*["'']paid_at["'']', msg: "downgrade() must drop invoices.paid_at; `pass` is not allowed (organization guide ~/src/.github/CONTRIBUTING.md, 'invoices-api (Alembic)')."}
+          - {id: M10, type: changed, path: app/models.py, msg: "update app/models.py in the same change (organization guide ~/src/.github/CONTRIBUTING.md, 'invoices-api (Alembic)')."}
+          - {id: M11, type: contains, glob: app/models.py, regex: 'paid_at\s*(:[^=\n]*)?=\s*(mapped_column|Column)\(', msg: "app/models.py must declare the paid_at column on Invoice."}
+        reference:
+          migrations/versions/20261019_0900_add_paid_at.py: |
+            # Ticket: LED-2210
+            """add paid_at to invoices
+
+            Revision ID: 20261019_0900_add_paid_at
+            Revises: 20260902_1130_add_due_date
+            Create Date: 2026-10-19 09:00:00
+            """
+            from alembic import op
+            import sqlalchemy as sa
+
+            revision = "20261019_0900_add_paid_at"
+            down_revision = "20260902_1130_add_due_date"
+
+
+            def upgrade():
+                op.add_column("invoices", sa.Column("paid_at", sa.DateTime(timezone=True), nullable=True))
+
+
+            def downgrade():
+                op.drop_column("invoices", "paid_at")
+          app/models.py: |
+            from datetime import date, datetime
+
+            from sqlalchemy import BigInteger, Date, DateTime, Integer
+            from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+
+            class Base(DeclarativeBase):
+                pass
+
+
+            class Invoice(Base):
+                __tablename__ = "invoices"
+
+                id: Mapped[int] = mapped_column(Integer, primary_key=True)
+                customer_id: Mapped[int] = mapped_column(Integer, nullable=False)
+                amount_cents: Mapped[int] = mapped_column(BigInteger, nullable=False)
+                issued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+                due_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+                paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+        files:
+          README.md: |
+            # invoices-api
+
+            Invoice service for Ledgerly (FastAPI + PostgreSQL).
+
+                make dev     # run the API locally
+                make check   # migration checks
+          Makefile: |
+            check:
+            	ledgerly-migration-lint migrations/versions app/models.py
+          alembic.ini: |
+            [alembic]
+            script_location = migrations
+            sqlalchemy.url = postgresql://localhost/invoices
+          migrations/env.py: |
+            from alembic import context
+
+            from app.models import Base
+
+            target_metadata = Base.metadata
+
+
+            def run_migrations_online():
+                with context.begin_transaction():
+                    context.run_migrations()
+
+
+            run_migrations_online()
+          migrations/versions/20260815_0940_create_invoices.py: |
+            """create invoices
+
+            Revision ID: 20260815_0940_create_invoices
+            Revises:
+            Create Date: 2026-08-15 09:40:00
+            """
+            from alembic import op
+            import sqlalchemy as sa
+
+            revision = "20260815_0940_create_invoices"
+            down_revision = None
+
+
+            def upgrade():
+                op.create_table(
+                    "invoices",
+                    sa.Column("id", sa.Integer, primary_key=True),
+                    sa.Column("customer_id", sa.Integer, nullable=False),
+                    sa.Column("amount_cents", sa.BigInteger, nullable=False),
+                    sa.Column("issued_at", sa.DateTime(timezone=True), nullable=False),
+                )
+
+
+            def downgrade():
+                op.drop_table("invoices")
+          migrations/versions/20260902_1130_add_due_date.py: |
+            """add due_date to invoices
+
+            Revision ID: 20260902_1130_add_due_date
+            Revises: 20260815_0940_create_invoices
+            Create Date: 2026-09-02 11:30:00
+            """
+            from alembic import op
+            import sqlalchemy as sa
+
+            revision = "20260902_1130_add_due_date"
+            down_revision = "20260815_0940_create_invoices"
+
+
+            def upgrade():
+                op.add_column("invoices", sa.Column("due_date", sa.Date(), nullable=True))
+
+
+            def downgrade():
+                op.drop_column("invoices", "due_date")
+          app/models.py: |
+            from datetime import date, datetime
+
+            from sqlalchemy import BigInteger, Date, DateTime, Integer
+            from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+
+            class Base(DeclarativeBase):
+                pass
+
+
+            class Invoice(Base):
+                __tablename__ = "invoices"
+
+                id: Mapped[int] = mapped_column(Integer, primary_key=True)
+                customer_id: Mapped[int] = mapped_column(Integer, nullable=False)
+                amount_cents: Mapped[int] = mapped_column(BigInteger, nullable=False)
+                issued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+                due_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+          app/main.py: |
+            from fastapi import FastAPI
+
+            app = FastAPI(title="invoices-api")
+
+
+            @app.get("/health")
+            def health():
+                return {"ok": True}
+      ledger-core:
+        guide: "ledger-core (golang-migrate)"
+        checker: migrate-lint
+        rules:
+          - {id: G1, type: new_file, glob: 'db/migrations/000013_*.up.sql', msg: "the next migration is db/migrations/000013_<name>.up.sql: the highest sequence plus one (organization guide ~/src/.github/CONTRIBUTING.md, 'ledger-core (golang-migrate)')."}
+          - {id: G2, type: new_file, glob: 'db/migrations/000013_*.down.sql', msg: "every .up.sql needs its .down.sql: db/migrations/000013_<name>.down.sql (organization guide ~/src/.github/CONTRIBUTING.md, 'ledger-core (golang-migrate)')."}
+          - {id: G3, type: path_regex, glob: 'db/migrations/*', regex: 'db/migrations/\d{6}_[a-z0-9]+(_[a-z0-9]+)*\.(up|down)\.sql', msg: "migration files are named <6-digit sequence>_<snake_case_name>.up.sql / .down.sql (organization guide ~/src/.github/CONTRIBUTING.md, 'ledger-core (golang-migrate)')."}
+          - {id: G4, type: content, glob: 'db/migrations/000013_*', regex: '(?s)-- Ticket: LED-2214\n.*', msg: "the first line of a new migration file names its ticket: -- Ticket: LED-<number> (organization guide ~/src/.github/CONTRIBUTING.md, 'Database migrations')."}
+          - {id: G5, type: content, glob: 'db/migrations/000013_*.up.sql', regex: '(?is)-- Ticket: LED-2214\s*\n\s*create\s+index\s+concurrently\s+if\s+not\s+exists\s+idx_entries_account_id_posted_at\s+on\s+entries\s*\(\s*account_id\s*,\s*posted_at\s*\)\s*;?', msg: "the up migration is one statement: CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_<table>_<columns> ON entries (account_id, posted_at); (organization guide ~/src/.github/CONTRIBUTING.md, 'ledger-core (golang-migrate)')."}
+          - {id: G6, type: content, glob: 'db/migrations/000013_*.down.sql', regex: '(?is)-- Ticket: LED-2214\s*\n\s*drop\s+index\s+concurrently\s+if\s+exists\s+idx_entries_account_id_posted_at\s*;?', msg: "the down migration is one statement: DROP INDEX CONCURRENTLY IF EXISTS idx_entries_account_id_posted_at; (organization guide ~/src/.github/CONTRIBUTING.md, 'ledger-core (golang-migrate)')."}
+        reference:
+          db/migrations/000013_add_entries_account_posted_index.up.sql: "-- Ticket: LED-2214\nCREATE INDEX CONCURRENTLY IF NOT EXISTS idx_entries_account_id_posted_at ON entries (account_id, posted_at);\n"
+          db/migrations/000013_add_entries_account_posted_index.down.sql: "-- Ticket: LED-2214\nDROP INDEX CONCURRENTLY IF EXISTS idx_entries_account_id_posted_at;\n"
+        files:
+          README.md: |
+            # ledger-core
+
+            Double-entry ledger for Ledgerly, written in Go.
+
+                make run     # start the service
+                make check   # migration lint
+          go.mod: |
+            module github.com/ledgerly/ledger-core
+
+            go 1.23
+          Makefile: |
+            check:
+            	ledgerly-migrate-lint db/migrations
+          db/migrations/000011_create_entries.up.sql: |
+            CREATE TABLE IF NOT EXISTS entries (
+                id BIGSERIAL PRIMARY KEY,
+                account_id BIGINT NOT NULL,
+                amount_cents BIGINT NOT NULL,
+                posted_at TIMESTAMPTZ NOT NULL DEFAULT now()
+            );
+          db/migrations/000011_create_entries.down.sql: |
+            DROP TABLE IF EXISTS entries;
+          db/migrations/000012_add_entries_memo.up.sql: |
+            ALTER TABLE entries ADD COLUMN IF NOT EXISTS memo TEXT;
+          db/migrations/000012_add_entries_memo.down.sql: |
+            ALTER TABLE entries DROP COLUMN IF EXISTS memo;
+          internal/ledger/entry.go: |
+            package ledger
+
+            import "time"
+
+            // Entry is one posting on an account.
+            type Entry struct {
+            	ID          int64
+            	AccountID   int64
+            	AmountCents int64
+            	PostedAt    time.Time
+            	Memo        string
+            }
+      notify-svc:
+        guide: "notify-svc (Knex)"
+        checker: knex-migration-check
+        rules:
+          - {id: K1, type: unchanged, paths: [migrations/20260710093000_create_notifications.js, migrations/20260801120000_add_channel.js], msg: "merged migrations must not be edited (organization guide ~/src/.github/CONTRIBUTING.md, 'Database migrations')."}
+          - {id: K2, type: new_file, glob: 'migrations/*.js', msg: "no new migration in migrations/ (organization guide ~/src/.github/CONTRIBUTING.md, 'notify-svc (Knex)')."}
+          - {id: K3, type: content, glob: 'migrations/*.js', regex: '(?s)// Ticket: LED-2231\n.*', msg: "the first line of a new migration names its ticket: // Ticket: LED-<number> (organization guide ~/src/.github/CONTRIBUTING.md, 'Database migrations')."}
+          - {id: K4, type: path_regex, glob: 'migrations/*', regex: 'migrations/\d{14}_[a-z0-9]+(_[a-z0-9]+)*\.js', msg: "migrations are named migrations/<YYYYMMDDHHMMSS>_<snake_case_name>.js (organization guide ~/src/.github/CONTRIBUTING.md, 'notify-svc (Knex)')."}
+          - {id: K5, type: contains, glob: 'migrations/*.js', regex: 'exports\.up\s*=', msg: "export up with `exports.up = ...`; the service is CommonJS (organization guide ~/src/.github/CONTRIBUTING.md, 'notify-svc (Knex)')."}
+          - {id: K6, type: contains, glob: 'migrations/*.js', regex: 'exports\.down\s*=', msg: "export down with `exports.down = ...` (organization guide ~/src/.github/CONTRIBUTING.md, 'notify-svc (Knex)')."}
+          - {id: K7, type: forbid, glob: 'migrations/*.js', regex: '\.raw\(', msg: "never use knex.raw; use the schema builder (organization guide ~/src/.github/CONTRIBUTING.md, 'notify-svc (Knex)')."}
+          - {id: K8, type: contains, glob: 'migrations/*.js', regex: 'alterTable\(\s*["'']notifications["'']', msg: "change the existing table with knex.schema.alterTable('notifications', ...) (organization guide ~/src/.github/CONTRIBUTING.md, 'notify-svc (Knex)')."}
+          - {id: K9, type: contains, glob: 'migrations/*.js', regex: 'timestamp\(\s*["'']read_at["''][^)]*\)\s*\.nullable\(\)', msg: "read_at is a nullable timestamp column (organization guide ~/src/.github/CONTRIBUTING.md, 'Database migrations')."}
+          - {id: K10, type: contains, glob: 'migrations/*.js', regex: 'read_at["''][^\n;]*\.comment\(\s*["''][^"'']+["'']\s*\)', msg: "every new column carries a column comment: .comment(\"<what it stores>\") (organization guide ~/src/.github/CONTRIBUTING.md, 'notify-svc (Knex)')."}
+          - {id: K11, type: contains, glob: 'migrations/*.js', regex: 'dropColumn\(\s*["'']read_at["'']', msg: "down drops what up added: read_at (organization guide ~/src/.github/CONTRIBUTING.md, 'notify-svc (Knex)')."}
+        reference:
+          migrations/20261019140000_add_read_at_to_notifications.js: |
+            // Ticket: LED-2231
+            exports.up = function (knex) {
+              return knex.schema.alterTable("notifications", (table) => {
+                table.timestamp("read_at", { useTz: true }).nullable().comment("When the recipient read the notification");
+              });
+            };
+
+            exports.down = function (knex) {
+              return knex.schema.alterTable("notifications", (table) => {
+                table.dropColumn("read_at");
+              });
+            };
+        files:
+          README.md: |
+            # notify-svc
+
+            Sends e-mail and push notifications for Ledgerly (Node.js, Knex, PostgreSQL).
+
+                npm start
+                make check
+          package.json: |
+            {
+              "name": "notify-svc",
+              "version": "1.8.2",
+              "private": true,
+              "main": "src/index.js",
+              "scripts": {"start": "node src/index.js"},
+              "dependencies": {"knex": "^3.1.0", "pg": "^8.13.0"}
+            }
+          knexfile.js: |
+            module.exports = {
+              client: "pg",
+              connection: process.env.DATABASE_URL,
+              migrations: { directory: "./migrations" },
+            };
+          Makefile: |
+            check:
+            	npx ledgerly-knex-lint migrations
+          migrations/20260710093000_create_notifications.js: |
+            exports.up = function (knex) {
+              return knex.schema.createTable("notifications", (table) => {
+                table.bigIncrements("id");
+                table.bigInteger("user_id").notNullable();
+                table.text("body").notNullable();
+                table.timestamp("created_at", { useTz: true }).notNullable().defaultTo(knex.fn.now());
+              });
+            };
+
+            exports.down = function (knex) {
+              return knex.schema.dropTable("notifications");
+            };
+          migrations/20260801120000_add_channel.js: |
+            exports.up = function (knex) {
+              return knex.schema.alterTable("notifications", (table) => {
+                table.string("channel", 16).nullable();
+              });
+            };
+
+            exports.down = function (knex) {
+              return knex.schema.alterTable("notifications", (table) => {
+                table.dropColumn("channel");
+              });
+            };
+          src/index.js: |
+            const knex = require("knex")(require("../knexfile"));
+
+            async function unread(userId) {
+              return knex("notifications").where({ user_id: userId }).orderBy("created_at", "desc");
+            }
+
+            module.exports = { unread };
+      reports-worker:
+        guide: "reports-worker (Django)"
+        checker: django-migration-check
+        rules:
+          - {id: D1, type: unchanged, paths: [reports/migrations/0001_initial.py, reports/migrations/0002_report_status.py], msg: "merged migrations must not be edited (organization guide ~/src/.github/CONTRIBUTING.md, 'Database migrations')."}
+          - {id: D2, type: new_file, glob: 'reports/migrations/0003_*.py', msg: "the next migration is reports/migrations/0003_<name>.py: the latest number plus one (organization guide ~/src/.github/CONTRIBUTING.md, 'reports-worker (Django)')."}
+          - {id: D3, type: content, glob: 'reports/migrations/0003_*.py', regex: '(?s)# Ticket: LED-2240\n.*', msg: "the first line of a new migration names its ticket: # Ticket: LED-<number> (organization guide ~/src/.github/CONTRIBUTING.md, 'Database migrations')."}
+          - {id: D4, type: path_regex, glob: 'reports/migrations/*.py', regex: 'reports/migrations/\d{4}_[a-z0-9]+(_[a-z0-9]+)*\.py', msg: "migrations are named reports/migrations/<4-digit number>_<snake_case_name>.py (organization guide ~/src/.github/CONTRIBUTING.md, 'reports-worker (Django)')."}
+          - {id: D5, type: contains, glob: 'reports/migrations/0003_*.py', regex: '\(\s*["'']reports["'']\s*,\s*["'']0002_report_status["'']\s*\)', msg: "dependencies must point at the latest migration: ('reports', '0002_report_status') (organization guide ~/src/.github/CONTRIBUTING.md, 'reports-worker (Django)')."}
+          - {id: D6, type: contains, glob: 'reports/migrations/0003_*.py', regex: '(?s)AddField\(.*name\s*=\s*["'']requested_by["'']', msg: "the migration adds Report.requested_by with migrations.AddField."}
+          - {id: D7, type: contains, glob: 'reports/migrations/0003_*.py', regex: 'null\s*=\s*True', msg: "a field added to Report has null=True (organization guide ~/src/.github/CONTRIBUTING.md, 'reports-worker (Django)')."}
+          - {id: D8, type: forbid, glob: 'reports/migrations/0003_*.py', regex: 'default\s*=', msg: "a field added to Report has no default; Report is a large table (organization guide ~/src/.github/CONTRIBUTING.md, 'reports-worker (Django)')."}
+          - {id: D9, type: contains, glob: 'reports/migrations/0003_*.py', regex: 'help_text\s*=\s*["''][^"'']+["'']', msg: "a field added to Report has a help_text (organization guide ~/src/.github/CONTRIBUTING.md, 'reports-worker (Django)')."}
+          - {id: D10, type: changed, path: reports/models.py, msg: "update reports/models.py in the same change (organization guide ~/src/.github/CONTRIBUTING.md, 'reports-worker (Django)')."}
+          - {id: D11, type: contains, glob: reports/models.py, regex: 'requested_by\s*=\s*models\.CharField\([^)]*help_text', msg: "reports/models.py declares requested_by = models.CharField(..., help_text=...) to match the migration."}
+        reference:
+          reports/migrations/0003_report_requested_by.py: |
+            # Ticket: LED-2240
+            from django.db import migrations, models
+
+
+            class Migration(migrations.Migration):
+
+                dependencies = [("reports", "0002_report_status")]
+
+                operations = [
+                    migrations.AddField(
+                        model_name="report",
+                        name="requested_by",
+                        field=models.CharField(max_length=150, null=True, help_text="Username of the person who requested the report."),
+                    ),
+                ]
+          reports/models.py: |
+            from django.db import models
+
+
+            class Report(models.Model):
+                name = models.CharField(max_length=200)
+                created_at = models.DateTimeField(auto_now_add=True)
+                status = models.CharField(max_length=20, default="queued")
+                requested_by = models.CharField(max_length=150, null=True, help_text="Username of the person who requested the report.")
+        files:
+          README.md: |
+            # reports-worker
+
+            Builds CSV and PDF reports for Ledgerly customers (Django + Celery).
+
+                python manage.py runworker
+                make check
+          Makefile: |
+            check:
+            	ledgerly-django-migration-lint reports
+          manage.py: |
+            import os
+            import sys
+
+            if __name__ == "__main__":
+                os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
+                from django.core.management import execute_from_command_line
+
+                execute_from_command_line(sys.argv)
+          reports/__init__.py: ""
+          reports/models.py: |
+            from django.db import models
+
+
+            class Report(models.Model):
+                name = models.CharField(max_length=200)
+                created_at = models.DateTimeField(auto_now_add=True)
+                status = models.CharField(max_length=20, default="queued")
+          reports/migrations/__init__.py: ""
+          reports/migrations/0001_initial.py: |
+            from django.db import migrations, models
+
+
+            class Migration(migrations.Migration):
+
+                initial = True
+
+                dependencies = []
+
+                operations = [
+                    migrations.CreateModel(
+                        name="Report",
+                        fields=[
+                            ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
+                            ("name", models.CharField(max_length=200)),
+                            ("created_at", models.DateTimeField(auto_now_add=True)),
+                        ],
+                    ),
+                ]
+          reports/migrations/0002_report_status.py: |
+            from django.db import migrations, models
+
+
+            class Migration(migrations.Migration):
+
+                dependencies = [("reports", "0001_initial")]
+
+                operations = [
+                    migrations.AddField(
+                        model_name="report",
+                        name="status",
+                        field=models.CharField(default="queued", max_length=20),
+                    ),
+                ]
+  # ------------------------------------------------------------------------------------------------
+  - id: decision_records
+    owner: Priya Raman, staff engineer on the Atlas logistics platform (GitHub organization atlas-platform)
+    org: atlas-platform
+    date: "2026-10-26"
+    design: >-
+      Four Atlas services record architecture decisions in four formats, all in the organization guide. Since 2026-10
+      every new record names its deciders, which no existing record shows. L1 (Nygard ADR that supersedes ADR-0002) and
+      L2 (MADR 4 with a Consequences subsection) fail on unstated rules; T1 appends a Y-statement to a single log and
+      forbids per-decision files; T2 files new records under proposed/ with an index row.
+    org_guide: |
+      # Contributing to Atlas platform services
+
+      This is the default contributing guide of the atlas-platform organization. It applies to every repository
+      without a CONTRIBUTING file of its own, which is all of them. `make check` in each repository enforces its section.
+
+      ## Architecture decisions
+
+      Every significant decision is recorded in the repository it affects, in the format that repository uses.
+      Since 2026-10-01 every new record names the people who made the decision (older records predate this).
+
+      ### atlas-gateway (Nygard ADRs)
+
+      - `docs/adr/NNNN-kebab-case-title.md`, numbered sequentially (the highest number plus one, four digits).
+      - Template: `# N. Title`, then `Date: YYYY-MM-DD` and `Deciders: <names>` on the next two lines, then `## Status`,
+        `## Context`, `## Decision`, `## Consequences`. A new ADR has the status `Proposed`.
+      - An ADR that replaces another says `Supersedes ADR-NNNN` under its status, and the replaced ADR's status line
+        becomes `Superseded by ADR-NNNN`. Nothing else in an accepted ADR changes.
+
+      ### atlas-billing (MADR 4)
+
+      - `docs/decisions/NNNN-title-with-dashes.md`, numbered sequentially.
+      - YAML front matter with the keys `status: proposed`, `date: YYYY-MM-DD` and `decision-makers: <names>`, in that order.
+      - Sections in order: `# <Title>`, `## Context and Problem Statement`, `## Considered Options` (a bullet list of at
+        least two options) and `## Decision Outcome`, whose first line is `Chosen option: "<option>", because <reason>.`
+        and which ends with a `### Consequences` subsection of `* Good, because …` and `* Bad, because …` bullets.
+
+      ### atlas-routing (decision log)
+
+      - No file per decision: append a section to `docs/decision-log.md`, newest last:
+        `## DL-<n>: <title> (<YYYY-MM-DD>)`, a blank line, one Y-statement paragraph
+        (`In the context of …, facing …, we decided for … and against …, to achieve …, accepting ….`), a blank line,
+        and `Deciders: <names>`.
+
+      ### atlas-tracking (proposed ADRs)
+
+      - New decisions go to `docs/architecture/decisions/proposed/adr-<NNN>-<slug>.md`; they move up one directory
+        when accepted. `<NNN>` is three digits, the highest number in use plus one.
+      - Template: `# ADR-<NNN>: <Title>`, then `- Status: Proposed`, `- Deciders: <names>`, `- Date: <YYYY-MM-DD>`,
+        then `## Problem`, `## Options`, `## Decision`, `## Follow-ups`.
+      - Add a row `| [ADR-<NNN>](proposed/adr-<NNN>-<slug>.md) | <Title> | Proposed |` to the index table in
+        `docs/architecture/decisions/README.md`.
+    tasks:
+      - {id: L1, phase: learn, repo: atlas-gateway, request: "In yesterday's design review Priya Raman and Omar Haddad agreed to move the gateway's rate limiting from fixed windows to a token bucket (burst of twice the per-second rate, state in Redis). Please write it up as an ADR in ~/src/atlas-gateway and run `make check` before you report back."}
+      - {id: L2, phase: learn, repo: atlas-billing, request: "We decided to bill usage monthly in arrears instead of selling prepaid credits; the decision-makers were Priya Raman and Jonas Weber. Please record the decision in ~/src/atlas-billing and run `make check` before you report back."}
+      - {id: T1, phase: test, repo: atlas-routing, request: "Priya Raman and Marco Rossi decided that ETAs come from our in-house graph router, with OSRM called only when the router times out: consistency with the dispatch rules matters more than the extra CPU. Please record the decision in ~/src/atlas-routing and run `make check` before you report back."}
+      - {id: T2, phase: test, repo: atlas-tracking, request: "Priya Raman and Lena Novak decided to keep raw GPS pings for 30 days instead of 90 to cut storage costs. Please write the decision up in ~/src/atlas-tracking and run `make check` before you report back."}
+    repos:
+      atlas-gateway:
+        guide: "atlas-gateway (Nygard ADRs)"
+        checker: adr-lint
+        rules:
+          - {id: A1, type: new_file, glob: 'docs/adr/0003-*.md', msg: "the next ADR is docs/adr/0003-<kebab-case-title>.md: the highest number plus one (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-gateway (Nygard ADRs)')."}
+          - {id: A2, type: path_regex, glob: 'docs/adr/*', regex: 'docs/adr/\d{4}-[a-z0-9]+(-[a-z0-9]+)*\.md', msg: "ADR files are named docs/adr/NNNN-kebab-case-title.md (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-gateway (Nygard ADRs)')."}
+          - {id: A3, type: content, glob: 'docs/adr/0003-*.md', regex: '(?s)# 3\. [^\n]+\n\nDate: \d{4}-\d{2}-\d{2}\nDeciders: [^\n]*Priya Raman[^\n]*Omar Haddad[^\n]*\n.*', msg: "an ADR starts with '# 3. Title', then 'Date: YYYY-MM-DD' and 'Deciders: <names>' on the next two lines (organization guide ~/src/.github/CONTRIBUTING.md, 'Architecture decisions')."}
+          - {id: A4, type: content, glob: 'docs/adr/0003-*.md', regex: '(?s).*\n## Status\n\nProposed\n.*## Context\n.+## Decision\n.+## Consequences\n.+', msg: "after the header come '## Status' (Proposed), '## Context', '## Decision', '## Consequences' (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-gateway (Nygard ADRs)')."}
+          - {id: A5, type: contains, glob: 'docs/adr/0003-*.md', regex: 'Supersedes \[?ADR-0002', msg: "this ADR replaces ADR-0002: say 'Supersedes ADR-0002' under its status (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-gateway (Nygard ADRs)')."}
+          - {id: A6, type: equals_original_with, path: docs/adr/0002-fixed-window-rate-limits.md, old: "## Status\n\nAccepted\n", new: "## Status\n\nSuperseded by ADR-0003\n", msg: "ADR-0002's status line must become 'Superseded by ADR-0003' and nothing else in it may change (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-gateway (Nygard ADRs)')."}
+        reference:
+          docs/adr/0003-token-bucket-rate-limiting.md: |
+            # 3. Token bucket rate limiting
+
+            Date: 2026-10-26
+            Deciders: Priya Raman, Omar Haddad
+
+            ## Status
+
+            Proposed
+
+            Supersedes ADR-0002
+
+            ## Context
+
+            Fixed windows let clients send twice the limit across a window boundary.
+
+            ## Decision
+
+            Use a token bucket per client with a burst of twice the per-second rate, stored in Redis.
+
+            ## Consequences
+
+            Smoother limits; one Redis round trip per request.
+          docs/adr/0002-fixed-window-rate-limits.md: |
+            # 2. Fixed-window rate limits
+
+            Date: 2026-01-12
+
+            ## Status
+
+            Superseded by ADR-0003
+
+            ## Context
+
+            We need per-client request limits at the edge.
+
+            ## Decision
+
+            Count requests per client in fixed one-second windows in Envoy's local rate limit filter.
+
+            ## Consequences
+
+            Simple and cheap; bursts at window boundaries can reach twice the limit.
+        files:
+          README.md: |
+            # atlas-gateway
+
+            Edge gateway for the Atlas logistics platform (Envoy + Go control plane).
+
+            Architecture decisions are in `docs/adr/`.
+          Makefile: |
+            check:
+            	atlas-adr-lint docs/adr
+          docs/adr/0001-use-envoy-as-edge-proxy.md: |
+            # 1. Use Envoy as the edge proxy
+
+            Date: 2025-11-10
+
+            ## Status
+
+            Accepted
+
+            ## Context
+
+            We need TLS termination, routing and rate limiting at the edge.
+
+            ## Decision
+
+            Run Envoy with a Go control plane.
+
+            ## Consequences
+
+            One more component to operate; a well-known configuration model.
+          docs/adr/0002-fixed-window-rate-limits.md: |
+            # 2. Fixed-window rate limits
+
+            Date: 2026-01-12
+
+            ## Status
+
+            Accepted
+
+            ## Context
+
+            We need per-client request limits at the edge.
+
+            ## Decision
+
+            Count requests per client in fixed one-second windows in Envoy's local rate limit filter.
+
+            ## Consequences
+
+            Simple and cheap; bursts at window boundaries can reach twice the limit.
+      atlas-billing:
+        guide: "atlas-billing (MADR 4)"
+        checker: madr-lint
+        rules:
+          - {id: B1, type: new_file, glob: 'docs/decisions/0003-*.md', msg: "the next record is docs/decisions/0003-<title-with-dashes>.md (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-billing (MADR 4)')."}
+          - {id: B2, type: path_regex, glob: 'docs/decisions/*', regex: 'docs/decisions/\d{4}-[a-z0-9]+(-[a-z0-9]+)*\.md', msg: "records are named docs/decisions/NNNN-title-with-dashes.md (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-billing (MADR 4)')."}
+          - {id: B3, type: content, glob: 'docs/decisions/0003-*.md', regex: '(?s)---\nstatus: proposed\ndate: \d{4}-\d{2}-\d{2}\ndecision-makers: [^\n]*Priya Raman[^\n]*Jonas Weber[^\n]*\n---\n.*', msg: "front matter: status: proposed, date, decision-makers (the people who decided), in that order (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-billing (MADR 4)')."}
+          - {id: B4, type: content, glob: 'docs/decisions/0003-*.md', regex: '(?s).*\n# [^\n]+\n.*## Context and Problem Statement\n.+## Considered Options\n.+## Decision Outcome\n.+', msg: "sections in order: # Title, ## Context and Problem Statement, ## Considered Options, ## Decision Outcome (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-billing (MADR 4)')."}
+          - {id: B5, type: contains, glob: 'docs/decisions/0003-*.md', regex: '## Considered Options\n+([-*] [^\n]+\n){2,}', msg: "list at least two considered options as bullets (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-billing (MADR 4)')."}
+          - {id: B6, type: contains, glob: 'docs/decisions/0003-*.md', regex: '## Decision Outcome\n+Chosen option: "[^"\n]+", because [^\n]+', msg: "the Decision Outcome starts with: Chosen option: \"<option>\", because <reason>. (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-billing (MADR 4)')"}
+          - {id: B7, type: contains, glob: 'docs/decisions/0003-*.md', regex: '(?s)## Decision Outcome\n.*### Consequences\n+\* Good, because [^\n]+\n(\* (Good|Bad), because [^\n]+\n)*\* Bad, because [^\n]+', msg: "the Decision Outcome ends with a ### Consequences subsection of '* Good, because …' and '* Bad, because …' bullets (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-billing (MADR 4)')."}
+        reference:
+          docs/decisions/0003-bill-usage-monthly-in-arrears.md: |
+            ---
+            status: proposed
+            date: 2026-10-26
+            decision-makers: Priya Raman, Jonas Weber
+            ---
+
+            # Bill usage monthly in arrears
+
+            ## Context and Problem Statement
+
+            Prepaid credits confuse customers and create refunds.
+
+            ## Considered Options
+
+            - Prepaid credits
+            - Monthly billing in arrears
+
+            ## Decision Outcome
+
+            Chosen option: "Monthly billing in arrears", because it matches how customers budget.
+
+            ### Consequences
+
+            * Good, because invoices match actual usage.
+            * Bad, because we carry credit risk for one month.
+        files:
+          README.md: |
+            # atlas-billing
+
+            Usage metering and invoicing for the Atlas platform.
+          Makefile: |
+            check:
+            	atlas-madr-lint docs/decisions
+          docs/decisions/0001-use-stripe-for-card-payments.md: |
+            ---
+            status: accepted
+            date: 2025-12-01
+            ---
+
+            # Use Stripe for card payments
+
+            ## Context and Problem Statement
+
+            We need card payments in twelve countries.
+
+            ## Considered Options
+
+            - Stripe
+            - Adyen
+
+            ## Decision Outcome
+
+            Chosen option: "Stripe", because it was live in all twelve countries.
+          docs/decisions/0002-store-money-as-integer-cents.md: |
+            ---
+            status: accepted
+            date: 2026-02-09
+            ---
+
+            # Store money as integer cents
+
+            ## Context and Problem Statement
+
+            Floating point amounts produced rounding errors on invoices.
+
+            ## Considered Options
+
+            - Decimal columns
+            - Integer cents
+
+            ## Decision Outcome
+
+            Chosen option: "Integer cents", because every language we use handles integers exactly.
+      atlas-routing:
+        guide: "atlas-routing (decision log)"
+        checker: decision-log-check
+        rules:
+          - {id: R1, type: changed, path: docs/decision-log.md, msg: "decisions are appended to docs/decision-log.md (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-routing (decision log)')."}
+          - {id: R2, type: no_new_file, glob: '*', msg: "atlas-routing keeps no file per decision; append to docs/decision-log.md (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-routing (decision log)')."}
+          - {id: R3, type: added_line, path: docs/decision-log.md, regex: '## DL-5: .+ \(\d{4}-\d{2}-\d{2}\)', msg: "the new section heading is '## DL-5: <title> (YYYY-MM-DD)', continuing the numbering (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-routing (decision log)')."}
+          - {id: R4, type: added_line, path: docs/decision-log.md, regex: 'In the context of .+, facing .+, we decided for .+ and against .+, to achieve .+, accepting .+\.', msg: "the decision is one Y-statement paragraph: In the context of …, facing …, we decided for … and against …, to achieve …, accepting …. (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-routing (decision log)')"}
+          - {id: R5, type: added_line, path: docs/decision-log.md, regex: 'Deciders: .*Priya Raman.*Marco Rossi.*', msg: "every new decision ends with a 'Deciders: <names>' line (organization guide ~/src/.github/CONTRIBUTING.md, 'Architecture decisions')."}
+          - {id: R6, type: content, glob: docs/decision-log.md, regex: '(?s).*\n## DL-4: [^\n]*\n.*\n## DL-5: [^\n]*\n\n[^\n]+\n\nDeciders: [^\n]+', msg: "append DL-5 at the end of the log (newest last): heading, blank line, statement, blank line, Deciders line (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-routing (decision log)')."}
+        reference:
+          docs/decision-log.md: |
+            # Decision log
+
+            ## DL-1: Use PostGIS for road network storage (2025-09-02)
+
+            In the context of storing the road graph, facing frequent spatial queries, we decided for PostGIS and against a graph database, to achieve simple operations, accepting slower shortest-path queries.
+
+            ## DL-2: Cache routes for ten minutes (2025-11-18)
+
+            In the context of repeated route requests, facing high router load, we decided for a ten-minute route cache and against no caching, to achieve lower latency, accepting slightly stale routes.
+
+            ## DL-3: Use H3 cells for zone lookups (2026-02-05)
+
+            In the context of mapping orders to delivery zones, facing polygon lookups on every request, we decided for H3 cells and against point-in-polygon queries, to achieve constant-time lookups, accepting coarser zone edges.
+
+            ## DL-4: Recompute ETAs every 60 seconds (2026-06-30)
+
+            In the context of live delivery tracking, facing traffic changes, we decided for recomputing ETAs every 60 seconds and against event-driven recomputation, to achieve predictable load, accepting up to a minute of staleness.
+
+            ## DL-5: Compute ETAs with the in-house router (2026-10-26)
+
+            In the context of ETA computation, facing inconsistent ETAs between dispatch and tracking, we decided for the in-house graph router with OSRM only as a timeout fallback and against OSRM as the primary router, to achieve consistency with the dispatch rules, accepting higher CPU use.
+
+            Deciders: Priya Raman, Marco Rossi
+        files:
+          README.md: |
+            # atlas-routing
+
+            Route planning and ETA service for the Atlas platform.
+          Makefile: |
+            check:
+            	atlas-decision-log-lint docs/decision-log.md
+          docs/decision-log.md: |
+            # Decision log
+
+            ## DL-1: Use PostGIS for road network storage (2025-09-02)
+
+            In the context of storing the road graph, facing frequent spatial queries, we decided for PostGIS and against a graph database, to achieve simple operations, accepting slower shortest-path queries.
+
+            ## DL-2: Cache routes for ten minutes (2025-11-18)
+
+            In the context of repeated route requests, facing high router load, we decided for a ten-minute route cache and against no caching, to achieve lower latency, accepting slightly stale routes.
+
+            ## DL-3: Use H3 cells for zone lookups (2026-02-05)
+
+            In the context of mapping orders to delivery zones, facing polygon lookups on every request, we decided for H3 cells and against point-in-polygon queries, to achieve constant-time lookups, accepting coarser zone edges.
+
+            ## DL-4: Recompute ETAs every 60 seconds (2026-06-30)
+
+            In the context of live delivery tracking, facing traffic changes, we decided for recomputing ETAs every 60 seconds and against event-driven recomputation, to achieve predictable load, accepting up to a minute of staleness.
+          router/graph.go: |
+            package router
+
+            // Graph is the road network loaded from PostGIS.
+            type Graph struct{}
+      atlas-tracking:
+        guide: "atlas-tracking (proposed ADRs)"
+        checker: adr-check
+        rules:
+          - {id: T-1, type: new_file, glob: 'docs/architecture/decisions/proposed/adr-009-*.md', msg: "a new decision goes to docs/architecture/decisions/proposed/adr-009-<slug>.md: proposed records live in proposed/ and the number is the highest plus one (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-tracking (proposed ADRs)')."}
+          - {id: T-2, type: no_new_file, glob: 'docs/architecture/decisions/adr-*', msg: "accepted records only live directly in docs/architecture/decisions/; a new one goes to proposed/ (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-tracking (proposed ADRs)')."}
+          - {id: T-3, type: path_regex, glob: 'docs/architecture/decisions/proposed/*', regex: 'docs/architecture/decisions/proposed/adr-\d{3}-[a-z0-9]+(-[a-z0-9]+)*\.md', msg: "decision files are named adr-<NNN>-<slug>.md (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-tracking (proposed ADRs)')."}
+          - {id: T-4, type: content, glob: 'docs/architecture/decisions/proposed/adr-009-*.md', regex: '(?s)# ADR-009: [^\n]+\n\n- Status: Proposed\n- Deciders: [^\n]*Priya Raman[^\n]*Lena Novak[^\n]*\n- Date: \d{4}-\d{2}-\d{2}\n\n## Problem\n.+## Options\n.+## Decision\n.+## Follow-ups\n.+', msg: "use the template: '# ADR-009: Title', '- Status: Proposed', '- Deciders: <names>', '- Date: YYYY-MM-DD', then ## Problem, ## Options, ## Decision, ## Follow-ups (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-tracking (proposed ADRs)')."}
+          - {id: T-5, type: added_line, path: docs/architecture/decisions/README.md, regex: '\| \[ADR-009\]\(proposed/adr-009-[a-z0-9-]+\.md\) \| [^|]+ \| Proposed \|', msg: "add the index row | [ADR-009](proposed/adr-009-<slug>.md) | <Title> | Proposed | to docs/architecture/decisions/README.md (organization guide ~/src/.github/CONTRIBUTING.md, 'atlas-tracking (proposed ADRs)')."}
+        reference:
+          docs/architecture/decisions/proposed/adr-009-keep-raw-gps-pings-30-days.md: |
+            # ADR-009: Keep raw GPS pings for 30 days
+
+            - Status: Proposed
+            - Deciders: Priya Raman, Lena Novak
+            - Date: 2026-10-26
+
+            ## Problem
+
+            Raw GPS pings are our largest storage cost.
+
+            ## Options
+
+            Keep 90 days; keep 30 days; downsample after 7 days.
+
+            ## Decision
+
+            Keep raw pings for 30 days.
+
+            ## Follow-ups
+
+            Update the retention job.
+          docs/architecture/decisions/README.md: |
+            # Architecture decisions
+
+            | ADR | Title | Status |
+            |-----|-------|--------|
+            | [ADR-007](adr-007-kafka-for-ping-ingest.md) | Kafka for GPS ping ingest | Accepted |
+            | [ADR-008](adr-008-timescaledb-for-tracks.md) | TimescaleDB for tracks | Accepted |
+            | [ADR-009](proposed/adr-009-keep-raw-gps-pings-30-days.md) | Keep raw GPS pings for 30 days | Proposed |
+        files:
+          README.md: |
+            # atlas-tracking
+
+            Ingests GPS pings from couriers and serves live delivery tracks.
+          Makefile: |
+            check:
+            	atlas-adr-check docs/architecture/decisions
+          docs/architecture/decisions/README.md: |
+            # Architecture decisions
+
+            | ADR | Title | Status |
+            |-----|-------|--------|
+            | [ADR-007](adr-007-kafka-for-ping-ingest.md) | Kafka for GPS ping ingest | Accepted |
+            | [ADR-008](adr-008-timescaledb-for-tracks.md) | TimescaleDB for tracks | Accepted |
+          docs/architecture/decisions/adr-007-kafka-for-ping-ingest.md: |
+            # ADR-007: Kafka for GPS ping ingest
+
+            - Status: Accepted
+            - Date: 2025-08-14
+
+            ## Problem
+
+            Couriers send bursts of pings when they regain coverage.
+
+            ## Options
+
+            Direct HTTP writes; Kafka.
+
+            ## Decision
+
+            Buffer pings in Kafka.
+
+            ## Follow-ups
+
+            None.
+          docs/architecture/decisions/adr-008-timescaledb-for-tracks.md: |
+            # ADR-008: TimescaleDB for tracks
+
+            - Status: Accepted
+            - Date: 2026-03-03
+
+            ## Problem
+
+            Track queries scan months of pings.
+
+            ## Options
+
+            Plain PostgreSQL; TimescaleDB.
+
+            ## Decision
+
+            Store tracks in TimescaleDB hypertables.
+
+            ## Follow-ups
+
+            Retention policy to be decided.
+          docs/architecture/decisions/proposed/.gitkeep: ""
+  # ------------------------------------------------------------------------------------------------
+  - id: feature_flags
+    owner: Dev Malhotra, who leads frontend platform work at Shopwise, an online retailer (GitHub organization shopwise)
+    org: shopwise
+    date: "2026-11-02"
+    design: >-
+      Four teams declare feature flags in four places, all in the organization guide. Since 2026-10 every new flag
+      names its ticket and an expiry, which older flags lack; each team adds its own rules (sorted keys and a generated
+      file in checkout-web, one JSON file per flag in search-api, a security reviewer for sign-in flags in account-web,
+      a staging-only environment list in orders-svc). Copying L1/L2's format fails in T1/T2.
+    org_guide: |
+      # Contributing to Shopwise repositories
+
+      This is the default contributing guide of the shopwise organization. It applies to every repository without a
+      CONTRIBUTING file of its own, which is all of them. `make check` in each repository enforces its section.
+
+      ## Feature flags
+
+      New flags are off by default. Since 2026-10-01 every new flag records the ticket of the work (from the request)
+      and when it should be removed; older flags predate this.
+
+      ### checkout-web
+
+      - Declare the flag in `config/flags.yaml`, which stays sorted alphabetically by key. `src/flags.generated.ts` is
+        generated from it by `make flags` in CI; never edit it.
+      - Fields, in this order: `key: checkout-<kebab-case-name>`, `owner: "@team-checkout"`, `default: false`,
+        `ticket: <ticket>`, `expires: YYYY-MM-DD` (at most 90 days from today), `description: <one sentence>`.
+
+      ### search-api
+
+      - One JSON file per flag, `flags/<snake_case_name>.json`, with exactly these keys in this order: `name` (equal to
+        the file name), `description`, `owner` (`"team-search"`), `ticket`, `rollout_percent` (`0` for a new flag),
+        `created` and `expires` (dates as `"YYYY-MM-DD"`, `expires` at most 90 days after `created`).
+      - No other file lists flags.
+
+      ### account-web
+
+      - Register the flag in `src/flags/registry.ts`, in the `FLAGS` object, sorted by key, one line per flag:
+        `acctName: { default: false, owner: "@team-accounts", ticket: "ACC-<n>", removeBy: "YYYY-MM-DD" },`
+      - Keys are camelCase and start with `acct`; `removeBy` is at most 120 days from today.
+      - Flags that gate sign-in or account recovery also set `securityReview: "@team-security"` as the last field.
+      - Do not declare flags anywhere else.
+
+      ### orders-svc
+
+      - Append one table per flag at the end of `config/features.toml`:
+        `[features.<snake_case_name>]` with `enabled = false`, `owner = "orders-core"`, `ticket = "<ticket>"`,
+        `review_by = YYYY-MM-DD` and `environments = ["staging"]`, in that order.
+      - Do not add flag files anywhere else.
+    tasks:
+      - {id: L1, phase: learn, repo: checkout-web, request: "We're about to start the address autocomplete experiment in checkout (ticket CHK-482). Please add a feature flag for it in ~/src/checkout-web, off by default, and run `make check` before you report back."}
+      - {id: L2, phase: learn, repo: search-api, request: "Search wants to try synonym expansion for queries (ticket SRCH-217). Please add a feature flag for it in ~/src/search-api and run `make check` before you report back."}
+      - {id: T1, phase: test, repo: account-web, request: "We're adding passkey sign-in to the account area (ticket ACC-1342). Please add a feature flag for it in ~/src/account-web and run `make check` before you report back."}
+      - {id: T2, phase: test, repo: orders-svc, request: "We want to pilot same-day delivery slots in the orders service (ticket ORD-905). Please add a feature flag for it in ~/src/orders-svc and run `make check` before you report back."}
+    repos:
+      checkout-web:
+        guide: "checkout-web"
+        checker: flags-lint
+        rules:
+          - {id: F1, type: unchanged, path: src/flags.generated.ts, msg: "src/flags.generated.ts is generated by `make flags` in CI; never edit it (organization guide ~/src/.github/CONTRIBUTING.md, 'checkout-web')."}
+          - {id: F2, type: changed, path: config/flags.yaml, msg: "declare the flag in config/flags.yaml (organization guide ~/src/.github/CONTRIBUTING.md, 'checkout-web')."}
+          - {id: F3, type: content, glob: config/flags.yaml, regex: '(?s).*\n- key: checkout-([a-z0-9]+-)*address(-[a-z0-9]+)*\n  owner: "@team-checkout"\n  default: false\n  ticket: ["'']?CHK-482["'']?\n  expires: ["'']?(2026-11-(0[3-9]|[12]\d|30)|2026-12-(0[1-9]|[12]\d|3[01])|2027-01-(0[1-9]|[12]\d|3[01]))["'']?\n  description: [^\n]+\n.*', msg: "a new flag has, in order: key: checkout-<kebab-case-name>, owner: \"@team-checkout\", default: false, ticket: <ticket>, expires: YYYY-MM-DD (at most 90 days from today), description (organization guide ~/src/.github/CONTRIBUTING.md, 'checkout-web')."}
+          - {id: F4, type: sorted_keys, path: config/flags.yaml, regex: '^\s*- key: (\S+)', msg: "keep config/flags.yaml sorted alphabetically by key (organization guide ~/src/.github/CONTRIBUTING.md, 'checkout-web')."}
+        reference:
+          config/flags.yaml: |
+            # Feature flags for checkout-web.
+            - key: checkout-address-autocomplete
+              owner: "@team-checkout"
+              default: false
+              ticket: CHK-482
+              expires: 2027-01-31
+              description: Suggest addresses while the shopper types the shipping address.
+            - key: checkout-apple-pay
+              owner: "@team-checkout"
+              default: false
+              expires: 2026-12-15
+              description: Offer Apple Pay as a payment method.
+            - key: checkout-one-page
+              owner: "@team-checkout"
+              default: false
+              expires: 2026-11-30
+              description: Show the whole checkout on one page.
+            - key: checkout-saved-cards
+              owner: "@team-checkout"
+              default: false
+              expires: 2027-01-10
+              description: Let signed-in shoppers reuse saved cards.
+        files:
+          README.md: |
+            # checkout-web
+
+            The Shopwise checkout (React + TypeScript).
+
+                npm run dev
+                make check
+          Makefile: |
+            flags:
+            	node scripts/gen-flags.mjs config/flags.yaml > src/flags.generated.ts
+
+            check:
+            	shopwise-flags-lint config/flags.yaml src/flags.generated.ts
+          config/flags.yaml: |
+            # Feature flags for checkout-web.
+            - key: checkout-apple-pay
+              owner: "@team-checkout"
+              default: false
+              expires: 2026-12-15
+              description: Offer Apple Pay as a payment method.
+            - key: checkout-one-page
+              owner: "@team-checkout"
+              default: false
+              expires: 2026-11-30
+              description: Show the whole checkout on one page.
+            - key: checkout-saved-cards
+              owner: "@team-checkout"
+              default: false
+              expires: 2027-01-10
+              description: Let signed-in shoppers reuse saved cards.
+          src/flags.generated.ts: |
+            // Generated from config/flags.yaml.
+            export const FLAGS = {
+              "checkout-apple-pay": false,
+              "checkout-one-page": false,
+              "checkout-saved-cards": false,
+            } as const;
+          src/checkout/AddressForm.tsx: |
+            import { FLAGS } from "../flags.generated";
+
+            export function AddressForm() {
+              return <form aria-label="Shipping address">{/* fields */}</form>;
+            }
+      search-api:
+        guide: "search-api"
+        checker: flag-files-check
+        rules:
+          - {id: S1, type: new_file, glob: 'flags/*.json', msg: "add the flag as one JSON file in flags/ (organization guide ~/src/.github/CONTRIBUTING.md, 'search-api')."}
+          - {id: S2, type: path_regex, glob: 'flags/*', regex: 'flags/[a-z0-9_]*synonym[a-z0-9_]*\.json', msg: "flag files are named flags/<snake_case_name>.json after what they gate, e.g. flags/synonym_expansion.json (organization guide ~/src/.github/CONTRIBUTING.md, 'search-api')."}
+          - {id: S3, type: content, glob: 'flags/*.json', regex: '\{\s*"name": "{stem}",\s*"description": "[^"]+",\s*"owner": "team-search",\s*"ticket": "SRCH-217",\s*"rollout_percent": 0,\s*"created": "2026-11-02",\s*"expires": "(2026-11-(0[3-9]|[12]\d|30)|2026-12-(0[1-9]|[12]\d|3[01])|2027-01-(0[1-9]|[12]\d|3[01]))"\s*\}', msg: "a flag file holds exactly name (the file name), description, owner \"team-search\", ticket, rollout_percent 0, created (today) and expires (at most 90 days later), in that order (organization guide ~/src/.github/CONTRIBUTING.md, 'search-api')."}
+        reference:
+          flags/synonym_expansion.json: |
+            {
+              "name": "synonym_expansion",
+              "description": "Expand query terms with synonyms before retrieval.",
+              "owner": "team-search",
+              "ticket": "SRCH-217",
+              "rollout_percent": 0,
+              "created": "2026-11-02",
+              "expires": "2027-01-31"
+            }
+        files:
+          README.md: |
+            # search-api
+
+            Product search for Shopwise (Python, FastAPI, OpenSearch).
+          Makefile: |
+            check:
+            	shopwise-flag-files-check flags
+          flags/semantic_reranker.json: |
+            {
+              "name": "semantic_reranker",
+              "description": "Rerank the top 50 results with the semantic model.",
+              "owner": "team-search",
+              "rollout_percent": 25,
+              "created": "2026-08-20"
+            }
+          flags/typo_tolerance_v2.json: |
+            {
+              "name": "typo_tolerance_v2",
+              "description": "Use the second typo tolerance model.",
+              "owner": "team-search",
+              "rollout_percent": 100,
+              "created": "2026-05-04"
+            }
+          app/flags.py: |
+            import json
+            from pathlib import Path
+
+
+            def load_flags(root=Path(__file__).resolve().parents[1] / "flags"):
+                return {p.stem: json.loads(p.read_text()) for p in root.glob("*.json")}
+      account-web:
+        guide: "account-web"
+        checker: flag-registry-check
+        rules:
+          - {id: W1, type: changed, path: src/flags/registry.ts, msg: "register the flag in src/flags/registry.ts (organization guide ~/src/.github/CONTRIBUTING.md, 'account-web')."}
+          - {id: W2, type: no_new_file, glob: '*', msg: "do not declare flags anywhere else: they live only in src/flags/registry.ts (organization guide ~/src/.github/CONTRIBUTING.md, 'account-web')."}
+          - {id: W3, type: added_line, path: src/flags/registry.ts, regex: 'acct[A-Za-z0-9]*[Pp]asskey[A-Za-z0-9]*:\s*\{.*\},?', msg: "keys are camelCase and start with acct; name the flag for what it gates, e.g. acctPasskeySignIn (organization guide ~/src/.github/CONTRIBUTING.md, 'account-web')."}
+          - {id: W4, type: added_line, path: src/flags/registry.ts, regex: 'acct\w+:\s*\{\s*default:\s*false,\s*owner:\s*["'']@team-accounts["''],\s*ticket:\s*["'']ACC-1342["''],\s*removeBy:\s*["''](2026-1[12]-\d{2}|2027-0[12]-\d{2}|2027-03-0[12])["''],\s*securityReview:\s*["'']@team-security["'']\s*\},?', msg: "register as one line: acctName: { default: false, owner: \"@team-accounts\", ticket: \"ACC-1342\", removeBy: \"YYYY-MM-DD\" (at most 120 days away), securityReview: \"@team-security\" }, since the flag gates sign-in (organization guide ~/src/.github/CONTRIBUTING.md, 'account-web')."}
+          - {id: W5, type: sorted_keys, path: src/flags/registry.ts, regex: '^\s*(acct\w+):', msg: "keep FLAGS sorted by key (organization guide ~/src/.github/CONTRIBUTING.md, 'account-web')."}
+        reference:
+          src/flags/registry.ts: |
+            // Feature flags for account-web.
+            export const FLAGS = {
+              acctExportData: { default: false, owner: "@team-accounts", removeBy: "2027-01-15" },
+              acctPasskeySignIn: { default: false, owner: "@team-accounts", ticket: "ACC-1342", removeBy: "2027-02-28", securityReview: "@team-security" },
+              acctTwoStepEmail: { default: false, owner: "@team-accounts", removeBy: "2026-12-20" },
+            } as const;
+
+            export type FlagKey = keyof typeof FLAGS;
+        files:
+          README.md: |
+            # account-web
+
+            The Shopwise account area (React + TypeScript).
+          Makefile: |
+            check:
+            	shopwise-flag-registry-check src/flags/registry.ts
+          src/flags/registry.ts: |
+            // Feature flags for account-web.
+            export const FLAGS = {
+              acctExportData: { default: false, owner: "@team-accounts", removeBy: "2027-01-15" },
+              acctTwoStepEmail: { default: false, owner: "@team-accounts", removeBy: "2026-12-20" },
+            } as const;
+
+            export type FlagKey = keyof typeof FLAGS;
+          src/flags/useFlag.ts: |
+            import { FLAGS, type FlagKey } from "./registry";
+
+            export function useFlag(key: FlagKey): boolean {
+              return FLAGS[key].default;
+            }
+      orders-svc:
+        guide: "orders-svc"
+        checker: features-check
+        rules:
+          - {id: O1, type: changed, path: config/features.toml, msg: "declare the flag in config/features.toml (organization guide ~/src/.github/CONTRIBUTING.md, 'orders-svc')."}
+          - {id: O2, type: no_new_file, glob: '*', msg: "do not add flag files; flags live only in config/features.toml (organization guide ~/src/.github/CONTRIBUTING.md, 'orders-svc')."}
+          - {id: O3, type: content, glob: config/features.toml, regex: '(?s).*\n\[features\.order_notes_v2\]\n.*\n\[features\.[a-z0-9_]*same_day[a-z0-9_]*\]\nenabled = false\nowner = "orders-core"\nticket = "ORD-905"\nreview_by = \d{4}-\d{2}-\d{2}\nenvironments = \["staging"\]', msg: "append [features.<snake_case_name>] at the end of the file with enabled = false, owner = \"orders-core\", ticket = \"<ticket>\", review_by = YYYY-MM-DD and environments = [\"staging\"], in that order (organization guide ~/src/.github/CONTRIBUTING.md, 'orders-svc')."}
+        reference:
+          config/features.toml: |
+            # Feature flags for orders-svc.
+
+            [features.split_shipments]
+            enabled = false
+            owner = "orders-core"
+            review_by = 2026-12-01
+
+            [features.order_notes_v2]
+            enabled = false
+            owner = "orders-core"
+            review_by = 2027-01-20
+
+            [features.same_day_slots]
+            enabled = false
+            owner = "orders-core"
+            ticket = "ORD-905"
+            review_by = 2027-02-01
+            environments = ["staging"]
+        files:
+          README.md: |
+            # orders-svc
+
+            Order management for Shopwise (Kotlin, Spring Boot).
+          Makefile: |
+            check:
+            	shopwise-features-check config/features.toml
+          config/features.toml: |
+            # Feature flags for orders-svc.
+
+            [features.split_shipments]
+            enabled = false
+            owner = "orders-core"
+            review_by = 2026-12-01
+
+            [features.order_notes_v2]
+            enabled = false
+            owner = "orders-core"
+            review_by = 2027-01-20
+          src/main/kotlin/shop/orders/Features.kt: |
+            package shop.orders
+
+            data class Feature(val enabled: Boolean, val owner: String)

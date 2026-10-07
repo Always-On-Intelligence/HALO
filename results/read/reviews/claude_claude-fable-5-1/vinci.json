@@ -1,0 +1,108 @@
+{
+  "id": "vinci",
+  "configuration": "Variant `vinci`: the paper-described always-on, head-mounted wake-word assistant in streaming mode: RTMP camera -> SRS -> vinci-be backend (wake word, ASR, TTS; prebuilt closed image) -> vinci-inference FastAPI service running EgoVideo-VL through vl_open.Chat with default flags (sep_chat=False, stream=True, use_chat_history=False). Memory is the per-session list of (timestamp, description) pairs produced by periodic 'silent' snapshot calls and held in an in-process FIFO cache; the last 10 entries are injected into the prompt at answer time. The optional MySQL user_chat_record backend and the Gradio uploaded-video demo are not the judged mode; demovl.py was read only to corroborate the fixed timer/stride memory policy.",
+  "sources_read": [
+    "https://arxiv.org/html/2412.21080v1 (version 2412.21080v1; Abstract, Sec 1, Sec 2.1-2.3, Sec 3.1-3.6, Sec 4.1-4.7, Sec 5, Sec 6, Fig. 1-14 captions; obtained via WebFetch model-mediated extraction, three passes)",
+    "README.md",
+    "vl_open.py",
+    "demovl.py",
+    "boot.sh",
+    "download.sh",
+    "vinci-inference/README.md",
+    "vinci-inference/.env",
+    "vinci-inference/boot.sh",
+    "vinci-inference/app/main.py",
+    "vinci-inference/app/data.py",
+    "vinci-inference/app/service/__init__.py",
+    "vinci-inference/app/service/internvl.py",
+    "vinci-inference/app/service/seine.py",
+    "vinci-inference/app/models/__init__.py",
+    "vinci-inference/app/models/internvl.py",
+    "vinci-inference/app/models/seine.py (empty)",
+    "vinci-inference/app/global_var/__init__.py",
+    "vinci-inference/app/global_var/cache.py",
+    "vinci-inference/app/util/__init__.py",
+    "vinci-inference/app/util/image.py",
+    "vinci-inference/app/util/oss.py",
+    "vinci-inference/client/internvl.py",
+    "vinci-inference/client/internvl_sse.py",
+    "vinci-local/README.md",
+    "vinci-local/docker/README.md",
+    "vinci-local/docker/docker-compose.yaml",
+    "vinci-local/docker/docker-compose-build.yaml",
+    "vinci-local/docker/mysql/init.sql",
+    "vinci-local/docker/boot.sh",
+    "vinci-local/docker/clone.sh",
+    "vinci-local/docker/nginx/conf.d/default.conf",
+    "vinci-local/docker/srs/conf/vinci.conf",
+    "vinci-local/docker/minio/entry.sh"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "The memory module is an implemented Sensing-to-Memory write path. On a periodic schedule the backend sends a 'silent' request carrying freshly captured frames (data.py documents the silent flag as the non-answering mode used for periodic frame capture); the inference service has EgoVideo-VL describe the frames with a fixed prompt and appends (timestamp, description) to the per-session history, which is persisted with history_cache.put. The Gradio demo does the same through Chat.answer(add_to_history=True). The paper describes exactly this periodic capture-describe-store loop, even in the absence of user queries. User-supplied text is not written to memory by default, but sensed evidence is.",
+      "locator": "Paper Sec 3.3 Memory module; Sec 1 paragraph beginning 'Vinci is composed of multiple integrated modules'; Fig. 2 caption. Code: vl_open.py:170-179; vinci-inference/app/models/internvl.py:113-152 (chat_unsafe_silent), 274-281 and 305-312 (history_cache.put); vinci-inference/app/data.py:16 (silent flag); vinci-inference/app/global_var/cache.py:5-27.",
+      "quote": "Paper Sec 3.3 (UNVERIFIED: WebFetch extraction; two independent extractions returned identical wording): \"It operates by periodically capturing short video snapshots, describing the observed actions in detail, and storing the resulting textual descriptions along with their corresponding timestamps.\" Code (verbatim, vinci-inference/app/models/internvl.py:144 and 146): question = video_prefix + '现在视频到了 %.1f 秒处. 简单的描述视频中我的动作.' % timestamp ... history.append((timestamp, response))"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained timestamped descriptions are injected into the prompt for every user query: get_history(session_id) returns the last 10 stored (timestamp, description) pairs and add_history() serialises them into a preamble telling the model it cannot see the earlier video and giving it the history, placed before the user question. Memory therefore shapes the content of the spoken answer (temporal grounding, summarisation, future planning). The paper states that when the user interacts, the memory module supplies historical context to EgoVideo-VL.",
+      "locator": "Paper Sec 3.3; Sec 4.3-4.5 and Figs. 9-12. Code: vinci-inference/app/models/internvl.py:26-69 (add_history), 205-207 (prompt assembly), 259-264 (get_history, last 10 entries); vl_open.py:202-262; demovl.py:242-291 (max_history 5-25).",
+      "quote": "Paper Sec 3.3 (UNVERIFIED: WebFetch extraction; two independent extractions returned identical wording): \"When a user interacts with Vinci, the memory module provides relevant historical context to EgoVideo-VL, enabling the system to temporally ground past actions, summarize user activities, and answer queries requiring historical reasoning.\" Code (verbatim, vinci-inference/app/models/internvl.py:57): res += 'When the video is at %.1f seconds, the video contect is \"%s\". ' % (ts, a.strip())"
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "No flow from Action to Sensing is described. Frame acquisition follows a fixed schedule: the backend issues periodic silent captures, and in the Gradio demo a fixed 5-second timer plus a user-set stride decides when a snapshot is taken, with frames sampled at the current timestamp plus a random offset regardless of any plan or answer. Wake-word detection gates Action (S->A), not the reverse, and the model's decision to invoke video generation routes to an effector, not to Sensing. However, the component that actually schedules capture and forwards frames (vinci-be) ships only as a prebuilt Docker image whose source is in a private GitLab, and the paper does not say whether model outputs influence capture, so the route is unknown rather than explicitly excluded.",
+      "locator": "Paper Sec 3.6 System integration; Sec 3.4 Generation module; Fig. 3 caption. Code: demovl.py:424, 442-449, 480-488 (fixed timer, user-set stride); vl_open.py:143-152 (frames sampled at timestamp with randint offset); vinci-inference/app/main.py:16-30 (frames arrive in the request); vinci-inference/app/data.py:16; vinci-local/docker/docker-compose.yaml:73-74 (vinci-be prebuilt image); vinci-local/docker/clone.sh:4 (private vinci-be source).",
+      "quote": "Paper Fig. 3 caption (UNVERIFIED: WebFetch extraction): \"It listens for wake-up commands and, upon detection, activates the EgoVideo-VL model to process user prompts and deliver the corresponding outputs.\" Code (verbatim, demovl.py:481): if gr_video_time - silent_time < memory_stride:"
+    },
+    "M->S": {
+      "label": "absent",
+      "rationale": "In this configuration memory never reaches Sensing. The only consumer of the stored history is add_history(), which runs at answer time (M->A). The periodic snapshot interpretation that feeds memory runs with a fixed prompt and history=None, so stored descriptions do not shape how new frames are interpreted; capture cadence is a fixed timer or user-set stride, not memory-driven; and the inference service does not export its memory at all (the HTTP response carries a dummy history [[1, \"test\"]]), so the capture component cannot use retained priors for sampling or attention. The paper likewise describes memory being supplied only when the user interacts.",
+      "locator": "Code: vl_open.py:170-179 (silent description: history=None, fixed prompt, no add_history call); vinci-inference/app/models/internvl.py:102-104 and 139-146 (history=None); vinci-inference/app/service/internvl.py:54 and 66 (dummy history returned); demovl.py:442-449, 480-488 (stride and timer). Paper Sec 3.3.",
+      "quote": "Code (verbatim, vinci-inference/app/service/internvl.py:54): return IntervlInferenceResponse(answer=answer, history=[[1, \"test\"]], session_id=session_id). Code (verbatim, whitespace collapsed, vl_open.py:176-178): response, history = self.model.chat(self.tokenizer, pixel_values, question, self.generation_config, num_patches_list=num_patches_list, history=None, return_history=True)"
+    },
+    "A->M": {
+      "label": "absent",
+      "rationale": "The assistant's own utterances are not written to memory in this configuration. In the inference service the non-silent answer path yields the response with the history list unchanged and re-puts the same list, so no question or answer is appended; in vl_open.Chat.answer the line that would store the answer in the timestamped history is commented out, and the separate chat_history list is written only in the non-stream path and consumed only when use_chat_history=True, a flag that defaults to False and is never enabled by init_model or the Gradio demo. The service also ignores any history field sent in requests. The MySQL user_chat_record table (request_text/response_text) belongs to the optional chat-history backend excluded by the judged configuration. The periodic snapshot descriptions that are stored are Sensing interpretations of the user's activity, not action records, so they count as S->M.",
+      "locator": "Code: vl_open.py:92 (use_chat_history=False), 181-197 (chat_history writes; answer-to-history line commented out), 238 (gate); demovl.py:124, 235, 305; vinci-inference/app/models/internvl.py:21 (init_model does not enable chat history), 229-234 and 283-295 (history unchanged after answer), 272 and 303 (request history overwritten by cache); vinci-local/docker/mysql/init.sql:55-76 (optional user_chat_record table). Paper Sec 3.3 (memory stores snapshot descriptions only).",
+      "quote": "Code (verbatim, vl_open.py:197): # self.history.append((timestamp, response)). Code (verbatim, vl_open.py:92): def __init__(self, path='Vinci-8B-base', path2='Vinci-8B-ckpt', sep_chat=False, stream=True, device='cuda:0', use_chat_history=False, language='chn', version='v0'):"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "The memory holds timestamped descriptions of the user's observed activity, not records of what the assistant decided or delivered; the answer-to-history write is commented out and the chat_history path is disabled by default. Service stdout prints redirected to vinci_inference.log are developer logs, and the MySQL chat table is the excluded optional backend. The paper never describes the service keeping records of its own actions for later use.",
+      "locator": "Paper Sec 3.3; vl_open.py:92, 197; vinci-inference/app/models/internvl.py:229-234, 283-295; vinci-inference/boot.sh:24; vinci-local/docker/mysql/init.sql:55-76."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No later evidence about the assistant's responses (ratings, corrections, dismissals, task results) is obtained or retained; the API exposes only inference endpoints and the paper describes no feedback mechanism. The 'timely feedback' phrase in Sec 5 refers to feedback given to the user, not received by the system.",
+      "locator": "vinci-inference/app/main.py:16-45; vinci-inference/app/data.py:13-25; Paper Secs 3.3, 3.6, 5."
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No outcome is linked back to a decision to check or correct assistance; the paper's evaluation is a set of qualitative author-run demonstrations on uploaded videos, which does not count.",
+      "locator": "Paper Sec 4.1-4.7; vinci-inference/app/models/internvl.py:266-326."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service makes no durable change to its own mechanism. EgoVideo-VL and SEINE are fine-tuned offline by the authors before release (two-stage instruction tuning with InternLM-7B kept fixed), weights are downloaded as static checkpoints, prompts are hard-coded string templates, and the only mutable runtime state is the per-session description list, which is content consumed by a fixed mechanism.",
+      "locator": "Paper Sec 3.2, 3.4; download.sh:31-39; vl_open.py:111-141, 202-262; vinci-inference/app/models/internvl.py:15-16, 26-69.",
+      "quote": "Paper Sec 3.2 (UNVERIFIED: WebFetch extraction): \"The LLM component, InternLM-7B, remains fixed during training, providing a stable foundation for language understanding and generation.\"",
+      "what": "None. Only offline developer fine-tuning of EgoVideo-VL and SEINE before release; runtime memory holds content (timestamped activity descriptions) consumed by a fixed prompt template."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revised mechanism exists, so no later run under one is reported; the code contains no update or reload logic.",
+      "locator": "Paper Secs 3-6 (no such statement); vinci-inference/app/models/internvl.py (no update or reload path)."
+    }
+  },
+  "notes": "Judged the streaming wake-word configuration only. Classification choices: the periodic 'silent' description is the model acting in the Sensing-interpretation role, so its storage is S->M rather than A->M. The vinci-be backend's source is unavailable (private GitLab listed in clone.sh; prebuilt image in docker-compose.yaml), which is why A->S is 'insufficient', whereas M->S and A->M are 'absent' on positive code evidence: memory is consumed only by add_history at answer time, the service exports a dummy history, the answer-store line is commented out, and the chat-history flag defaults off and is never set. In the Gradio uploaded-video demo (not the judged mode) the last answer text is reused as the SEINE generation prompt via chat_state, which is the closest thing to an utterance being retained for a later action. Paper text came through WebFetch (model-mediated), so all paper quotes are labelled UNVERIFIED; three extraction passes were made and Sec 3.3, the Introduction module paragraph, and the Fig. 2 caption returned identical wording in two independent passes. Section numbering confirmed as 1 Introduction, 2 Related Work, 3 Method (3.1-3.6), 4 Experiments (4.1-4.7), 5 Potential Applications, 6 Conclusion.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 549,
+    "code_commit": "a3b9dfabc184ded110d5f28daa4f132e5bdcebaa"
+  }
+}

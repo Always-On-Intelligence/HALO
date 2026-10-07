@@ -1,0 +1,81 @@
+{
+  "id": "movecare",
+  "configuration": "MoveCare platform as deployed in the 10-week home pilot (with-robot condition, rounds R1 Sept-Dec 2019 and R2 Jan-Mar 2020): Giraff-X socially assistive robot, IoT environmental sensors with concentrator, smart objects (ball, pen, scale, insoles), Community-Based Activity Centre (tablet/TV), and the cloud Virtual Caregiver (scenario modules, Reminders, Report Generation, User Location, Orchestrator). The without-robot condition was not judged.",
+  "sources_read": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC8853423/ (case-listed source; the direct URL served a reCAPTCHA page; the printable view ?report=printable was readable up to Sect. 6.1 and was used for Sect. 5.5 and 6)",
+    "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8853423/fullTextXML (Europe PMC JATS XML of the same PMC record, Luperto et al., Int J Soc Robot 15:517-545, published 14 Feb 2022, DOI 10.1007/s12369-021-00843-0; all body sections incl. 5.5, 6, 6.1, 6.2, 7 and appendix Table 10 read via per-section raw text extraction)",
+    "https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json/PMC8853423/unicode (NCBI BioC full text of PMC8853423; used to cross-confirm every quoted sentence)",
+    "https://link.springer.com/article/10.1007/s12369-021-00843-0 (version of record: heading structure; /tables/9 and /tables/10 appendix tables; Table 1 image 12369_2021_843_Tab1_HTML.png; Table 2 image 12369_2021_843_Tab2_HTML.png; Fig. 7 image 12369_2021_843_Fig7_HTML.png)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed data are written to retained stores that later decisions read: IoT sensor data are stored in the cloud for other components, smart-object measurements (weight, gait) are uploaded to the cloud, CBAC activity reports go to a cloud repository the VC queries, and the VC's periodic modules query a central database; the Body Weight module compares each new measurement with the previously registered weight. This is an implemented write path, not a static profile.",
+      "locator": "Sect. 4 component list (Environmental Sensors bullet); Sect. 4.3 ('Gait data is then stored on the cloud'); Sect. 4.4 last paragraph; Sect. 4.5.1 Body Weight Measurement; Fig. 7 caption",
+      "quote": "Environmental Sensors (Sect. 4.2), a set of domotic sensors integrated inside an IoT network that collects data about the user's daily living activities and stores them in the cloud. The data is then available to the other system's components. | This data is stored in a cloud repository and accessible for analysis to the VC through a set of APIs. | All the modules implementing the periodic workflows query data from the system's central database."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The VC decides the type, number and timing of interventions by reasoning on retained data: reminders are issued when a scenario has not been done for a pre-defined time (retained usage history), weight interventions are triggered by deviation from the previously registered weight, and Orchestrator context rules (Table 2) suppress interventions based on the retained user-location state (bedroom, bathroom, OUTDOOR).",
+      "locator": "Sect. 4 component list (Virtual Caregiver bullet); Sect. 4.5.2 Reminders; Sect. 4.5.1 Body Weight Measurement; Sect. 4.5.5 Orchestrator and Table 2",
+      "quote": "Virtual Caregiver (Sect. 4.5), a virtual assistant providing intelligent supervision to the whole platform by reasoning on the collected data, determining the type and number of needed interventions, and managing their execution. | To promote the use of the platform, the system provides reminders to the user to perform a recommended scenario if it had not been done for more than a pre-defined amount of time. | In the reactive workflow, the VC analyses the data gathered from the smart scale to detect anomalous weight variations (more than 2% of the previously registered weight)."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "An intervention decided by the VC sets the robot's sensing targets: it navigates to the expected user location, detects the user and searches the apartment if not found, and in the Finding Lost Objects scenario directs RFID/vision sensing at the requested object. The Dialogue Manager's interaction state conditions how user utterances are interpreted, and the robot performs an expected-effect check by repeating a question after a timeout; after a weight reminder it waits for the measure to be received before acknowledging.",
+      "locator": "Sect. 4.1.3 Robot Functionalities (numbered action sequence, items 2-3; Finding Lost Objects); Sect. 4.1.2 Human Robot Interface; Sect. 4.1.1 Autonomous Navigation; Appendix Table 10 (Body Weight Measurement)",
+      "quote": "safely navigates to the expected user location [45] (updated by the system in real-time, see Sect. 4.5.4), | locates the user and, if not found, performs a search in the apartment, | The DM identifies keywords related to each dialogue instance according to the state it is in and processed inside the semantic domain of the current particular interaction. | the robot asks a question to the user and if, after a timeout (30s), no answer is received from the cloud, the question is repeated."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained priors are supplied to sensing for interpretation and attention: the User Location module interprets raw PIR/door events into the user's room by combining them with the stored, semantically annotated apartment map (acquired at installation and kept on the concentrator); the Spot Question module interprets the user's spoken answer by retrieving the correct answer from historical activity data in the database; the robot's search for the user is focused on the last room where the user was detected. These are interpretation/attention uses of retained information, not answer-time retrieval for action. Caveat: the map is a static artifact, but by function it is retained information that the sensing pipeline consumes.",
+      "locator": "Sect. 4.5.4 User Location; Sect. 4.5.1 Spot Question; Sect. 4.2 (concentrator stores the map); Sect. 4.1.1 Autonomous Navigation",
+      "quote": "This is done by combining the data from the PIR and the door sensor with the a priori knowledge of the apartment map where the position of the installed sensors are semantically annotated (see Fig. 4). | If the question relates to the user's recent activity (e.g. \"Can you tell me if you played cards in the last 3 days?\"), the Spot Question module queries the MoveCare database to retrieve the correct answer from historical activity data. | The concentrator also stores the map of the environment (as acquired by the robot during installation) and the system's setup."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Action-side information is written to retained state used later: generated interventions are stored in a pending-intervention list that later Orchestrator cycles (hourly, 08:00-21:00) consume; the robot returns execution feedback and failure causes to the VC, which keeps a failed intervention to reschedule it; Table 2 constraints ('maximum of 5 interventions per day', 'at least 1 hour between 2 interventions') require records of delivered interventions; a closed emergency produces a stored report. Retention scope is short (queue cleared every evening, per-day counts) but explicit.",
+      "locator": "Sect. 4.5.5 Orchestrator; Table 2 (Max. number of interventions; Min. time between interventions); Sect. 4.1.2 Human Robot Interface; Sect. 4.1.3 (action sequence item 6 'provides feedback to the VC'; Robot Recovery Behaviour); Appendix Table 10 (Call for Help)",
+      "quote": "In the reactive workflow, the Orchestrator is activated each time an intervention is received. The intervention is stored in a list of pending interventions, sorted by priority. | If no answer is received after a second timeout (30s), the robot apologises to the user (by saying \"Sorry, I can not understand\") and the VC reschedules the intervention as it could be a temporal connectivity issue. | If the robot cannot complete its task autonomously, it informs the VC about the possible cause of the problem and automatically starts a self-management task to return to the docking station. | When the emergency situation is closed, a report is created."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of its own decided and delivered actions for its own later use: queued interventions are stored and processed in later Orchestrator cycles, the Orchestrator enforces a per-day intervention count and minimum spacing (Table 2), and a report is created when an emergency scenario closes. The counts of interventions delivered were additionally available for the authors' analysis (Sect. 5.5, Fig. 10b), which by itself would not count.",
+      "locator": "Sect. 4.5.5 Orchestrator; Table 2; Appendix Table 10 (Call for Help); Sect. 5.5 Interaction Between the Components",
+      "quote": "The intervention is stored in a list of pending interventions, sorted by priority. | There should be a maximum of 5 interventions per day. | When the emergency situation is closed, a report is created."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later evidence about the service's actions is obtained and retained: the robot reports the result of each intervention to the VC (no answer after two timeouts leads to rescheduling), answers given to the robot's spot questions are kept in the database and included in weekly reports, and the measurement requested by a weight reminder is received and acknowledged.",
+      "locator": "Sect. 4.1.2 Human Robot Interface; Sect. 4.5.3 Report Generation; Sect. 4.1.3 (action sequence item 6); Appendix Table 10 (Body Weight Measurement)",
+      "quote": "If no answer is received after a second timeout (30s), the robot apologises to the user (by saying \"Sorry, I can not understand\") and the VC reschedules the intervention as it could be a temporal connectivity issue. | In addition, the report contains the answer given to the Spot Questions asked during the week, which a clinician to whom the report is handed could analyse to follow the evolution of the users' state. | After the measure is received, the robot say a 'thank you' message to the user."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Outcomes are linked to the specific intervention they concern and used to correct assistance immediately: a failed dialogue leads the VC to reschedule that intervention; a task the robot cannot complete is reported with its cause and triggers a recovery task; a non-compliant or incorrect measurement after a reminder leads the robot to ask for a repeat; compliance with the given indications triggers positive feedback. No service-outcome causal evidence is required for this step.",
+      "locator": "Sect. 4.1.2 Human Robot Interface; Sect. 4.1.3 Robot Recovery Behaviour; Sect. 4.5.2 Reminders; Sect. 5.5 Interaction Between the Components",
+      "quote": "In addition to reminders, this module also provides \"positive feedback\" when scenarios are performed regularly and by following the indications. | Furthermore, not only the robot encouraged the users to use the smart objects regularly but also informed them in case incorrect values were measured or when the users failed to comply with the agreed protocol (i.e., to measure their weight only in the morning after getting up), suggesting them to repeat the measurement."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No durable change to the mechanism is made by the service itself. All reported revisions were made by developers between pilot rounds (revised software for connectivity checks, removal of night-time robot movement, microphone updates, new VC recharge-reminder functions) or by clinicians (Orchestrator rules 'approved by the clinical partners', 'constraints that the clinicians can add'). The VC's runtime 'identifying, reacting, and adapting the system to unexpected events' is self-management within fixed rules, the microphones' self-adaptation to noise and voice pitch is sensing calibration inside a fixed mechanism, and adapting robot behaviour to the user's status is stated only as future work.",
+      "locator": "Sect. 5.2.3 Deployment Modalities; Sect. 4.5.5 Orchestrator; Sect. 6.1 Lessons Learned; Sect. 6.2 Limitations and Open Questions; Sect. 4.2",
+      "quote": "These issues were solved with a revised version of the software that checked periodically for network connectivity to warn the user upon losses. | For example, we removed the possibility for the robot to move at night unless an emergency was triggered. | some software functions have been introduced to allow the VC to remind elders to recharge the objects after using them. | In that cases, the introduction of modifications in the robot behaviour (e.g., by trying to introduce an emphatic behaviour of the robot, adapting it to the users' status) could be beneficial.",
+      "what": "None by the service; only developer-made software revisions between R1 and R2 and clinician-authored Orchestrator rules/constraints."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "There is no service-made revision whose later use could be reported. R2 ran under developer-revised software ('These improvements introduced between the two pilot rounds allowed, as expected, getting a more robust system with a better appreciation by the users.'), which is later use of developer changes and does not count.",
+      "locator": "Sect. 5.2.3 Deployment Modalities; Sect. 5.4.1 Satisfaction Questionnaire (R1 vs R2)"
+    }
+  },
+  "notes": "Judged the with-robot MoveCare configuration of the 10-week home pilot as described in Luperto et al., 'Integrating Social Assistive Robots, IoT, Virtual Communities and Smart Objects to Assist at-Home Independently Living Elders: the MoveCare Project' (Int J Soc Robot, DOI 10.1007/s12369-021-00843-0, PMC8853423). No code repository exists; judged from text only. The case-listed PMC URL served a reCAPTCHA to the fetch tool, so the same PMC record was read through the Europe PMC JATS XML and NCBI BioC mirrors plus the Springer version of record (headings, appendix tables, and the Table 1, Table 2 and Fig. 7 images, which I viewed directly). Every quoted sentence was confirmed identical in at least two independent extraction passes (and most in raw per-section XML text); Table 2 quotes were transcribed by me from the table image. The downloaded PDF could not be rendered locally and was not used. All five channels are reported; the self-evolution evidence stops at attribution: the service records, obtains outcomes for, and immediately corrects individual interventions, but every durable mechanism change was made by developers or clinicians.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 1673,
+    "code_commit": null
+  }
+}

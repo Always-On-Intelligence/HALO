@@ -1,0 +1,83 @@
+{
+  "id": "langchaineai2025",
+  "configuration": "EAIA reference implementation at commit 758db7174223da7864feea7c9f8d1aba12923037 (GitHub main matched this commit for every excerpt verified): cron email ingestion (eaia/cron_graph.py, scripts/setup_cron.py), persistent LangGraph store with embedding index (langgraph.json), Question tool in draft_response, Agent Inbox interrupts in human_inbox.py, and feedback/reflection enabled via `memory: true` (eaia/main/config.yaml:52).",
+  "sources_read": [
+    "https://github.com/langchain-ai/executive-ai-assistant/blob/main/eaia/main/human_inbox.py (main; raw fetch matched local commit 758db71 for save_email and all feedback/prompt_types/multi_reflection_graph lines)",
+    "https://github.com/langchain-ai/executive-ai-assistant/blob/main/eaia/main/draft_response.py (main; raw fetch matched local commit for the store.aget/aput block)",
+    "https://github.com/langchain-ai/executive-ai-assistant/blob/main/eaia/main/fewshot.py (main; raw fetch matched local commit in full)",
+    "https://github.com/langchain-ai/executive-ai-assistant/blob/main/eaia/reflection_graphs.py (main; raw fetch matched local commit for update_general, MEMORY_TO_UPDATE dicts, determine_what_to_update, graph tail)",
+    "https://www.langchain.com/blog/introducing-ambient-agents (report listed in cases/eaia/case.yaml; fetched through a paraphrasing tool, so any quote from it is UNVERIFIED)",
+    "Local checkout at commit 758db7174223da7864feea7c9f8d1aba12923037: eaia/main/human_inbox.py, eaia/main/draft_response.py, eaia/main/fewshot.py, eaia/reflection_graphs.py, eaia/main/graph.py, eaia/main/triage.py, eaia/main/rewrite.py, eaia/main/find_meeting_time.py, eaia/main/config.py, eaia/main/config.yaml, eaia/schemas.py, eaia/gmail.py, eaia/cron_graph.py, scripts/run_ingest.py, scripts/setup_cron.py, scripts/run_single.py, scripts/setup_gmail.py, langgraph.json, pyproject.toml, README.md, CONTRIBUTING.md",
+    "cases/eaia/case.yaml; halo/read/schema.json"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed email content plus the user's Agent Inbox disposition are written to the persistent store: save_email stores {input: email, triage: status} in the (assistant_id, 'triage_examples') namespace on every accept/edit/ignore/respond branch (status 'email' or 'no'). The user's free-text feedback or corrected draft from the interrupt is also delivered to multi_reflection_graph, whose update_general integrates it into the stored prompt sections via store.aput. Both are sensed or user-supplied evidence admitted to memory, gated by memory=true in config.yaml.",
+      "locator": "eaia/main/human_inbox.py:61-70 (save_email), 103-104, 131-132, 169-170, 197-198, 212-230; eaia/reflection_graphs.py:84-93; eaia/main/config.yaml:52",
+      "quote": "data = {\"input\": state[\"email\"], \"triage\": status}\n        await store.aput(namespace, str(uuid.uuid4()), data)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained store content feeds action decisions on every run: triage_input calls get_few_shot_examples, which runs store.asearch over triage_examples and inserts 'Here are some previous examples:' into the triage prompt that selects no/email/notify; draft_response reads schedule_preferences, random_preferences and response_preferences from the store into EMAIL_WRITING_INSTRUCTIONS, which governs the choice among Question, ResponseEmailDraft, SendCalendarInvite, MeetingAssistant and NewEmailDraft; rewrite reads rewrite_instructions from the store into the tone-rewrite prompt. Config.yaml values are only written as defaults when the store key is absent.",
+      "locator": "eaia/main/fewshot.py:32-40; eaia/main/triage.py:49,56; eaia/main/draft_response.py:102-133; eaia/main/rewrite.py:38-56",
+      "quote": "result = await store.asearch(namespace, query=str({\"input\": email}), limit=5)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action's information needs direct the acquisition of new observations. When draft_response selects the Question tool, send_message raises a LangGraph interrupt whose action_request carries the question, and the user's answer returns through interrupt() as a tool message that re-enters drafting; the drafting prompt instructs the agent to use Question to obtain missing information. The MeetingAssistant choice runs find_meeting_time, a ReAct agent whose get_events_for_days calls select which calendar days are fetched. Proposed drafts and invites are likewise surfaced through interrupt for accept/edit/ignore/respond, so the action's intent defines what user input is solicited, and send_cal_invite_node returns the execution result ('Sent calendar invite!' or the error) to the drafting loop. The Agent Inbox user is the service's principal, not an external grader.",
+      "locator": "eaia/main/draft_response.py:27-38; eaia/main/graph.py:59-60, 115-130, 177-178; eaia/main/human_inbox.py:74-117; eaia/main/find_meeting_time.py:66-96; eaia/gmail.py:309-354",
+      "quote": "First, get all required information to respond. You can use the Question tool to ask {name} for information if you do not know it."
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "No acquisition or interpretation function reads retained priors: fetch_group_emails queries Gmail by address and minutes_since only, get_events_for_days takes dates only, and the interrupt handlers do not consult the store before interpreting the user's response. The two memory-adjacent reads are (a) the few-shot examples pulled into triage_input, whose output is directly the behavior selection no/email/notify routed by route_after_triage, which I classify as M->A rather than a sensing-side prior, and (b) the per-thread email_id metadata the cron loop checks to stop re-ingesting an already-processed email, a bookkeeping cursor rather than a prior shaping sampling or interpretation. Memory-informed drafting that then calls Question or MeetingAssistant is the M->A->S composition. The source neither implements a distinct memory-to-sensing flow nor explicitly excludes one, so the route cannot be confirmed.",
+      "locator": "eaia/gmail.py:187-285, 309-354; eaia/cron_graph.py:21-47; eaia/main/triage.py:46-72; eaia/main/graph.py:30-42; eaia/main/human_inbox.py:89-134"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The agent's own trajectory and draft are delivered to memory's update path: on an edit, human_inbox builds rewrite_state containing the assistant's draft content and the user's correction; on respond branches it forwards the full state['messages'] trajectory; both are sent to multi_reflection_graph, whose update_general renders the trajectory with get_trajectory_clean and writes the revised prompt into the store with store.aput. save_email also stores the final disposition ('email' or 'no') of each handled email for later few-shot use.",
+      "locator": "eaia/main/human_inbox.py:105-117, 212-230; eaia/reflection_graphs.py:14-18, 64-93, 150-178",
+      "quote": "\"content\": state[\"messages\"][-1].tool_calls[0][\"args\"][\"content\"],"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains a record of each email it handled and the final disposition in the store's triage_examples namespace (status 'email' when a draft was accepted, edited or responded to, 'no' when ignored), which later runs read as few-shot examples; the per-thread LangGraph checkpoint also retains the triage result and the draft tool calls in state['messages'], which are resumed after the interrupt and forwarded to reflection.",
+      "locator": "eaia/main/human_inbox.py:61-70, 231-234; eaia/main/fewshot.py:32-40",
+      "quote": "data = {\"input\": state[\"email\"], \"triage\": status}\n        await store.aput(namespace, str(uuid.uuid4()), data)"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later evidence about the proposed action is obtained from the user through the Agent Inbox interrupt (accept, edit with corrected content, ignore, or free-text response) and retained: the disposition is written to triage_examples, and the corrected text or feedback is passed to the reflection graph, which persists its effect in the stored prompt sections.",
+      "locator": "eaia/main/human_inbox.py:155, 162-170, 184-198, 199-214",
+      "quote": "corrected = response[\"args\"][\"args\"][\"content\"]\n            await save_email(state, config, store, \"email\")"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The user's response is tied to the specific tool call it concerns via tool_call_id and used to correct assistance immediately: an edit replaces the draft's args with the user's version before send_email_node runs, a free-text response is returned as a tool message that drives a re-draft, and ignore converts the action to Ignore. The reflection input pairs the trajectory with feedback phrased as 'A better response would have been: {corrected}'.",
+      "locator": "eaia/main/human_inbox.py:162-168, 199-211, 215-230; eaia/main/graph.py:88-113",
+      "quote": "\"content\": f\"Error, {user} interrupted and gave this feedback: {response['args']}\",\n                \"tool_call_id\": tool_call[\"id\"],"
+    },
+    "revision": {
+      "label": "stated",
+      "what": "Stored prompt sections rewrite_instructions (tone/style), response_preferences (email-content rules), schedule_preferences (calendar-invite rules) and random_preferences (background), rewritten by the o1 reflection model and written back to the store under the same keys, then injected into the drafting and rewrite prompts.",
+      "rationale": "update_general asks the reflection model to return an updated prompt and, when update_prompt is true, persists new_prompt under the same store key; those keys are the instruction blocks later formatted into EMAIL_WRITING_INSTRUCTIONS and rewrite_prompt. The change is made by the service's own reflection step rather than written by the developer or user; the tone, email and calendar sections are reusable rules applied as instructions by later runs, while random_preferences is closer to user facts. The few-shot triage examples are stored content consumed by a fixed mechanism and are not counted here.",
+      "locator": "eaia/reflection_graphs.py:34-61, 64-93, 103-120; eaia/main/draft_response.py:102-133; eaia/main/rewrite.py:38-56",
+      "quote": "if output[\"update_prompt\"]:\n        await store.aput(\n            namespace, key, {\"data\": output[\"new_prompt\"]}, index=False\n        )"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "draft_response and rewrite read the store-held prompt sections on every run and fall back to config.yaml only when absent, so a revised prompt would be loaded; but no source reports an actual later run under a reflected prompt. CONTRIBUTING.md only says the code powers a real assistant, the triage prompt's 'you will learn from this in the future' is an instruction rather than a report, and the blog's 'empowers long term memory and learning' (UNVERIFIED paraphrase) is a marketing claim.",
+      "locator": "eaia/main/draft_response.py:104-109; eaia/main/rewrite.py:39-49; CONTRIBUTING.md:1; eaia/main/triage.py:33; README.md:165-166"
+    }
+  },
+  "notes": "Judged the reference implementation with memory enabled (config.yaml:52 `memory: true`), which gates every store write in human_inbox.py. Reflection is spawned as a separate run on the same deployment via LGC.runs.create(None, 'multi_reflection_graph', ...), sharing the store configured in langgraph.json; determine_what_to_update uses claude-3-5-sonnet-latest and update_general uses o1. Minor code observation that does not change any judgment: save_email looks up the email id as key but writes under a random uuid4 key, so the dedup check never matches and duplicate examples can accumulate. The GitHub main raw files matched the pinned commit for every verified excerpt; the blog report was only available as a tool paraphrase and contributed no verbatim evidence beyond marketing-level statements.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 404,
+    "code_commit": "758db7174223da7864feea7c9f8d1aba12923037"
+  }
+}

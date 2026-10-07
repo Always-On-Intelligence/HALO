@@ -1,0 +1,277 @@
+{
+  "case": "eaia",
+  "channels": {
+    "A->S": "the Question tool call reaches the Agent Inbox as the interrupt request the user answers (human_inbox.py:79-89)",
+    "M->A": "stored prompts read by draft_response (draft_response.py:102-125) and rewrite (rewrite.py:38-49); duplicates revision in the test phase",
+    "S->M": "user feedback, edits, and answers reach the reflection input (human_inbox.py); same site as outcome",
+    "A->M": "the assistant's own draft or tool calls reach the reflection input (human_inbox.py); same site as record"
+  },
+  "steps": {
+    "record": "reflection input keeps only the user's messages, without the assistant's draft or tool calls",
+    "outcome": "EAIA's memory switch off during learning: no feedback reaches the reflection graph",
+    "attribution": "each feedback reaches reflection with the previous email's trajectory",
+    "revision": "reflection runs but update_general's prompt write is discarded; later drafts read the original prompts (covers later_use)"
+  },
+  "tests": [
+    {
+      "cut": [
+        "record"
+      ],
+      "field": "output",
+      "pairs": 9,
+      "original": 5,
+      "modified": 1,
+      "tie": 3,
+      "metrics": {
+        "reflection_runs": {
+          "original": 4.5556,
+          "modified": 5.3333
+        },
+        "prompts_changed": {
+          "original": 2.1111,
+          "modified": 3.0
+        },
+        "backbone_calls": {
+          "original": 22.8889,
+          "modified": 27.1111
+        },
+        "jordan_handoff": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "rule_checks_passed": {
+          "original": 0.6926,
+          "modified": 0.5444
+        },
+        "confirm_by_friday": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "no_greeting": {
+          "original": 1.0,
+          "modified": 0.9444
+        },
+        "signoff_thanks_alex": {
+          "original": 0.8333,
+          "modified": 0.5
+        },
+        "user_calls": {
+          "original": 5.3333,
+          "modified": 5.3333
+        },
+        "errors": {
+          "original": 0.0,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "outcome"
+      ],
+      "field": "output",
+      "pairs": 9,
+      "original": 9,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "reflection_runs": {
+          "original": 4.5556,
+          "modified": 0.0
+        },
+        "prompts_changed": {
+          "original": 2.1111,
+          "modified": 0.0
+        },
+        "backbone_calls": {
+          "original": 22.8889,
+          "modified": 14.3333
+        },
+        "jordan_handoff": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "rule_checks_passed": {
+          "original": 0.6926,
+          "modified": 0.1889
+        },
+        "confirm_by_friday": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "no_greeting": {
+          "original": 1.0,
+          "modified": 0.5
+        },
+        "signoff_thanks_alex": {
+          "original": 0.8333,
+          "modified": 0.0
+        },
+        "user_calls": {
+          "original": 5.3333,
+          "modified": 5.3333
+        },
+        "errors": {
+          "original": 0.0,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "attribution"
+      ],
+      "field": "output",
+      "pairs": 9,
+      "original": 6,
+      "modified": 2,
+      "tie": 1,
+      "metrics": {
+        "reflection_runs": {
+          "original": 4.5556,
+          "modified": 5.3333
+        },
+        "prompts_changed": {
+          "original": 2.1111,
+          "modified": 3.0
+        },
+        "backbone_calls": {
+          "original": 22.8889,
+          "modified": 25.2222
+        },
+        "jordan_handoff": {
+          "original": 0.0,
+          "modified": 0.1667
+        },
+        "rule_checks_passed": {
+          "original": 0.6926,
+          "modified": 0.5259
+        },
+        "confirm_by_friday": {
+          "original": 0.0,
+          "modified": 0.5
+        },
+        "no_greeting": {
+          "original": 1.0,
+          "modified": 0.6667
+        },
+        "signoff_thanks_alex": {
+          "original": 0.8333,
+          "modified": 0.4444
+        },
+        "user_calls": {
+          "original": 5.3333,
+          "modified": 5.3333
+        },
+        "errors": {
+          "original": 0.0,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "revision"
+      ],
+      "field": "output",
+      "pairs": 9,
+      "original": 9,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "reflection_runs": {
+          "original": 4.5556,
+          "modified": 5.3333
+        },
+        "prompts_changed": {
+          "original": 2.1111,
+          "modified": 0.0
+        },
+        "backbone_calls": {
+          "original": 22.8889,
+          "modified": 24.3333
+        },
+        "jordan_handoff": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "rule_checks_passed": {
+          "original": 0.6926,
+          "modified": 0.1889
+        },
+        "confirm_by_friday": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "no_greeting": {
+          "original": 1.0,
+          "modified": 0.5
+        },
+        "signoff_thanks_alex": {
+          "original": 0.8333,
+          "modified": 0.0
+        },
+        "user_calls": {
+          "original": 5.3333,
+          "modified": 5.3333
+        },
+        "errors": {
+          "original": 0.0,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->S"
+      ],
+      "field": "output",
+      "pairs": 9,
+      "original": 2,
+      "modified": 2,
+      "tie": 5,
+      "metrics": {
+        "reflection_runs": {
+          "original": 4.5556,
+          "modified": 4.7778
+        },
+        "prompts_changed": {
+          "original": 2.1111,
+          "modified": 2.1111
+        },
+        "backbone_calls": {
+          "original": 22.8889,
+          "modified": 22.8889
+        },
+        "jordan_handoff": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "rule_checks_passed": {
+          "original": 0.6926,
+          "modified": 0.6445
+        },
+        "confirm_by_friday": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "no_greeting": {
+          "original": 1.0,
+          "modified": 0.8889
+        },
+        "signoff_thanks_alex": {
+          "original": 0.8333,
+          "modified": 0.8333
+        },
+        "user_calls": {
+          "original": 5.3333,
+          "modified": 5.3333
+        },
+        "errors": {
+          "original": 0.0,
+          "modified": 0.0
+        }
+      }
+    }
+  ]
+}

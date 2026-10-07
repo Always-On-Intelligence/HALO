@@ -1,0 +1,15 @@
+id: proagent
+name: "ProAgent"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2512.06721
+sources:
+  - url: https://arxiv.org/html/2512.06721v2
+    kind: paper
+    version: "2512.06721v2"
+    sha256: 09e1c58139d89369d8fd6f1e8ff815a991b150652c3c2a0a5e6d2a0414715490
+variants:
+  - id: proagent
+    label: "ProAgent"
+    configuration: "Default Qwen3-VL-4B ProAgent with persona updating/retrieval and agent-in-the-loop tiered sensing"
+modes: [read]

@@ -1,0 +1,80 @@
+{
+  "id": "pro2assist2026",
+  "configuration": "Pro²Assist as described in arXiv 2605.04227v2: continuous, step-aware proactive guidance for one procedural task per session on RayNeo X3 Pro glasses with a back-end VLM reasoner. The completed-step progress record is initialized empty at the start of each task session (§4.3.2) and the paper states the system 'currently focuses on continuous, single-session task execution' (§6). No other mode is described.",
+  "sources_read": [
+    "https://arxiv.org/html/2605.04227v2 (version 2605.04227v2; full-page reads via WebFetch, truncated after §5.4.5)",
+    "https://arxiv.org/html/2605.04227v2 sections retrieved as element-scoped text via api.microlink.io selectors: #S3, [id='S4.SS2.SSS1'], [id='S4.SS2.SSS2'], [id='S4.SS3.SSS2'], [id='S4.SS4.SSS1'], [id='S4.F14'], [id='S4.SS4.SSS2'], [id='S5.SS1'], [id='S5.SS7'], #S6, #S7, [id='A1.SS2']",
+    "https://arxiv.org/abs/2605.04227v2 (abstract, version history: v2 Sat 1 Aug 2026, 'To appear in IMWUT'26')",
+    "https://arxiv.org/pdf/2605.04227v2 (downloaded; could not be rendered locally, not read)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed evidence is admitted to retained state: at each key moment the VLM's step prediction from the egocentric frames is appended to a sliding window, and once a new step dominates the window the previous active step is appended to the historical task progress record, which persists across inference moments within the task session (Algorithm 1 lines 1-5). The user's spoken task instruction also seeds the session-retained structured guideline through WikiHow retrieval (§4.3.1). Retention is session-scoped by design, which does not negate the write path.",
+      "locator": "§4.3.2 Multi-Scale Temporal Context Extraction; §4.4.2 Algorithm 1 lines 1-5 (Historical Context Update); §4.3.1 Expert Knowledge Retrieval",
+      "quote": "The record is initialized as empty at the start of each task session and progressively updated as verified step transitions occur throughout the task"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained state drives the assistance decision in two ways. The progress record ('Historical Context: Previously completed steps in order') and the session-retained structured guideline are placed in the VLM prompt that decides whether to initiate a proactive service and generates the response text (§4.4.1, Figure 14). The previous moment's retained predicted step and status gate delivery versus silence in the response delivery control (Algorithm 1 lines 7-10, state updated at line 13).",
+      "locator": "§4.4.1 VLM Reasoner Training and Inference and Figure 14 system prompt; §4.4.2 Algorithm 1 lines 6-13 (Response Delivery Control)",
+      "quote": "determine whether to initiate a proactive service for the user or not"
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "Sensing control is described as driven only by sensed signals: adaptive sampling switches between normal and burst modes on gyroscope head-motion magnitude (§4.2.1), and key-moment selection filters frames by optical-flow magnitude over detected hand regions (§4.2.2). No sentence describes the reasoner's proactive trigger, delivered response, or predicted step feeding back into sampling, selection, attention, or an expected-effect check; the overview (§4.1, Figure 8) runs perception to reasoner to display. The paper does not explicitly exclude such a route either, so the label is insufficient rather than absent.",
+      "locator": "§4.1 System Overview and Figure 8 caption; §4.2.1 Head-Motion-Aware Adaptive Sampling; §4.2.2 Motion-Based Key Moment Selection",
+      "quote": "head motion from IMU as an always-on sampling signal"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The retained completed-step record, together with the session-retained guideline, is supplied to the VLM to interpret the current observation: the paper states it lets the VLM identify the user's current step and distinguish visually similar actions across different steps, and anticipate possible next steps (§4.3.2; motivated in §3 Observation 3). Step identification is interpretation of the current sensed frames, a Sensing function realized by the same model that also selects the action, so this is a retained prior guiding interpretation, not answer-time retrieval alone. No retained information is reported to guide sampling or attention.",
+      "locator": "§4.3.2 Multi-Scale Temporal Context Extraction (long-term historical task progress paragraph); §3 Observation 3; Figure 14 'Historical Context' field",
+      "quote": "combining this progress record with the retrieved guideline enables the VLM to better identify the user's current step within the task workflow, thereby distinguishing visually similar actions across different steps"
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "Everything retained is an interpretation of the user's state: the predicted step in the sliding window, the completed-step record, and the previous moment's predicted step and status. By function these are Sensing-derived evidence (S->M). The action outputs, the proactive trigger and the response, are delivered or set to None, and no retention of them is described (Algorithm 1 lines 6-13); the record is explicitly 'completed steps from past verified predictions', not assistance records. The paper does not explicitly exclude storing action records, so the route is unknown rather than absent.",
+      "locator": "§4.4.2 Algorithm 1 Input/State line and lines 6-13; §4.3.2",
+      "quote": "Pro²Assist therefore maintains a compact structured text record of completed steps from past verified predictions"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "The service retains the user's completed steps and the previous moment's predicted step and status, all judgments about the user's state rather than records of what the service decided or delivered. The proactive trigger and the delivered response are not retained: Algorithm 1 line 8 sets the response to None or line 10 delivers it, and line 13 stores only step and status. No log of delivered assistance kept for later use is described.",
+      "locator": "§4.4.2 Algorithm 1 (Input/State line and lines 6-13); §4.3.2",
+      "quote": "Ds^prev ← D̂s; Ss^prev ← Ŝs"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No later evidence about delivered assistance (user reply, dismissal, rating, correction, observed effect) is obtained or retained by the running service. The only feedback reported is the user-study questionnaire collected by the authors after task execution (§5.7), which is research evaluation, not a service flow. The step-transition verification in Algorithm 1 checks consistency of observations, not the effect of an action.",
+      "locator": "§5.7 User Study; §4.4.2 Algorithm 1 lines 1-5",
+      "quote": "Participants provided feedback for Pro²Assist's assistance through a questionnaire"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "With no outcome evidence captured, nothing links an outcome to the decision it concerns. The response delivery control compares consecutive state predictions to avoid repetition and is not a check of a prior response's effect. Benchmark scoring and user-study analysis are performed offline by the authors.",
+      "locator": "§4.4.2 Algorithm 1 lines 6-13; §5.3-5.7"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The VLM reasoner is trained offline by the authors with supervised training on annotated data (§4.4.1). At run time the only state that changes is the completed-step record and sliding window, which are content consumed by a fixed mechanism and are reset to empty at each task session (§4.3.2). No run-time change to parameters, prompts, thresholds, rules, or code is described, and §6 frames cross-session experience and personalization through user modeling as future work.",
+      "locator": "§4.4.1 VLM Reasoner Training and Inference; §4.3.2; §6 Discussion and Limitations (longitudinal use and design implications paragraphs)",
+      "quote": "Pro²Assist currently focuses on continuous, single-session task execution.",
+      "what": "None at run time. The only trained artifact is the offline, developer-trained VLM reasoner, which is not a self-revision."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revised mechanism exists, so no later run under a revision is reported; each session starts from an empty progress record with the same trained model, prompt, and thresholds.",
+      "locator": "§4.3.2; §6 Discussion and Limitations"
+    }
+  },
+  "notes": "Judged the single configuration the paper describes: one procedural task per session, completed-step record reset per session (§4.3.2), 'single-session task execution' (§6). Access method: full-page fetches of the arXiv HTML truncated after §5.4.5, so §3, §4.2.1-4.2.2, §4.3.2, §4.4.1 with Figure 14, §4.4.2 with Algorithm 1, §5.1, §5.7, §6 and §7 were additionally retrieved as element-scoped text from the same arXiv HTML via api.microlink.io CSS selectors. The PDF was downloaded but could not be rendered locally and the case-file sha256 could not be checked (no shell access). All quotes are tool-extracted; each quote given here was returned with identical wording by two independent extraction passes (an exact-match check and a section-scoped extraction), with math symbols rendered in plain text. §5.5-5.6 and the Appendix A.2 prompt-template figures were not read in full. No code repository exists for this work. §6 states that 'leveraging cross-session experience over days for long-term personalization' and adaptive assistance 'through user modeling' are future directions, consistent with all five self-evolution steps being not stated.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 744,
+    "code_commit": null
+  }
+}

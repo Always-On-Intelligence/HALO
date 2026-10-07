@@ -1,0 +1,79 @@
+{
+  "id": "longtermtoa2026",
+  "configuration": "Full hybrid-triggered Task-oriented Agent with task-state/reminder tracking, in the Qwen3-32B-Finetuned ChronosBench configuration: Qwen3-32B fine-tuned offline by the authors with LoRA (rank 32, 3 epochs, ~2 h on 2 A100s) on 1,052 synthetic dialogs, then evaluated with weights fixed against a GPT-4.1 user simulator on the 216-case ChronosBench test set (temperature 0.2), using the structured-JSON agent prompt of Appendix D.1 (proactive_action, trigger_condition, task_description with status), a simulated backend environment monitor that injects observation messages during user dormancy, and the reminder/task-state tracker described in Sections 3.2, 3.4 and 3.6.",
+  "sources_read": [
+    "https://arxiv.org/html/2601.09382v1 (paper, version 2601.09382v1; Abstract, Sections 1, 2, 3.1-3.6, 4.1-4.3, Limitations, Conclusion, Appendices C, D.1, D.2, E, G, H, Figures 1-2, Tables 1-3) - read through the WebFetch tool's markdown conversion with model-mediated extraction; raw HTML could not be opened in this session (Bash denied), so every quote below is labelled UNVERIFIED even where two independent extractions agreed word for word",
+    "No code repository listed in cases/long-term-toa/case.yaml; judged from the text alone"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-supplied evidence (initial query Q_t, supplementary constraints C, intention shifts S) and sensed environment state E_t are integrated by the agent into the retained task description T_t = {T_d, T_c, T_s} and reminder M_t each turn; user expressions of satisfaction or refusal are written into the retained status field (COMPLETED/FAILED). Appendix E Listing 1 shows constraints from user turns 5 and 11 being admitted into task_description.constraints and a new trigger_condition.",
+      "locator": "Section 3.1.1 (T_t = g(H_t, Q_t, C, S); M_t = h(H_t, Q_t, C, S, E_t)); Section 3.6; Appendix D.1 status rules; Appendix E Listing 1 turns 5-6 and 11-12",
+      "quote": "UNVERIFIED: \"Upon receiving a initial user inquiry Q_t, the agent must initialize the task description T_t and continuously update it with subsequent supplementary constraints C and intention shifts S\" (Section 3.1.1); \"When user explicitly expresses that their needs have been met (perhaps express gratitude), the status should be 'COMPLETED'.\" (Section 3.6)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information drives action selection: responses are a function of dialog history H_t (R_t = f(H_t, Q_t, E_t)); at wake-up the observation message carries the original task context alongside the new environment state, and the agent decides FOLLOW_UP vs KEEP_SILENT by checking the new state against the retained constraints; the retained status rule (IN_PROGRESS once a reminder exists) also conditions what the agent outputs.",
+      "locator": "Section 3.1 (R_t = f(H_t, Q_t, E_t)); Section 3.1.2; Section 3.2 observation message; Appendix D.1 FOLLOW_UP / KEEP_SILENT instructions; Appendix E Listing 1 turns 9-10 and 15-16",
+      "quote": "UNVERIFIED: \"the system constructs an observation message to replace the typical user query, and the message contains the updated environment state E_t as well as the original task context.\" (Section 3.2); \"When you receive an <observation> message (triggered by the system, usually containing '**internal trigger**') indicating new info, you should evaluate if it meets the user's needs.\" (Appendix D.1)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action's information needs and plans direct acquisition in-system: the INFO_RETRIEVAL action triggers a real-time retrieval of E_t whose result returns as an observation message (ReAct-style), and SET_REMINDER formulates a trigger condition (type TIME/EVENT, value) that the backend monitor executes as its filter and that puts the task into a 'monitoring' state after which the system notifies the agent via an internal trigger. This is the paper's 'Intent-Conditioned Monitoring' capability.",
+      "locator": "Abstract (Intent-Conditioned Monitoring); Section 3.2 (INFO_RETRIEVAL; backend monitor); Appendix D.1 INFO_RETRIEVAL and SET_REMINDER instructions; Appendix E Listing 1 turns 2-3 and 6-9",
+      "quote": "UNVERIFIED: \"During active dialog sessions, the agent can perform the action INFO_RETRIEVAL to trigger a real-time retrieval of E_t and immediately receive an observation message involving retrieval results like ReAct\" (Section 3.2); \"This puts the task in a 'monitoring' state. You do not need to keep checking; the system will notify you via an internal trigger.\" (Appendix D.1)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The retained reminder, stored as a task in a database-driven tracker (task's conditions, task status, last interaction time), is what the backend monitor executes as its filter while periodically scanning the environment during dormancy, i.e., a retained prior supplied to Sensing for sampling/attention rather than an answer-time retrieval. Caveats a voter should weigh: the monitor is introduced with 'We assume', benchmark assumption (iii) has the monitoring framework deliver environment status at a fixed frequency, and the tracker/system architecture is explicitly deferred as engineering detail; under the protocol a simulated or fixed-policy realization does not negate the described flow.",
+      "locator": "Section 3.2 (backend monitor paragraph); Section 3.4 (assumption (iii); database-driven tracker sentence); Appendix D.1 SET_REMINDER ('monitoring' state); Appendix E observation messages with source environment_monitor and trigger_type EVENT",
+      "quote": "UNVERIFIED: \"We assume a backend monitor that periodically scans the environment state. This module acts as a filter, executing the logic defined by the agent's previous reminders.\" (Section 3.2); \"setting up a reminder essentially creates a task within a database-driven tracker module, involving data like username, task's conditions, task status, and last interaction time.\" (Section 3.4)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Action outputs are retained for later use: setting a reminder creates a task record in the database-driven tracker (conditions, status, last interaction time); the agent continuously writes its own task_description/status (status IN_PROGRESS encodes that it has set a reminder) and these JSON responses plus its natural-language replies stay in the dialog history that later turns and the wake-up observation ('original task context') draw on. Retention scope described is a single task episode spanning the active, dormant and wake-up periods (days apart on the simulated timeline); no cross-task or cross-user store is described.",
+      "locator": "Section 3.4 (tracker sentence; 'communicates with the system back-end internally through the proactive_action field'); Section 3.6; Section 3.2 ('the agent's previous reminders'); Appendix E Listing 1 turns 6, 8, 12, 14",
+      "quote": "UNVERIFIED: \"The task-oriented agent needs to keep updated with the task process by continuously modifying the 'status' field in the 'task_description' field ('task_description' is stored in JSON format).\" (Section 3.6); \"the agent communicates with the system back-end internally through the 'proactive_action' field described in Appendix G.\" (Section 3.4)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of its own decisions for later use: each reminder it sets becomes a tracked task entry (conditions, status, last interaction time) that the monitor later executes, and the agent's maintained status field records whether it has set a reminder (PENDING vs IN_PROGRESS). These are service-side records used in later turns, not author-only trial logs.",
+      "locator": "Section 3.4 (database-driven tracker sentence); Section 3.6 (status rules); Section 3.2 ('the agent's previous reminders')",
+      "quote": "UNVERIFIED: \"setting up a reminder essentially creates a task within a database-driven tracker module, involving data like username, task's conditions, task status, and last interaction time.\" (Section 3.4); \"When at least one reminder has been set and the task is not completed, the status should be 'IN_PROGRESS'.\" (Section 3.6)"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later evidence about the agent's follow-up is obtained and retained: the user's reply after a FOLLOW_UP (gratitude, refusal/disappointment, cancellation, or an intention shift) is written into the retained task status (COMPLETED/FAILED) and dialog history. Appendix E shows the user's reaction at turn 11 and 17 to the agent's follow-ups at turns 10 and 16 being absorbed into task_description.",
+      "locator": "Section 3.6; Appendix D.1 (FAILED_TASK rule 'to your response'); Section 3.5; Appendix E Listing 1 turns 10-12 and 16-18",
+      "quote": "UNVERIFIED: \"When user expresses refusal/disappointment or asks for cancellation of the task, the status should be 'FAILED'.\" (Section 3.6); \"We assume that users may express that their intentions have changed when the agent first proactively provides information that meets their initial requirements.\" (Section 3.5)"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The outcome is linked to the decision it concerns and used to correct assistance within the task: refusal/disappointment 'to your response' must be attributed to that response and ends the task as FAILED_TASK, and an intention shift voiced after the agent's first follow-up must lead the agent to set a new reminder with the updated constraints instead of repeating retrieval. This is an immediate, service-side check; the paper's action/status-accuracy scoring is offline author scoring and was not counted.",
+      "locator": "Appendix D.1 (FAILED_TASK rule); Section 3.5 (new reminder after intention shift); Section 4.3 failure analysis of agents that fail to re-set reminders",
+      "quote": "UNVERIFIED: \"Whenever the user expresses refusal/disappointment (do not include constraints supplement and intention shift) to your response, you should set proactive_action to FAILED_TASK.\" (Appendix D.1); \"It's better for the agent to set a new reminder immediately after user describes their intention shift rather than performing yet another redundant information retrieval by 'INFO_RETRIEVAL'.\" (Section 3.5)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No durable change to the mechanism is made by the service. The only parameter change is the authors' offline LoRA supervised fine-tuning of Qwen3-32B on synthetic data before evaluation; the agent prompt (Appendix D.1/D.2) is fixed and authored by the developers; what the agent updates at run time (task_description intention/constraints/status, trigger_condition) is task-state content consumed by a fixed mechanism, not a reusable rule. Learning per-user tolerance thresholds is named only as future work.",
+      "locator": "Section 4 / 4.2 (fine-tuning hyper-parameters: LoRA rank 32, batch 16, lr 3e-5, 3 epochs, 2 A100s); Appendix D.1-D.2; Limitations item 3 'Definition of Intrusiveness'",
+      "quote": "UNVERIFIED: \"Future work should investigate personalized proactivity thresholds, allowing the agent to learn specific user tolerance levels for interruptions.\" (Limitations, item 3); \"For training Qwen3-32B, we employ LoRA rank of 32, a total batch size of 16, a learning rate of 3e-5, and an AdamW Optimizer with a 0.1 warm-up ratio.\" (Section 4)",
+      "what": "Nothing is revised by the service; model weights were changed once by the authors offline (LoRA SFT) and prompts are developer-written."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Because the service makes no revision, no later step runs under a service-revised mechanism. Evaluation runs use the authors' fine-tuned weights fixed with the user simulator; this is later use of a developer change, which does not count.",
+      "locator": "Section 4.2-4.3 evaluation procedure ('The models under test engage in dialogs with the user simulator on the test set and the temperature is set to 0.2'); Conclusion"
+    }
+  },
+  "notes": "Judged the Qwen3-32B-Finetuned ChronosBench configuration of the hybrid-triggered task-oriented agent (Sections 3.2-3.6, Appendix D.1 prompt, 85.19% complex-scene completion in Table 3). Memory in this system is the per-task retained state: dialog history H_t, the agent-maintained task_description JSON, and the reminder/trigger_condition stored as a task in a database-driven tracker; retention spans the active, dormant and wake-up periods of one task episode (observation timestamps in Appendix E are weeks apart) but no cross-task or cross-user memory is described, and the tracker/system architecture is explicitly left as 'engineering implementation methods'. The basic S->A path (user query and observation messages reaching the agent) was not reviewed. Only text sources were available; the arXiv HTML was read through the WebFetch tool's markdown conversion with model-mediated extraction because shell access was denied, so all quotes are marked UNVERIFIED even though independent extractions returned identical wording. The case-file sha256 for the HTML could not be checked for the same reason.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 436,
+    "code_commit": null
+  }
+}

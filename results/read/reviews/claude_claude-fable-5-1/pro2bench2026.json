@@ -1,0 +1,79 @@
+{
+  "id": "pro2bench2026",
+  "configuration": "Full predicted-plan PWR: SFT-trained planner (p_phi) plus SFT-trained duplex interaction model (p_theta); at inference the duplex runs at 2 fps on plan-anchored clips conditioned on the cached plan P_{t-1} and dialogue history, and the planner is invoked only on Interrupt to revise the plan online (step advance or recovery plan). Not the PWR-Oracle condition, which restores ground-truth plans at test time.",
+  "sources_read": [
+    "https://arxiv.org/html/2606.04970v1 (paper, version 2606.04970v1; read via WebFetch extraction in 20 targeted passes; raw HTML could not be read directly because Bash was denied)",
+    "https://arxiv.org/abs/2606.04970v1 (listing page; title, abstract, submission date 3 Jun 2026, version v1)",
+    "https://arxiv.org/pdf/2606.04970v1 (fetched; local PDF rendering unavailable, so not readable)",
+    "No code repository listed for this work"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "The retained plan state (cached plan with completed/current/next step statuses and visual cues) is initialized from the user's query and rewritten at each interrupt from the current video observation o_t; the planner uses current visual evidence to advance the step index or write a recovery plan. The dialogue history H_<t also accumulates user turns (reactive queries). This is sensed and user-supplied evidence delivered to Memory for integration via a dynamic inference-time write path, not a static profile.",
+      "locator": "Sec. 2.3 (Procedural Plan); Sec. 2.4 (Plan-Anchored Clip Selection); Sec. 2.5 (Inference); Fig. 3 caption",
+      "quote": "UNVERIFIED (WebFetch extraction; identical wording returned in two independent passes): \"The plan is dynamic: initialized from q at session start and updated at each interrupt timestep as steps complete or the user deviates.\" (Sec. 2.3); \"So the planner needs only current visual evidence to decide whether to advance the step index or emit a recovery plan.\" (Sec. 2.4); \"If dt=Interrupt, the planner is invoked on (ot,Pt−1) to produce Pt.\" (Sec. 2.5)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "At every 2 fps timestep the duplex conditions its Silent/Interrupt decision and its utterance on the cached plan P_{t-1} carried over from the last update and on the dialogue history H_<t contained in o_t; reactive answers draw on plan context and conversation history. Retained information is delivered to Action decisions about timing, content, and silence.",
+      "locator": "Fig. 3 caption; Sec. 2.2 (duplex paragraph); Sec. 2 problem formulation (o_t = (v_1:t, H_<t, q)); Sec. 2.5 'Reactive turn handling'",
+      "quote": "UNVERIFIED (WebFetch extraction; identical wording in two passes): \"At every observation o_t (2 fps), the duplex interaction model consumes the cached plan P_{t-1} to emit a decision d_t and, when interrupting, an utterance u_t.\" (Fig. 3 caption); \"the model draws on the current plan context, video observations, and conversation history to respond.\" (Sec. 2.5)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The planner's output (plan with visual cues, recovery step) is an Action-side intention/preparation that explicitly tells the duplex's perception what to look for (cues describing in-progress vs completed evidence) and where in the video timeline to sample: clip selection is anchored to the system's own plan-update/interrupt events, including the assistant's initial response at t=0. This is in-system guidance of Sensing targets, acquisition, and interpretation, not an external grader.",
+      "locator": "Sec. 2.4 (Plan-Anchored Clip Selection); Sec. 2.3 (visual cues); Fig. 1 caption (a)",
+      "quote": "UNVERIFIED (WebFetch extraction; wording matched across two passes, location confirmed as Sec. 2.4 in a third): \"The planner's output shapes both what the interaction model looks for and where in the timeline it looks.\" (Sec. 2.4); \"Planner generates an ideal sequence of procedure for the requested task, along with visual cues to look out for step completion.\" (Fig. 1 caption); \"Every session opens with the assistant's initial response to q, which is treated as a plan update at t=0\" (Sec. 2.4)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained state directly structures sensing at every pass: the retained timestamps of prior plan updates determine which 8 s slices of the video stream are fed (up to 14 anchored clips instead of a recency window, i.e., retention-driven sampling/compression), and the cached plan's cues guide interpretation of the current clip (evidence of in-progress vs completed step). This happens on every timestep without an Action decision requesting a new observation, so it is not merely the M->A->S composition; retention scope (within-session, 14 most recent updates) is stated.",
+      "locator": "Sec. 2.4 (Plan-Anchored Clip Selection); Sec. 2.3 (cue definition: in-progress (Silent) vs completed (Interrupt) evidence); Fig. 3 caption",
+      "quote": "UNVERIFIED (WebFetch extraction; identical wording in two passes): \"The plan thus performs double duty in the decoupled architecture. Alongside the visual cues established in §2.3, it also structures which slices of v1:t the duplex perceives.\" (Sec. 2.4); \"At each step the duplex receives up to 15 non-contiguous 8 s clips drawn from v1:t: one clip covering the most recent 8 s ending at t, plus up to 14 additional clips anchored at prior plan-update timestamps (the 14 most recent, when more updates have occurred).\" (Sec. 2.4); \"The cached plan Pt−1 already encodes the session's procedural history in structured form.\" (Sec. 2.4)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "On each Interrupt the duplex's decision and utterance (d_t, u_t) are delivered to the planner, which writes a revised plan P_t (completed/current/remaining steps, recovery step, fresh cues) into the cached plan that is held fixed and consumed by all later passes; the time of each such action is also retained as a clip anchor. Action context and plans are delivered to Memory for retention and integration within the session.",
+      "locator": "Sec. 2.2 (planner paragraph and Eq. 3); Sec. 2.5 (Inference); Fig. 3 caption",
+      "quote": "UNVERIFIED (WebFetch extraction; core phrase identical in three passes): \"consumes the duplex's full output (dt,ut) together with ot and the cached plan Pt−1, producing a revised plan Pt with visual cues for the new current step\" (Sec. 2.2); \"The plan is updated only at interrupt time steps; at all other time steps it is held fixed.\" (Sec. 2.2); \"The planner runs only on interrupt, producing a revised plan P_t (completed/current/remaining steps with visual cues) that conditions the next duplex pass.\" (Fig. 3 caption)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "Within a session the service retains the timestamps of its own plan updates (which occur only when it decided to interrupt, plus its own initial response at t=0) and uses them later for clip selection, and it retains its own revised plan (completed/current/next statuses, recovery step) as the cached plan for later passes. These are records of what it decided and delivered, kept by the service for its own later use, not author-only trial logs. Retention is within-session only; nothing is stated about cross-session persistence, and the paper does not explicitly say assistant utterances are appended to H_<t.",
+      "locator": "Sec. 2.4 (Plan-Anchored Clip Selection); Sec. 2.2 (Eq. 3); Fig. 3 caption",
+      "quote": "UNVERIFIED (WebFetch extraction; wording matched across two passes): \"plus up to 14 additional clips anchored at prior plan-update timestamps (the 14 most recent, when more updates have occurred)\" (Sec. 2.4); \"Every session opens with the assistant's initial response to q, which is treated as a plan update at t=0; one plan-anchored clip is therefore always available, and the budget grows with session progress and saturates at 15.\" (Sec. 2.4)"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No reply, rating, dismissal, correction, receipt, or observed effect of the assistant's interventions is described as being obtained or retained as evidence about those actions. Later video is used to track the user's procedural state, not framed as the outcome of an utterance; no expected-effect check after a recovery step is described; the 'Silent-failure backstop' is a training-time loss weighting, not run-time outcome evidence; reactive turns are new user queries, not responses to guidance. Targeted sweeps for user responses, feedback, and effect checks returned nothing.",
+      "locator": "Sec. 2.5 ('Reactive turn handling', 'Silent-failure backstop'); Sec. 3.3 (offline metrics); full-text keyword sweep (feedback, correction, user response, rating)"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No run-time linking of an outcome to the decision it concerns is described. G-Mean F1, PQS, OOP detection recall, recovery quality, and the GPT-5.2 judge scores are offline benchmark scoring by the authors, which does not count.",
+      "locator": "Sec. 3.3.1-3.3.4 (Tasks and Metrics); Sec. 4.1 (Main Findings); Appendix B (Subjective Score Details)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Both models are trained by offline SFT and nothing describes the service changing its own weights, prompts, rules, code, or harness during or after interactions. Inference-time plan updates are task-state content (current/next step, cues, recovery step) consumed by a fixed duplex mechanism, which the protocol classifies as content, not revision. Training the duplex on its own predicted plans (RL on rollouts) is explicitly left to future work. The 'Self-Optimized Prompt' item in Appendix G.2 sits under third-party baseline prompts (its text could not be surfaced) and is outside the judged configuration.",
+      "locator": "Sec. 2.6 (Training Objective); Sec. 2.3; Sec. 4.2 (Analysis); Appendix G.2 heading list",
+      "quote": "UNVERIFIED (WebFetch extraction; identical wording in two passes): \"Both models are trained via supervised fine-tuning (SFT) at the single time-step level.\" (Sec. 2.6); \"Closing it requires exposing the duplex to predicted rather than ground-truth plans, for example through RL on the planner's own rollouts, which we leave to future work.\" (Sec. 2.6)",
+      "what": "Nothing: no model parameters, prompts, skills, rules, code, or harness are revised by the service; only the per-session plan content changes."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revised mechanism exists, so no later runs under one are reported; all reported runs use the SFT-trained planner and duplex fixed after training.",
+      "locator": "Sec. 2.6; Sec. 4 (Experiments & Results)"
+    }
+  },
+  "notes": "Judged the full predicted-plan PWR configuration (trained planner + trained duplex, planner invoked only on Interrupt to revise the cached plan online), not PWR-Oracle. Module assignment by function: Sensing = 2 fps video stream, plan-anchored clip selection, user queries, and the duplex's interpretation of clips against cues; Memory = cached plan P_{t-1} (step statuses + cues), retained plan-update timestamps, dialogue history H_<t; Action = duplex decision/utterance and the planner's plan/recovery proposal. Evidence basis: arXiv HTML v1 read only through WebFetch extraction because Bash was denied and local PDF rendering is unavailable; every quote is therefore labelled UNVERIFIED, and the load-bearing quotes were re-requested in 2-3 independent passes with matching wording. The extraction tool could not surface Section 8 (Limitations and Broader Impacts) or the Appendix G.2 'Self-Optimized Prompt' prose; a full-text keyword sweep for memory, personalization, feedback, online/continual learning, and self-improvement found no run-time learning mechanism. The paper does not state whether predicted-plan evaluation rolls out sequentially using the system's own interrupts or scores instances independently; channel judgments rest on the inference procedure in Sec. 2.5, not the evaluation protocol. All memory described is within-session; no cross-session retention is mentioned. No code repository.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 558,
+    "code_commit": null
+  }
+}

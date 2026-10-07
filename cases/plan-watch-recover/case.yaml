@@ -1,0 +1,15 @@
+id: plan-watch-recover
+name: "Plan, Watch, Recover"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2606.04970
+sources:
+  - url: https://arxiv.org/html/2606.04970v1
+    kind: paper
+    version: "2606.04970v1"
+    sha256: d7141ea0a580be0db512c50011ffb5536a4d63af72c55228cf29ee9616a5cbbd
+variants:
+  - id: pro2bench2026
+    label: "Plan, Watch, Recover"
+    configuration: "Full predicted-plan PWR: trained planner plus trained duplex interaction model, with online plan updates; not the oracle-plan condition"
+modes: [read]

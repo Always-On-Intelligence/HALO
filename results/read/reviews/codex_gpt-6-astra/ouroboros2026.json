@@ -1,0 +1,92 @@
+{
+  "id": "ouroboros2026",
+  "configuration": "Hope live deployment with reviewed experience-driven core evolution; excludes frozen benchmark configurations.",
+  "sources_read": [
+    "cases/ouroboros/case.yaml",
+    "https://arxiv.org/html/2608.08311v3",
+    "https://github.com/razzant/ouroboros at commit 4b37f96223b4b8248eea80c9be22cf923759cd5a; checked-out HEAD verified",
+    "supervisor/message_bus.py",
+    "ouroboros/memory.py",
+    "ouroboros/context.py",
+    "ouroboros/presence_context.py",
+    "ouroboros/presence_delivery.py",
+    "ouroboros/consciousness.py",
+    "ouroboros/consciousness_wake.py",
+    "ouroboros/loop_tool_execution.py",
+    "ouroboros/reflection.py",
+    "ouroboros/post_task_synthesis.py",
+    "ouroboros/outcome_receipt_store.py",
+    "ouroboros/tools/verify.py",
+    "ouroboros/tools/browser.py",
+    "ouroboros/tools/git_evolution.py",
+    "ouroboros/tools/review_context_atlas.py"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Incoming messages are persisted before dispatch. Hope's channel inputs enter retained logs and digests, while complaints and internal observations enter its improvement backlog.",
+      "locator": "[Paper v3](https://arxiv.org/html/2608.08311v3), §4, Multi-channel state and Social-interaction-driven development; supervisor/message_bus.py:50-82, 1405-1420, 1492-1498."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Stored identity, working memory and knowledge enter model context. Previous conversation turns and delivery records explicitly inform whether to speak, remain silent or avoid repeating a message.",
+      "locator": "ouroboros/context.py:758-799; ouroboros/presence_context.py:50-88, 203-215, 242-278, 286-291."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action supplies verification commands, expected results and artifact targets to host observation routines. Browser requests likewise specify the URL, observation format, selector and expected page state.",
+      "locator": "ouroboros/tools/verify.py:1-8, 650-679, 790-863; ouroboros/tools/browser.py:815-870, 897-922."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Persisted observation boundaries and previously observed transition identities directly determine which events the next wake acquires and treats as new. The observer reads this retained state before the model makes an action decision.",
+      "locator": "ouroboros/consciousness.py:158-192, 287-336; ouroboros/consciousness_wake.py:640-697, 712-750.",
+      "quote": "Capture every fact since the accepted boundary, plus outstanding cards."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Assistant utterances, tool-call arguments and execution trajectories enter service-owned logs and retained reflection inputs. Reflections and proposed repairs are subsequently persisted; this route includes Action's own records, independently of incoming feedback.",
+      "locator": "supervisor/message_bus.py:1537-1568; ouroboros/loop_tool_execution.py:1487-1513; ouroboros/reflection.py:505-513, 586-609, 862-899."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains its tool-call records and assistant output. Its own reflection process reads recorded execution and preserves the reflection input, establishing subsequent service use rather than author-only logging.",
+      "locator": "ouroboros/reflection.py:454-468, 505-521, 586-609; ouroboros/post_task_synthesis.py:719-750; supervisor/message_bus.py:1553-1568.",
+      "quote": "Retain the complete STORED per-call record"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Checks obtain results about completed work and retain verdicts and output in task-specific verification receipts. Communication delivery outcomes are also retained with message and task identities.",
+      "locator": "ouroboros/tools/verify.py:1-8, 790-863; ouroboros/outcome_receipt_store.py:55-64, 87-101; ouroboros/presence_delivery.py:162-188.",
+      "quote": "verify_and_record — the host runs the agent's declared verification check and\nwrites a durable, host-attested receipt (FR3 verify-before-done)."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Runtime reflection receives the task's recorded choices, tool results and final outcome together, evaluates their appropriateness and produces corrective candidates. Hope's duplicate-message repair also explicitly traces observed faulty assistance to its send path.",
+      "locator": "ouroboros/reflection.py:81-91, 121-141, 586-609; ouroboros/post_task_synthesis.py:726-750; [Paper v3](https://arxiv.org/html/2608.08311v3), §4, Evolution during deployment.",
+      "quote": "Review this finished run from its recorded inputs, execution and sealed outcome."
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The deployment account reports agent-authored, reviewed implementation repairs following social feedback and self-observed failure. These change executable mechanisms, rather than merely adding remembered facts.",
+      "locator": "[Paper v3](https://arxiv.org/html/2608.08311v3), §4, Evolution during deployment, paragraphs describing duplicate sends and review-context overflow.",
+      "quote": "landed a reviewed verbatim-duplicate guard in the public output pipeline.",
+      "what": "Public-message duplicate suppression and the review-context assembly mechanism, including a bounded context atlas and calibrated size estimation."
+    },
+    "later_use": {
+      "label": "stated",
+      "rationale": "The paper explicitly reports subsequent interactions using both structural repairs, establishing actual later use beyond a code path that could load them.",
+      "locator": "[Paper v3](https://arxiv.org/html/2608.08311v3), §4, Evolution during deployment, final sentence of the second paragraph.",
+      "quote": "Both became durable error classes and reviewed structural changes used by subsequent interactions."
+    }
+  },
+  "notes": "Reviewed independently without modifying files or executing the service. Deployment revision and later-use judgments rely on the specified paper version; implementation judgments use the pinned checkout. M->S specifically concerns retained observation-state filtering, not answer-time retrieval or a composed M->A->S route. Benchmark scoring and author-only trajectory audits were not counted.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 271,
+    "code_commit": "4b37f96223b4b8248eea80c9be22cf923759cd5a"
+  }
+}

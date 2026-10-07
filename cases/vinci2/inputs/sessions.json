@@ -1,0 +1,53 @@
+{
+  "note": "Scripted egocentric sessions for EgoMemo. A session is a few 30-second windows (the caption window of egomemo/run.py), each with six frames sampled every 5 seconds and written as text; the adapter turns every frame into a placeholder image and gives its text to the replaced caption model and visual encoder. No user questions are asked: the run tests the proactive service. 'ideal' says what a helpful assistant would do and is shown only to the judge; 'design' records why the session was chosen and is never sent to a model.",
+  "sessions": [
+    {
+      "id": "stove_eggs",
+      "setting": "At home in the morning: eggs on the stove, a phone call, then getting ready to leave.",
+      "design": "The burner is turned on in window 1 and the user leaves the kitchen in window 2; in window 3 the camera only shows the user getting ready to leave, so a reminder about the stove needs memory. In window 4 the user goes back and turns it off, so a repeated reminder would be redundant.",
+      "ideal": "Remind the user once, when they leave the kitchen or are about to leave the house (windows 2-3), that the stove is still on under the eggs. Stay silent in window 4, where the user has gone back and turned it off.",
+      "windows": [
+        ["Kitchen counter; my hands fill a small saucepan with water at the sink.", "I place the saucepan on the front-right burner of a gas stove.", "My hand turns the front-right knob; a blue flame lights under the saucepan.", "I turn the knob to the highest setting; the flame is large.", "I lower four eggs into the water with a spoon.", "Small bubbles rise in the saucepan and steam starts to appear."],
+        ["My phone on the counter lights up with an incoming call from 'Mum'.", "I pick up the phone and answer it while walking out of the kitchen.", "A hallway; I walk toward the living room holding the phone to my ear.", "The living room; I sit down on a grey sofa.", "I am still on the phone, looking out of the window.", "A cushion on the sofa; my free hand plays with a tassel."],
+        ["I lower the phone; the screen shows the call ended after 4 minutes.", "I stand up from the sofa and walk into the hallway.", "I take a black jacket from a hook by the front door.", "I put on the jacket and pick up car keys from a small dish.", "I sit on a bench by the door and put on my sneakers.", "My hand reaches for the front door handle."],
+        ["The front door is half open; I stand in the doorway.", "I turn around and walk quickly back down the hallway.", "In the kitchen, the saucepan is boiling hard on the front-right burner.", "I turn the front-right knob off; the flame disappears.", "I lift the eggs out with a spoon into a bowl.", "I walk back toward the front door."]
+      ]
+    },
+    {
+      "id": "cafe_phone",
+      "setting": "Working on a laptop in a cafe, then leaving.",
+      "design": "The phone is put face down on the table in window 1 and is still there in window 2; in window 3 the camera shows the user leaving without it. In window 4 the user goes back for it.",
+      "ideal": "Remind the user in window 3, as they leave, that their phone is still on the table. Stay silent otherwise; in window 4 they are already going back for it.",
+      "windows": [
+        ["A cafe counter; I pay with my phone at the card reader.", "I carry a latte to a small round table by the window.", "I put my phone face down on the table next to the latte.", "I take a laptop out of my backpack and open it.", "The laptop screen shows a slide deck titled 'Q3 Review'.", "I sip the latte."],
+        ["I type notes into the slide deck.", "The phone lies face down on the table beside the saucer.", "I look out of the window at people passing.", "I drink the rest of the latte.", "I scroll through the slides on the laptop.", "A waiter takes the empty cup away; the phone stays on the table."],
+        ["I close the laptop and slide it into my backpack.", "I stand up and put on my coat.", "I sling the backpack over my shoulder and turn toward the exit.", "I walk between the tables toward the glass door.", "My hand pushes the glass door open.", "The street outside; a bus passes."],
+        ["On the pavement, I pat my coat pockets.", "I turn back toward the cafe door.", "Inside, I walk to the window table.", "My phone lies face down on the table; I pick it up.", "I put the phone in my coat pocket.", "I walk out of the cafe again."]
+      ]
+    },
+    {
+      "id": "double_dose",
+      "setting": "Breakfast at home with a once-daily heart medication.",
+      "design": "The daily tablet is taken in window 1; in window 3 the user shakes out a second tablet, which is only a mistake given window 1. In window 4 the user puts it back.",
+      "ideal": "Warn the user in window 3, before they swallow it, that they already took today's tablet in window 1 (the label says one tablet daily). Stay silent otherwise.",
+      "windows": [
+        ["A kitchen counter with an orange pill bottle labelled 'Metoprolol 50 mg - take ONE tablet daily'.", "I open the bottle and shake one white tablet into my palm.", "I put the tablet in my mouth.", "I drink a glass of water.", "I close the bottle and put it next to the kettle.", "I fill the kettle and switch it on."],
+        ["I put two slices of bread into the toaster.", "I take butter from the fridge.", "The kettle clicks off.", "I pour hot water into a mug with a tea bag.", "The toast pops up; I butter it on a plate.", "I eat the toast standing at the counter."],
+        ["I put the plate in the sink.", "I pick up the orange pill bottle next to the kettle.", "I open the bottle.", "I shake one white tablet into my palm.", "I reach for the glass of water.", "The tablet is in my palm and the glass is in my other hand."],
+        ["I look at the tablet in my palm.", "I put the tablet back into the bottle.", "I close the bottle and put it in a cupboard.", "I pick up the mug of tea.", "I walk to the living room.", "I sit in an armchair with the tea."]
+      ]
+    },
+    {
+      "id": "garden_tap",
+      "setting": "Watering the garden, then a video call indoors.",
+      "design": "The hose is dropped with the tap running in window 2 as the user goes indoors; in window 3 the camera only shows the call. In window 4 the user goes out and turns the tap off.",
+      "ideal": "Remind the user once, in window 2 or 3, that the garden tap is still running. Do not repeat it during the call, and stay silent in window 4, where they turn it off.",
+      "windows": [
+        ["A garden; my hand turns on an outdoor tap on the house wall.", "Water flows through a green hose.", "I water a row of tomato plants with the hose.", "I move along the row, watering the base of each plant.", "I water a flower bed with yellow marigolds.", "Puddles form on the soil."],
+        ["I drop the hose on the lawn; water keeps pouring out of it.", "I take my phone out of my pocket; a message reads 'Call in 2 min?'.", "I walk toward the back door of the house.", "I step into the kitchen and take off my garden shoes.", "I walk to a desk in the study.", "I sit down and open a laptop."],
+        ["A video call starts on the laptop; three faces appear.", "I talk, gesturing with my hand.", "I take notes on a paper notepad.", "I look at a shared spreadsheet on the screen.", "I nod at the screen.", "The call continues."],
+        ["The call ends; I close the laptop.", "I walk back to the kitchen.", "I look out of the window; the lawn near the tomato plants is flooded.", "I put on garden shoes and go outside.", "I turn off the outdoor tap.", "I pick up the hose and coil it."]
+      ]
+    }
+  ]
+}

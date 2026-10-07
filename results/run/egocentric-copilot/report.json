@@ -1,0 +1,131 @@
+{
+  "case": "egocentric-copilot",
+  "channels": {
+    "S->M": "frames retained in the orchestrator frame buffer (image_queue); caption and speech events admitted to the HCC event history",
+    "M->A": "retained frames delivered to the memory-query branch; HCC summaries and recent events delivered to the answer",
+    "A->S": "the interaction mode sets the glasses frame interval and JPEG quality (send_text_parameters)"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "A->S"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 12,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "final_quality": {
+          "original": 80.0,
+          "modified": 25.0
+        },
+        "hcc_correct": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "memory_fact_recall": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "model_calls": {
+          "original": 7.0,
+          "modified": 7.0
+        },
+        "label_fact_recall": {
+          "original": 0.875,
+          "modified": 0.0
+        },
+        "replies": {
+          "original": 5.0,
+          "modified": 5.0
+        },
+        "buffer_frames": {
+          "original": 146.0,
+          "modified": 260.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output_hcc",
+      "pairs": 12,
+      "original": 12,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "final_quality": {
+          "original": 80.0,
+          "modified": 80.0
+        },
+        "hcc_correct": {
+          "original": 1.0,
+          "modified": 0.0
+        },
+        "memory_fact_recall": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "model_calls": {
+          "original": 7.0,
+          "modified": 4.0
+        },
+        "label_fact_recall": {
+          "original": 0.875,
+          "modified": 0.875
+        },
+        "replies": {
+          "original": 5.0,
+          "modified": 5.0
+        },
+        "buffer_frames": {
+          "original": 146.0,
+          "modified": 1.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output_hcc",
+      "pairs": 12,
+      "original": 9,
+      "modified": 0,
+      "tie": 3,
+      "metrics": {
+        "final_quality": {
+          "original": 80.0,
+          "modified": 80.0
+        },
+        "hcc_correct": {
+          "original": 1.0,
+          "modified": 0.25
+        },
+        "memory_fact_recall": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "model_calls": {
+          "original": 7.0,
+          "modified": 7.0
+        },
+        "label_fact_recall": {
+          "original": 0.875,
+          "modified": 0.875
+        },
+        "replies": {
+          "original": 5.0,
+          "modified": 5.0
+        },
+        "buffer_frames": {
+          "original": 146.0,
+          "modified": 146.0
+        }
+      }
+    }
+  ]
+}

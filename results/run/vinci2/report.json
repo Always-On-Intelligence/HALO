@@ -1,0 +1,107 @@
+{
+  "case": "vinci2",
+  "channels": {
+    "S->M": "clip captions, entities and relations, visual embeddings and activity captions are written to memory (memory_bridge.py:262-344)",
+    "M->A": "memory reaches the proactive reasoner: retrieval, the recent activity caption and the caption time ranges (pipeline_v2_patch.py:680-697, 778)",
+    "A->M": "the reasoner's own reminders and search requests are kept and shown to it in later windows (pipeline_v2_patch.py:771-775, 850-856)"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 3,
+      "modified": 0,
+      "tie": 9,
+      "metrics": {
+        "searches": {
+          "original": 0.6667,
+          "modified": 0.25
+        },
+        "stored_captions": {
+          "original": 4.0,
+          "modified": 0.0
+        },
+        "kg_nodes": {
+          "original": 47.1667,
+          "modified": 0.0
+        },
+        "activity_captions": {
+          "original": 2.0,
+          "modified": 0.0
+        },
+        "reminders": {
+          "original": 0.25,
+          "modified": 0.5
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 3,
+      "modified": 0,
+      "tie": 9,
+      "metrics": {
+        "searches": {
+          "original": 0.6667,
+          "modified": 0.25
+        },
+        "stored_captions": {
+          "original": 4.0,
+          "modified": 4.0
+        },
+        "kg_nodes": {
+          "original": 47.1667,
+          "modified": 47.1667
+        },
+        "activity_captions": {
+          "original": 2.0,
+          "modified": 2.0
+        },
+        "reminders": {
+          "original": 0.25,
+          "modified": 0.5
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 1,
+      "modified": 0,
+      "tie": 11,
+      "metrics": {
+        "searches": {
+          "original": 0.6667,
+          "modified": 1.0
+        },
+        "stored_captions": {
+          "original": 4.0,
+          "modified": 4.0
+        },
+        "kg_nodes": {
+          "original": 47.1667,
+          "modified": 47.1667
+        },
+        "activity_captions": {
+          "original": 2.0,
+          "modified": 2.0
+        },
+        "reminders": {
+          "original": 0.25,
+          "modified": 0.3333
+        }
+      }
+    }
+  ]
+}

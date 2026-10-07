@@ -1,0 +1,18 @@
+id: abot-claw
+name: "ABot-Claw"
+domain: physical
+kind: research
+report: https://arxiv.org/abs/2604.10096
+sources:
+  - url: https://arxiv.org/html/2604.10096v2
+    kind: paper
+    version: ""
+    sha256: f9cb7a00c5520237d229d5b533b70bb4c5c19e826bd104cf7dceca3c9aa2ec63
+code:
+  repo: https://github.com/amap-cvlab/ABot-Claw
+  commit: 39c9ffc94a84f2e6baac431a9bff9771111f8539
+variants:
+  - id: abot-claw
+    label: "ABot-Claw"
+    configuration: "ABot-Claw OpenClaw orchestration with shared multi-robot spatial/visual memory and online critic"
+modes: [read, run]

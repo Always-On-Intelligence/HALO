@@ -1,0 +1,81 @@
+{
+  "id": "vinci",
+  "configuration": "Variant `vinci`: the paper-described streaming assistant. An RTMP camera (e.g. a OnePlus phone mounted on the user's head, Fig. 4) streams video and audio. The backend detects wake-up keywords through an API, EgoVideo-VL answers, and the answer is played as speech; generation and retrieval modules are also available. The memory module periodically describes short video snapshots and stores the descriptions with timestamps, which later history-aware QA uses. Not assumed: the optional chat-history route (use_chat_history, off by default) and the MySQL chat-record log in the closed vinci-be backend. Code at a3b9dfa was read alongside the paper: the model service in vinci-inference/ (used by the streaming demo) and the Gradio demo demovl.py, which implement the same memory.",
+  "sources_read": [
+    "https://arxiv.org/html/2412.21080v1 (v1): Abstract, §1, section list, §3.1–3.6, §4–4.7, §5, §6, captions of Figs. 1–4 and 9–14. Read through WebFetch because raw download was not permitted. Every paper sentence quoted below was confirmed by at least two independent exact-wording checks.",
+    "https://github.com/OpenGVLab/vinci @ a3b9dfabc184ded110d5f28daa4f132e5bdcebaa (local checkout): README.md, boot.sh, demovl.py, vl_open.py, download.sh (listing)",
+    "vinci-inference/app/main.py, app/data.py, app/models/__init__.py, app/models/internvl.py, app/models/seine.py (empty file), app/service/internvl.py, app/service/seine.py, app/global_var/cache.py; vinci-inference/README.md, boot.sh, .env, client/internvl.py, client/internvl_sse.py",
+    "vinci-local/README.md; vinci-local/docker/README.md, docker-compose.yaml, docker-compose-build.yaml, boot.sh, clone.sh, mysql/init.sql, srs/conf/vinci.conf",
+    "generation/seine-v2/seine.py; repo-wide grep for backward|optimizer|.step(|feedback|rating|thumb|cancel|fine-tun|lora|save_pretrained|torch.save"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensing → Memory admission. EgoVideo-VL periodically turns short video snapshots into action descriptions, whether or not the user has asked anything, and the descriptions are stored with their timestamps. The code agrees. The request's 'silent' field is documented as the mode for timed frame capture (data.py L16). In that mode the model describes the frames with a fixed prompt and the service appends (timestamp, response) to a per-session history_cache (internvl.py L139-146, L274-281, L305-313). The Gradio demo does the same every memory_stride seconds (demovl.py L208-218, L480-488). Memory lasts across queries within a session but is bounded: get_history keeps the last 10 entries (internvl.py L259-264), and the Gradio memory size is 5–25 (demovl.py L289-290).",
+      "locator": "arXiv 2412.21080v1 §3.3 Memory module; §1 Introduction (paragraph 'Vinci is composed of multiple integrated modules'); Fig. 2 caption; vinci-inference/app/data.py L16; vinci-inference/app/models/internvl.py L113-152, L259-264, L274-281, L305-313; demovl.py L203-218, L289-290, L480-488",
+      "quote": "It operates by periodically capturing short video snapshots, describing the observed actions in detail, and storing the resulting textual descriptions along with their corresponding timestamps."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "When the user asks something after the wake word, the stored timestamped descriptions go into EgoVideo-VL's prompt next to the current frames. They shape the content of the spoken answer: temporal grounding, step summaries and next-step plans (§4.3–4.5). In code, add_history() writes each stored entry as '当视频在%.1f秒时, 视频的内容是 ...' ('when the video was at t s, the content was ...') ahead of the user question. This happens in the streaming service (internvl.py L26-69, L204-207) and in the Gradio demo (demovl.py L221, L242-291).",
+      "locator": "§3.3 Memory module; §1 Introduction; §4.3 Temporal grounding; §4.5 Future planning; vinci-inference/app/models/internvl.py L26-69, L204-207; demovl.py L219-235, L242-291",
+      "quote": "When a user interacts with Vinci, the memory module provides relevant historical context to EgoVideo-VL, enabling the system to temporally ground past actions, summarize user activities, and answer queries requiring historical reasoning."
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "No source describes Action's intentions, plans or information needs steering what Sensing acquires or how it interprets it. Snapshot capture runs on a timer with a fixed description prompt (internvl.py L144; demovl.py L209-212). Wake-word detection lets Sensing trigger Action, which is S→A. For generation, Action passes the user query and the most recent frame to an effector, and retrieval sends HowTo100M clips to the user; neither feeds back into Sensing. The code's sep_chat path, which describes the current frames before answering, is off by default (internvl.py L240), is not in the paper, and uses a fixed prompt. The paper never explicitly excludes this route. The component that captures frames and detects wake words lives in the closed vinci-be Docker image (docker-compose.yaml L73-104; clone.sh L4 points to an internal GitLab), so absence cannot be established.",
+      "locator": "§3.1 Input processing; §3.4 Generation module; §3.5 Retrieval Module; §3.6 System integration; vinci-inference/app/models/internvl.py L113-152, L178-207, L240; demovl.py L176-196, L208-216; vinci-local/docker/docker-compose.yaml L73-104; vinci-local/docker/clone.sh L4",
+      "quote": "When required, it provides the user query and the most recent video frame to the generation module, which then outputs a 2-second video illustrating the requested action."
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Memory is read only at answer time, which the protocol counts as M→A. The step that writes memory gets no memory: its prompt is the frame tokens plus a fixed instruction ('the video is now at t s; briefly describe my actions'), and model.chat is called with history=None (internvl.py L102-104, L143-145; demovl.py L208-216). The paper describes no memory-guided sampling, attention, compression or interpretation of new observations. It also does not explicitly exclude one, so the label is insufficient, not absent.",
+      "locator": "§3.3 Memory module; vinci-inference/app/models/internvl.py L102-104, L139-146 (quote at L144); demovl.py L203-218",
+      "quote": "question = video_prefix + '现在视频到了 %.1f 秒处. 简单的描述视频中我的动作.' % timestamp"
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "The paper's memory holds only snapshot descriptions and timestamps. It never says answers, plans, generated or retrieved videos, or their outcomes are written to memory, but it doesn't exclude this either, and the abstract's 'task planning based on past interactions' is tied to no mechanism. The public code points toward no flow in this configuration. Writing the answer back into the activity memory is commented out (demovl.py L235; vl_open.py L197). After answering, the streaming service stores the history unchanged (internvl.py L283-295, L315-324). The Q/A chat_history buffer reaches prompts only when use_chat_history=True (default False; demovl.py L124, L263), which the configuration excludes. Two leftovers prevent calling this a clear absence. The Gradio-only 'Video how-to demo' button reuses the last transcript entry as the SEINE prompt (demovl.py L491-497). The closed vinci-be backend also logs request/response text, video URLs and a cancel status in the MySQL user_chat_record table (init.sql L58-76), and how that log is used is unknown.",
+      "locator": "Abstract; §3.3 Memory module; demovl.py L124, L219-236, L263-279, L491-497; vl_open.py L92, L180-198; vinci-inference/app/models/internvl.py L204-234, L283-295, L315-324; vinci-local/docker/mysql/init.sql L58-76",
+      "quote": "With its ability to process long video streams in real-time, Vinci can answer user queries about current observations and historical context while also providing task planning based on past interactions."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "The memory logs the wearer's activities and the environment, not what the assistant decided or delivered. No source says the service keeps its own answers or demonstrations for later use. In this configuration the answer write-back is commented out, and the chat-history buffer is optional and excluded. The closed backend's MySQL user_chat_record schema implies a log of each Q&A, but neither the paper nor the public code says the service uses it later.",
+      "locator": "§1 Introduction; §3.3 Memory module; demovl.py L235; vinci-inference/app/models/internvl.py L283-295; vinci-local/docker/mysql/init.sql L58-76",
+      "quote": "This ensures a comprehensive log of user activities and environmental events."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No source describes the service obtaining and keeping a reply, rating, correction, receipt or task result about its answers or demonstrations. The only hint is a status column in the closed backend's DB schema (0 = normal, 1 = cancelled by the user). That table belongs to the excluded chat-record backend, and no source describes the column's use. §4 is the authors' own qualitative demo analysis.",
+      "locator": "§4 Experiments (4.1–4.7); vinci-local/docker/mysql/init.sql L70",
+      "quote": "In this section, we present a qualitative analysis of Vinci's capabilities using examples from its Gradio demo with uploaded long videos."
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Nothing links an outcome to the decision it concerns in order to check or correct assistance, not even an immediate check. Whether examples such as the sugar-timestamp answer (Fig. 9) are correct is judged by the authors in the paper, which does not count.",
+      "locator": "§4.1–4.7; Figs. 5–14"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service never changes its own mechanism. Developers fine-tune EgoVideo-VL and SEINE offline (§3.2, §3.4). At inference the checkpoints are loaded frozen (demovl.py L137-158 eval(); seine.py L50-56, L163 set_grad_enabled(False), L185 model.eval()), and prompts are fixed templates in code. Memory entries are content (timestamped activity descriptions) read through a fixed prompt template, so they are not a revision. Memory stride and size are sliders set by the user (demovl.py L433-449).",
+      "locator": "§3.2 EgoVideo-VL; §3.4 Generation module; demovl.py L137-158, L433-449; vinci-inference/app/models/internvl.py L26-69; generation/seine-v2/seine.py L45-56, L163, L185",
+      "quote": "We apply a two-stage fine-tuning strategy: in the first stage, we tune the model using Ego4D and EgoExoLearn to better align the vision and language tokens in the egocentric context.",
+      "what": "Nothing is revised by the service. Weights change only through developers' offline fine-tuning, and memory holds content only."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "With no service-made revision there is no later run under a revised mechanism. Later queries use the same frozen checkpoints and prompt templates; only the memory content is newer.",
+      "locator": "§3.2; §4; demovl.py L158; vinci-inference/app/models/internvl.py L72-82, L236-246"
+    }
+  },
+  "notes": "Judged the paper-described wake-word streaming assistant, reading the code alongside. The streaming demo's backend (vinci-be: wake-word API, timed frame capture, MySQL logging) ships only as a prebuilt Docker image; its source is on an internal GitLab (clone.sh). The public code therefore covers the model service and the Gradio demo but not the backend logic. In code, memory is a per-session rolling window (last 10 descriptions in the streaming service, 5–25 in Gradio), not the 'comprehensive record' the paper implies. This does not negate S→M or M→A. Code quirks noted but not relied on: vl_open.Chat never sets self.sep_chat, and its check `if 'version' == 'v0'` is always false. The sep_chat answer path in internvl.py references a nonexistent lmmodel and is disabled. Paper text came through WebFetch because a raw download was not permitted. Each quoted paper sentence was confirmed by repeated exact-wording checks. The Fig. 3 caption came back with inconsistent wording ('commands' vs 'keywords'), so it is not quoted.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 669,
+    "code_commit": "a3b9dfabc184ded110d5f28daa4f132e5bdcebaa"
+  }
+}

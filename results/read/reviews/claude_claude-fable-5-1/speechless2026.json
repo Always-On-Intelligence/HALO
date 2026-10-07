@@ -1,0 +1,81 @@
+{
+  "id": "speechless2026",
+  "configuration": "SpeechLess six-module implementation (Query Decoding Agent, Contextual Dimension Encoder, Personal Memory Store Manager, Memory Retriever, Response/Answer Composer with Answer Validation Agent, User Verification Interface) with a long-term per-user episodic spatial memory, low-confidence Yes/No verification with rationale, and Full/Partial/Zero utterance modes, as described in arXiv 2602.00793v2 Section 3 and deployed in Study A (Meta Quest 3 passthrough AR) and Study B (mobile AR client talking to a Google Cloud Platform Python server). The Meta RayBan formative-study setup (Section 2.1) was not judged.",
+  "sources_read": [
+    "https://arxiv.org/html/2602.00793v2 (version 2602.00793v2; read through the WebFetch tool, which is model-mediated: whole-section verbatim dumps were refused, so sentence-level quotes were extracted per subsection in repeated independent passes; all quotes below are therefore labelled UNVERIFIED although key sentences came back identically across passes; Bash was unavailable so the raw HTML and the case.yaml sha256 could not be checked)",
+    "cases/speechless/case.yaml and cases/speechless/README.md (configuration and source list only)",
+    "No code repository exists for this work; judged from the paper text alone"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed and user-supplied evidence is written into the per-user memory store: the Dimension Encoder turns the multimodal input (scene description, referent/object-of-focus, space label, time, raw speech transcription) into a dimension sketch that is bound into each stored spatial-memory entry; Remembrance queries encode the current scene/object/time/intent into an episodic entry for storage; user confirmation gates the store operation and user-requested Removal deletes an entry, so user-supplied corrections also reach Memory. The study reports 833 such entries were actually collected.",
+      "locator": "Sec. 3.1 (Remembrance and Removal paragraphs), Sec. 3.2 sentences 1-3, Sec. 3.5 sentences 1-2 and 5-7, Sec. 4.3, Sec. 5.1 Technical Evaluation",
+      "quote": "UNVERIFIED (Sec. 3.5): \"Each entry binds the query, its response, and the dimension sketch that contextualizes the interaction (scene description, object, time, intent, and spatial metadata), in the form of a 'Spatial memory.'\" UNVERIFIED (Sec. 3.1): \"The scene description, object-of-focus, time, and intent are encoded into an episodic entry and prepared for storage directly via Memory Store Manager.\" UNVERIFIED (Sec. 3.1): \"Once confirmed, the memory is removed.\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved episodes are delivered to the response decision: the Memory Retriever surfaces up to five candidate memories matched on GPS proximity, semantic similarity and temporal filters, and the Response Composer Agent generates the answer from those candidates together with the query and current view; for simple recalls the stored knowledge is returned directly, combined with the current scene.",
+      "locator": "Sec. 3.3 sentences 1-4, Sec. 3.4 sentences 1-2, Fig. 3 caption",
+      "quote": "UNVERIFIED (Sec. 3.4): \"The Response Composer Agent follows a RAG-like pipeline. It aggregates five candidate memories received from Retriever, and together with the user query and current view, it generates an informed response.\" UNVERIFIED (Sec. 3.3): \"If a query involves simple recalling of a prior 'as-is' memory, SpeechLess recalls knowledge directly from Memory Store Manager, combining retrieved episodes with the current scene.\""
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Two in-system flows from Action to Sensing are described. (1) When the response being prepared concerns live content, the system's information need triggers a targeted acquisition of new external information through the Google Custom Search API before the answer is returned. (2) When the Answer Validation Agent scores a response as low confidence, Action requests a specific new observation, a Yes/No confirmation shown with the response rationale, whose interpretation is bound to that pending response; Removal likewise summarizes the matched memory and requests confirmation before acting. Sensing is otherwise on-demand (button-triggered), so no continuous sensing is steered.",
+      "locator": "Sec. 3.3 sentences 6-7 and 9, Sec. 3.4 sentences 3-5, Sec. 3.6 first sentences, Sec. 3.1 Removal paragraph, Sec. 2.2 design goal on human-in-the-loop",
+      "quote": "UNVERIFIED (Sec. 3.3): \"If the user refers to a memory that involves a live, up-to-date content (e.g., weather, transit), an updated response is needed.\" \"The Retriever proactively updates the response of the retrieved memory via the Google Custom Search API, before returning it as candidate memories.\" UNVERIFIED (Sec. 3.4): \"For a low confidence response, the user is asked to verify via Verification Interface.\" UNVERIFIED (Sec. 3.6): \"Each low-confidence response is paired with a binary confirmation–accept or reject (Yes/No), along with its rationale.\""
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained spatial memories are supplied to the interpretation of the current observation, not only to answer composition: for Partial and Zero utterances the encoder hands the current dimensions to an intent-resolution step that refines and infers the intent of the under-specified or silent query from the user's stored spatial memories, and the Zero mode is defined as the system inferring the user's intent entirely from spatial memory context. This is interpretation of current input guided by retained priors, described as a step distinct from and prior to the Response Composer, so it is not merely answer-time retrieval nor an M->A->S composition.",
+      "locator": "Sec. 3.2 sentence 4, Sec. 3.1 Zero Utterance definition, Sec. 3 intro (micro-utterance paragraph), Fig. 3 caption",
+      "quote": "UNVERIFIED (Sec. 3.2): \"For under-specified intents under Question Answering queries (Partial or Zero), the encoder passes these dimensions to the intent resolution step, where it attempts to refine and infer the intent of the query based on the user's stored/prior spatial memories.\" UNVERIFIED (Sec. 3.1): \"Zero Utterance–zero-verbal cue, where the system fully infers the user's intent from spatial (visuo-location) memory contexts.\" UNVERIFIED (Fig. 3 caption): \"a memory recall request (C) retrieves similar contextual memories, and uses them to infer the intention behind a user's new query\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The service's own outputs are written to Memory: every stored entry binds the system's response and the inferred intent to the query and context, memories are stored on Question Answering as well as Remembrance, and the store is a long-term per-user layer that grows with routines. Whether the live-content update is written back to the stored entry is ambiguous (Sec. 4.2 says the live memory is updated upon recall), but the flow is established by the stored responses and inferred intents regardless.",
+      "locator": "Sec. 3 system overview item (3), Sec. 3.5 sentences 1-3 and 7, Sec. 4.2, Sec. 5.1 Technical Evaluation",
+      "quote": "UNVERIFIED (Sec. 3 overview): \"(3) Personal Memory Store Manager incrementally builds long-term, personalized memories by binding prior interactions, inferred intents, and responses to spatiotemporal and referential contexts\" UNVERIFIED (Sec. 3.5): \"A memory is stored by either Remembrance or Question Answering.\" UNVERIFIED (Sec. 5.1): \"We collected 833 memories, each containing a dimension sketch, user query, and system response.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of what it delivered: each memory entry stores the system's response and inferred intent with the query and dimension sketch in the per-user store for later recall, and the evaluation confirms 833 such entries (sketch, query, system response) were accumulated by the system during Study A.",
+      "locator": "Sec. 3.5 sentences 1-2, Sec. 3 overview item (3), Sec. 5.1 Technical Evaluation",
+      "quote": "UNVERIFIED (Sec. 3.5): \"Personal Memory Store Manager serves as a long-term, per-user episodic memory layer.\" \"Each entry binds the query, its response, and the dimension sketch that contextualizes the interaction (scene description, object, time, intent, and spatial metadata), in the form of a 'Spatial memory.'\""
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "The only feedback on delivered responses is the immediate Yes/No verification of low-confidence answers, which gates storage; the paper never states that the accept/reject outcome, a user correction, or any later evidence about a delivered response is itself retained, logs no verification counts or acceptance rates in either study, and does not describe what is kept after a rejection.",
+      "locator": "Sec. 3.5 sentences 5-6, Sec. 3.6, Sec. 5.1-5.2 (no verification statistics), Sec. 6 future-work sentence on feedback from Verification Interface",
+      "quote": "UNVERIFIED (Sec. 3.5): \"Furthermore, the store operation is gated by User Verification, with deletions supported at any time, upon confirmation.\" \"A low-confidence response triggers a user correction/verification rather than being silently recorded, to maintain high-quality memory storage.\""
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "An immediate check is described: each low-confidence response is paired with its own accept/reject confirmation and rationale, and that confirmation is used to validate the response and decide whether it is stored, so the outcome is linked to the specific decision it concerns and used to check assistance (an immediate check counts even if nothing is kept).",
+      "locator": "Sec. 3.6 first sentences, Sec. 3.3 sentence 9, Sec. 3.4 sentence 5, Sec. 3.5 sentences 5-6",
+      "quote": "UNVERIFIED (Sec. 3.6): \"Each low-confidence response is paired with a binary confirmation–accept or reject (Yes/No), along with its rationale.\" UNVERIFIED (Sec. 3.3): \"Then, it is validated by user via User Verification Interface, for a trustworthy response.\""
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service changes no part of its own mechanism: prompts, models, the 1-10 confidence validation, retrieval rules (GPS proximity, semantic similarity, recency filters, Reciprocal Rank Fusion) and the pipeline are fixed, and what accumulates is per-user episodic memory content consumed by that fixed mechanism, which is content rather than a revision. Learning-based personalization using verification feedback (RL, SFT) is explicitly future work.",
+      "locator": "Sec. 3.3-3.5 (fixed retrieval and composition mechanism), Sec. 6 'Recognizing Routine Patterns' and 'Towards Fully Proactive Wearable AR Assistance'",
+      "quote": "UNVERIFIED (Sec. 6): \"we will extend SpeechLess toward proactivity by modeling predictive intent from user preferences (e.g., OmniActions, Sensible Agent) and personalizing with learning-based methods (e.g., RL, SFT) using episodic memories and feedback from Verification Interface.\" UNVERIFIED (Sec. 6): \"The routine activity detection of SpeechLess currently relies on recency and word-based filters.\"",
+      "what": "Nothing in the mechanism is revised by the service; only memory content (per-user episodic spatial memories: query, response, inferred intent, dimension sketch) accumulates and is deleted on user request, and it is used by an unchanged retrieval and composition pipeline."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revised mechanism exists, so no later run under a revision is reported; later queries do reuse stored memory content (seeded and user-created entries recalled in Study A and Study B), but that is use of content by the fixed mechanism, not later use of a revised mechanism.",
+      "locator": "Sec. 5.1 Study Design and Technical Evaluation, Sec. 5.2 Study Design, Sec. 6",
+      "quote": "UNVERIFIED (Sec. 5.1): \"We made three personas, each indicating a hypothesized individual user, with disparate interests, and pre-seeded 45 personal memories before the study.\""
+    }
+  },
+  "notes": "Judged the SpeechLess six-module configuration (speechless2026) from the paper text only; no code exists. Quotes are labelled UNVERIFIED because the only available fetch path was a model-mediated extractor that refused full-section dumps; sentence-level extractions were repeated independently and the key sentences (Sec. 3.3-3.6) came back identically each time, but exact wording could not be confirmed against raw HTML. One extractor claim that the live-content update is not written back to the store was its own inference and was not relied on. The A->S label rests on the live-content search acquisition and on the response-bound Yes/No verification request; the M->S label rests on the Sec. 3.2 statement that stored spatial memories are used in an intent-resolution step to refine the interpretation of Partial/Zero queries, which the paper distinguishes from response composition. Sensing is on-demand (button-mapped triggers mirroring Meta RayBan taps, Quest controller A button in Study A; camera, microphone, GPS and network accessed by the mobile client in Study B).",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 399,
+    "code_commit": null
+  }
+}

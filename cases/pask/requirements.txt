@@ -1,0 +1,3 @@
+# PASK's released code (eval/, bench/03c_memory.py) needs only the standard library once the `openai`
+# client is replaced by the adapter's stub, so nothing else is installed.
+pyyaml

@@ -1,0 +1,18 @@
+id: pask
+name: "PASK"
+domain: digital
+kind: research
+report: https://arxiv.org/abs/2604.08000
+sources:
+  - url: https://arxiv.org/html/2604.08000v1
+    kind: paper
+    version: "2604.08000v1"
+    sha256: 91e8456b4b48d1ccc2eae9b938e00cca66dfda972562eb3eb7f5146cb56d44c2
+code:
+  repo: https://github.com/xzf-thu/Pask
+  commit: d54646c52b1555232ce4ab39103768d7f65b8267
+variants:
+  - id: pask2026
+    label: "PASK"
+    configuration: "IntentFlow demand detection with PASK-MM and PASK-PAS"
+modes: [read, run]

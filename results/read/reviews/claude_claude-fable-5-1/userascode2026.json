@@ -1,0 +1,116 @@
+{
+  "id": "userascode2026",
+  "configuration": "arXiv 2606.16707v1 'UaC + constraint pipeline' as named in the case: two-phase executable personal memory (Phase 1 per-session LLM fact extraction appended to a never-overwritten fact list indexed in ChromaDB plus a chunked raw-conversation archive; Phase 2 periodic LLM regeneration of typed Python dataclass state), three-channel answer-time retrieval ([STATE]/[FACTS]/[ARCHIVE] concatenated into the answer prompt), plus the Active Service constraint pipeline (generate–verify–review loop: the coding agent writes Python constraints against the typed state, a sandbox executes them, useful ad-hoc checks are promoted to persistent constraints, and alerts are written to the manifest's ACTIVE_ALERTS loaded at the start of every conversation). Read alongside the code at commit 3d47361: experiments/user_as_code_v5.py (two-phase + retrieval), experiments/run_active_service_v2.py, run_active_service_v3.py and active_service_engine.py (LLM-authored constraints executed after every session), prototype/ (reference user project), and the deprecated pilot scripts (active_service_experiment.py, fair_experiment.py, final_evaluation.py) that produced the arXiv v1 Active Service numbers.",
+  "sources_read": [
+    "https://arxiv.org/html/2606.16707v1 (version v1; accessed through a paraphrasing fetch tool; main text §1–§6 covered; quotes confirmed by exact-match checks; Appendix F and A.6 not retrievable)",
+    "https://arxiv.org/pdf/2606.16707v1 (attempted; fetched text truncated before Appendix F)",
+    "README.md",
+    "paper.tex",
+    "body.tex (reduced later version at this commit; Active Service section removed)",
+    "paper_aaai/AnonymousSubmission2027.tex (later draft with 'Cue-Free Constraint Detection')",
+    "experiments/README.md",
+    "experiments/user_as_code_v5.py",
+    "experiments/active_service_engine.py",
+    "experiments/active_service_sandbox.py",
+    "experiments/run_active_service_v2.py",
+    "experiments/run_active_service_v3.py",
+    "experiments/active_service_experiment.py",
+    "experiments/ablation_experiment.py",
+    "experiments/fair_experiment.py (L1-130)",
+    "experiments/final_evaluation.py (L1-120, L700-850)",
+    "experiments/run_active_service_mem0lib.py",
+    "experiments/run_active_service_amem_hard.py",
+    "experiments/gen_case_memory.py",
+    "experiments/analytical_bench/tools.py",
+    "experiments/analytical_bench/runners.py (L185-228 and symbol grep)",
+    "experiments/results/active_service_ablation_log.txt",
+    "experiments/results/active_service_ablation.json",
+    "experiments/results/hard_active_service_log.txt",
+    "experiments/results/active_service_v3_gpt_5_6_luna/traces/deadline_03.json (L1-120)",
+    "experiments/results/active_service_v3_gpt_5_6_luna/programs/deadline_03/02_trigger.py",
+    "experiments/results/conv30_extraction/provenance.json",
+    "evaluation/README.md",
+    "evaluation/ACTIVE_SERVICE_V2.md",
+    "evaluation/ACTIVE_SERVICE_V3.md",
+    "evaluation/active_service_v2_protocol.json (L1-90)",
+    "prototype/README.md",
+    "prototype/runner.py",
+    "prototype/jessica_thompson/manifest.py",
+    "prototype/jessica_thompson/constraints/travel_readiness.py",
+    "prototype/jessica_thompson/constraints/health_safety.py",
+    "prototype/jessica_thompson/tests/test_cross_domain.py",
+    "user-as-code/slides.md",
+    "web/src/components/Mechanism.jsx"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Phase 1 (Memorize) has an LLM extract every fact from each new session and append it to a never-overwritten fact list indexed in ChromaDB, while the raw session is chunked into a second archive collection; this is sensed user evidence delivered to Memory for admission. The code implements exactly this path: ingest_session() calls _extract_facts() on the session text, extends fact_list, adds the facts to the facts collection and stores archive chunks. The Active Service v2/v3 runners likewise have the model emit a replacement STATE from the user-authored history after every session.",
+      "locator": "arXiv v1 §3.2.1 (Phase 1) and Fig. 1 caption; code experiments/user_as_code_v5.py L65-89 (ingest_session), L91-132 (_extract_facts), L134-160 (_store_archive); experiments/run_active_service_v3.py L47-55 (STATE instructions), L167-186",
+      "quote": "Facts are appended to a running list—never overwritten, never deleted [...] Each fact is indexed in ChromaDB; the raw conversation is also chunked and indexed in a second collection (§3.2.1); Fig. 1 caption: Phase 1 extracts facts from each session (append-only, never overwritten)."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information reaches Action in two described ways: (1) at answer time the typed code state (first 6,000 chars), the top-20 facts and top-10 archive chunks are concatenated into the answer prompt that decides the reply (code: retrieve()/answer()); (2) the compact manifest with ACTIVE_ALERTS is always loaded at the start of every conversation, so the agent decides to surface outstanding alerts without any query, and constraint execution itself reads the typed state to decide alerts (compiled check_constraints iterates STATE['constraints']).",
+      "locator": "arXiv v1 §3.3.1, §3.3.2, §3.1 (progressive disclosure sentence), Listing 8 caption; code experiments/user_as_code_v5.py L221-296 (retrieve, answer); experiments/active_service_engine.py L262-288 (check_constraints over STATE); prototype/jessica_thompson/manifest.py L1-45",
+      "quote": "Alerts surface in the manifest's ACTIVE_ALERTS, visible at the start of every future conversation. (§3.3.2); The three channels are concatenated under fixed headers ([STATE], [FACTS], [ARCHIVE]) and passed to the answer LLM with no reranking (§3.3.1); Proactive alerts surface in a compact manifest loaded at the start of every conversation, so the agent sees outstanding issues with no retrieval. (§3.1)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "In the generate–verify–review loop the coding agent (Action) writes a constraint or ad-hoc check, has it executed in a sandbox, and reads back the deterministic result (observed execution state) to decide whether to refine, persist or incorporate; the agent's information need selects what is executed and observed, an expected-effect check on its own output. The analytical configuration exposes typed state via a REPL in which the model's python calls return stdout to it. Code: run_tool_loop appends the REPL stdout/error as a tool message to the model; run_active_service_v3.generate_valid_ir returns the compiler's validation error to the model for repair. Author-side graders are not counted.",
+      "locator": "arXiv v1 §3.3.2 (loop steps 1–3), §4.3 (systems list), §5 (interpreter as verification tool); code experiments/analytical_bench/tools.py L170-281 (run_tool_loop; tool result appended L263-280), experiments/analytical_bench/runners.py L185-222 (run_uac_v5); experiments/run_active_service_v3.py L94-102 (IR_REPAIR_TEMPLATE), L109-148 (generate_valid_ir)",
+      "quote": "Verify: Execute in a sandbox—results are deterministic. [...] Review: The agent reviews results, decides to refine, persist, or incorporate. (§3.3.2); UaC (records structured into typed Python, exposed via REPL) (§4.3); The interpreter is a tool the LLM uses to verify its own outputs, not a rule layer it must obey (§5)"
+    },
+    "M->S": {
+      "label": "absent",
+      "rationale": "No retained prior is supplied to any sensing or interpretation step. Phase 1 is described as per-session extraction, and the implementation passes only the session text, session id and date into the extraction prompt (no fact list, code state or manifest); archive chunking is fixed. The Active Service v2/v3 update prompt receives only the raw user-authored history and the session timestamp, and the compiled check_constraints() receives only the session timestamp. Every memory read in the system is answer-time retrieval or manifest loading into the agent prompt (M→A), memory-guided domain loading (M→A→M), or Phase 2 regeneration (memory-internal), none of which the protocol counts as M→S.",
+      "locator": "arXiv v1 §3.2.1, §3.3.1, §3.4 (Progressive Disclosure); code experiments/user_as_code_v5.py L91-124 (def _extract_facts(self, session_text: str, session_id: str, date: str) and its prompt), L134-160, L221-296; experiments/run_active_service_v2.py L50-55, L544-577; experiments/run_active_service_v3.py L87-92, L198",
+      "quote": "An LLM extracts every individual fact as a flat string from each session (Gemini 3 Flash, thinking budget 8192). (§3.2.1)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Action artifacts and execution records are written into the user project: the coding agent writes constraints and promotes useful ad-hoc checks to persistent constraints, reviews results to 'persist, or incorporate' them, and the constraint runner writes the alerts it computed into the manifest's ACTIVE_ALERTS for later sessions. In code, the v2/v3 runners persist each model-generated STATE+constraints module to programs/<case>/NN_stage.py before executing it and record emitted alerts. Caveats noted: prototype/runner.py only prints alerts and never writes ACTIVE_ALERTS back; the deprecated pilot injected the authored expected alert; v2/v3 regenerate the module from the full history at each session rather than appending to an earlier one.",
+      "locator": "arXiv v1 §3.3.2; Listing 8 caption; Fig. 1 caption ('Constraint execution produces pre-computed alerts surfaced in the manifest.'); code experiments/run_active_service_v2.py L557-567, experiments/run_active_service_v3.py L173-186; prototype/jessica_thompson/manifest.py L43-45; prototype/runner.py L115-150; experiments/fair_experiment.py L54-74",
+      "quote": "When an ad-hoc check proves useful, the agent promotes it to a persistent constraint. (§3.3.2); ACTIVE_ALERTS is overwritten by the constraint runner; the agent surfaces them proactively without retrieval. (Listing 8 caption)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains artifacts of its own decisions for later use: the constraints the agent decided to persist, and the alerts the constraint runner decided to raise, kept in the always-loaded manifest and consumed at the start of later conversations. Limits: ACTIVE_ALERTS is overwritten each run (no durable history), no log of delivered utterances or answers is described, 'version control provides audit trails' (§5) is a design claim with no implementation in the code, and the v2/v3 traces and programs are evaluation artifacts.",
+      "locator": "arXiv v1 §3.3.2; Listing 8 caption; Listing 5 caption; §3.1; code prototype/jessica_thompson/manifest.py L43-45 (ACTIVE_ALERTS 'updated after each constraint check cycle'); experiments/run_active_service_v3.py L180-186",
+      "quote": "ACTIVE_ALERTS is overwritten by the constraint runner; the agent surfaces them proactively without retrieval. (Listing 8 caption); Alert surfaced in ACTIVE_ALERTS at the start of every subsequent session (Listing 5 caption)"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No later evidence about delivered alerts or answers (user reply, rating, dismissal, correction, receipt, task result) is described as obtained or retained; the only post-action signal is the sandbox result inside the verify step, and all alert and QA scoring (keyword/regex rubrics, LLM judge) is performed offline by the authors' harness.",
+      "locator": "arXiv v1 §3.3.2, §4.4, §5; code experiments/run_active_service_v3.py L211-227 (rubric scoring by harness), experiments/final_evaluation.py L671-699 (check_alert)"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The verify–review loop is an immediate check: the agent executes the constraint it just wrote and reviews the deterministic result to refine, persist or incorporate it, linking the execution outcome to that generation decision. In the v3 runner the compiler's validation error is returned to the model, which must correct its generation (bounded machine-feedback retries). No user outcome is attributed, and offline benchmark scoring is not counted.",
+      "locator": "arXiv v1 §3.3.2; §5; code experiments/run_active_service_v3.py L94-102, L131-145; evaluation/ACTIVE_SERVICE_V3.md L36-39",
+      "quote": "Review: The agent reviews results, decides to refine, persist, or incorporate. (§3.3.2); The interpreter is a tool the LLM uses to verify its own outputs, not a rule layer it must obey (§5)"
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The paper states that the service itself authors and persists reusable rules (constraints) that later runs execute as rules, with no human authoring; this is a durable change to the rule set rather than content used by a fixed mechanism. RL-trained constraint generation is explicitly future work and is not counted. In the repo, v2 has the LLM write the check_constraints() module and v3 has it emit declarative constraint IR compiled by trusted code; prototype constraints are hand-written by developers and the deprecated pilot generated none.",
+      "locator": "arXiv v1 §3.3.2; §5 ('Domain knowledge is LLM-generated; infrastructure is human-designed'); Listing 4 caption; §6 future work; code experiments/run_active_service_v2.py L38-55, experiments/run_active_service_v3.py L47-85, experiments/active_service_engine.py L230-288; prototype/jessica_thompson/constraints/*.py",
+      "quote": "When an ad-hoc check proves useful, the agent promotes it to a persistent constraint. [...] Constraints emerge autonomously from the LLM's reasoning. (§3.3.2); Schemas, constraints, and domain partitioning are all produced by the LLM and evolve with the user. (§5)",
+      "what": "Persistent constraints: executable Python check functions (constraints/*.py) written by the coding agent and promoted from ad-hoc checks, later applied as rules by the constraint runner at every state change; the typed schema/dataclasses are also LLM-generated in Phase 2 but serve as content structure for a fixed retrieval mechanism."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "The text asserts design-level later use (alerts visible at the start of every future conversation; '+Constraint pipeline' lifts Active Service to 100%) but never states operationally that agent-authored constraints persisted and executed in later sessions of a reported run; the Introduction's Listings 2–5 are a worked example and Appendix F could not be retrieved. The code at the commit shows the pilot behind the Table 7/9 numbers injected the scenario's authored expected alert into ACTIVE_ALERTS or ran the plain v5 answer path, generating no constraints (evaluation/README.md: 'the UaC experiment implementation does not generate, persist, and execute ACTIVE_ALERTS constraints'), and the later v2/v3 runners regenerate the whole module from the full history at each session rather than loading an earlier revision.",
+      "locator": "arXiv v1 §3.3.2, §4.4 Table 7, §4.5 Table 9, §1 Listings 2–5; code experiments/fair_experiment.py L54-74, experiments/final_evaluation.py L700-751, experiments/active_service_experiment.py L1-8, evaluation/README.md L8-14, experiments/run_active_service_v3.py L167-186",
+      "quote": "Nearest statements: Without pre-computed alerts UaC drops to 52.5% (§4.4); the alert (Listing 5) appears in the next session's manifest before the user asks anything. (§1, worked example)"
+    }
+  },
+  "notes": "Judged the arXiv v1 (2606.16707v1) configuration 'UaC + constraint pipeline' as named in the case. Version discrepancy: body.tex at commit 3d47361 ('Paper: reduce under page limit') is a later, reduced version that drops Active Service and the generate–verify–review loop; paper_aaai/AnonymousSubmission2027.tex is another later draft reporting a 'Cue-Free Constraint Detection' v3 regression (17/17) with LLM-emitted constraint IR compiled by trusted code. The repo's evaluation/README.md and pilot docstrings mark the arXiv v1 Active Service pilot as deprecated because it prompted for alerts and did not generate, persist or execute UaC constraints; the v2.1 frozen protocol scored 4/17 and v3 (tuned on the same cases) 17/17. The arXiv HTML was read through a fetch tool that paraphrases; every paper quote above was confirmed by exact-match checks against the HTML and section locators come from those checks. Appendix F ('Real Cases') and Appendix A.6 could not be retrieved by any route (HTML and PDF fetches truncated before them, PDF rendering unavailable, reader proxy returned 401), so no judgment relies on them. Shell execution was restricted, so no scripts were run; code was read directly and no files were modified.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 1032,
+    "code_commit": "3d473617a27e7ace8cbbde531b667d515864c21e"
+  }
+}

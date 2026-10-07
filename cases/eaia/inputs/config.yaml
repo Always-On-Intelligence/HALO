@@ -1,0 +1,23 @@
+# EAIA configuration for the fictional user of this case, in the structure of
+# core/eaia/main/config.yaml (the upstream config for Harrison Chase). The adapter passes these keys
+# through config["configurable"], so eaia/main/config.py:get_config returns them instead of loading
+# the upstream file. rewrite_preferences keeps the upstream rules with the name changed.
+# The triage keys (triage_no, triage_notify, triage_email) are left out because triage is not run:
+# every email in this scenario needs a reply (see README).
+email: alex@lumen.dev
+full_name: Alex Rivera
+name: Alex
+background: Alex is CEO and co-founder of Lumen. Lumen is a startup building tools for developers.
+schedule_preferences: By default, unless specified otherwise, you should make meetings 30 minutes long.
+background_preferences: Lumen has a head of product - Sam Patel. For questions about the product roadmap, Sam can help.
+response_preferences: ""
+timezone: "PST"
+rewrite_preferences: |
+  Alex has a few rules for how he likes his emails to be written:
+
+  - He generally likes to match their tone. If they write formally, then so will he. If they write casually, then he should write casual
+  - If working with an assistant to schedule, then he is usually more formal
+  - If conversing with someone he seems to know well, then he is more direct and to the fact
+  - Alex REALLY does not want anyone to know he is using an assistant, so you should try not to sound too much like an assistant and rather sound like Alex
+  - When Alex is casual, he generally does not include any greetings or sign offs, and just directly says his message
+memory: true

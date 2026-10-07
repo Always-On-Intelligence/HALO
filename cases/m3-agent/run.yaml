@@ -1,0 +1,16 @@
+# HALO run mode for M3-Agent. Inputs and the backbone are fixed across arms; only the cut sites differ.
+models:
+  backbone: {backend: "codex:gpt-6-astra", effort: low}   # stands in for memory-7b-sft, control-32b-rl and the GPT-4o verifier
+  judge: {backend: "codex:gpt-6-astra", effort: high}
+samples: 3
+rubric: >-
+  M3-Agent watched a long video in 30-second clips, kept what it saw and heard in a memory graph,
+  and then answered questions about the video from that memory. The situation gives the video's
+  content and a reference answer for each question. Decide which output answers the questions
+  better. An answer that agrees with the reference beats one that does not, and a specific correct
+  answer beats a vague or hedged one. An answer that names the wrong person, time or place is worse
+  than one that admits it does not know. Ignore wording, length and style.
+tests:
+  - cut: [S->M]
+  - cut: [M->A]
+  - cut: [M->S]

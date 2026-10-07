@@ -1,0 +1,172 @@
+{
+  "vinci": {
+    "repo": "OpenGVLab/vinci",
+    "url": "https://github.com/OpenGVLab/vinci",
+    "commit": "a3b9dfabc184ded110d5f28daa4f132e5bdcebaa",
+    "pinned": false,
+    "sparse": null,
+    "size": "5.5M"
+  },
+  "vinci2": {
+    "repo": "SitongGong/EgoMemo",
+    "url": "https://github.com/SitongGong/EgoMemo",
+    "commit": "0029a33fd83bb93cb6a7bb012bbdd3477b4c6b35",
+    "pinned": false,
+    "sparse": null,
+    "size": " 25M"
+  },
+  "visionclaw": {
+    "repo": "Intent-Lab/VisionClaw",
+    "url": "https://github.com/Intent-Lab/VisionClaw",
+    "commit": "82699eca917c0062516c14b99affa34ea230ecd7",
+    "pinned": false,
+    "sparse": null,
+    "size": " 30M"
+  },
+  "contextagent": {
+    "repo": "openaiotlab/ContextAgent",
+    "url": "https://github.com/openaiotlab/ContextAgent",
+    "commit": "f4674bf2a1385ce829c6a7f2ea9c53871dd1a8ce",
+    "pinned": false,
+    "sparse": null,
+    "size": " 37M"
+  },
+  "aiget": {
+    "repo": "Synteraction-Lab/AiGet",
+    "url": "https://github.com/Synteraction-Lab/AiGet",
+    "commit": "92b17f82a4e54965fc40ce9ea21e919a753ab6b7",
+    "pinned": true,
+    "sparse": null,
+    "size": "8.2M"
+  },
+  "m3-agent": {
+    "repo": "ByteDance-Seed/M3-Agent",
+    "url": "https://github.com/ByteDance-Seed/M3-Agent",
+    "commit": "0e3e41939bd8a0b66d756e7b7eb8d5fe9992da5c",
+    "pinned": false,
+    "sparse": null,
+    "size": " 20M"
+  },
+  "lightmem-ego": {
+    "repo": "zjunlp/LightMem-Ego",
+    "url": "https://github.com/zjunlp/LightMem-Ego",
+    "commit": "3c023dfec301bb2f9624f82cee76007ac3ac0646",
+    "pinned": false,
+    "sparse": null,
+    "size": " 32M"
+  },
+  "egocentric-copilot": {
+    "repo": "YoungSeng/Egocentric-Co-Pilot",
+    "url": "https://github.com/YoungSeng/Egocentric-Co-Pilot",
+    "commit": "4bdc1c49f72d6b20e3daf0d35ce06b6b5ca2ee43",
+    "pinned": false,
+    "sparse": null,
+    "size": "8.2M"
+  },
+  "ipi-agent": {
+    "repo": "lijinzhao30/IPI",
+    "url": "https://github.com/lijinzhao30/IPI",
+    "commit": "2c96ea86180a979c472207c6ca0fe0c2f1d31383",
+    "pinned": false,
+    "sparse": null,
+    "size": " 73M"
+  },
+  "omi": {
+    "repo": "BasedHardware/omi",
+    "url": "https://github.com/BasedHardware/omi",
+    "commit": "5a46ab0467ce594c35fd04d72131421afd747259",
+    "pinned": false,
+    "sparse": [
+      "backend"
+    ],
+    "size": " 84M"
+  },
+  "assistantx": {
+    "repo": "AssistantX-Agent/AssistantX",
+    "url": "https://github.com/AssistantX-Agent/AssistantX",
+    "commit": "35ab2715f7371d935d78907d90dc4131e414fcb7",
+    "pinned": false,
+    "sparse": null,
+    "size": "388M"
+  },
+  "abot-claw": {
+    "repo": "amap-cvlab/ABot-Claw",
+    "url": "https://github.com/amap-cvlab/ABot-Claw",
+    "commit": "39c9ffc94a84f2e6baac431a9bff9771111f8539",
+    "pinned": false,
+    "sparse": null,
+    "size": "220M"
+  },
+  "pask": {
+    "repo": "xzf-thu/Pask",
+    "url": "https://github.com/xzf-thu/Pask",
+    "commit": "d54646c52b1555232ce4ab39103768d7f65b8267",
+    "pinned": false,
+    "sparse": null,
+    "size": "651M"
+  },
+  "user-as-code": {
+    "repo": "19PINE-AI/user-as-code",
+    "url": "https://github.com/19PINE-AI/user-as-code",
+    "commit": "3d473617a27e7ace8cbbde531b667d515864c21e",
+    "pinned": false,
+    "sparse": null,
+    "size": "157M"
+  },
+  "ouroboros": {
+    "repo": "razzant/ouroboros",
+    "url": "https://github.com/razzant/ouroboros",
+    "commit": "4b37f96223b4b8248eea80c9be22cf923759cd5a",
+    "pinned": false,
+    "sparse": null,
+    "size": "101M"
+  },
+  "visualclaw": {
+    "repo": "UCSC-VLAA/VisualClaw",
+    "url": "https://github.com/UCSC-VLAA/VisualClaw",
+    "commit": "f6de05bb8f03e8ba44ec5ee458961cd70002a6d5",
+    "pinned": false,
+    "sparse": null,
+    "size": " 19M"
+  },
+  "proactive-agent": {
+    "repo": "thunlp/ProactiveAgent",
+    "url": "https://github.com/thunlp/ProactiveAgent",
+    "commit": "3fcf9beebe256b86871659fbb12541c41c9381b9",
+    "pinned": false,
+    "sparse": null,
+    "size": " 16M"
+  },
+  "pahf": {
+    "repo": "facebookresearch/PAHF",
+    "url": "https://github.com/facebookresearch/PAHF",
+    "commit": "7a11213360a82d5f437a035e3a31c92d6307f8cf",
+    "pinned": false,
+    "sparse": null,
+    "size": "6.6M"
+  },
+  "proact": {
+    "repo": "AgentACE-AI/ProAct",
+    "url": "https://github.com/AgentACE-AI/ProAct",
+    "commit": "7ac78fde0524443ebeb9d3173b78498c25625f57",
+    "pinned": false,
+    "sparse": null,
+    "size": "5.9M"
+  },
+  "properassistant": {
+    "repo": "jiho283/ProPerSim",
+    "url": "https://github.com/jiho283/ProPerSim",
+    "commit": "013b9eefd618b075875a2ce0ce6089138c30c82f",
+    "pinned": false,
+    "sparse": null,
+    "size": "103M"
+  },
+  "eaia": {
+    "repo": "langchain-ai/executive-ai-assistant",
+    "url": "https://github.com/langchain-ai/executive-ai-assistant",
+    "commit": "758db7174223da7864feea7c9f8d1aba12923037",
+    "pinned": true,
+    "sparse": null,
+    "size": "908K"
+  }
+}

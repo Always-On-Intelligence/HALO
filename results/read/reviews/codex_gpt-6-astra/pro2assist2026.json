@@ -1,0 +1,72 @@
+{
+  "id": "pro2assist2026",
+  "configuration": "Continuous single-task procedural guidance with session-reset progress history",
+  "sources_read": [
+    "cases/pro2assist/case.yaml",
+    "https://arxiv.org/html/2605.04227v2",
+    "https://arxiv.org/pdf/2605.04227v2"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Verified observations of step transitions update session progress history.",
+      "locator": "[§§4.3.2, 4.4.2](https://arxiv.org/html/2605.04227v2)",
+      "quote": "updating the record only when step transitions are consistently observed across multiple moments."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Stored progress and previous step/status guide assistance content and response suppression.",
+      "locator": "[§§4.4.1–4.4.2; Algorithm 1, lines 6–13](https://arxiv.org/pdf/2605.04227v2)"
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "Sampling follows head/hand motion; no Action-originating signal guiding observation or interpretation is described.",
+      "locator": "[§§4.2, 4.4](https://arxiv.org/html/2605.04227v2)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained progress and guidelines disambiguate visual observations during current-step recognition.",
+      "locator": "[§4.3.2](https://arxiv.org/html/2605.04227v2)",
+      "quote": "distinguishing visually similar actions across different steps"
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "Retained predictions describe user activity, a Sensing function; retention of assistant responses, plans, or delivery decisions is unspecified.",
+      "locator": "[§4.4.2; Algorithm 1, state and lines 1–5, 13](https://arxiv.org/pdf/2605.04227v2)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "History records observed user steps; retention of the service's own assistance decisions or messages is unreported.",
+      "locator": "[§4.3.2; Algorithm 1](https://arxiv.org/pdf/2605.04227v2)"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Progress retention is described, but retention as assistance-outcome evidence is unreported; questionnaires serve researcher evaluation.",
+      "locator": "[§§4.4.2, 5.7](https://arxiv.org/html/2605.04227v2)"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Subsequent predictions correct state estimates; no explicit assistance-decision/outcome linkage for checking or correction is described.",
+      "locator": "[§4.4.2; §5.7, Incorrect step guidance](https://arxiv.org/html/2605.04227v2)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Fine-tuning is developer training; runtime progress updates change task data, not the service's mechanism.",
+      "locator": "[§§4.4.1, 5.1.2, 6](https://arxiv.org/html/2605.04227v2)"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No run under a service-revised mechanism is reported.",
+      "locator": "[§§5–6](https://arxiv.org/html/2605.04227v2)"
+    }
+  },
+  "notes": "Reviewed the specified session-reset configuration from version v2, including algorithm and prompt text. No code repository supplied.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 197,
+    "code_commit": null
+  }
+}

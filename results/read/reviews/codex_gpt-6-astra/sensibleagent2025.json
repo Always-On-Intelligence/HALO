@@ -1,0 +1,71 @@
+{
+  "id": "sensibleagent2025",
+  "configuration": "WebXR prototype with context-conditioned prompts and response modalities.",
+  "sources_read": [
+    "https://arxiv.org/html/2509.09255v2 (2509.09255v2; main text and appendices)",
+    "cases/sensible-agent/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "insufficient",
+      "rationale": "Runtime observations reach inference; their retention across interactions is unspecified. The annotation study does not establish a prototype write path.",
+      "locator": "[§5.1; §5.2; §9](https://arxiv.org/html/2509.09255v2)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained study exemplars are selected by contextual similarity and supplied to decisions about action, query format, and presentation.",
+      "locator": "[§5.2.2, Prompting Strategy and Few-Shot Selection; Appendix B](https://arxiv.org/html/2509.09255v2)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Chosen presentation modality gates input sensing; audio-only queries disable gaze input.",
+      "locator": "[§5.1, Interaction Module](https://arxiv.org/html/2509.09255v2)",
+      "quote": "gaze interaction is considered infeasible and suppressed."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Study examples condition every reasoning layer, including context parsing, supplying retained priors for interpreting observations.",
+      "locator": "[§5.1, opening paragraphs and Context Parsing](https://arxiv.org/html/2509.09255v2)"
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "Retention of runtime suggestions or utterances for subsequent service use is unspecified; research logging alone does not establish it.",
+      "locator": "[§5.1, Response Generation Layer; §7.3; §8.3](https://arxiv.org/html/2509.09255v2)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "Research logs lack reported later service use.",
+      "locator": "[§7.3](https://arxiv.org/html/2509.09255v2)"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Replies guide immediate responses; retained outcomes for later service use are unspecified.",
+      "locator": "[§5.1, Response Generation Layer; §7.3](https://arxiv.org/html/2509.09255v2)"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Feedback checks the proposed query and determines follow-up assistance.",
+      "locator": "[§7.4, Interaction Time; §5.1, Response Generation Layer](https://arxiv.org/html/2509.09255v2)",
+      "quote": "the user then confirms or modifies it"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Researchers authored prompts; autonomous durable revision is not reported.",
+      "locator": "[§5.2.1; §5.2.2, Prompting Strategy](https://arxiv.org/html/2509.09255v2)"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No execution under a service-revised mechanism is reported.",
+      "locator": "[§7; §8.3; §9](https://arxiv.org/html/2509.09255v2)"
+    }
+  },
+  "notes": "Text-only review. Static exemplars are interpreted as retained priors; proposed user-history personalization is excluded.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 236,
+    "code_commit": null
+  }
+}

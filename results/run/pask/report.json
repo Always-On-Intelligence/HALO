@@ -1,0 +1,74 @@
+{
+  "case": "pask",
+  "channels": {
+    "S->M": "earlier stream turns delivered to the memory writer (bench/03c_memory.py build_memory_prompt)",
+    "M->A": "memory document delivered to the demand-detection prompt (eval/prompts.py build_prompt)"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 15,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "memory_chars_delivered": {
+          "original": 2196.4667,
+          "modified": 0.0
+        },
+        "interventions": {
+          "original": 3.2667,
+          "modified": 2.0
+        },
+        "other_turn_interventions": {
+          "original": 2.2667,
+          "modified": 1.2
+        },
+        "need_turn_hit_rate": {
+          "original": 1.0,
+          "modified": 0.8
+        },
+        "need_turn_uses_earlier_rate": {
+          "original": 1.0,
+          "modified": 0.1333
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 15,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "memory_chars_delivered": {
+          "original": 2196.4667,
+          "modified": 0.0
+        },
+        "interventions": {
+          "original": 3.2667,
+          "modified": 2.0
+        },
+        "other_turn_interventions": {
+          "original": 2.2667,
+          "modified": 1.2
+        },
+        "need_turn_hit_rate": {
+          "original": 1.0,
+          "modified": 0.8
+        },
+        "need_turn_uses_earlier_rate": {
+          "original": 1.0,
+          "modified": 0.1333
+        }
+      }
+    }
+  ]
+}

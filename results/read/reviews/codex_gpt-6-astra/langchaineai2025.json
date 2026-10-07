@@ -1,0 +1,82 @@
+{
+  "id": "langchaineai2025",
+  "configuration": "Executive AI Assistant reference implementation with cron email ingestion, persistent LangGraph store, Question tool, and Agent Inbox feedback/reflection enabled (memory: true); source-snapshot scope 2026-09-22, repository commit 758db7174223da7864feea7c9f8d1aba12923037.",
+  "sources_read": [
+    "https://github.com/langchain-ai/executive-ai-assistant/blob/main/eaia/main/human_inbox.py (fetched; pinned local counterpart read)",
+    "https://github.com/langchain-ai/executive-ai-assistant/blob/main/eaia/main/draft_response.py (fetched; pinned local counterpart read)",
+    "https://github.com/langchain-ai/executive-ai-assistant/blob/main/eaia/main/fewshot.py (fetched; pinned local counterpart read)",
+    "https://github.com/langchain-ai/executive-ai-assistant/blob/main/eaia/reflection_graphs.py (fetched; pinned local counterpart read)",
+    "https://www.langchain.com/blog/introducing-ambient-agents (January 14, 2025; report linked in case.yaml)",
+    "Local checkout at 758db7174223da7864feea7c9f8d1aba12923037: README.md; langgraph.json; eaia/main/human_inbox.py; eaia/main/draft_response.py; eaia/main/fewshot.py; eaia/reflection_graphs.py; eaia/main/triage.py; eaia/main/graph.py; eaia/main/rewrite.py; eaia/main/find_meeting_time.py; eaia/main/config.py; eaia/main/config.yaml; eaia/schemas.py; eaia/cron_graph.py; eaia/gmail.py:187-285; scripts/setup_cron.py",
+    "cases/eaia/case.yaml",
+    "halo/read/schema.json"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Incoming emails and user-derived triage labels are written to persistent triage_examples. Question answers and draft feedback also enter reflection for integration into stored information and instructions.",
+      "locator": "eaia/main/human_inbox.py:61-70,96-117,212-230; eaia/reflection_graphs.py:64-93, at commit 758db7174223da7864feea7c9f8d1aba12923037."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Drafting reads retained scheduling, background, and response information into its decision prompt; rewriting reads stored tone instructions. Retrieved triage examples guide whether to ignore, notify, or prepare a response.",
+      "locator": "eaia/main/draft_response.py:102-148; eaia/main/rewrite.py:38-62; eaia/main/fewshot.py:17-40; eaia/main/triage.py:46-72, at the pinned commit."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The drafting agent selects a Question to obtain missing information. Graph routing delivers its specific request to the user and acquires the answer through an interrupt, directing sensing toward the action's information need.",
+      "locator": "eaia/main/draft_response.py:27-38; eaia/main/graph.py:55-60; eaia/main/human_inbox.py:78-102, at the pinned commit.",
+      "quote": "You can use the Question tool to ask {name} for information if you do not know it."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Cron ingestion reads the previously retained email_id from thread metadata and stops iteration when it encounters that email again. Because message and thread bodies are fetched during iteration, retained history directly limits further acquisition.",
+      "locator": "eaia/cron_graph.py:21-40; eaia/gmail.py:215-280, at the pinned commit.",
+      "quote": "recent_email = thread_info[\"metadata\"].get(\"email_id\")\n        if recent_email == email[\"id\"]:\n            break"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Assistant drafts and tool calls enter persistent conversation state. Original drafts or action trajectories also enter reflection alongside feedback and inform updates to the persistent store.",
+      "locator": "eaia/main/draft_response.py:154; eaia/schemas.py:91-94; eaia/main/human_inbox.py:212-230; eaia/reflection_graphs.py:71-93; [Introducing ambient agents](https://www.langchain.com/blog/introducing-ambient-agents), 'Why LangGraph is great for ambient agents'."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "Assistant messages and proposed tool actions are kept in persisted graph state across user interactions, then reused for continuation and reflection.",
+      "locator": "[Introducing ambient agents](https://www.langchain.com/blog/introducing-ambient-agents), 'Why LangGraph is great for ambient agents', persistence paragraph; eaia/main/draft_response.py:154; eaia/main/human_inbox.py:105-117.",
+      "quote": "LangGraph is backed by a persistence layer that saves the state of the agent between each action (or node of the graph)."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Replies to assistant questions are retained as tool messages associated with the originating call. Acceptance and dismissal also produce persistent email/triage examples.",
+      "locator": "eaia/main/human_inbox.py:61-70,96-117,131-136,197-234; eaia/schemas.py:91-94, at the pinned commit.",
+      "quote": "msg = {\n            \"type\": \"tool\",\n            \"name\": tool_call[\"name\"],\n            \"content\": response[\"args\"],\n            \"tool_call_id\": tool_call[\"id\"],\n        }"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The edit handler pairs the original assistant draft with the user's correction for reflection. Textual feedback is also linked to its tool call and routes back to drafting.",
+      "locator": "eaia/main/human_inbox.py:162-183,212-230; eaia/main/graph.py:88-100; eaia/reflection_graphs.py:71-93, at the pinned commit.",
+      "quote": "\"feedback\": f\"A better response would have been: {corrected}\","
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "Reflection models select behavioral prompts, generate replacement instructions from trajectories and feedback, and persist them under reusable prompt keys. These instructions govern subsequent behavior rather than merely supplying user facts.",
+      "locator": "eaia/reflection_graphs.py:8-11,64-119,150-178; eaia/main/rewrite.py:38-62; eaia/main/draft_response.py:102-148, at the pinned commit.",
+      "quote": "if output[\"update_prompt\"]:\n        await store.aput(\n            namespace, key, {\"data\": output[\"new_prompt\"]}, index=False\n        )",
+      "what": "Model-generated reusable tone/style instructions (rewrite_instructions), email-response instructions (response_preferences), and calendar-invitation instructions (schedule_preferences). Background facts in random_preferences alone do not establish revision."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Subsequent calls load stored instructions, but no source reports a later run under a particular revised mechanism; general everyday-use claims do not establish this.",
+      "locator": "eaia/main/draft_response.py:102-148; eaia/main/rewrite.py:38-62; [Introducing ambient agents](https://www.langchain.com/blog/introducing-ambient-agents), 'Building an AI email assistant'."
+    }
+  },
+  "notes": "Judgments concern the enabled reference implementation. Code quotations and line numbers were verified against the pinned checkout. Fetched main URLs were cross-read, not treated as proof of the snapshot date. M->S rests on ingestion history controlling acquisition; prompt-loading code alone does not establish later use.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 269,
+    "code_commit": "758db7174223da7864feea7c9f8d1aba12923037"
+  }
+}

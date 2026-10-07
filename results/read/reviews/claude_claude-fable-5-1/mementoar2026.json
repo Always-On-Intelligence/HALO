@@ -1,0 +1,79 @@
+{
+  "id": "mementoar2026",
+  "configuration": "Memento Quest 3 prototype (Meta Quest 3 Passthrough AR HMD + remote Python server; GPT-4o / Gemini 2.0-Flash / CLIP / YOLO-World-XL) with RSAM (Referent-anchored Spatiotemporal Activity Memory) storage in an R-tree + HNSW structure, context-triggered proactive resurfacing from the Spatial Activity Profile, referent existence checking via open-vocabulary detection, and the 'Remove' permanent-dismissal option, as described in arXiv 2601.17622v4 Sections 2.2.1-2.2.6 and deployed in the 2-4 day diary study of Section 4.2.",
+  "sources_read": [
+    "https://arxiv.org/html/2601.17622v4 (paper, version 2601.17622v4): Abstract, Introduction, Sec. 1 Related Work (1.3, 1.4), Sec. 2 (opening, 2.1 Design Considerations, 2.2 Prototype System Design incl. 2.2.1-2.2.6), Sec. 3 Example Use Cases (A1-A3), Sec. 4.1 Technical Evaluation, Sec. 4.2 User Evaluation and Feedback, Sec. 5 Future Work and Discussion, Sec. 6 Conclusion, captions of Figures 1-4 and Table 1. Read through WebFetch text extraction; no code repository exists for this work."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed and user-supplied evidence is written into Memory: when the user issues a verbal query about a referent, the transcribed query, the identified referent and the most recent Spatial Activity Profile (built from the continuously lifelogged first-person view, latitude, longitude and timestamp, Sec. 2.2.2) are recorded as an RSAM in the R-tree + HNSW store (Sec. 2.2.3; Fig. 2 caption). User-supplied correction also reaches Memory via the 'Remove' option, which permanently deletes a memory (Sec. 2.2.5, 2.2.6).",
+      "locator": "Sec. 2.2.3 Personal Memory Generation (sentences 2 and 5); Sec. 2.2.2 Spatial Activity Analysis (sentence 3); Fig. 2 caption; Sec. 2.2.5 'Remove' option",
+      "quote": "Upon initial query interaction with a physical referent via Personal assistant, the query and its metadata are recorded in the form of a memory. [...] To generate an RSAM, we first identify the referent in question, and retrieve the most recent Spatial Activity Profile."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained RSAMs drive the Action decision between silence and proactive display: recall retrieves top-K RSAMs matching the current profile, and an RSAM is suggested only when all dimensions are satisfied; the stored query/response/source and referent determine what is shown and where it is anchored, and stored content is refreshed on each repeat cycle. A retained user preference (memory recall sensitivity in days, Sec. 2.2.6; Fig. 3B) also governs the timing of recalls.",
+      "locator": "Sec. 2.2.4 Context-aware Memory Retrieval (sentences 1, 3, 7); Sec. 2.2.5 Proactive Situated Information Display (sentences 4, 8); Sec. 2.2.6; Fig. 2 and Fig. 4 captions",
+      "quote": "Only when all dimensions are satisfied, an RSAM is suggested to the user. [...] A memory is AR-anchored onto the referent specified by an RSAM."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The Proactive visualizer, the module that selects and situates a recalled memory, directs sensing toward the referent it intends to anchor on: it runs the open-vocabulary detector for that referent in the current view and, if present, has the HMD compute 3D anchor points from the depth map captured at that time, so the action's situating plan guides sensing targets and acquisition. The resurfacing action also triggers re-acquisition of live information on each repeat cycle through the integrated Google Custom Search path (Sec. 2.2.1, 2.2.5). These are in-system flows, not an external grader.",
+      "locator": "Sec. 2.2.5 Proactive Situated Information Display (sentences 1-3, 8); Sec. 2.2.1 (Google Custom Search API sentence)",
+      "quote": "If present in the current view, the 2D center points are transmitted to the user's HMD to compute the 3D anchor points using the depth map acquired from the external camera of the HMD, at the time of the image capture."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained content conditions the interpretation of the sensed view: during recall, before any suggestion decision is made, the referent labels stored in candidate RSAMs are supplied to the open-vocabulary detector (YOLO-World, with a Gemini 2.0-Flash fallback at low confidence, Sec. 4.1) to verify whether those referents exist in the user's current view (Sec. 2.2.4), i.e., the memory's referent acts as the detector's vocabulary/attention prior. Because this check is a gating step inside retrieval that precedes the suggest-or-stay-silent decision ('Only when all dimensions are satisfied, an RSAM is suggested'), it is a direct memory-to-sensing prior for interpretation rather than only an Action-decision-requested observation (M->A->S). No memory conditioning of the continuous scene/activity lifelogging itself is described.",
+      "locator": "Sec. 2.2.4 Context-aware Memory Retrieval (sentences 5-7); Sec. 2.2.5 (sentence 2: 'localizing the referents specified in RSAMs via an open-vocabulary detector'); Sec. 2.1 Open-world scene analysis; Sec. 4.1",
+      "quote": "We sequentially verify the semantic alignment between each dimension, and the user's current context. The proximity of spatiotemporal context is assessed as the first step, then we verify the existence of the RSAM referents in the user's view, and finally fine-grained spatial activity semantics matching."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The assistant's own output is written to Memory: each RSAM stores the response the assistant delivered and the source of that response together with the query and context, and the Figure 2 caption states the generated answer is permanently stored as a memory. Sec. 2.1 describes the memory bank as storing interaction histories. Whether the self-updated content on repeat cycles is written back is not stated, but the initial response/source storage already establishes the flow.",
+      "locator": "Sec. 2.2.3 Personal Memory Generation (sentences 3 and 6); Fig. 2 caption; Sec. 2.1 Proactive assistance",
+      "quote": "Then, we bring the user's verbal query, its response, and the response source together, and form a memory. [Fig. 2:] Upon completion of response generation, the answer is situated onto the referent that the query is initiated to, and is permanently stored along with its spatial activity context as a form of a memory."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service itself keeps a record of what it delivered: every RSAM stores the response given and its source, alongside the query and spatial activity context, and these records are kept for later resurfacing (not merely study logs). The study-time 'System logs of spatial context, interactions, and resurfaced memories' (Sec. 4.2) are researcher data and were not relied on.",
+      "locator": "Sec. 2.2.3 Personal Memory Generation (sentence 3); Sec. 2.1 Proactive assistance; Fig. 2 caption",
+      "quote": "It holds the moment of the verbal query, the response, the source of the response, and the context of the spatial activity. [Sec. 2.1:] A context-aware memory bank stores interaction histories and resurfaces them under matched spatiotemporal and activity cues, with an adjustable interface providing users agency over repetition cycles."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later evidence about a resurfacing action is obtained and retained: a user can dismiss a resurfaced memory with the 'Remove' option, and the dismissal is applied permanently (the memory is durably removed from future recall). The deployment reports dismissals occurred (Sec. 4.2 counts memories 'including user-dismissed memories'). No ratings, replies or outcome records beyond this dismissal are described.",
+      "locator": "Sec. 2.2.5 Proactive Situated Information Display (sentence 7); Sec. 2.2.6 (sentence 2); Sec. 4.2 (session/memory counts)",
+      "quote": "The 'Remove' option allows permanent dismissal of unwanted (e.g., mismatched) memories or one-time queries that do not require repeating."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The dismissal is linked to the specific resurfaced memory it concerns (the UI shows that memory with the matched Space/Time/Activity reasoning) and is used to correct assistance: removing a mismatched memory stops that memory from being resurfaced again. The link and corrective use are per-memory only; no aggregation across memories is described.",
+      "locator": "Sec. 2.2.5 Proactive Situated Information Display (sentences 5-7); Sec. 2.2.6 (sentences 1-2)",
+      "quote": "users are given the option to view the system reasoning on Spatial Activity contextual alignment. The Space, Time, and Activity of the matched information in a human-readable format is shown for explainability. The 'Remove' option allows permanent dismissal of unwanted (e.g., mismatched) memories or one-time queries that do not require repeating."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No durable change to the service's own mechanism is reported. The only persistent changes are content used by a fixed mechanism: RSAM entries added or deleted, and the user-set recall interval (Sec. 2.2.6), both made by the user. Retrieval weighting, the detection-confidence fallback threshold (<0.5, Sec. 4.1), prompts and models are fixed design choices; 'learned from prior memories' (Sec. 2 opening) refers to retrieval of stored interests. Adapting resurfacing over time is explicitly left to future work.",
+      "locator": "Sec. 2.2.6 User Preference and Proactivity Adjustment Interface; Sec. 4.1; Sec. 5 Future Work and Discussion ('Need for longitudinal routine pattern evaluation' and 'Mixed-initiative context control')",
+      "quote": "Our diary-based deployment captured short-term routine patterns but could not reveal how resurfacing should adapt [...] Prior work on user-assistant collaboration and conditional triggers, such as IFTTT (If-This-Then-That)-like structures, may provide contexts for lightweight refinements.",
+      "what": "None. Only memory content changes (RSAM creation, user-initiated permanent removal, user-set recall interval in days); no self-modified parameters, prompts, rules, code, or thresholds."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revised mechanism exists, so no later run under a revision is reported. The 2-4 day deployment ran under a fixed configuration with the recall sensitivity pinned by the authors.",
+      "locator": "Sec. 4.2 User Evaluation and Feedback (procedure paragraph); Sec. 5",
+      "quote": "To ensure consistency across participants, proactive resurfacing sensitivity was fixed at one resurfacing per 24 hours."
+    }
+  },
+  "notes": "Judged variant mementoar2026: the Quest 3 prototype as described in Sec. 2.2.1-2.2.6 of arXiv 2601.17622v4 (unnumbered Introduction; 1 Related Work; 2 Memento; 3 Use Cases; 4 Evaluation; 5 Future Work; 6 Conclusion) and deployed in the Sec. 4.2 diary study. No code repository exists, so judgments rest on the text alone. Shell access was denied in this session, so the raw HTML could not be opened directly; all quotes were obtained by asking the fetch tool for verbatim sentences and each quoted sentence was returned identically in at least two independent extraction passes. The HTML renders the math symbol K as 'KK' in extracted text (e.g., 'top-K', 'K-similar'); those fragments were avoided in quotes. M->S is the closest call: I marked it reported because the RSAM referent labels are fed to the open-vocabulary detector as a gating verification inside recall (Sec. 2.2.4) before the suggest/silence decision, which I read as a direct retained prior for interpretation rather than only the M->A->S composition; a reviewer who treats the retrieval pipeline itself as the Action decision would mark M->S insufficient. Outcome and attribution rest solely on the per-memory 'Remove' permanent dismissal; the service does not generalise from dismissals, which is why revision and later use are not_stated.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 497,
+    "code_commit": null
+  }
+}

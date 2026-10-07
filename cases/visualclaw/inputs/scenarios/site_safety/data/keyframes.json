@@ -1,0 +1,38 @@
+{
+  "note": "Text stand-ins for the keyframes that VisualClaw's cascade gate (Cascade-8) forwards from the walkthrough clip. The adapter stages each description as _clip_frames/<MM_SS>.jpg, and the backbone receives it in place of the image attachment.",
+  "clip_seconds": 70,
+  "keyframes": [
+    {
+      "t": "00:07",
+      "description": "Site gate. Worker #11: white hard hat, orange hi-vis vest, clear safety glasses over the eyes. Worker #12: hard hat and hi-vis vest, no safety glasses."
+    },
+    {
+      "t": "00:15",
+      "description": "Scaffold base. Worker #13: hard hat, vest, safety glasses on. Worker #14: vest and glasses on, hard hat held in the hand, bare head. Worker #15: hard hat and vest, safety glasses pushed up onto the brim of the hat."
+    },
+    {
+      "t": "00:23",
+      "description": "Crusher zone, yellow hatching on the ground. Worker #16: hard hat, vest, glasses and red ear muffs. Worker #17: hard hat, vest and glasses, no ear muffs or plugs visible."
+    },
+    {
+      "t": "00:31",
+      "description": "Rebar yard. Worker #18: hard hat, vest, glasses and work gloves. Worker #19: hard hat and glasses, grey T-shirt, no hi-vis vest."
+    },
+    {
+      "t": "00:39",
+      "description": "Concrete pour. Workers #20 and #21: hard hats, vests, safety glasses on. Worker #22: hard hat and vest, no safety glasses."
+    },
+    {
+      "t": "00:47",
+      "description": "Crusher zone, second pass. Worker #23: hard hat, vest, glasses, orange foam ear plugs visible. Worker #24: hard hat, vest and ear muffs, no safety glasses."
+    },
+    {
+      "t": "00:55",
+      "description": "Site office ramp. Worker #25: hard hat, vest, glasses. Worker #26: hard hat, vest, glasses, bare hands (no gloves)."
+    },
+    {
+      "t": "01:03",
+      "description": "Loading bay. Worker #27: baseball cap instead of a hard hat, vest and glasses on. Worker #28: hard hat, vest, glasses."
+    }
+  ]
+}

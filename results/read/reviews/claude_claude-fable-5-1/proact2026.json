@@ -1,0 +1,131 @@
+{
+  "id": "proact2026",
+  "configuration": "Directed Idle (paper Sec. 5.1 / Appendix F), i.e. code condition `Full-single-idle`: AblationConfig fsp_enabled=True, ite_enabled=True, idle_window_mode=False (experiments/ProactiveBench/eval/ablation_config.py:62-63). Per turn the adapter runs Future-State Prediction (memory critic + research predictor + value evaluator) into a dedup intent queue, then Idle-Time Acquisition (search over the ExternalFactStore via SearchService, knowledge written to MemorySystem, push-score gate -> direct push / inline / drop), then the simulated user turn goes through ChatHandler (topic monitor -> planning with memory context -> optional reactive search -> assistant reply -> incremental profile/fact/summary extraction into memory). In-conversation need prediction and deep research are disabled in this configuration (adapter.py:676-684). Memory is a fresh on-disk MemorySystem per scenario (adapter.py:320-325) that persists across turns within the scenario.",
+  "sources_read": [
+    "https://arxiv.org/html/2605.25971v2 (paper, version 2605.25971v2; fetched via WebFetch in targeted passes covering the abstract, Sec. 1, 3.1-3.4, 4.3, 4.4, 5.1-5.3, 6, and Appendices C, D, F, J, L, M, O, P; quotes marked verbatim were returned identically by two or more independent fetches)",
+    "cases/proact/case.yaml",
+    "README.md",
+    "RUN_COMMANDS.md",
+    "ARTIFACT_MANIFEST.json",
+    "experiments/ProactiveBench/eval/runner.py",
+    "experiments/ProactiveBench/eval/adapter.py",
+    "experiments/ProactiveBench/eval/ablation_config.py",
+    "experiments/ProactiveBench/eval/fsp_module.py",
+    "experiments/ProactiveBench/eval/ite_module.py",
+    "experiments/ProactiveBench/eval/coverage_judge.py",
+    "experiments/ProactiveBench/eval/user_simulator.py",
+    "experiments/ProactiveBench/eval/benchmark_search.py",
+    "experiments/ProactiveBench/eval/external_fact_store.py",
+    "experiments/ProactiveBench/eval/models.py",
+    "experiments/ProactiveBench/eval/evaluator.py",
+    "server/handlers/chat_handler.py",
+    "server/handlers/report_handler.py",
+    "server/dependencies.py",
+    "server/tasks/proactive_tasks.py",
+    "server/tasks/scheduler.py",
+    "server/websocket/ws_handler.py",
+    "services/search_service.py",
+    "services/push_service.py",
+    "services/report_service.py",
+    "services/proactive/decision_service.py",
+    "services/proactive/policy.py",
+    "services/proactive/item_service.py",
+    "services/proactive/eligibility.py",
+    "services/proactive/brief_service.py",
+    "services/proactive/turn_signals.py",
+    "services/proactive/models.py",
+    "agents/assistant_agent.py",
+    "agents/base_agent.py",
+    "agents/memory_critic.py",
+    "agents/need_predictor.py",
+    "agents/planning_agent.py",
+    "agents/push_score.py",
+    "agents/research_evaluator.py",
+    "agents/research_predictor.py",
+    "agents/search_planner.py",
+    "agents/topic_monitor.py",
+    "core/config.py",
+    "core/models.py",
+    "core/prompts.py",
+    "memory/memory_system.py",
+    "memory/memory_update_agent.py",
+    "memory/profile_store.py",
+    "memory/fact_store.py",
+    "memory/knowledge_index.py",
+    "memory/vector_store.py",
+    "tools/search_tool.py",
+    "tools/web_fetcher.py",
+    "experiments/MemBench/benchmark/adapters/memory_v2_adapter.py",
+    "tests/test_proactive_agent_adapter.py"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Two implemented write paths deliver sensed/user-supplied evidence to Memory. (1) After every foreground turn, ChatHandler._incremental_extract_and_save runs the INCREMENTAL_PROFILE_EXTRACTION prompt on the new user message and submits profile updates (MemoryUpdateRequest UPDATE_PROFILE -> ProfileStore.update), entity facts (memory.add_facts -> FactStore), and the user message with a sentiment label plus an updated rolling summary (append_interaction_to_topic -> conversations.json). (2) Evidence retrieved by Idle-Time Acquisition or reactive search is admitted through SearchService._store_results -> MemorySystem.submit_update(ADD_KNOWLEDGE) -> MemoryUpdateAgent._add_knowledge, which hashes, deduplicates and lets an LLM decide skip/replace/merge before writing to the Chroma knowledge collection and the SQLite knowledge index. The paper states the same per-turn extraction pipeline and that foreground interactions update memory.",
+      "locator": "server/handlers/chat_handler.py:849-953; memory/memory_system.py:393-418, 665-706, 985-996; memory/memory_update_agent.py:112-209; services/search_service.py:301-353; experiments/ProactiveBench/eval/ite_module.py:220-245; paper Sec. 3.1-3.2 and Appendix J (Sentiment and Temporal Query Details)",
+      "quote": "The incremental extraction pipeline produces structured updates after each turn, including profile_updates for user attributes such as interests, goals, traits, and demographics."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information conditions every Action decision in the configuration. Reply content: PlanningAgent.run builds memory_context via MemorySystem.format_context_for_query (user facts, knowledge items, conversation summaries, preferences) and AssistantAgent.run injects it plus the stored user profile into the ASSISTANT prompt (\"Prioritize using concrete facts from memory to answer\"). Prediction and acquisition: BenchmarkFSP feeds the memory critic with memory context, the research predictor with recent topics and profile.research_history, and the value evaluator with existing knowledge from memory.search_knowledge. Delivery/silence: BenchmarkITE._evaluate_push passes profile interests and the current session context to the push scorer, and the direct-push gate suppresses pushes using retained delivered-fact state (_delivered_fact_ids, _recent_direct_push_fact_sets) and prior assistant lines. The paper states that prediction candidates are grounded in Mt and that memory coverage decides whether to search.",
+      "locator": "agents/planning_agent.py:60-81; memory/memory_system.py:249-323; agents/assistant_agent.py:61-84; core/prompts.py:61-76; experiments/ProactiveBench/eval/fsp_module.py:315-424; experiments/ProactiveBench/eval/ite_module.py:258-310, 360-417; paper Sec. 3.3 (Candidate generation) and Sec. 3.4 (Memory-aware acquisition, Memory update)",
+      "quote": "Second, related expansion proposes adjacent topics grounded in Mt, including user profiles, conversation summaries, stored artifacts, and unresolved goals."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action's plans and information needs direct what is sensed. Predicted intents (each carrying a topic, query and reason) are queued, and during the idle window BenchmarkITE._explore_intent calls SearchService.search(topic=intent.topic, purpose=intent.reason), which plans queries and executes them against the external fact store through BenchmarkSearchTool/BenchmarkWebFetcher; the adapter allocates how many intents may be searched per idle tick and enforces a total search budget. In the foreground, PlanningAgent decides whether memory is insufficient and emits search_queries that trigger search_for_query. The paper describes each candidate as carrying a retrieval plan and acquisition as searching only for what the candidate still lacks.",
+      "locator": "experiments/ProactiveBench/eval/adapter.py:464-544; experiments/ProactiveBench/eval/ite_module.py:70-110, 220-245; services/search_service.py:105-179, 236-299; experiments/ProactiveBench/eval/benchmark_search.py:17-41; server/handlers/chat_handler.py:239-255; paper Sec. 3.2 (candidate z includes the retrieval plan ρz) and Sec. 3.4 (Memory-aware acquisition)",
+      "quote": "If coverage is partial, it searches only for missing subtopics."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The code supplies retained priors to the interpretation and acquisition side, not only to answer-time decisions. (1) Interpretation: on every user message ChatHandler.handle calls TopicMonitorAgent.run with current_topic and existing_topics=memory.get_all_topics(); the TOPIC_MONITOR prompt lists \"topics the user has previously discussed\" and uses them to classify the incoming message as same topic, returning topic, or new topic, which then governs how the observation is filed. (2) Sampling: SearchService.search fetches the stored UserProfile and passes it to SearchPlannerAgent, whose SEARCH_PLANNING prompt conditions the generated search queries on \"User background\" before the external store is queried. (3) The per-turn extraction that compresses the new interaction is conditioned on the retained running summary (\"Historical summary: {running_summary}\"). These are direct memory-to-sensing inputs rather than a memory-guided Action decision that requests an observation. The paper text does not describe this flow explicitly; it is established from the code at the listed commit, and the closest paper statement is Appendix J's rolling summary that merges historical and new interaction highlights.",
+      "locator": "server/handlers/chat_handler.py:221-233, 870-893; agents/topic_monitor.py:37-125; core/prompts.py:12-37, 128-138, 392-415; services/search_service.py:131-137; agents/search_planner.py:37-69; paper Appendix J",
+      "quote": "List of topics the user has previously discussed:\n{existing_topics}\n\nUser's new message: {new_message}\n\nDetermine:\n1. Whether the user's new message is still about the current topic\n2. If not, whether it returns to a previously discussed topic"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Action outputs are written to Memory. Every assistant reply is appended to the session (memory.add_message(\"assistant\", response)), included in the extraction prompt, and persisted with the turn to conversations.json via append_interaction_to_topic; direct pushes produced during idle time are recorded into the session memory by adapter.record_direct_push, and BenchmarkITE._record_direct_push retains the delivered fact IDs and source URLs that later gate novelty. Knowledge artifacts acquired by the agent's own idle-time searches are written back with provenance (source_url, title, topic) through submit_update. The paper states that artifacts and provenance are written back after acquisition and delivery decisions.",
+      "locator": "server/handlers/chat_handler.py:278-283, 928-943; experiments/ProactiveBench/eval/adapter.py:614-619; experiments/ProactiveBench/eval/runner.py:266-268; experiments/ProactiveBench/eval/ite_module.py:419-438; services/search_service.py:331-346; paper Sec. 3.4 (Memory update)",
+      "quote": "After acquisition and delivery decisions, each artifact and its provenance are written back into memory, allowing later predictions and responses to reuse grounded preparation."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of what it delivered and prepared for its own later use: assistant replies and idle-time pushes are stored in the session and persisted per topic in conversations.json, acquired artifacts are stored with provenance, and the ITE module retains delivered fact IDs and recent push fact sets that later turns consult (FSP reads the formatted history; ITE's direct gate checks recent_push_overlap and recent_reactive_overlap). The paper states this write-back of artifacts and the per-interaction memory update.",
+      "locator": "paper Sec. 3.2 and Sec. 3.4 (Memory update); server/handlers/chat_handler.py:278-283, 928-943; experiments/ProactiveBench/eval/adapter.py:614-619; experiments/ProactiveBench/eval/ite_module.py:360-438",
+      "quote": "After each foreground interaction, the agent updates its memory, predicts possible future needs, allocates idle-time computation to valuable candidates, and decides how the resulting preparation should be handled."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No in-service mechanism obtains evidence about the effect of a push or reply. Subsequent user messages are stored only as generic dialogue content, never captured as a rating, dismissal, acceptance, receipt or result tied to an assistant action. The coverage judge and the simulator's need-skipping are run by the benchmark harness outside the service (runner.py:240-346; coverage_judge.py), and the paper explicitly says downstream benefit is not observed by the system at idle time. The production websocket push_response hook only prints and clears a wait flag and is not part of the judged configuration.",
+      "locator": "paper Appendix C (Benefit and cost) and Sec. 4.3; experiments/ProactiveBench/eval/runner.py:240-346; experiments/ProactiveBench/eval/coverage_judge.py:53-123; server/websocket/ws_handler.py:426-447",
+      "quote": "Downstream benefit is not observed at idle time."
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Outcomes are linked to decisions only in the offline evaluator (anticipation recall, push precision, intent hit rate computed by the authors from traces in evaluator.py), which is benchmark scoring, not a check or correction performed by the service. Inside the service the only checks against its own past actions are redundancy gates (delivered-fact overlap, content-hash dedup), which use no outcome signal.",
+      "locator": "experiments/ProactiveBench/eval/evaluator.py:140-226, 707-786; paper Sec. 4.3 and Appendix C",
+      "quote": "An LLM-based coverage judge finally marks which facts were correctly conveyed, which claims were distorted or unsupported, and which needs were addressed."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Nothing the service changes is a mechanism. All prompts are static class constants in core/prompts.py, thresholds are constants (PUSH_THRESHOLD, INLINE_THRESHOLD, EVALUATOR_THRESHOLD), no model parameters are updated (the MemBench adapter's train() is a no-op), and what accumulates (user profile fields, entity facts, knowledge artifacts, rolling summaries, research_history topic list, delivered-fact sets) is content consumed by a fixed mechanism. A keyword sweep of the paper for learn/adapt/update/feedback/fine-tune found only memory-content updates; the title's 'Learn' refers to memory accumulation.",
+      "locator": "core/prompts.py (static templates); experiments/ProactiveBench/eval/ite_module.py:34-43; experiments/ProactiveBench/eval/fsp_module.py:33; experiments/MemBench/benchmark/adapters/memory_v2_adapter.py:524-526; memory/profile_store.py:82-141; paper Sec. 3.4 (Memory update) and Appendix J",
+      "what": "None. Only memory content (profile, facts, knowledge artifacts, summaries) changes; prompts, rules, parameters and code are fixed."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "There is no revised mechanism for later turns to run under; the stated loop (Ht, Mt) -> Zt -> S(z) -> Az -> dz -> Mt+1 only carries memory content forward into a fixed predictor, acquirer and delivery policy.",
+      "locator": "paper Sec. 3.4 (Memory update); experiments/ProactiveBench/eval/adapter.py:396-597"
+    }
+  },
+  "notes": "Judged the Directed Idle configuration, which Appendix F maps to the code condition Full-single-idle (single fetch, UNVERIFIED wording: \"The reported 200-scenario run uses the three conditions in Appendix S: Reactive (Baseline), Undirected Idle (Blind), and Directed Idle (Full-single-idle).\"), consistent with the README/RUN_COMMANDS invocation `--conditions Baseline Blind Full-single-idle` with idle trigger 5 s, 3 intents per idle, 1 query per search. Retention scope: MemorySystem is wiped and recreated per scenario (adapter.py:320-325, 'system memory starts empty'), then persists on disk across the scenario's turns and idle windows; in-conversation need prediction (ChatHandler._proactive_anticipate) and deep research are disabled, so ProactiveItemService persistence and the LLM turn-signal extractor are not exercised. Sensing in this configuration is the benchmark ExternalFactStore (Chroma) accessed through the production SearchService; the user simulator and coverage judge are harness components, not service flows. Paper quotes marked as verbatim were returned identically by at least two independent WebFetch passes; the paper limitation (Sec. 6, verbatim) reads: \"These results come from a closed-world synthetic benchmark, so they should be read as controlled evidence for prediction-guided idle-time compute rather than a deployment guarantee in open-world personal assistants.\"",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 461,
+    "code_commit": "7ac78fde0524443ebeb9d3173b78498c25625f57"
+  }
+}

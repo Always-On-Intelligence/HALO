@@ -1,0 +1,233 @@
+{
+  "case": "omi",
+  "channels": {
+    "S->M": "transcripts become stored conversations, vectors and extracted memories; chat turns become chat history",
+    "M->A": "stored facts, conversations, tasks, notifications and chat history read by the mentor and the chat agent",
+    "A->S": "open tasks supplied to the extraction of a new transcript (dedup and completion)",
+    "M->S": "enrolled speech profile and stored people label who is speaking in the incoming transcript",
+    "A->M": "delivered mentor notifications, chat answers and created tasks written back to the user store"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 10,
+      "modified": 3,
+      "tie": 2,
+      "metrics": {
+        "notifications": {
+          "original": 0.2,
+          "modified": 0.2
+        },
+        "backbone_calls": {
+          "original": 11.9333,
+          "modified": 10.8
+        },
+        "memories_written": {
+          "original": 10.4,
+          "modified": 0.0
+        },
+        "failed_conversations": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "tasks_last_day": {
+          "original": 1.8667,
+          "modified": 1.8667
+        },
+        "repeated_notifications": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "duplicate_tasks_last_day": {
+          "original": 0.4,
+          "modified": 0.4
+        },
+        "chat_expected_hits": {
+          "original": 0.9333,
+          "modified": 0.3
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 14,
+      "modified": 0,
+      "tie": 1,
+      "metrics": {
+        "notifications": {
+          "original": 0.2,
+          "modified": 0.2
+        },
+        "backbone_calls": {
+          "original": 11.9333,
+          "modified": 10.6
+        },
+        "memories_written": {
+          "original": 10.4,
+          "modified": 10.4
+        },
+        "failed_conversations": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "tasks_last_day": {
+          "original": 1.8667,
+          "modified": 1.8667
+        },
+        "repeated_notifications": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "duplicate_tasks_last_day": {
+          "original": 0.4,
+          "modified": 0.4
+        },
+        "chat_expected_hits": {
+          "original": 0.9333,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 2,
+      "modified": 3,
+      "tie": 10,
+      "metrics": {
+        "notifications": {
+          "original": 0.2,
+          "modified": 0.2667
+        },
+        "backbone_calls": {
+          "original": 11.9333,
+          "modified": 12.1333
+        },
+        "memories_written": {
+          "original": 10.4,
+          "modified": 10.4
+        },
+        "failed_conversations": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "tasks_last_day": {
+          "original": 1.8667,
+          "modified": 2.2
+        },
+        "repeated_notifications": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "duplicate_tasks_last_day": {
+          "original": 0.4,
+          "modified": 0.0
+        },
+        "chat_expected_hits": {
+          "original": 0.9333,
+          "modified": 1.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->S"
+      ],
+      "field": "output_tasks",
+      "pairs": 15,
+      "original": 3,
+      "modified": 0,
+      "tie": 12,
+      "metrics": {
+        "notifications": {
+          "original": 0.2,
+          "modified": 0.2
+        },
+        "backbone_calls": {
+          "original": 11.9333,
+          "modified": 12.0
+        },
+        "memories_written": {
+          "original": 10.4,
+          "modified": 10.4
+        },
+        "failed_conversations": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "tasks_last_day": {
+          "original": 1.8667,
+          "modified": 2.2
+        },
+        "repeated_notifications": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "duplicate_tasks_last_day": {
+          "original": 0.4,
+          "modified": 0.6
+        },
+        "chat_expected_hits": {
+          "original": 0.9333,
+          "modified": 1.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->S"
+      ],
+      "field": "output_capture",
+      "pairs": 15,
+      "original": 15,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "notifications": {
+          "original": 0.2,
+          "modified": 0.0
+        },
+        "backbone_calls": {
+          "original": 11.9333,
+          "modified": 10.2667
+        },
+        "memories_written": {
+          "original": 10.4,
+          "modified": 4.0
+        },
+        "failed_conversations": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "tasks_last_day": {
+          "original": 1.8667,
+          "modified": 2.2
+        },
+        "repeated_notifications": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "duplicate_tasks_last_day": {
+          "original": 0.4,
+          "modified": 0.4
+        },
+        "chat_expected_hits": {
+          "original": 0.9333,
+          "modified": 0.9667
+        }
+      }
+    }
+  ]
+}

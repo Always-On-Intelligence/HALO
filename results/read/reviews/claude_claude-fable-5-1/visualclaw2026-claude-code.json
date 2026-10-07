@@ -1,0 +1,96 @@
+{
+  "id": "visualclaw2026-claude-code",
+  "configuration": "VisualClawArena run with the Claude Code backend (Sonnet 4.6), Cascade-8 keyframes (cascade keyframe mode, 8 frames, 1 fps, tau_major 0.30) and FullEvo in the Cat. memory-to-evolver mode. In the repository this is the agent-backend path of benchmark/visualclawarena/runner.py with --backend claude-code --keyframe-mode cascade --max-keyframes 8 --skills-mode inject --memory --evolve --skills-evolve-every N --memory-evolver-fusion; the Cat. variant corresponds to --memory-evolver-context-mode simple_concat (retrieved memory concatenated into the standard evolver prompt without prefix guidance), whereas related_prefix is the Guide variant. The gateway/proxy and the live-glasses pipeline are not part of this configuration (route B, direct module import).",
+  "sources_read": [
+    "https://arxiv.org/html/2606.16295v1 (v1; read via WebFetch extraction: Abstract, Sec. 1, 3.1-3.4, 4.1-4.2, 5.1, 5.3, Fig. 2 and Fig. 5 captions, Table 7 and Table 8, Appendix A outline; raw HTML could not be downloaded because Bash was unavailable)",
+    "README.md",
+    "docs/visualclawarena.md",
+    "docs/architecture.md",
+    "benchmark/visualclawarena/runner.py",
+    "benchmark/visualclawarena/engines/claude_code.py",
+    "benchmark/visualclawarena/engines/base.py",
+    "benchmark/visualclawarena/cascade_frames.py",
+    "benchmark/visualclawarena/work_copy.py",
+    "benchmark/visualclawarena/failure_analysis.py",
+    "benchmark/skill_wire.py",
+    "scripts/run_visualclawarena_self_evolve.sh",
+    "visualclaw/modules/skill/evolver.py",
+    "visualclaw/modules/skill/manager.py",
+    "visualclaw/modules/memory/manager.py",
+    "visualclaw/modules/memory/models.py",
+    "visualclaw/modules/multimodal/video/change_gate.py",
+    "visualclaw/modules/multimodal/video/state_memory.py"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "After every round the runner writes an episodic MemoryUnit into the per-scenario memory scope whose content is the user-supplied round question plus the answer tail, tagged with the pass/fail outcome that the evaluator observes from the final workspace state. The round question (user input) and the observed checker result are sensed evidence admitted to Memory; failed rounds' questions and references are also appended to the cross-scenario failure buffer. The paper states that correctly solved examples are stored in the memory bank and that failures are routed back into the memory loop.",
+      "locator": "benchmark/visualclawarena/runner.py:752-797 (_store_round_memory) and 1015-1030; runner.py:2056-2069 (failure buffer append); paper Sec. 3.4 and Sec. 4.2",
+      "quote": "runner.py:756 'Store one round's outcome as an episodic memory unit for later rounds.'; runner.py:1016 'Store this round's Q&A immediately so the next round can retrieve it.'; paper Sec. 3.4 UNVERIFIED (WebFetch-extracted): 'Correctly-solved examples are stored in the memory bank, and failures trigger an offline LLM evolver that uses relevant memories and failures to update the skill bank.'"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Each round the runner retrieves memories stored by earlier rounds of the scenario (retrieve_for_prompt, scope_id = scenario_id, top-k and char cap) and prepends the rendered block to the agent prompt, and retrieves SKILL.md skills from the writable bank via SkillManager.retrieve and prepends them in hot/cold hybrid format. The Claude Code agent's answer, file edits and tool decisions are conditioned on this retained content. The paper describes the same prepending of retrieved skills or memory context to the agent prompt and the hot/cold skill injection.",
+      "locator": "benchmark/visualclawarena/runner.py:847-934 (skill injection and _prepend_memory) and 610-615; visualclaw/modules/skill/manager.py:663-727 (format_for_injection_hybrid); paper Sec. 3.3 and Sec. 4.2",
+      "quote": "runner.py:613 '## Relevant memory from earlier rounds of this scenario'; paper Sec. 4.2 UNVERIFIED (WebFetch-extracted): 'For each evolve step, the runner initializes a clean computer workspace, applies the step's document or data updates, stages the selected visual keyframes as local image files, and prepends retrieved skills or memory context to the agent prompt.'"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "In the Claude Code backend the agent acts through native Read/Write/Edit/Bash/Glob/Grep tools with the staged workspace as cwd. Its plan and information needs decide which keyframe images under _clip_frames/ and which workspace files are read, and the Read tool returns the chosen images as image content blocks that the same multimodal model interprets; Bash is allowed so the agent can run python for ad-hoc validation of the files it wrote (an expected-effect check). The round prompt instructs the agent to inspect the keyframes with its image/file-reading tools before answering, and the paper describes Claude Code as a native tool-using workspace agent operating through file reads, tool calls, edits and verification loops. The up-front cascade keyframe selection itself is not action-guided (it is anchored on question citations), but the agent's tool-directed acquisition is an in-system Action-to-Sensing flow.",
+      "locator": "benchmark/visualclawarena/engines/claude_code.py:12-16 and 33-36; runner.py:580-589 (keyframe inspection instruction) and 512-532; paper Sec. 4.2 and Sec. 5.3",
+      "quote": "claude_code.py:12-16 'The agent receives the per-round `message`, has `workspace` as its `cwd`, and is free to use Read / Write / Edit / Bash / Glob / Grep tools. Image attachments (walkthrough keyframes) are staged by the runner as files under `workspace/_clip_frames/<MM_SS>.jpg`; the agent's Read tool returns them as image content blocks to the underlying multimodal model.'; paper Sec. 5.3 UNVERIFIED (WebFetch-extracted): 'agentic backends can better use long context when they process it through file reads, tool calls, edits, and verification loops.'"
+    },
+    "M->S": {
+      "label": "absent",
+      "rationale": "The sensing stage of this configuration is the cascade keyframe selector (dHash, 128-dim CPU encoder, adaptive change gate) run once per scenario before any round. The paper defines the gate as producing its verdict from the frame stream alone, and the generation equation a ~ pi(q, G(F), Ret_S, Cat(S), Ret_Mv(q)) places skills and memory only at answer generation. The arena extractor explicitly states that the StateMemory and ContextBuilder stages are not used and that only stages 1-3 run; its only external input is the list of [clip @ MM:SS] timestamps cited in questions.json, which is task input, not retained memory. The change gate's adaptive EMA state is per-extraction and not retained across interactions. Skills and memories reach the agent only through prompt-time retrieval, which the protocol classifies as M->A, and any memory-informed decision to read a frame is the excluded M->A->S composition.",
+      "locator": "paper Sec. 3.2 and Eq. 1 in Sec. 3.1; benchmark/visualclawarena/cascade_frames.py:11-14 and 111-166; runner.py:1583-1625; visualclaw/modules/multimodal/video/change_gate.py:80-147",
+      "quote": "cascade_frames.py:11-14 'Stage 4 (StateMemory) and Stage 5 (ContextBuilder) of the cascade are not used here — they are streaming-session constructs that don't fit offline keyframe extraction. We use only Stages 1-3 (FrameHasher → LightweightEncoder → ChangeGate).'; paper Sec. 3.2 UNVERIFIED (WebFetch-extracted): 'the visual encoding gate G maps each arriving frame f_t to a verdict g_t ∈ {major, minor, skip} from f_1:t alone'"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The agent's own utterance is written to Memory each round: _store_round_memory builds the unit content from the question plus the last 700 characters of the agent answer ('Conclusion: ...') and tags it with the round outcome. The per-round prompt, answer and transcript are persisted to agent_logs/<qid>/ and are later read back to build failure samples (question, agent answer, prompt tail, reference) that are fed to the skill evolver and appended to the cross-scenario failure buffer JSONL. The paper states that failures are routed back into the same memory and skill-evolution loop.",
+      "locator": "benchmark/visualclawarena/runner.py:773-797 and 945-959 and 1015-1030; runner.py:1793-1828 and 1900-1942 and 2056-2069; paper Sec. 4.2 and Sec. 3.4",
+      "quote": "runner.py:776-777 'if tail: content += f\"\\nConclusion: {tail}\"'; paper Sec. 4.2 UNVERIFIED (WebFetch-extracted): 'The evaluator checks the final workspace state for execution-style tasks or parses the final answer for multiple-choice rounds, and failures are routed back into the same memory and skill-evolution loop.'"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service itself keeps records of what it decided and delivered: every round's agent answer is stored as an episodic memory unit for later rounds, and prompt.txt, answer.txt and transcript.json are written per round and re-read by the evolver path to build failure trajectories. These are operational records consumed by the system, not author-only trial logs. The paper states that correctly solved examples are stored in the memory bank and that the evolver analyses failure trajectories.",
+      "locator": "benchmark/visualclawarena/runner.py:945-959 and 1015-1030 and 1793-1828; paper Sec. 3.4 and Sec. 3.1",
+      "quote": "paper Sec. 3.4 UNVERIFIED (WebFetch-extracted): 'Correctly-solved examples are stored in the memory bank, and failures trigger an offline LLM evolver that uses relevant memories and failures to update the skill bank.'; runner.py:1016 'Store this round's Q&A immediately so the next round can retrieve it.'"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "After each round the runner obtains the task result (multiple-choice parse or executable checker on the final workspace state) and retains it: the MemoryUnit.outcome field is set to 'passed' or 'failed', the per-round result is kept in results, failed rounds are persisted to the cross-scenario failure buffer, and F2 record_result is fed the outcome. The paper states that the evaluator checks the final workspace state and that failures are routed back into the memory and skill-evolution loop. Caveat: the outcome signal is benchmark checker/answer-key scoring executed by the harness inside the loop, not end-user feedback.",
+      "locator": "benchmark/visualclawarena/runner.py:981-1030 and 1763-1772 and 2056-2069; visualclaw/modules/memory/models.py:52-57; paper Sec. 4.2",
+      "quote": "paper Sec. 4.2 UNVERIFIED (WebFetch-extracted): 'In both cases, scoring remains outside the agent. The evaluator checks the final workspace state for execution-style tasks or parses the final answer for multiple-choice rounds, and failures are routed back into the same memory and skill-evolution loop.'; models.py:52-53 'v4 Fix 0 — failure-aware retrieval. \"passed\" | \"failed\" | \"\"'"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Outcomes are linked to the specific decisions they concern and used to correct assistance: each failed round's own answer, prompt tail and reference are assembled into failure samples that drive the evolver ('analyses failure trajectories'), and the F2 utility tracker credits or blames exactly the skills injected on that round with that round's pass/fail, pruning skills whose hit rate lags the bank mean. This is online, in-loop attribution performed by the system, not offline author scoring.",
+      "locator": "paper Sec. 3.1 and Sec. 3.4; benchmark/visualclawarena/runner.py:1763-1772 and 1785-1828; benchmark/skill_wire.py:311-386",
+      "quote": "paper Sec. 3.4 UNVERIFIED (WebFetch-extracted): 'a per-skill utility tracker logs each sj's hit rate on scored answers and periodically prunes skills'; skill_wire.py:312 'Credit/blame the last-injected skills with the question outcome.'"
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The service durably changes its own mechanism: after every N within-scenario failures (and at scenario end with the pooled buffer) the LLM evolver writes new SKILL.md reusable rule files into the run-local writable skill bank via add_skill(write_to_disk=True), tags them in the qa_types.json sidecar, and F1 token-Jaccard dedup plus optional F2 pruning remove entries. These skills are later applied as rules by retrieval and injection, so they are revisions of the mechanism rather than content used by a fixed mechanism. Written by the system, not by developers or users (the seed bank is never mutated).",
+      "locator": "paper Sec. 3.1 and Sec. 3.4; visualclaw/modules/skill/evolver.py:245-297; visualclaw/modules/skill/manager.py:782-823 and 894-923; benchmark/visualclawarena/runner.py:1349-1373 and 1774-1884 and 1986-2049",
+      "quote": "paper Sec. 3.1 UNVERIFIED (WebFetch-extracted): 'Per-session (minutes, offline). After every Nevo failures the LLM evolver ℰ analyses failure trajectories and proposes new skills, S←S∪ℰ(S,Dfail,Mv); bank-hygiene filters F1,F2 maintain bank quality.'; runner.py:1238-1240 'Newly-evolved skills are written to the skill bank and become visible to LATER rounds in the SAME scenario'",
+      "what": "The skill bank: new SKILL.md reusable rule files generated by the evolver and written into the run-local writable bank (plus qa_types.json routing tags), and skill removals by F1 dedup / F2 utility pruning; the LLM weights are frozen and the memory store holds content, not mechanism."
+    },
+    "later_use": {
+      "label": "stated",
+      "rationale": "The paper reports the 200-scenario VisualClawArena runs with evolution firing every 5 within-scenario steps and analyses accuracy by early/mid/late thirds under the evolved bank, stating a generally increasing within-scenario trend and that FullEvo is most useful once the agent has enough local trajectory; each evolve step prepends retrieved skills to the prompt. The runner's within-day evolve adds new skills to the live SkillManager and bank so later rounds of the same scenario retrieve them, and the cross-scenario buffer carries evolved skills across runs. Together these state that later steps ran under the revised skill bank.",
+      "locator": "paper Fig. 5 caption, Sec. 5.3 (Temporal Trends), Sec. 4.2, Table 7; benchmark/visualclawarena/runner.py:1235-1243 and 1774-1777 and 1220-1222",
+      "quote": "paper Fig. 5 caption UNVERIFIED (WebFetch-extracted): 'Per-day accuracy on 200 scenarios in VisualClawArena. We present VisualClaw (Cat.), VisualClaw w/o FullEvo, and Uniform-8. The x-axis is within-scenario step; the evolution frequency is set to 5 day steps and only steps with at least 20 scenarios are displayed.'; paper Sec. 5.3 UNVERIFIED: 'Table 7 shows a generally increasing within-scenario trend rather than a flat pass rate.'; runner.py:1774-1777 'fire the evolver mid-scenario when enough failures have accumulated since the last fire. New skills are written to disk + injected into skill_manager via add_skill, so LATER rounds in this same scenario see them on retrieve.'"
+    }
+  },
+  "notes": "Judged the VisualClawArena / Claude Code (Sonnet 4.6) / Cascade-8 / FullEvo Cat. configuration from Table 7 (52.16% macro). Code evidence comes from the agent-backend route of runner.py (direct module import, no gateway). Mapping of Cat. to --memory-evolver-context-mode simple_concat is my inference from Sec. 3.4 ('retrieved memory is appended as auxiliary context without changing the evolver instruction') versus the runner's simple_concat intro text; the public helper script scripts/run_visualclawarena_self_evolve.sh defaults to related_prefix (Guide) with a claude-code evolver, and the paper does not name the evolver model used for the arena (Sec. 5.1 names Claude Haiku 4.5 only for video-QA). Outcome and attribution rely on benchmark checkers / answer keys executed by the harness inside the loop, which is online self-evolution rather than author-side offline scoring, but it is not deployment feedback. All paper quotes were extracted by the WebFetch summarizer and could not be confirmed character-for-character (Bash was denied, so the raw HTML could not be downloaded); they are labelled UNVERIFIED, though several recurred identically across independent fetches. Code quotes are verbatim from the checked-out commit f6de05b.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 438,
+    "code_commit": "f6de05bb8f03e8ba44ec5ee458961cd70002a6d5"
+  }
+}

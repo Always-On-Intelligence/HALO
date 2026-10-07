@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "halo"
+version = "0.1.0"
+description = "Implementation of HALO (Harness for Always-On Loop Oversight)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["pyyaml>=6", "jsonschema>=4"]
+
+[project.scripts]
+halo = "halo.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["halo*"]
+
+[tool.setuptools.package-data]
+halo = ["read/schema.json", "read/protocol/*.md"]

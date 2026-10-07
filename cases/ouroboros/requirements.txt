@@ -1,0 +1,10 @@
+# Ouroboros run mode (CPU only, no model weights).
+# httpx: imported by the vendored transport modules at import time (no network call is made).
+# freezegun: the adapter's per-step frozen clock, so rendered memory is identical across arms.
+# tree-sitter + tree-sitter-language-pack: upstream runtime dependencies (pyproject.toml, same bounds); the
+#   markdown parser behind the reference books, the governance chapters of the review packets and plan review.
+pyyaml
+httpx>=0.28
+freezegun
+tree-sitter>=0.23.2,<0.25
+tree-sitter-language-pack>=0.9.1,<1.0

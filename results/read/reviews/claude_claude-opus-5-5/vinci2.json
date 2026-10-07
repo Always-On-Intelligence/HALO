@@ -1,0 +1,89 @@
+{
+  "id": "vinci2",
+  "configuration": "EgoMemo streaming proactive configuration on EgoServe, with GPT-5-mini as the reasoning agent (variant vinci2). The code at commit 0029a33 runs in two passes. Pass 1 builds memory for each video: Qwen3-VL-8B writes clip captions (CaptainCook4D: one frame every 2 s, 10 s windows), text summaries are built at activity and session level, GPT-4o-mini extracts entities and relations into a knowledge graph, captions go into a text-embedding vector store, and keyframes are embedded with ImageBind. Pass 2 is the proactive-service loop. It replays the saved 10 s captions in time order and asks GPT-5-mini to return one of three things: [] (no service), need_retrieval, or a finalized service. On need_retrieval it runs caption, knowledge-graph and visual retrieval limited to earlier time (t′≤t), then VLM caption reconstruction, then a second GPT-5-mini call that finalizes or suppresses the service. The main evidence is the CaptainCook4D driver (captioncook4d_processing_parallel.py and captioncook4d_online_retrieval_parallel_.py, which call VideoGraphSeparated.process_proactive_service). The EgoLife routine (process_egolife_proactive_service) was also read. The egomemo_demo live assistant is a different configuration and was not judged.",
+  "sources_read": [
+    "https://arxiv.org/html/2607.11523v1 (version 2607.11523v1), read only through WebFetch: Abstract, §1 Introduction, §3.1 Task Formulation, §3.5 Evaluation Protocol, §4 intro, §4.1, §4.2, §4.3 (summary), §5.1 implementation details, Conclusion, App. B.1, B.2, C.3, and the list of figure and table captions",
+    "https://github.com/SitongGong/EgoMemo at 0029a33fd83bb93cb6a7bb012bbdd3477b4c6b35 (local checkout)",
+    "README.md",
+    "captioncook4d_processing_parallel.py",
+    "captioncook4d_online_retrieval_parallel_.py",
+    "videorag/egograph_retrieval_optimize_.py (lines 1-130, 370-770, 1022-1441, 1780-1899, 2840-3732, 4174-4749, plus grep of all caption and summary calls)",
+    "videorag/ego_op.py (lines 1000-1705: streaming_videorag_query, streaming_egolife_query header)",
+    "videorag/_videoutil/caption.py (lines 80-340: retrieved_segment_caption, retrieved_segment_caption_qwen3_api)",
+    "videorag/egoextra_prompt.py (lines 1-185, 640-1277)",
+    "videorag/ego_prompt_.py (lines 549-1068)",
+    "videorag/holoassist_prompt_.py (lines 721-760, 895-934)",
+    "videorag/_llm.py (gpt_4o_mini_complete / openai_complete_if_cache)",
+    "egomemo_demo/README.md, egomemo_demo/egomemo/pipeline_v2_patch.py, egomemo_demo/egomemo/working_memory.py (context only, not judged)",
+    "cases/vinci2/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Each incoming clip is captioned by the VLM. The caption and its keyframes are then written into memory in four places: the clip-level store (video_segments, which keeps the frames), the caption vector store, the knowledge graph (entities and relations merged by name), and the ImageBind visual archive. Activity-level and session-level summaries are then built from the stored clip captions. The paper describes the same write path.",
+      "locator": "Paper §4.1 Streaming Memory Construction and App. B.1; code videorag/egograph_retrieval_optimize_.py:1834-1842 (captioning), :1896 (video_segments.upsert), :2874-2893 (chunks_vdb.upsert, batch_extract_entities, text_chunks.upsert), :2908-2913 (visual embedding upsert); captioncook4d_processing_parallel.py:117-128",
+      "quote": "Paper (UNVERIFIED, via WebFetch): \"These captions and keyframes are the atomic inputs from which three complementary memory representations are incrementally constructed.\" Code (verbatim, egograph_retrieval_optimize_.py:1896): loop.run_until_complete(self.video_segments.upsert({time_span: {\"content\": json.dumps(caption_dict), \"video_frames\": current_window_frames, \"type\": \"second\"}}))"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Stored memory feeds the decision of whether to intervene. When the first GPT-5-mini call returns need_retrieval, the system runs caption, knowledge-graph and visual retrieval, restricted to entries before the current window. The VLM-reconstructed results are passed to a second call. That call either finalizes a service or returns {\"decision\": \"suppressed\"}, which means staying silent. The reasoner also receives its own recent service history, which it uses for per-subtype cooldowns (CaptainCook4D path). In the EgoLife path it also receives the most recent activity-level caption.",
+      "locator": "Paper §4.2 ((d_t, r_t) = Reason(c_t, Ĉ, q_r)) and App. B.2; code videorag/egograph_retrieval_optimize_.py:3501-3510, :3565-3681, :3232-3242; videorag/egoextra_prompt.py:1108-1205",
+      "quote": "Code (verbatim, egoextra_prompt.py:1133): \"• Use RETRIEVED_MEMORY_EVIDENCE only as supporting or suppressing evidence.\" Paper (UNVERIFIED, via WebFetch): \"where dt∈{0,1} is the intervention decision and rt is the generated response.\""
+    },
+    "A->S": {
+      "label": "absent",
+      "rationale": "The code runs sensing as a separate pass that finishes first. All clip captions, summaries, the graph and the visual embeddings are generated and saved before the decision pass starts. The decision pass then reloads the saved captions from streaming_checkpoint.json. Nothing GPT-5-mini decides can change frame sampling, what gets captioned, or how new clips are interpreted. There is no check of an action's expected effect either, because the video is pre-recorded. The retrieval query does steer the VLM caption reconstruction. But that step re-reads keyframes already stored in memory (video_segments) when building the answer, so it is a memory read (M→A), not sensing of new observations. The P/R/F1 and LLM-judge graders sit outside the service. The module docstring translates as: construction only generates and saves captions; proactive judgment and retrieval run after the captions, visual embeddings and graph are all saved.",
+      "locator": "videorag/egograph_retrieval_optimize_.py:1-7 (module docstring), :1044-1046, :3371-3373, :3393-3403; videorag/_videoutil/caption.py:253; videorag/ego_op.py:1554-1583; paper §4.2 (reconstruction) and §3.5",
+      "quote": "Code (verbatim, egograph_retrieval_optimize_.py:5-6): \"1. streaming_graph_construction_only: 只做建图，生成caption并保存\" / \"2. process_proactive_service_after_graph: 在caption、visual embedding和构造的图都保存后，进行主动服务判断和检索\""
+    },
+    "M->S": {
+      "label": "absent",
+      "rationale": "No stored information reaches sensing. Every clip-caption call, for all EgoServe subsets, gets a fixed dataset-specific prompt and only the current window's frames. It does not get earlier captions, summaries, graph entities or service history. The prompt tells the VLM to treat each frame independently. The sampling interval and window lengths are fixed arguments. The construction routine's docstring says it excludes proactive judgment and retrieval. Memory is read only at decision time (M→A) and when summaries are built from stored captions, which stays inside memory.",
+      "locator": "videorag/egograph_retrieval_optimize_.py:1044-1046, :1809-1842, :2479-2511; videorag/egoextra_prompt.py:9-181 (line 177); captioncook4d_processing_parallel.py:117-128",
+      "quote": "Code (verbatim, egograph_retrieval_optimize_.py:1045-1046): \"只进行建图，生成多个阶段的caption并保存，调用self.ainsert_streaming_caption。\" \"不包含主动服务判断和检索。\"; (verbatim, egoextra_prompt.py:177): \"- Treat each frame independently.\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "This flow is in the code, not the paper. The agent keeps its own outputs in a store that lasts across windows. Each finalized service is appended to proactive_service_history: subtype, trigger window, the user_prompt message, the trigger evidence and the confidence. The history is written to the per-video checkpoint after every window and reloaded when a run resumes. Later windows read it back as \"Proactive Service History\" to enforce cooldowns. In the EgoLife routine the history is still appended and checkpointed, but passing it into the first call is commented out. Instead, the agent's own last retrieval request (last_pre_retrieval_probe) is carried into the next window's prompt.",
+      "locator": "videorag/egograph_retrieval_optimize_.py:3429-3449, :3501, :3154-3155, :3683-3721; :4268, :4298-4307, :4501-4507, :4700-4737",
+      "quote": "Code (verbatim, egograph_retrieval_optimize_.py:3695-3698): \"proactive_service_history.append({\" \"'service_main_type': service.get('service_main_type', ''),\" \"'service_sub_type': service.get('service_sub_type', ''),\" \"'user_prompt': service.get('user_prompt', ''),\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps its own record of what it delivered: type, trigger window, message, evidence and confidence, in proactive_service_history. It checkpoints this after every window and uses the last 5 entries in later decisions to suppress repeat interventions. The service itself reuses this record, so it is not a log only the authors analyse. The separate proactive_response_*.json file is evaluation output only and is not counted.",
+      "locator": "videorag/egograph_retrieval_optimize_.py:3501, :3689-3702, :3709-3718; videorag/egoextra_prompt.py:665-667, :862-866",
+      "quote": "Code (verbatim, egograph_retrieval_optimize_.py:3501): \"history_text = format_proactive_history(proactive_service_history[-5:])\"; prompt (verbatim, egoextra_prompt.py:666-667): \"A record of recently delivered proactive services and user responses.\" \"Use this ONLY to suppress overly frequent or redundant interventions.\""
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No later evidence about a delivered service is collected or kept. History entries store only what was delivered; format_proactive_history outputs Service Type, Time Window and User Prompt. The prompt template says records may include whether the user accepted, ignored or rejected the service, but no code fills that field. EgoServe replays pre-recorded video, so messages never reach a user. The paper describes no feedback mechanism.",
+      "locator": "videorag/egograph_retrieval_optimize_.py:374-385, :3695-3702; videorag/egoextra_prompt.py:669-672; paper (WebFetch search found no feedback, cooldown or suppression mechanism)"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No outcome is linked back to the decision it concerns. The cooldown compares a new candidate with past deliveries. The post-retrieval stage checks a tentative suspected service against memory evidence. Neither uses evidence about what a delivered service actually achieved. P/R/F1 matching and the GPT-4o and DeepSeek-R1 judges are offline scoring by the authors.",
+      "locator": "videorag/egoextra_prompt.py:862-887, :1179-1205; paper §3.5 Evaluation Protocol and App. C.3"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "EgoMemo is training-free. Model weights, prompts, cooldown rules and retrieval code are fixed and written by the developers. What changes at run time is content used by that fixed mechanism: captions, summaries, the graph, embeddings and the service history. The paper names learning intervention timing from human preferences only as future work.",
+      "locator": "Paper Abstract and §4 (\"training-free\"), Conclusion; static prompt dictionaries in videorag/egoextra_prompt.py, videorag/ego_prompt_.py, videorag/holoassist_prompt_.py",
+      "quote": "Paper (UNVERIFIED, via WebFetch): \"Future directions include learning intervention timing from human preferences\"",
+      "what": "Nothing. The service makes no change to its parameters, prompts, rules, skills or code."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "There is no revision, so no run under a revised mechanism is reported.",
+      "locator": "Paper §5 Experiments; code as cited above"
+    }
+  },
+  "notes": "The paper was read only through the WebFetch tool, which summarizes the page and caps quotes at about 125 characters, so every paper quote is labeled UNVERIFIED. Three sentences came back identical in two separate fetches: the 'atomic inputs' sentence, the 'At each timestep t' sentence and the 'GPT-5-mini' sentence. The two fetches gave different endings for the Conclusion sentence, so only its opening is quoted. Code quotes were read directly from the checkout at 0029a33 and are verbatim. At this commit the repo has driver scripts only for CaptainCook4D; there are none for EgoLife or HoloAssist. The EgoLife routine (process_egolife_proactive_service) does not pass the service history into the first call (commented out at line 4304), but it feeds back the previous retrieval request. The A→M flow and the Record step rest on code alone (the service history and cooldown rules); the paper does not describe them. A→S and M→S are marked absent, not insufficient, because the code shows captioning is a completed pass whose inputs are only a fixed prompt and the current frames, and the docstrings state that judgment and retrieval run only after construction. VLM caption reconstruction re-reads stored keyframes when building the answer, so it is counted as M→A. egomemo_demo, the live web/CLI assistant with working memory and Q&A, was not used for any label.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 675,
+    "code_commit": "0029a33fd83bb93cb6a7bb012bbdd3477b4c6b35"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "case": "contextagent",
+  "channels": {
+    "A->S": "information-gathering calls of the planned tool chain delivered to the tool executor (src/icl/inference_api.py run_tools -> src/utils.py execute_tools_with_memory)"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "A->S"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 9,
+      "modified": 2,
+      "tie": 4,
+      "metrics": {
+        "sensing_results_delivered": {
+          "original": 1.5333,
+          "modified": 0.0
+        },
+        "proactive": {
+          "original": 0.8667,
+          "modified": 0.8667
+        },
+        "sensing_calls_planned": {
+          "original": 1.5333,
+          "modified": 1.5333
+        },
+        "tool_errors": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "effector_calls_run": {
+          "original": 0.0667,
+          "modified": 0.0667
+        },
+        "proactive_score": {
+          "original": 3.4667,
+          "modified": 3.4667
+        }
+      }
+    }
+  ]
+}

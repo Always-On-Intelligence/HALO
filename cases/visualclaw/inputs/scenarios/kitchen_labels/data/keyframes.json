@@ -1,0 +1,38 @@
+{
+  "note": "Text stand-ins for the keyframes that VisualClaw's cascade gate (Cascade-8) forwards from the walkthrough clip. The adapter stages each description as _clip_frames/<MM_SS>.jpg, and the backbone receives it in place of the image attachment.",
+  "clip_seconds": 68,
+  "keyframes": [
+    {
+      "t": "00:05",
+      "description": "Walk-in, top shelf, left side. Three quart deli containers. Salsa verde: masking-tape label 'SALSA VERDE  PREP 10/06  USE BY 10/09'. Pico de gallo: label 'PICO  PREP 10/06', no use-by date. Crema: label 'CREMA  USE BY 10/12', no prep date."
+    },
+    {
+      "t": "00:13",
+      "description": "Top shelf, right side. Two hotel pans with lids. Carnitas: label 'CARNITAS  PREP 10/05  USE BY 10/08'. Rice: a strip of tape reading only 'RICE' in marker."
+    },
+    {
+      "t": "00:21",
+      "description": "Middle shelf, front row. Four containers. Pickled onions: 'PICKLED ONION  PREP 10/01  USE BY 10/15'. Chipotle aioli: 'CHIPOTLE AIOLI  PREP 10/06  USE BY 10/10'. Lime juice: no label at all. Guacamole base: 'GUAC BASE  PREP 10/06', no use-by date."
+    },
+    {
+      "t": "00:29",
+      "description": "Middle shelf, back row. Black beans in a 6-quart cambro: 'BLACK BEANS  PREP 10/06  USE BY 10/09'. Mole in a 4-quart cambro: 'MOLE  PREP 10/04  USE BY 10/11'."
+    },
+    {
+      "t": "00:37",
+      "description": "Bottom shelf. Chicken thighs marinating on a covered sheet tray: 'CHX THIGH  PREP 10/06  USE BY 10/08'. Shrimp in a lexan bin: label 'SHRIMP  USE BY 10/07', no prep date."
+    },
+    {
+      "t": "00:45",
+      "description": "Door rack. Squeeze bottles. Habanero sauce: 'HABANERO  PREP 10/02  USE BY 10/16'. Cilantro oil: tape reading 'CILANTRO OIL' only."
+    },
+    {
+      "t": "00:53",
+      "description": "Speed rack by the door. Tortilla dough in a lexan bin: 'TORTILLA DOUGH  PREP 10/06  USE BY 10/07'. Masa in a second lexan bin with no label."
+    },
+    {
+      "t": "01:01",
+      "description": "Floor dunnage. Chicken stock in a 22-quart cambro: 'STOCK  PREP 10/05  USE BY 10/09'. Horchata base in a 6-quart cambro: 'HORCHATA  PREP 10/06', no use-by date."
+    }
+  ]
+}

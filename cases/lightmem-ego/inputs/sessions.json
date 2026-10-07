@@ -1,0 +1,420 @@
+{
+  "note": "Scripted capture sessions for LightMem-Ego. Each session stands in for 44 seconds of glasses video: one text frame every frame_interval_s seconds (what the camera shows) and the speech that ASR would return. Scenes get distinct frame colours so the upstream OpenCV event detector splits them as it would split real scene changes. Two questions are asked at the end, while the capture is still running. The first needs something seen more than 30 seconds earlier, outside the rolling current window. The second is a follow-up whose pronoun only resolves through the first exchange. 'summary' and 'expect' are for the judge and the metrics only and never reach the system.",
+  "sessions": [
+    {
+      "id": "keys_morning",
+      "situation": "Weekday morning at home. The wearer streams from the glasses while getting ready to leave.",
+      "duration_s": 44,
+      "frame_interval_s": 2,
+      "scenes": [
+        {
+          "start": 0,
+          "end": 10,
+          "summary": "Kitchen. The wearer drops car keys with a red leather tag into the blue ceramic bowl beside the fruit basket. Their partner, in a green sweater, stands at the fridge and asks them to pick up her blood pressure refill.",
+          "frames": [
+            "Kitchen counter in morning light. The wearer's right hand holds a ring of car keys with a red leather tag above the counter.",
+            "The hand lowers the car keys into a blue ceramic bowl that sits next to a wicker fruit basket with bananas and apples.",
+            "Close view of the blue ceramic bowl: the car keys with the red leather tag lie inside it. A woman in a green sweater stands at the open fridge in the background and is talking.",
+            "The woman in the green sweater turns toward the wearer while speaking; the blue bowl with the keys is at the lower edge of the view.",
+            "The wearer's hands leave the counter; the blue bowl with the keys and the fruit basket stay on the counter."
+          ]
+        },
+        {
+          "start": 10,
+          "end": 20,
+          "summary": "Hallway. The wearer takes a black umbrella from the stand and looks at the wall calendar (dentist on Thursday at 3:30 pm).",
+          "frames": [
+            "A narrow hallway with a coat rack and an umbrella stand holding two umbrellas.",
+            "The wearer's hand pulls a black folding umbrella out of the umbrella stand.",
+            "A paper wall calendar for October next to the front door. Thursday 9 is circled in red with the note 'Dentist 3:30 pm'.",
+            "Closer view of the calendar note: 'Dentist 3:30 pm - Dr. Okafor'.",
+            "The wearer holds the black umbrella and turns back toward the living room."
+          ]
+        },
+        {
+          "start": 20,
+          "end": 32,
+          "summary": "Living room. On a laptop video call, a colleague with short grey hair asks the wearer to send the budget slides before noon, while the wearer waters a fern.",
+          "frames": [
+            "Living room. A laptop on the coffee table shows a video call with a woman with short grey hair in an office.",
+            "The woman on the laptop screen is speaking and holding up a printed chart titled 'Q4 budget'.",
+            "The wearer holds a green plastic watering can over a fern in a white pot on the window sill.",
+            "Water pours from the green watering can into the fern's pot; the laptop call is still open behind.",
+            "The wearer puts the green watering can down on the floor beside the window.",
+            "The laptop screen shows the call has ended: 'Call ended - 6 min'."
+          ]
+        },
+        {
+          "start": 32,
+          "end": 44,
+          "summary": "Desk. The wearer reads email next to a coffee mug.",
+          "frames": [
+            "A wooden desk with a closed silver laptop and a white coffee mug.",
+            "The laptop is open and shows an email inbox.",
+            "The wearer's hands type on the laptop keyboard.",
+            "The screen shows an email titled 'Team sync moved to 11:00'.",
+            "The wearer picks up the white coffee mug.",
+            "The laptop screen with the inbox; the mug is back on the desk."
+          ]
+        }
+      ],
+      "speech": [
+        {
+          "start": 3.0,
+          "end": 8.0,
+          "text": "The pharmacy closes at six today, so please pick up my blood pressure refill. It's under the name Lee."
+        },
+        {
+          "start": 21.0,
+          "end": 26.0,
+          "text": "Could you send me the budget slides before noon? I need them for the board meeting."
+        }
+      ],
+      "questions": [
+        {
+          "q": "Where did I put my car keys?",
+          "expect": [
+            "blue",
+            "bowl"
+          ]
+        },
+        {
+          "q": "What did she ask me to do?",
+          "expect": [
+            "pharmacy",
+            "refill"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pharmacy_visit",
+      "situation": "Saturday errand. The wearer collects a new prescription and then gets a coffee.",
+      "duration_s": 44,
+      "frame_interval_s": 2,
+      "scenes": [
+        {
+          "start": 0,
+          "end": 12,
+          "summary": "Pharmacy counter. The pharmacist hands over amoxicillin capsules and explains: one capsule three times a day for seven days, finish the course, no alcohol. The receipt shows S$18.60.",
+          "frames": [
+            "A pharmacy counter with a glass screen. A pharmacist in a white coat holds a small paper bag.",
+            "The pharmacist places a box labelled 'Amoxicillin 500 mg capsules' on the counter and points at the label while talking.",
+            "Close view of the box label: 'Amoxicillin 500 mg - 21 capsules'.",
+            "The pharmacist taps a printed sheet with the dosing instructions while speaking.",
+            "A paper receipt on the counter reads 'Amoxicillin 500mg x21  S$18.60'.",
+            "The wearer's hand puts the box and the receipt into a tote bag."
+          ]
+        },
+        {
+          "start": 12,
+          "end": 22,
+          "summary": "Street. The wearer walks past a bus stop to a cafe.",
+          "frames": [
+            "A sunny street with a bus stop; bus 174 is pulling away.",
+            "A pedestrian crossing with the green man lit.",
+            "The front of a small cafe with a chalkboard: 'Flat white S$5.20'.",
+            "The cafe door opens; a barista stands behind the counter.",
+            "The wearer approaches the cafe counter."
+          ]
+        },
+        {
+          "start": 22,
+          "end": 34,
+          "summary": "Cafe. The wearer orders a flat white; the barista says it will be ready in two minutes and the card machine shows S$5.20.",
+          "frames": [
+            "A barista in a black apron behind an espresso machine looks at the wearer.",
+            "A card machine on the counter shows 'S$5.20 - Approved'.",
+            "The barista steams milk in a metal jug.",
+            "A paper cup with 'flat white' written on the side is placed on the counter.",
+            "The wearer's hand picks up the paper cup.",
+            "The wearer walks to a window seat with the cup."
+          ]
+        },
+        {
+          "start": 34,
+          "end": 44,
+          "summary": "Window seat. The wearer scrolls news on the phone.",
+          "frames": [
+            "A window seat in the cafe; the paper cup is on the narrow table.",
+            "The wearer's phone shows a news app with a headline about the weather.",
+            "Outside the window, people walk past with umbrellas.",
+            "The phone screen scrolls to a sports article.",
+            "The wearer sips from the paper cup."
+          ]
+        }
+      ],
+      "speech": [
+        {
+          "start": 3.0,
+          "end": 10.0,
+          "text": "Take one capsule three times a day for seven days, and finish the whole course even if you feel better. No alcohol while you're on these."
+        },
+        {
+          "start": 23.0,
+          "end": 26.0,
+          "text": "One flat white, that'll be ready in about two minutes."
+        }
+      ],
+      "questions": [
+        {
+          "q": "What did the pharmacist tell me about the new medicine?",
+          "expect": [
+            "three times",
+            "seven days"
+          ]
+        },
+        {
+          "q": "How much did it cost?",
+          "expect": [
+            "18.60"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office_badge",
+      "situation": "Workday at the office. The wearer arrives at the desk, then joins a meeting.",
+      "duration_s": 44,
+      "frame_interval_s": 2,
+      "scenes": [
+        {
+          "start": 0,
+          "end": 10,
+          "summary": "Desk. The wearer takes off the ID badge and puts it in the top left drawer, next to a red stapler and a USB drive.",
+          "frames": [
+            "An office desk with a monitor; the wearer's hand holds a blue lanyard with an ID badge reading 'R. Tan - Engineering'.",
+            "The top left drawer of the desk is pulled open; inside are a red stapler and a black USB drive.",
+            "The hand drops the ID badge with the blue lanyard into the drawer beside the red stapler.",
+            "The drawer is pushed closed.",
+            "The wearer logs in on the monitor; the login screen shows 'Welcome back'."
+          ]
+        },
+        {
+          "start": 10,
+          "end": 22,
+          "summary": "Corridor and meeting room. A colleague says the launch is moved to Friday the 17th.",
+          "frames": [
+            "An office corridor with glass meeting rooms.",
+            "A meeting room door with a sign 'Room 4B - Orchid'.",
+            "Inside the room, a man in a checked shirt stands at a whiteboard and talks.",
+            "The whiteboard reads 'Launch: Fri 17 Oct' with 'Tue 14' crossed out.",
+            "The man in the checked shirt points at the new date.",
+            "Two other colleagues sit at the table with laptops."
+          ]
+        },
+        {
+          "start": 22,
+          "end": 32,
+          "summary": "Meeting room. The wearer writes notes in a notebook.",
+          "frames": [
+            "The wearer's notebook on the table; the pen writes 'Launch -> Fri 17'.",
+            "The man at the whiteboard draws a timeline with three boxes.",
+            "The wearer's notebook page with the timeline sketch.",
+            "A colleague passes a printed agenda across the table.",
+            "The printed agenda shows item 3: 'QA sign-off'."
+          ]
+        },
+        {
+          "start": 32,
+          "end": 44,
+          "summary": "Pantry. The wearer makes tea.",
+          "frames": [
+            "An office pantry with a hot water dispenser.",
+            "The wearer's hand drops a green tea bag into a white mug.",
+            "Hot water fills the mug.",
+            "A fridge door with a note 'Label your food!'.",
+            "The wearer holds the mug of tea in the corridor.",
+            "The corridor leading back to the desks."
+          ]
+        }
+      ],
+      "speech": [
+        {
+          "start": 13.0,
+          "end": 18.0,
+          "text": "Heads up everyone, the launch is moving from Tuesday to Friday the seventeenth because QA needs more time."
+        }
+      ],
+      "questions": [
+        {
+          "q": "Where did I leave my ID badge?",
+          "expect": [
+            "drawer"
+          ]
+        },
+        {
+          "q": "What else was in there with it?",
+          "expect": [
+            "stapler"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mall_parking",
+      "situation": "Evening shopping trip. The wearer parks at a mall and goes inside.",
+      "duration_s": 44,
+      "frame_interval_s": 2,
+      "scenes": [
+        {
+          "start": 0,
+          "end": 10,
+          "summary": "Car park. The wearer parks in bay C14 on level B2, next to a yellow taxi, near pillar C14.",
+          "frames": [
+            "An underground car park; a painted pillar reads 'B2 - C14'.",
+            "The car's dashboard as the engine is switched off; a yellow taxi is parked in the next bay.",
+            "The wearer steps out of the car; the floor marking reads 'C14'.",
+            "The wearer looks back at the parked silver hatchback beside the yellow taxi.",
+            "A sign on the wall: 'Lifts to Level 1 - this way'."
+          ]
+        },
+        {
+          "start": 10,
+          "end": 20,
+          "summary": "Lift lobby. The wearer takes the lift to level 1.",
+          "frames": [
+            "A lift lobby with two steel lift doors.",
+            "The lift button panel; the button '1' is lit.",
+            "Inside the lift, a mirror and a poster for a shoe sale.",
+            "The lift doors open onto a bright shopping floor.",
+            "A directory board listing 'Bookshop - Level 2'."
+          ]
+        },
+        {
+          "start": 20,
+          "end": 32,
+          "summary": "Bookshop. The wearer picks up a cookbook; the cashier mentions a 20 percent member discount.",
+          "frames": [
+            "A bookshop entrance with a display of new releases.",
+            "The wearer's hand takes a cookbook titled 'Salt and Smoke' from a shelf.",
+            "The back cover of the book shows the price S$34.90.",
+            "A cashier with round glasses at the counter speaks to the wearer.",
+            "A sign at the counter: 'Members save 20% today'.",
+            "The wearer holds the book and a paper bag."
+          ]
+        },
+        {
+          "start": 32,
+          "end": 44,
+          "summary": "Food court. The wearer looks at menus.",
+          "frames": [
+            "A busy food court with many stalls.",
+            "A stall menu board for noodle soups.",
+            "A stall menu board for chicken rice.",
+            "The wearer stands in a queue at the chicken rice stall.",
+            "A tray with a plate of chicken rice.",
+            "An empty table near a window."
+          ]
+        }
+      ],
+      "speech": [
+        {
+          "start": 24.0,
+          "end": 28.0,
+          "text": "If you sign up for membership today you get twenty percent off that book."
+        }
+      ],
+      "questions": [
+        {
+          "q": "Where did I park the car?",
+          "expect": [
+            "B2",
+            "C14"
+          ]
+        },
+        {
+          "q": "What was parked next to it?",
+          "expect": [
+            "taxi"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grocery_call",
+      "situation": "Weekday evening at the supermarket. The wearer's sister calls during the shopping.",
+      "duration_s": 44,
+      "frame_interval_s": 2,
+      "scenes": [
+        {
+          "start": 0,
+          "end": 12,
+          "summary": "Produce aisle. The wearer's sister calls on speaker and asks for lemons and oat milk; the wearer puts spinach in the cart.",
+          "frames": [
+            "A supermarket produce aisle; the wearer's phone shows an incoming call from 'Mei (sister)'.",
+            "The phone is on speaker in the wearer's hand; spinach bags are on the shelf in front.",
+            "The wearer's other hand puts a bag of spinach into the shopping cart.",
+            "A crate of lemons is visible two shelves away.",
+            "The phone shows the call ended after 0:42.",
+            "The cart with the spinach bag."
+          ]
+        },
+        {
+          "start": 12,
+          "end": 22,
+          "summary": "Dairy aisle. The wearer puts a carton of eggs and a 1 L oat milk in the cart.",
+          "frames": [
+            "The dairy aisle with milk cartons and eggs.",
+            "The wearer's hand takes a carton of 10 eggs.",
+            "The wearer's hand takes a 1 litre carton of 'Oatly Oat Drink'.",
+            "The cart now holds spinach, eggs and the oat milk.",
+            "A price tag: 'Oatly Oat Drink 1L S$4.95'."
+          ]
+        },
+        {
+          "start": 22,
+          "end": 32,
+          "summary": "Bakery. A staff member offers a free sample of sourdough; the wearer takes a loaf.",
+          "frames": [
+            "A bakery counter with sourdough loaves.",
+            "A staff member in a white cap holds a tray of bread samples.",
+            "The wearer's hand takes a sample piece.",
+            "The wearer's hand puts a sourdough loaf into the cart.",
+            "The cart holds spinach, eggs, oat milk and a sourdough loaf."
+          ]
+        },
+        {
+          "start": 32,
+          "end": 44,
+          "summary": "Checkout queue. The wearer waits behind two customers.",
+          "frames": [
+            "A checkout area with three lanes.",
+            "Two customers ahead in the queue with full baskets.",
+            "A magazine rack beside the lane.",
+            "The cashier scans items for the customer ahead.",
+            "The wearer's cart moves forward in the queue.",
+            "The conveyor belt is empty and ready."
+          ]
+        }
+      ],
+      "speech": [
+        {
+          "start": 2.0,
+          "end": 8.0,
+          "text": "Hey, since you're at the supermarket, can you grab some lemons and a carton of oat milk for me? I'll pay you back."
+        },
+        {
+          "start": 24.0,
+          "end": 27.0,
+          "text": "Would you like to try our sourdough? It's fresh out of the oven."
+        }
+      ],
+      "questions": [
+        {
+          "q": "What did my sister ask me to buy?",
+          "expect": [
+            "lemon",
+            "oat"
+          ]
+        },
+        {
+          "q": "Did I put those in the cart?",
+          "expect": [
+            "lemon"
+          ]
+        }
+      ]
+    }
+  ]
+}

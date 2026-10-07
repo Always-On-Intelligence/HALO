@@ -1,0 +1,101 @@
+{
+  "id": "omi2026",
+  "configuration": "Wearable capture with an enrolled speech profile, retained personal backend, authorized agentic chat tools, and an installed proactive-notification app with granted context scopes. Rollout-gated desktop JIT features, including playbook and standing-trigger tools, are excluded.",
+  "sources_read": [
+    "https://docs.omi.me/doc/developer/apps/Notifications — unversioned documentation, fetched 2026-10-07",
+    "https://docs.omi.me/doc/developer/backend/StoringConversations — unversioned documentation, fetched 2026-10-07",
+    "https://docs.omi.me/doc/developer/backend/chat_system — unversioned documentation, fetched 2026-10-07",
+    "https://docs.omi.me/doc/developer/backend/transcription — unversioned documentation, fetched 2026-10-07",
+    "https://github.com/BasedHardware/omi — local checkout HEAD verified as 5a46ab0467ce594c35fd04d72131421afd747259; all following code references use this commit",
+    "backend/utils/conversations/process_conversation.py",
+    "backend/utils/memory/memory_service.py",
+    "backend/utils/app_integrations.py",
+    "backend/utils/llms/memory.py",
+    "backend/utils/llm/proactive_notification.py",
+    "backend/utils/llm/chat.py",
+    "backend/routers/chat.py",
+    "backend/database/chat.py",
+    "backend/utils/feedback.py",
+    "backend/routers/transcribe.py",
+    "backend/routers/listen/runtime.py",
+    "backend/routers/listen/speakers.py",
+    "backend/database/users.py",
+    "backend/utils/stt/speaker_embedding.py",
+    "backend/utils/retrieval/agentic.py",
+    "backend/utils/retrieval/tools/web_tools.py",
+    "backend/utils/retrieval/tools/calendar_tools.py",
+    "backend/utils/retrieval/tools/preference_tools.py",
+    "backend/utils/retrieval/tools/knowledge_ledger_write_tools.py",
+    "backend/utils/retrieval/tools/knowledge_ledger_tools.py",
+    "backend/utils/retrieval/tools/conversation_jit_gate.py"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Captured transcripts enter persistent conversation storage. Memory extraction turns transcript evidence into retained personal records with source-conversation provenance; the implementation submits these records through the memory service.",
+      "locator": "[Storing Conversations & Memories](https://docs.omi.me/doc/developer/backend/StoringConversations), Processing Flow and Memory Extraction Process; backend/utils/conversations/process_conversation.py:2003-2057,3141-3163,3297-3301; backend/utils/memory/memory_service.py:4230-4251",
+      "quote": "Saves to `memories` collection with a link back to the source conversation"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The proactive-notification processor retrieves retained facts, relevant conversations, and app chat history, substitutes the permitted context into the generation prompt, and generates the notification. Chat also reloads retained messages for subsequent responses.",
+      "locator": "[Sending Notifications](https://docs.omi.me/doc/developer/apps/Notifications), Proactive Notifications: How It Works and Available Scopes; backend/utils/app_integrations.py:1018-1057; backend/routers/chat.py:524-537",
+      "quote": "Omi fills in user context (name, facts, etc.) and generates the notification"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The agent selects information-acquisition tools and supplies their targets and arguments. For example, an agent-selected URL drives an HTTP fetch, and authorized calendar queries specify dates and search terms for fresh external observations. This establishes action-guided sensing beyond retrieval of stored memories.",
+      "locator": "[Chat System Architecture](https://docs.omi.me/doc/developer/backend/chat_system), How Tool Calling Works; backend/utils/retrieval/agentic.py:1356-1391; backend/utils/retrieval/tools/web_tools.py:233-259,265-294; backend/utils/retrieval/tools/calendar_tools.py:419-469,603-612",
+      "quote": "LLM autonomously decides which tool(s) to call based on question intent"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The live speaker matcher loads the owner's retained voice embedding and compares incoming audio embeddings against it to interpret speaker identity. This is a direct retained-prior input to sensing, independent of an intervening Action request.",
+      "locator": "[Real-time Transcription](https://docs.omi.me/doc/developer/backend/transcription), Speech Profile & Speaker Embedding; backend/database/users.py:1205-1223; backend/routers/listen/runtime.py:575-600; backend/routers/listen/speakers.py:160-183,435-465",
+      "quote": "When a user has a speech profile, the system uses speaker embedding comparison to identify the user’s voice in real-time."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Generated assistant responses are persisted as AI messages associated with the chat session. Generated proactive app messages are likewise passed to add_app_message and stored in the user's message collection, making the service's own communications available as retained history.",
+      "locator": "backend/routers/chat.py:568-595; backend/database/chat.py:152-198; backend/utils/app_integrations.py:1281-1314",
+      "quote": "chat_db.add_message(uid, ai_message.model_dump())"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains its delivered assistant text and proactive app messages in backend chat storage, and later chat requests retrieve that history. These are operational records used by the service.",
+      "locator": "[Chat System Architecture](https://docs.omi.me/doc/developer/backend/chat_system), Example: Question Flow, Post-Processing; backend/routers/chat.py:524-537,568-595; backend/database/chat.py:154-198",
+      "quote": "Save message to Firestore"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "The backend accepts subsequent thumbs-up/down feedback for an identified chat message, persists the rating on that message, and records associated feedback in its ledger.",
+      "locator": "backend/routers/chat.py:2179-2222; backend/database/chat.py:664-684; backend/utils/feedback.py:34-89",
+      "quote": "Append a chat-message rating to the ledger. Returns the event id or None."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Execution results are associated with their originating tool-call IDs and returned to the agent loop. The service checks calendar-operation results to distinguish success from failure before reporting completion; authentication failure can also trigger token refresh and a retry of the same operation. This is an immediate in-system assistance check.",
+      "locator": "backend/utils/retrieval/agentic.py:605-622,717-742,1356-1391; backend/utils/retrieval/tools/calendar_tools.py:907-981",
+      "quote": "if output and ('Successfully created' in output or '✅' in output):\n            await callback.put_thought('Event created successfully')\n        elif output and ('Error' in output or 'error' in output.lower()):\n            await callback.put_thought('Failed to create event')"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No service-authored durable mechanism change is established in this configuration: retained facts and preferences are content, while reusable playbook and standing-trigger writers belong to the excluded JIT rollout.",
+      "locator": "backend/utils/retrieval/tools/preference_tools.py:124-188; backend/utils/retrieval/tools/knowledge_ledger_write_tools.py:1-11,149-204; backend/utils/retrieval/agentic.py:302-322,1737-1743"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "The sources do not report a later run under a service-revised mechanism in this configuration; the excluded playbook-loading implementation alone does not establish such a run.",
+      "locator": "backend/utils/retrieval/tools/knowledge_ledger_tools.py:406-436; backend/utils/retrieval/agentic.py:302-322,1737-1743; Chat System Architecture, Example: Question Flow"
+    }
+  },
+  "notes": "Reviewed independently from the four fetched documentation pages and the pinned code. Documentation versions were unspecified, so fetched pages are not treated as commit-pinned snapshots. Attribution rests on operational tool-result checking, not developer feedback reports. No files were modified and no deployment or execution experiment was performed.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 266,
+    "code_commit": "5a46ab0467ce594c35fd04d72131421afd747259"
+  }
+}

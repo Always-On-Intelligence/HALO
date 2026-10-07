@@ -1,0 +1,20 @@
+id: bee
+name: "Bee"
+domain: wearable
+kind: product
+report: https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features
+sources:
+  - url: https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features
+    kind: product_description
+    version: ""
+  - url: https://docs.bee.computer/docs/mcp
+    kind: product_documentation
+    version: ""
+  - url: https://docs.bee.computer/docs/proxy
+    kind: product_documentation
+    version: ""
+variants:
+  - id: bee2026
+    label: "Bee"
+    configuration: "Shipped wearable capture, personal facts/conversation store, Daily Insights, Actions and retained to-do suggestions as documented September 22; excludes future Templates."
+modes: [read]

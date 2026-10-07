@@ -1,0 +1,72 @@
+{
+  "id": "longtermtoa2026",
+  "configuration": "Full hybrid-triggered Task-oriented Agent with task-state/reminder tracking; Qwen3-32B-Finetuned ChronosBench configuration.",
+  "sources_read": [
+    "cases/long-term-toa/case.yaml",
+    "https://arxiv.org/html/2601.09382v1"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User constraints and intention shifts update retained task descriptions.",
+      "locator": "[§§3.1.1, 3.4, 3.6](https://arxiv.org/html/2601.09382v1)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained task context determines follow-up content, reminders, and silence.",
+      "locator": "[§§3.1–3.2; Appendix D.1](https://arxiv.org/html/2601.09382v1)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "INFO_RETRIEVAL requests observations; agent-created reminders configure monitoring.",
+      "locator": "[§3.2; Appendix G, Table 4](https://arxiv.org/html/2601.09382v1)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The monitor directly filters environmental observations using previously stored reminder conditions.",
+      "locator": "[§3.2, backend-monitor paragraph; §3.4, tracker paragraph](https://arxiv.org/html/2601.09382v1)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Setting reminders writes agent-created monitoring commitments into the database tracker; task status records progress.",
+      "locator": "[§§3.4, 3.6](https://arxiv.org/html/2601.09382v1)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The tracker retains reminders established by the agent for subsequent monitoring.",
+      "locator": "[§3.4, final paragraph; §3.6](https://arxiv.org/html/2601.09382v1)",
+      "quote": "setting up a reminder essentially creates a task within a database-driven tracker module"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "User satisfaction or refusal is retained as COMPLETED or FAILED task status.",
+      "locator": "[§3.6; Appendix D.1, status field](https://arxiv.org/html/2601.09382v1)",
+      "quote": "the status should be \"COMPLETED\"."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "User feedback about the agent's follow-up determines completion or failure.",
+      "locator": "[Appendix G, Table 4, COMPLETE_TASK/FAILED_TASK](https://arxiv.org/html/2601.09382v1)",
+      "quote": "after receiving the agent’s follow-up message"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Authors fine-tune models offline; service updates concern task content, without revising its mechanism.",
+      "locator": "[§§3.5–3.6, 4; Appendix D.1](https://arxiv.org/html/2601.09382v1)"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Evaluation uses author-trained models; no run under a service-generated mechanism revision is reported.",
+      "locator": "[§§4–4.3; Tables 2–3](https://arxiv.org/html/2601.09382v1)"
+    }
+  },
+  "notes": "Text-only review of the simulated configuration and basic prompt. Data-generation critics and benchmark graders are external.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 135,
+    "code_commit": null
+  }
+}

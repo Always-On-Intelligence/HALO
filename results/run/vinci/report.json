@@ -1,0 +1,58 @@
+{
+  "case": "vinci",
+  "channels": {
+    "S->M": "silent timestamped activity descriptions are appended to the session history (internvl.py:146, 279)",
+    "M->A": "the last ten history entries are prepended to the question by add_history (internvl.py:206)"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 11,
+      "modified": 1,
+      "tie": 0,
+      "metrics": {
+        "answer_chars": {
+          "original": 41.25,
+          "modified": 100.2917
+        },
+        "history_entries": {
+          "original": 7.25,
+          "modified": 0.0
+        },
+        "history_entries_at_question": {
+          "original": 7.25,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 11,
+      "modified": 1,
+      "tie": 0,
+      "metrics": {
+        "answer_chars": {
+          "original": 41.25,
+          "modified": 100.2917
+        },
+        "history_entries": {
+          "original": 7.25,
+          "modified": 7.25
+        },
+        "history_entries_at_question": {
+          "original": 7.25,
+          "modified": 0.0
+        }
+      }
+    }
+  ]
+}

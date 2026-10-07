@@ -1,0 +1,81 @@
+{
+  "id": "chatgptdots2026",
+  "configuration": "chatgptdots2026: OpenAI dots as described in the ChatGPT documentation pages 'Meet dots' and 'Tasks and memory' (Markdown versions fetched 2026-10-05): saved notes, self-timed follow-up, delegated tasks, and approval checks. I judged only the always-on dot service described on these two pages: one GPT-6 Astra dot with background agents, delegated Work and Codex tasks, a cloud computer and browser, connected apps and plugins, and ChatGPT, Slack, Teams and call channels. Linked subpages (Controls, Computers and apps, Messaging, Review work) are outside the case sources and were not used.",
+  "sources_read": [
+    "https://learn.chatgpt.com/docs/dots ('Meet dots'). Case version: Markdown documentation page fetched 2026-10-05. Read on 2026-10-07 section by section through WebFetch. The case sha256 2dd16a1b... could not be checked with the available tools.",
+    "https://learn.chatgpt.com/docs/dots/tasks-and-memory ('Tasks and memory'). Case version: Markdown documentation page fetched 2026-10-05. Read on 2026-10-07 section by section through WebFetch. The case sha256 190a71e1... could not be checked with the available tools.",
+    "cases/dot/case.yaml (variant chatgptdots2026)",
+    "halo/read/protocol/PROTOCOL.md and halo/read/schema.json"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-supplied and sensed information is written into the dot's own persistent notes and corrected there. The notes cover preferences, decisions and ongoing work. They are separate from ChatGPT memory and selective, since they are 'not a complete transcript'. The dot updates them as new decisions and priorities come up in conversation. It also keeps private notes on useful findings from background research of connected sources. The notes carry across conversations and contact methods.",
+      "locator": "https://learn.chatgpt.com/docs/dots/tasks-and-memory § Context and memory › Persistent memory (sentences 'It also keeps its own notes…', 'These notes are separate…', 'As you work together…'); § Proactive research (first sentence). https://learn.chatgpt.com/docs/dots § How dots work › Memory and context",
+      "quote": "UNVERIFIED: \"As you work together, your dot can update these notes to reflect new decisions and changing priorities.\" … \"Alongside assigned work, your dot can research information it has permission to read and keep private notes about useful findings.\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Stored information feeds the dot's decisions about what to do and say. When it works and replies, the dot draws on ChatGPT memory and its own saved notes, and it uses them in later conversations and across channels. For example, it can use a deadline shared privately to help prepare an update, while it still checks permission before disclosing anything. Setup also uses the context available to it to suggest ways to help. Saved schedules set when recurring work runs.",
+      "locator": "https://learn.chatgpt.com/docs/dots § Meet dots ('It can research, analyze data, prepare documents, and build software, using relevant context…'); § Make it your own; § How dots work › Memory and context. https://learn.chatgpt.com/docs/dots/tasks-and-memory § Context and memory › Persistent memory; › Across messaging channels ('Information you share through one contact method…', 'For example, it can use a deadline you shared privately…'); § Recurring tasks",
+      "quote": "UNVERIFIED: \"Your dot draws on the conversation, relevant ChatGPT memory, and its own saved notes about your preferences, decisions, and ongoing work.\" … \"It also keeps its own notes about preferences, decisions, and ongoing work so it can use them in later conversations.\""
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The dot's own actions decide what it later looks at and checks. It can check the results of tasks it created, through each task's original computer or cloud environment, and then send follow-up instructions. This is a check inside the service on whether its own delegated work had the intended effect, aimed at targets its own actions set. Background agents it sends out report back to it, and it 'tracks progress' on its work. Monitoring tasks it creates fix which events it watches; connecting Slack alone does not create one. The docs warn that 'A completed run doesn't by itself confirm that the requested result was achieved or delivered'. That limits how reliable the check is but does not remove the flow.",
+      "locator": "https://learn.chatgpt.com/docs/dots § How dots work (intro: 'It tracks progress…'); › Tasks and conversations ('Your dot can check results and send follow-up instructions to tasks it created.'). https://learn.chatgpt.com/docs/dots/tasks-and-memory § Assigned work (background-agents sentence; task table row 'Task your dot created'); § Event monitoring",
+      "quote": "UNVERIFIED: \"Your dot can check results and send follow-up instructions to tasks it created.\" … \"Check results and send follow-up instructions using the task's original computer or cloud environment.\""
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Earlier stored work is used to interpret new information found during background research. The page says the research 'can connect new information to earlier work'. Its example flags a release decision that conflicts with a draft the user shared last week, so information kept from an earlier session shapes how a new observation is read. This is interpretation during background research, not retrieval when answering, and it does not depend on a memory-guided action requesting a new observation. I did not count saved recurring schedules that name what to check: they work through scheduled task runs, which is the M→A→S composition.",
+      "locator": "https://learn.chatgpt.com/docs/dots/tasks-and-memory § Proactive research (first three sentences). Supporting: § Context and memory › Conversation context ('It can use this information to connect a new request to work already underway.'); https://learn.chatgpt.com/docs/dots § How dots work › Memory and context ('It can also research connected information and keep private notes…')",
+      "quote": "UNVERIFIED: \"This background research can connect new information to earlier work.\" … \"For example, your dot might flag that a release decision conflicts with a draft you shared last week.\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The dot keeps its own plans, work context and execution records for later use. Its notes cover decisions and ongoing work, and it uses them in later conversations to keep track of its ongoing responsibilities. It saves schedules for recurring work, which are its plans for future checks, updates and notifications, and it can later list, change or cancel them. Tasks it created, with their progress, files and results, stay available so it can check them and follow up later. That it chooses when to pause and wake up again suggests it keeps a plan for continuing, but I use this only as support.",
+      "locator": "https://learn.chatgpt.com/docs/dots/tasks-and-memory § Context and memory (intro: '…its own saved notes to keep track of your preferences and ongoing responsibilities'); › Persistent memory; § Recurring tasks ('Ask your dot to confirm what it saved.', 'Use Scheduled to review recurring work…'); § Assigned work ('It can decide when to pause and wake up to continue…'; Activity sentence; task table). https://learn.chatgpt.com/docs/dots § How dots work (intro)",
+      "quote": "UNVERIFIED: \"It also keeps its own notes about preferences, decisions, and ongoing work so it can use them in later conversations.\" … \"Ask your dot to confirm what it saved.\" … \"Use **Scheduled** to review recurring work, or ask your dot to list, change, or cancel its scheduled tasks.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of its own actions and uses them itself. Tasks it delegated stay in Activity with their progress, files and results, and the dot later checks them and sends follow-ups. It can list its saved scheduled tasks. Its notes on decisions and ongoing work are kept 'so it can use them in later conversations'. These are not research logs that only the authors analyse.",
+      "locator": "https://learn.chatgpt.com/docs/dots/tasks-and-memory § Context and memory › Persistent memory; § Assigned work (Activity sentence; task table row 'Task your dot created'); § Recurring tasks ('…ask your dot to list, change, or cancel its scheduled tasks.')",
+      "quote": "UNVERIFIED: \"It also keeps its own notes about preferences, decisions, and ongoing work so it can use them in later conversations.\" … \"In the desktop app, open your dot's profile, select **Activity**, and open a task to inspect its progress, files, results, or requests for input.\""
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "The dot obtains and keeps later evidence about its actions. Background agents and delegated tasks report back to it, and results from its tools or delegated work become part of its context. Each task keeps its progress, files, results and reported errors. Users are asked to review the dot's work and say what needs to change. In the page's opening example (paraphrased), the dot reports that the fix task it created has passing tests.",
+      "locator": "https://learn.chatgpt.com/docs/dots/tasks-and-memory § Assigned work (background-agents sentence; Activity sentence; 'Review the output and any reported errors even after a run completes.'); § Context and memory › Conversation context (first sentence); opening example. https://learn.chatgpt.com/docs/dots § Work with your dot",
+      "quote": "UNVERIFIED: \"Your dot can divide work among background agents that run in parallel and report back to it.\" … \"Context is the information available to your dot while it responds or works: messages, instructions, relevant source material, and results from its tools or delegated work.\""
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Results are tied to the action they concern and used to correct the work. The dot checks the results of a specific task it created and sends follow-up instructions to that same task in its original computer or cloud environment. This check happens inside the service, not as offline scoring. User corrections are also tied to a specific result ('Review the first result and correct any missing details'). I did not count the automatic approval checks: they gate an action before it happens, so no outcome exists yet. The docs also warn that a completed run does not by itself confirm success.",
+      "locator": "https://learn.chatgpt.com/docs/dots § How dots work › Tasks and conversations; § Work with your dot › Give it a responsibility. https://learn.chatgpt.com/docs/dots/tasks-and-memory § Assigned work (task table row 'Task your dot created')",
+      "quote": "UNVERIFIED: \"Your dot can check results and send follow-up instructions to tasks it created.\""
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Neither page says the service itself makes a lasting change to how it works. What persists is content that a fixed mechanism uses: notes on preferences, decisions and ongoing work, saved schedules, monitoring tasks and website sessions. Instructions and custom rules are written by the user, and nothing says the dot writes or edits its own prompts, rules, skills, code or model.",
+      "locator": "https://learn.chatgpt.com/docs/dots § How dots work › Permissions and approvals ('You can add instructions…', 'Custom rules are optional controls…'); › Its computer and yours ('Local skills require a connected computer.'). https://learn.chatgpt.com/docs/dots/tasks-and-memory § Context and memory › Persistent memory",
+      "quote": "UNVERIFIED: \"You can add instructions for how you want your dot to work, such as asking it to show you drafts before sending them.\" … \"Custom rules are optional controls for more specific ongoing boundaries.\"",
+      "what": "Nothing is revised by the service. Saved notes are content, and instructions and custom rules are written by users."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revision by the service is stated, so no later run under a revised mechanism is reported. Later runs use saved notes, schedules and sessions, but those are content and task state.",
+      "locator": "https://learn.chatgpt.com/docs/dots and https://learn.chatgpt.com/docs/dots/tasks-and-memory (whole pages); see revision"
+    }
+  },
+  "notes": "I read both pages on 2026-10-07 through WebFetch only, because Bash/curl was not available. The fetch model would not reproduce the pages verbatim, so I pulled out each section sentence by sentence. I then re-checked every quoted sentence in a separate fetch that also contained made-up decoy sentences, and the tool rejected every decoy. I still could not confirm exact characters, punctuation or the case sha256 for the 2026-10-05 versions, so every quote is labeled UNVERIFIED. Close calls: (1) M→S rests on the proactive-research statement that background research connects new information to earlier work, with the release-decision example. I treated saved schedules as M→A→S and did not count them. (2) A→S rests on the dot checking results of tasks it created. I treated the automatic approval review ('review determines whether your dot can proceed, needs your approval, or must hand a step over to you') as a gate inside Action, not as A→S or attribution. (3) Revision is not stated: notes are content, and instructions and custom rules are written by users. I did not read the linked subpages (Controls, Computers and apps, Messaging, Review work) because they are not among the case sources. The case README shows one earlier reviewer's labels. I did not open any review files, and every judgment here rests on the two pages.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 613,
+    "code_commit": null
+  }
+}

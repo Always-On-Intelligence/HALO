@@ -1,0 +1,92 @@
+{
+  "id": "proact2026",
+  "configuration": "Directed Idle: full Future-State Prediction, Idle-Time Acquisition, delivery policy, and persistent memory. Reviewed the paper's Full-single-idle configuration and its implementation at commit 7ac78fde0524443ebeb9d3173b78498c25625f57.",
+  "sources_read": [
+    "https://arxiv.org/html/2605.25971v2 — methods, evaluation protocol, configuration descriptions, operational examples, and appendices",
+    "https://github.com/AgentACE-AI/ProAct/tree/7ac78fde0524443ebeb9d3173b78498c25625f57 — local read-only checkout",
+    "README.md",
+    "experiments/ProactiveBench/eval/ablation_config.py",
+    "experiments/ProactiveBench/eval/adapter.py — configuration, initialization, idle execution, and conversation handling",
+    "experiments/ProactiveBench/eval/fsp_module.py",
+    "experiments/ProactiveBench/eval/ite_module.py",
+    "experiments/ProactiveBench/eval/runner.py — service execution and external judging",
+    "server/handlers/chat_handler.py — topic interpretation, responses, and incremental memory updates",
+    "agents/topic_monitor.py",
+    "agents/planning_agent.py",
+    "agents/search_planner.py",
+    "services/search_service.py",
+    "memory/memory_system.py — retrieval, message retention, conversation persistence, and update dispatch",
+    "memory/memory_update_agent.py — knowledge admission, merging, replacement, and profile updates",
+    "core/prompts.py — incremental extraction and memory criticism"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "New user messages undergo fact and profile extraction and are saved in conversation memory. Acquired search evidence is submitted to MemoryUpdateAgent for admission, deduplication, replacement, or merging. These are runtime writes beyond the initial benchmark profile.",
+      "locator": "server/handlers/chat_handler.py:879-943; services/search_service.py:301-346; memory/memory_update_agent.py:112-209.",
+      "quote": "self.memory.add_facts(extracted_facts, source_topic=topic)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained profiles, dialogue, research history, and knowledge condition future-need generation and acquisition approval. Retrieved memory also conditions response content, while retained delivery history suppresses repeated pushes.",
+      "locator": "experiments/ProactiveBench/eval/fsp_module.py:343-410; experiments/ProactiveBench/eval/ite_module.py:258-289,375-388,419-488; agents/planning_agent.py:60-80; server/handlers/chat_handler.py:272-276.",
+      "quote": "memory_context = self.memory.format_context_for_query(user_query)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Selected exploration intents supply a topic and purpose to search acquisition. The search planner generates prioritized queries that determine which external facts are searched and fetched. This is an implemented flow from preparation intentions to observation acquisition.",
+      "locator": "experiments/ProactiveBench/eval/ite_module.py:220-245; services/search_service.py:130-149,263-295.",
+      "quote": "result = self.search_service.search(\n                    topic=intent.topic,\n                    purpose=intent.reason or f\"Research about {intent.topic}\",\n                    generate_report=False,\n                )"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Before response planning, the topic monitor receives retained conversation history and stored topic names to interpret whether the new user message continues a topic or returns to an earlier one. This direct use of memory for current-input interpretation establishes the channel independently of memory-guided search decisions.",
+      "locator": "server/handlers/chat_handler.py:221-228; agents/topic_monitor.py:86-124; memory/memory_system.py:190-197.",
+      "quote": "prompt = Prompts.TOPIC_MONITOR.format(\n            current_topic=current_topic,\n            conversation_history=history_text,\n            existing_topics=existing_topics_text,\n            new_message=new_message,\n        )"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Assistant responses are appended to persistent topic conversations, and direct pushes enter the active memory session. The delivery module also retains delivered fact identifiers and source URLs for subsequent novelty decisions.",
+      "locator": "server/handlers/chat_handler.py:278-283,932-943; memory/memory_system.py:665-706,861-884; experiments/ProactiveBench/eval/adapter.py:614-619; experiments/ProactiveBench/eval/ite_module.py:419-438.",
+      "quote": "assistant_message=Message(role=\"assistant\", content=assistant_response),"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains its own assistant messages in topic conversations and writes those conversations to disk. Direct-push records and delivery identifiers are subsequently used by the service, rather than existing only in author evaluation logs.",
+      "locator": "memory/memory_system.py:694-706,861-884; experiments/ProactiveBench/eval/adapter.py:614-619; experiments/ProactiveBench/eval/ite_module.py:375-388,419-438.",
+      "quote": "conv.messages.append(assistant_message)"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "At the acquisition level, executed exploration intents produce search results that the service obtains and retains in its own memory, with topic and source provenance. These are retained task results; this judgment does not claim retained evidence of user satisfaction or downstream benefit.",
+      "locator": "experiments/ProactiveBench/eval/ite_module.py:4-6,220-245; services/search_service.py:148-175,321-346; memory/memory_update_agent.py:112-209.",
+      "quote": "Executes exploration intents by searching the ExternalFactStore via\nSearchService, storing discovered facts into system MemorySystem, and\nevaluating push worthiness via PushScoreAgent."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The acquisition result is linked to its originating intent. The service checks search success and the actual number of newly stored facts; an acquisition producing no new facts receives a blocking reason for direct delivery. This is an immediate operational check of preparation results, independent of the external benchmark judge.",
+      "locator": "experiments/ProactiveBench/eval/ite_module.py:109-163,220-245,353-354,360-389.",
+      "quote": "if facts_stored <= 0:\n            reasons.append(\"no_new_facts\")"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The described updates change knowledge, profiles, summaries, and delivery history; no service-authored durable change to parameters, prompts, reusable rules, skills, code, or harness is reported.",
+      "locator": "memory/memory_update_agent.py:76-98,112-209,264-289; core/prompts.py:127-198; experiments/ProactiveBench/eval/ite_module.py:34-43,338-358; paper v2 §3.4 and Appendix U: https://arxiv.org/html/2605.25971v2.",
+      "what": "No durable mechanism revision is stated."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Later turns reuse accumulated knowledge and interaction records, but no reported run executes under a service-revised mechanism.",
+      "locator": "experiments/ProactiveBench/eval/adapter.py:426-450,621-627; experiments/ProactiveBench/eval/runner.py:233-322; paper v2 §3.4 and Appendices D/F: https://arxiv.org/html/2605.25971v2."
+    }
+  },
+  "notes": "All code locators refer to the specified commit. The paper identifies Directed Idle with Full-single-idle in Appendix F. That implementation disables legacy in-conversation prediction and deep research, while enabling the separate FSP/ITE pipeline. Outcome and attribution are supported narrowly by acquisition results and their runtime checks; benchmark coverage judgments and author analyses are excluded. Memory enrichment and duplicate suppression are not counted as mechanism revision.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 192,
+    "code_commit": "7ac78fde0524443ebeb9d3173b78498c25625f57"
+  }
+}

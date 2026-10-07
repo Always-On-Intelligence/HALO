@@ -1,0 +1,337 @@
+{
+  "case": "visualclaw",
+  "channels": {
+    "S->M": "the round's request text written into the episodic memory unit (runner.py:752-797, 1020-1025)",
+    "M->A": "retrieved memory units rendered and prepended to the agent prompt (runner.py:919-934)",
+    "A->M": "the agent's conclusion and its pass/fail outcome written into the memory unit (runner.py:752-797)",
+    "M->S": "remembered text naming _clip_frames/ makes the Codex engine attach the keyframes (codex_cli.py:159)"
+  },
+  "steps": {
+    "record": "the evolver's failure samples carry the agent's answers from agent_logs/<qid>/answer.txt",
+    "outcome": "the evolver receives only the rounds the scorer failed, labelled reward -1.0",
+    "attribution": "each failure label is shown with that round's own answer",
+    "revision": "the evolver writes new SKILL.md cards into the bank (evolver.py:260-270), which the test invocation loads"
+  },
+  "tests": [
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 6,
+      "modified": 2,
+      "tie": 4,
+      "metrics": {
+        "learn_pass_rate": {
+          "original": 0.7,
+          "modified": 0.6667
+        },
+        "evolver_calls_learning": {
+          "original": 0.5833,
+          "modified": 0.75
+        },
+        "memory_hits_test": {
+          "original": 20.0,
+          "modified": 20.0
+        },
+        "evolved_skill_injections_test": {
+          "original": 3.0,
+          "modified": 4.3333
+        },
+        "test_rounds_with_frames_from_retained_text": {
+          "original": 0.25,
+          "modified": 0.5
+        },
+        "skills_written_learning": {
+          "original": 0.9167,
+          "modified": 1.25
+        },
+        "test_pass_rate": {
+          "original": 0.7917,
+          "modified": 0.625
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 5,
+      "modified": 3,
+      "tie": 4,
+      "metrics": {
+        "learn_pass_rate": {
+          "original": 0.7,
+          "modified": 0.6667
+        },
+        "evolver_calls_learning": {
+          "original": 0.5833,
+          "modified": 0.6667
+        },
+        "memory_hits_test": {
+          "original": 20.0,
+          "modified": 20.0
+        },
+        "evolved_skill_injections_test": {
+          "original": 3.0,
+          "modified": 3.6667
+        },
+        "test_rounds_with_frames_from_retained_text": {
+          "original": 0.25,
+          "modified": 0.1667
+        },
+        "skills_written_learning": {
+          "original": 0.9167,
+          "modified": 1.0833
+        },
+        "test_pass_rate": {
+          "original": 0.7917,
+          "modified": 0.6875
+        }
+      }
+    },
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 4,
+      "modified": 1,
+      "tie": 7,
+      "metrics": {
+        "learn_pass_rate": {
+          "original": 0.7,
+          "modified": 0.7167
+        },
+        "evolver_calls_learning": {
+          "original": 0.5833,
+          "modified": 0.6667
+        },
+        "memory_hits_test": {
+          "original": 20.0,
+          "modified": 10.0833
+        },
+        "evolved_skill_injections_test": {
+          "original": 3.0,
+          "modified": 3.5
+        },
+        "test_rounds_with_frames_from_retained_text": {
+          "original": 0.25,
+          "modified": 0.3333
+        },
+        "skills_written_learning": {
+          "original": 0.9167,
+          "modified": 1.0833
+        },
+        "test_pass_rate": {
+          "original": 0.7917,
+          "modified": 0.7083
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->S"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 0,
+      "modified": 2,
+      "tie": 10,
+      "metrics": {
+        "learn_pass_rate": {
+          "original": 0.7,
+          "modified": 0.7
+        },
+        "evolver_calls_learning": {
+          "original": 0.5833,
+          "modified": 0.5833
+        },
+        "memory_hits_test": {
+          "original": 20.0,
+          "modified": 20.0
+        },
+        "evolved_skill_injections_test": {
+          "original": 3.0,
+          "modified": 3.0
+        },
+        "test_rounds_with_frames_from_retained_text": {
+          "original": 0.25,
+          "modified": 0.25
+        },
+        "skills_written_learning": {
+          "original": 0.9167,
+          "modified": 0.9167
+        },
+        "test_pass_rate": {
+          "original": 0.7917,
+          "modified": 0.7917
+        }
+      }
+    },
+    {
+      "cut": [
+        "record"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 2,
+      "modified": 3,
+      "tie": 7,
+      "metrics": {
+        "learn_pass_rate": {
+          "original": 0.7,
+          "modified": 0.7
+        },
+        "evolver_calls_learning": {
+          "original": 0.5833,
+          "modified": 0.5833
+        },
+        "memory_hits_test": {
+          "original": 20.0,
+          "modified": 20.0
+        },
+        "evolved_skill_injections_test": {
+          "original": 3.0,
+          "modified": 3.0
+        },
+        "test_rounds_with_frames_from_retained_text": {
+          "original": 0.25,
+          "modified": 0.5
+        },
+        "skills_written_learning": {
+          "original": 0.9167,
+          "modified": 0.8333
+        },
+        "test_pass_rate": {
+          "original": 0.7917,
+          "modified": 0.7917
+        }
+      }
+    },
+    {
+      "cut": [
+        "outcome"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 3,
+      "modified": 3,
+      "tie": 6,
+      "metrics": {
+        "learn_pass_rate": {
+          "original": 0.7,
+          "modified": 0.7
+        },
+        "evolver_calls_learning": {
+          "original": 0.5833,
+          "modified": 0.5833
+        },
+        "memory_hits_test": {
+          "original": 20.0,
+          "modified": 20.0
+        },
+        "evolved_skill_injections_test": {
+          "original": 3.0,
+          "modified": 2.9167
+        },
+        "test_rounds_with_frames_from_retained_text": {
+          "original": 0.25,
+          "modified": 0.25
+        },
+        "skills_written_learning": {
+          "original": 0.9167,
+          "modified": 0.9167
+        },
+        "test_pass_rate": {
+          "original": 0.7917,
+          "modified": 0.7708
+        }
+      }
+    },
+    {
+      "cut": [
+        "attribution"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 2,
+      "modified": 3,
+      "tie": 7,
+      "metrics": {
+        "learn_pass_rate": {
+          "original": 0.7,
+          "modified": 0.7
+        },
+        "evolver_calls_learning": {
+          "original": 0.5833,
+          "modified": 0.5833
+        },
+        "memory_hits_test": {
+          "original": 20.0,
+          "modified": 20.0
+        },
+        "evolved_skill_injections_test": {
+          "original": 3.0,
+          "modified": 1.9167
+        },
+        "test_rounds_with_frames_from_retained_text": {
+          "original": 0.25,
+          "modified": 0.1667
+        },
+        "skills_written_learning": {
+          "original": 0.9167,
+          "modified": 0.5833
+        },
+        "test_pass_rate": {
+          "original": 0.7917,
+          "modified": 0.7083
+        }
+      }
+    },
+    {
+      "cut": [
+        "revision"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 2,
+      "modified": 3,
+      "tie": 7,
+      "metrics": {
+        "learn_pass_rate": {
+          "original": 0.7,
+          "modified": 0.7
+        },
+        "evolver_calls_learning": {
+          "original": 0.5833,
+          "modified": 0.5833
+        },
+        "memory_hits_test": {
+          "original": 20.0,
+          "modified": 20.0
+        },
+        "evolved_skill_injections_test": {
+          "original": 3.0,
+          "modified": 0.0
+        },
+        "test_rounds_with_frames_from_retained_text": {
+          "original": 0.25,
+          "modified": 0.0
+        },
+        "skills_written_learning": {
+          "original": 0.9167,
+          "modified": 0.0
+        },
+        "test_pass_rate": {
+          "original": 0.7917,
+          "modified": 0.75
+        }
+      }
+    }
+  ]
+}

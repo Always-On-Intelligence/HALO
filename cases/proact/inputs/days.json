@@ -1,0 +1,60 @@
+{
+  "note": "Each item is one short day with one ProActEval scenario (core/experiments/ProactiveBench/data/scenarios): the scenario supplies the user profile and the fact sheet that the system can only reach by searching (ExternalFactStore). The day has two user messages with their clock times. The first gives context in the morning without asking for a fact; the gap until the second is the idle period in which Directed Idle may predict needs, acquire facts and push a note; the second asks for something that follows from the first (a 'predictable_after' need in the scenario). The judge compares what happens from the idle period on: any unprompted note and the reply to the second message. 'judge_facts' are fact ids from the scenario's fact sheet shown to the judge as ground truth; 'needs' and 'design' are for analysis only. None of these extra fields is sent to the system.",
+  "items": [
+    {
+      "id": "med_day",
+      "scenario": "health_medication_routine_01",
+      "messages": [
+        {"time": "07:20", "text": "Morning. Today is day one of the new blood pressure medication Dr. Reed prescribed. I'm heading into the office now and will get the routine straight at lunch."},
+        {"time": "12:40", "text": "Lunch break, and I just realized I never took this morning's pill. What should I do now, and does it matter if I eat with it?"}
+      ],
+      "needs": ["N1", "N5", "N2"],
+      "judge_facts": ["F03", "F05", "F06", "F08", "F09"],
+      "design": "the morning message points to the medication routine; the missed-dose rule (F08) and the with-food rule (F06) are what idle preparation should have ready"
+    },
+    {
+      "id": "registration_day",
+      "scenario": "relocate_city_01",
+      "messages": [
+        {"time": "08:10", "text": "Good morning. We move to Cedar Creek next month and I want to get the city registration sorted this week."},
+        {"time": "17:45", "text": "Heading home from work. When exactly is my registration appointment, and what do I have to bring?"}
+      ],
+      "needs": ["N5", "N6"],
+      "judge_facts": ["F09", "F10", "F11"],
+      "design": "city registration is named in the morning; the appointment (F10) and the required documents (F11) are predictable"
+    },
+    {
+      "id": "utilities_day",
+      "scenario": "rent_move_in_logistics_02",
+      "messages": [
+        {"time": "09:00", "text": "The lease for Unit 12B at The Veridian Towers is signed! Today I'm starting on the utilities before move-in."},
+        {"time": "13:30", "text": "I'm about to call the power company. What do they need from me, and do I have to set up water and trash separately?"}
+      ],
+      "needs": ["N3", "N4", "N5"],
+      "judge_facts": ["F12", "F13", "F14", "F15"],
+      "design": "utilities are named in the morning; the call details (F12), the fee (F14) and the building-managed water and trash (F15) are predictable"
+    },
+    {
+      "id": "school_week_day",
+      "scenario": "parent_school_week_01",
+      "messages": [
+        {"time": "07:05", "text": "Monday morning. Leo has a packed school week, and I think Friday is a short day."},
+        {"time": "11:30", "text": "Quick check before my meeting: who is picking Leo up today and on Friday, and at what time?"}
+      ],
+      "needs": ["N3", "N4"],
+      "judge_facts": ["F13", "F17", "F18", "F22"],
+      "design": "the school week and Friday's short day are named in the morning; the pickup plan for Monday (F18) and Friday (F22) follows from the school hours (F13, F17)"
+    },
+    {
+      "id": "summit_trip_day",
+      "scenario": "travel_business_02",
+      "messages": [
+        {"time": "09:30", "text": "I'm finalizing the FutureTech Summit trip for the team today. The hotel is booked."},
+        {"time": "15:10", "text": "Ben is asking about arrival day: where and when do we meet the airport shuttle, and what is the booking reference?"}
+      ],
+      "needs": ["N1", "N3"],
+      "judge_facts": ["F06", "F07", "F09"],
+      "design": "the trip and the hotel are named in the morning; the arrival shuttle (F06, F07, dispatcher F09) is a predictable next need"
+    }
+  ]
+}

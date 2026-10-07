@@ -1,0 +1,9 @@
+# SpatialMemory service (service_layer/SpatialMemory/requirements.txt, minus uvicorn) run in-process
+fastapi>=0.116.0
+pydantic>=2.11.0
+numpy>=2.1.0
+Pillow>=10.4.0
+requests>=2.32.0
+# FastAPI's TestClient, which carries the agent's HTTP requests to the in-process service
+httpx
+pyyaml

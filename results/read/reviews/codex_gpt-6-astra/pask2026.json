@@ -1,0 +1,79 @@
+{
+  "id": "pask2026",
+  "configuration": "IntentFlow demand detection with PASK-MM and PASK-PAS, including user, workspace, and global memory.",
+  "sources_read": [
+    "https://arxiv.org/html/2604.08000v1 — version 2604.08000v1, sections 1–8 and associated figures",
+    "https://github.com/xzf-thu/Pask at d54646c52b1555232ce4ab39103768d7f65b8267 — README.md; docs/index.html",
+    "Repository at the specified commit — eval/run.py; eval/prompts.py; eval/config.py; eval/score.py",
+    "Repository at the specified commit — bench/03c_memory.py; bench/PIPELINE.md",
+    "Repository at the specified commit — docs/assets/images/figure2-intentflow.png; figure3-memory.png; figure4-pas.png; experiments-table5.png",
+    "cases/pask/case.yaml",
+    "halo/read/schema.json"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Observations update workspace state; completed observation trajectories supply user-trait updates and new global-memory episodes. This establishes admission beyond static benchmark profiles.",
+      "locator": "[PASK v1](https://arxiv.org/html/2604.08000v1), §4.2 equations (3)–(5), §4.3 equations (10)–(11).",
+      "quote": "the system extracts candidate user traits"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "MemLoader supplies retained evidence to Demand Detector for response generation or abstention; the persistent profile also conditions intervention decisions.",
+      "locator": "[PASK v1](https://arxiv.org/html/2604.08000v1), §3.1 Full assistance and §4.1 User Memory; README.md:163–178.",
+      "quote": "returned to Demand Detector for final decision making"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The full_assistance decision triggers observation summarization and entity extraction, directing Sensing interpretation. PAS also routes detected needs to tools including web search.",
+      "locator": "[PASK v1](https://arxiv.org/html/2604.08000v1), §3.1 Full assistance; README.md:187; docs/index.html:355.",
+      "quote": "Detected intents are routed to the appropriate tool and returned to the user within the latency budget."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained user priors condition incoming-context interpretation and latent-intent inference within the fused Demand Detector, establishing more than answer-time retrieval.",
+      "locator": "[PASK v1](https://arxiv.org/html/2604.08000v1), §2.2 Memory Modeling, §3.1, and §4.1 User Memory.",
+      "quote": "interpret current observations in light of accumulated personal context"
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "Workspace internal states and interaction traces are mentioned, but their Action-originated contents are unspecified. The defined request trajectories contain observations; retention of assistant decisions, outputs, or execution records remains unclear.",
+      "locator": "[PASK v1](https://arxiv.org/html/2604.08000v1), §§4.1–4.3, equations (3)–(5), (10)–(11); eval/prompts.py:92–131; eval/run.py:171–184."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "The interaction trace is not explicitly identified as retaining the service's own actions; the concrete response logs are research evaluation records.",
+      "locator": "[PASK v1](https://arxiv.org/html/2604.08000v1), §4.2 equation (4); eval/run.py:125–184."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Feedback persistence is named without specifying retained outcomes of assistance; user ratings and quiz results are reported as research measurements.",
+      "locator": "[PASK v1](https://arxiv.org/html/2604.08000v1), §5, Figure 7, and §6.5.3; docs/assets/images/figure4-pas.png."
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No service-side action–outcome check is specified; the implemented response-linked judgments belong to offline benchmark scoring.",
+      "locator": "[PASK v1](https://arxiv.org/html/2604.08000v1), §6.1.1 Scoring; eval/score.py:167–294."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Profile updates and episode compression change memory content under fixed procedures; SFT/RL describes author-run training, not service-authored mechanism revision.",
+      "locator": "[PASK v1](https://arxiv.org/html/2604.08000v1), §§3.3 and 4.3; docs/index.html:346.",
+      "what": "No qualifying revision to parameters, prompts, reusable rules, skills, code, or harness is stated."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Later interactions demonstrate memory reuse, but no reported run is identified as using a mechanism previously revised by the service.",
+      "locator": "[PASK v1](https://arxiv.org/html/2604.08000v1), §§6.4–6.5.2; docs/assets/images/experiments-table5.png."
+    }
+  },
+  "notes": "Judged the named integrated system, not merely its benchmark harness. The checked-out commit contains benchmark construction and evaluation code, but no identifiable production PASK-MM/PAS implementation. Paper-described flows remain eligible as reported; missing runtime code does not establish absence.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 258,
+    "code_commit": "d54646c52b1555232ce4ab39103768d7f65b8267"
+  }
+}

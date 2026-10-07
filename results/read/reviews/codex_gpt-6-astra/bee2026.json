@@ -1,0 +1,74 @@
+{
+  "id": "bee2026",
+  "configuration": "Shipped wearable capture, personal facts/conversation store, Daily Insights, Actions, and retained to-do suggestions, as specified for September 22. Future Templates are excluded.",
+  "sources_read": [
+    "https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features — full product description; no version specified in case.yaml.",
+    "https://docs.bee.computer/docs/mcp — full documentation page; displayed last updated June 7, 2026.",
+    "https://docs.bee.computer/docs/proxy — full documentation page; displayed last updated June 7, 2026.",
+    "cases/bee/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Captured conversations become retained transcripts and summaries, and voice notes contribute to stored personal context. The documented fact creation and update operations also provide a write path for supplied evidence.",
+      "locator": "[Product description](https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features), introduction and Voice Notes/privacy paragraphs; [API documentation](https://docs.bee.computer/docs/proxy), Facts and Conversations."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Bee uses accumulated history to generate personalized insights and recommend goals, establishing retained information influencing assistance content.",
+      "locator": "[Product description](https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features), What we’ve learned and Daily Insights bullet.",
+      "quote": "Bee surfaces insights across months of conversations, emails, calendar data, and health metrics from HealthKit"
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "User-controlled capture, Actions, and streaming interfaces are described, but no passage establishes Bee's plans or execution state directing observation acquisition, interpretation, or expected-effect checks.",
+      "locator": "[Product description](https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features), capture paragraph and Actions bullet; [API documentation](https://docs.bee.computer/docs/proxy), Streaming."
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Historical context informs insights, but the sources do not establish retained priors guiding ongoing sampling, attention, compression, or interpretation. Context retrieval alone does not establish this channel.",
+      "locator": "[Product description](https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features), What we’ve learned and Daily Insights; [MCP documentation](https://docs.bee.computer/docs/mcp), What this is and Tool catalog."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Generated to-do suggestions remain available for subsequent retrieval and acceptance or dismissal. Retention of these proposed actions establishes this flow without requiring evidence that executed emails or calendar operations are logged.",
+      "locator": "[MCP documentation](https://docs.bee.computer/docs/mcp), Tool catalog, bee_get_todo_suggestions, bee_accept_todo_suggestion, and bee_dismiss_todo_suggestion."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The documented getter exposes retained to-do suggestions: records of behavior Bee proposed. This establishes recording of recommendations, not necessarily completed external executions.",
+      "locator": "[MCP documentation](https://docs.bee.computer/docs/mcp), Tool catalog, to-do suggestion retrieval.",
+      "quote": "bee_get_todo_suggestions"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Acceptance/dismissal operations and a stored todo completion field are documented, but retention of suggestion responses or outcomes linked to Bee's own actions is not specified.",
+      "locator": "[MCP documentation](https://docs.bee.computer/docs/mcp), Tool catalog, suggestion acceptance/dismissal; [API documentation](https://docs.bee.computer/docs/proxy), Todos, update example."
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Item-specific response controls exist, but the sources do not describe Bee checking a prior decision against its outcome or using that outcome to correct assistance.",
+      "locator": "[MCP documentation](https://docs.bee.computer/docs/mcp), Tool catalog; [Product description](https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features), Actions and Daily Insights."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Accumulating personal context and developer-shipped features do not establish a durable mechanism change made by the service itself.",
+      "locator": "[Product description](https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features), introduction and Accelerating with Amazon; [API documentation](https://docs.bee.computer/docs/proxy), Facts and Todos.",
+      "what": "No service-authored revision to parameters, prompts, skills, reusable rules, code, or harness is stated."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No run under a service-revised mechanism is reported; use of accumulated personal information is not evidence of such a run.",
+      "locator": "[Product description](https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features), What we’ve learned and Accelerating with Amazon."
+    }
+  },
+  "notes": "Independent text-only review of the three listed primary sources; no code repository was supplied. Documentation interfaces establish the specified stores and controls, but unspecified feedback retention and autonomous mechanism changes were not inferred.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 151,
+    "code_commit": null
+  }
+}

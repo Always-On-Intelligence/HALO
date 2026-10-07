@@ -1,0 +1,90 @@
+{
+  "id": "pahf2026",
+  "configuration": "pahf2026: full PAHF with both channels on, pre-action clarification and post-action feedback. The agent is GPT-4o (LLMClient default) using ReAct prompting. Memory is the default SQLite per-user note store: one shared DB with rows keyed by person_id and DRAGON+ dense embeddings; aug_mem=False, keep_whole_memory=True. Judged during the feedback-enabled learning/adaptation phases, i.e. the Phase 1 and Phase 3 iterations (run_agent.py sets enable_pre_feedback = enable_post_feedback = enable_memory = True). In Phases 2 and 4 both feedback channels are off. I checked both benchmark instantiations, online shopping (the digital domain) and embodied manipulation, and every label is the same for both.",
+  "sources_read": [
+    "https://arxiv.org/html/2602.16173v1 (v1), read via WebFetch: Abstract, §1, §3.1, §3.2, §3.3, §3.4 (Baselines, Memory design, Memory interaction), §4.1, §4.2, §5, Fig. 1-2 captions, App. B, App. C.2, App. D prompt boxes",
+    "facebookresearch/PAHF@7a11213360a82d5f437a035e3a31c92d6307f8cf: README.md",
+    "PAHF@7a11213: run_agent.py",
+    "PAHF@7a11213: agents/base.py",
+    "PAHF@7a11213: agents/embodied_agent.py",
+    "PAHF@7a11213: agents/shopping_agent.py",
+    "PAHF@7a11213: memory/banks.py",
+    "PAHF@7a11213: memory/utils.py",
+    "PAHF@7a11213: utils/agent_utils.py",
+    "PAHF@7a11213: utils/llm.py",
+    "PAHF@7a11213: prompts/embodied_prompts.py",
+    "PAHF@7a11213: prompts/shopping_prompts.py"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-supplied evidence is written to per-user memory through both channels. Pre-action: GPT-4o summarizes the user's answer to the clarification question, and the summary is added as a note before the agent acts. Post-action: the feedback passes a salience detector and is summarized. It is then added as a new note, or merged into or overwrites the most similar existing note (drift detector plus integration prompt). Notes persist in the on-disk SQLite store across iterations and phases. Writes happen only in the feedback-enabled Phases 1 and 3.",
+      "locator": "Paper §3.2 (Pre-Action Interaction, Eq. 1; Post-Action Feedback Integration, Eq. 3); §3.4 Memory interaction; Fig. 1 caption. Code: agents/base.py:135-143; agents/embodied_agent.py:242-306; agents/shopping_agent.py:247-305, 430-435; memory/banks.py:270-341",
+      "quote": "UNVERIFIED (WebFetch): \"Crucially, this feedback is parsed and written to memory before acting\" (§3.2); \"Writing is a multi-step process triggered any time the agent receives personalized information from either pre-action feedback\" (§3.4). Code (verbatim, agents/base.py:137): summ = f\"{qa}\\n\\nAccording to this Q&A, please summarize the personalized information of {name} in one brief sentence.\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Before every decision, the agent retrieves the top-k per-user notes with a dense query built from the instruction and the observation. GPT-4o distills them into a task-relevant summary, which is appended as 'Context:' to the ReAct prompt. That prompt decides whether to ask the user (communication) or commit to option A-D (execution; in shopping, D means do not buy). The same context stays in the prompt for the re-decision after clarification.",
+      "locator": "Paper §3.2 Action Execution (Eq. 2); §3.4 Memory interaction. Code: agents/base.py:45-79; agents/embodied_agent.py:185-196, 211-215; agents/shopping_agent.py:376-386; memory/utils.py:69-84",
+      "quote": "UNVERIFIED (WebFetch): \"Retrieval always precedes action selection so the policy conditions on m_t rather than an empty context.\" ... \"the resulting cleaned summary is inserted into the model context for action selection\" (§3.4). Code (verbatim, agents/embodied_agent.py:193,195): prompt_final += \"\\n\\n\" + context_str ... gen_text = self.llm_client.generate(prompt_final).strip()"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "When the ReAct policy outputs 'Ask human' (an Action decision to communicate), a clarification question is generated and sent to the user. The user's input is acquired as an answer to that specific question. The answer is interpreted as a Question/Human Q&A pair, both for the re-decision and for the memory write. So the Action's information need sets what Sensing acquires and how the answer is framed. Post-action elicitation is not counted: there the action is shown to the persona simulator (embodied) or to a rule-based judge (shopping), which are outside the service.",
+      "locator": "Paper §3.2 Pre-Action Interaction; App. C.2 (Online Shopping). Code: agents/base.py:109-133; agents/embodied_agent.py:199-215; agents/shopping_agent.py:389-416",
+      "quote": "UNVERIFIED (WebFetch): \"it then proactively generates a clarification query q_t to the user, receiving pre-action feedback f_t^pre\" (§3.2); \"During clarification, the LLM mimics a user by answering only the specific feature questions the agent asks.\" (App. C.2). Code (verbatim, agents/base.py:129,133): {\"role\": \"user\", \"content\": scenario + \"\\n\\n\" + inject_question} ... qa = self.qa_prompt.format(question, human_a)"
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "No passage in the paper describes memory being supplied to Sensing for sampling, attention, compression, or interpretation. In the code, retrieved memory goes only to the action prompt (answer-time retrieval, which is M->A) and to merging inside memory (find_similar_memory plus the integration prompt or same-product check). The question generator, Q&A summarizer, salience detector, and drift detector get no memory input. The Results remark that confident notes stop the agent from 'perceiving' ambiguity describes the memory-guided decision to ask or act. That is the M->A->S composition, not M->S. The source does not explicitly exclude the route either, so absent does not apply.",
+      "locator": "Paper §3.2; §3.4 Memory interaction; §5 'Pre-action feedback alone is brittle under preference drift'. Code: agents/base.py:66-79, 112-115, 136-138; agents/embodied_agent.py:244-267; agents/shopping_agent.py:253-287",
+      "quote": "UNVERIFIED (WebFetch): \"once the agent has written confident notes into memory, it no longer perceives ambiguity and therefore stops asking clarification questions\" (§5). Code (verbatim, agents/base.py:113): prompt_final2 = self.prompt_question + \"\\n\\n\" + whole_scenario"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The paper's memory-update operators take Action outputs as inputs: the agent's clarification query q_t in Eq. 1, and q_t plus the executed action a_t in Eq. 3. The code implements the q_t route: the note written after clarification is generated from a Q&A string that holds the agent's own question together with the user's answer. That delivers an assistant utterance into memory integration. The released post-action write does not pass a_t directly. It uses only the feedback text (embodied) or scenario plus feedback (shopping), and that part alone would be S->M.",
+      "locator": "Paper §3.2 Eq. (1) and Eq. (3). Code: agents/base.py:113-117, 133-142; compare agents/embodied_agent.py:244-251 and agents/shopping_agent.py:253-270",
+      "quote": "UNVERIFIED (WebFetch; math as plain text): Eq. 1 \"M^'_t = F_update^pre(M^_t, I_t, O_t, m_t, q_t, f_t^pre)\"; Eq. 3 \"M^_t+1 = F_update^post(M^'_t, I_t, m_t, q_t, f_t^pre, a_t, f_t^post)\" (§3.2). Code (verbatim, agents/base.py:133,137): qa = self.qa_prompt.format(question, human_a) ... summ = f\"{qa}\\n\\nAccording to this Q&A, please summarize the personalized information of {name} in one brief sentence.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "The service keeps no records of its own decisions for later use. Memory entries are per-user preference notes distilled from feedback, not action records. The per-task trajectory (whole_prompt, action, correctness, feedback) is written only to output/.../phase*.json result files, which feed the authors' SR/FF/ACPE metrics. Those are research trial logs. The Thought/Action text that accumulates in the prompt within one task is temporary working context.",
+      "locator": "Paper §3.4 Memory design. Code: agents/embodied_agent.py:309-325, 485-491; agents/shopping_agent.py:437-453, 646-652; utils/agent_utils.py:131-144, 230-276",
+      "quote": "UNVERIFIED (WebFetch): \"Each memory entry is a short natural-language note paired with an embedding, and all notes are strictly isolated per user.\" (§3.4). Code (verbatim, agents/embodied_agent.py:323): test_data[\"whole_prompt\"] = whole_prompt"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "After the agent acts, it receives the user's post-action feedback about that action within the loop. In embodied, the persona LLM sees the scenario plus 'Robot Action: ...'. In shopping, a rule-based judge names the offending feature. A detector decides whether the feedback is salient. Salient corrections are kept in distilled form in persistent per-user memory; non-informational feedback is discarded.",
+      "locator": "Paper §3.2 Post-Action Feedback Integration; Fig. 1 caption; App. C.2. Code: agents/embodied_agent.py:226-306; agents/shopping_agent.py:161-245, 247-305, 418-435",
+      "quote": "UNVERIFIED (WebFetch): \"After observing the outcome, the user provides post-action feedback f_t^post.\" ... \"We then prompt an LLM as a feedback detector to determine whether f_t^post contains salient, personalized information that should be stored.\" (§3.2)"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Post-action feedback is requested about the specific action a_t, and Eq. 3 updates memory from a_t and f_t^post together. The feedback is used right away to correct the belief behind the wrong action. In code, a drift detector checks whether the feedback changes a prior preference. If it does, the agent restates the previous preference, finds the most similar note, and merges or overwrites it, which changes later assistance. Phase 3 is framed as detecting the error and revising outdated beliefs. This is in-loop correction, not offline scoring.",
+      "locator": "Paper §3.2 Post-Action Feedback Integration (Eq. 3); §4.2 Phase 3. Code: agents/embodied_agent.py:229-236, 253-291; agents/shopping_agent.py:121-159, 273-291",
+      "quote": "UNVERIFIED (WebFetch): \"Post-action feedback is triggered only if the action a_t (taken in the previous step) results in a non-optimal outcome\" ... \"This post-action update allows the agent to add, revise, and refine its knowledge, such as revising m_coke → m_sprite\" (§3.2)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Only content used by a fixed mechanism changes: per-user natural-language preference notes are added, merged, or overwritten. The service never changes GPT-4o weights, its prompts (ReAct, question, summarization, salience, drift, integration), retrieval, or code. Developers wrote all of those, and the service writes no reusable rules or skills.",
+      "locator": "Paper §3.1; §3.4 Memory design and Baselines. Code: prompts/embodied_prompts.py and prompts/shopping_prompts.py (static templates); utils/llm.py (inference-only calls); memory/banks.py:179-203 (schema: person_id, text, embedding)",
+      "quote": "UNVERIFIED (WebFetch): \"Our goal in this work is not to propose a new memory architecture, but to integrate human feedback into memory for continual personalization.\" (§3.4)",
+      "what": "Nothing at the mechanism level. Only per-user preference notes (user facts and preferences, i.e. content) in the SQLite store are revised."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "There is no revised mechanism to run under. Later iterations and the test phases (2 and 4) run the same fixed pipeline over updated preference memory, which is reuse of content.",
+      "locator": "Paper §4.2 (Phases 2 and 4). Code: agents/embodied_agent.py:463-573; agents/shopping_agent.py:625-755",
+      "quote": "UNVERIFIED (WebFetch): \"We evaluate the agent (using the memory learned in Phase 1) on a corresponding test set.\" (§4.2)"
+    }
+  },
+  "notes": "Paper quotes come from the arXiv HTML via WebFetch, which runs pages through a summarizing model, so they are labelled UNVERIFIED. A second exact-match query reported EXACT for each key sentence used here. Code quotes are verbatim from commit 7a11213. Where paper and code differ: (1) The paper merges only when similarity exceeds a threshold τ. In the code, find_similar_memory is called without a threshold, so the embodied drift path always merges with the best match; shopping instead gates the merge with an LLM same-product check. (2) The code's post-action memory write does not pass a_t, despite Eq. 3. A->M therefore rests on the agent's question being part of the clarification Q&A write, plus Eqs. 1 and 3. (3) run_agent.py defaults --shopping_feedback_style to 'minimal' although its help text says 'detailed'. The README also warns that the released shopping agent may perform differently from the paper's version. (4) agents/shopping_agent_old.py is not imported by run_agent.py and was not used. Pre-action answers come from a persona LLM in both domains. Post-action feedback comes from that persona LLM in embodied and from a rule-based judge in shopping.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 759,
+    "code_commit": "7a11213360a82d5f437a035e3a31c92d6307f8cf"
+  }
+}

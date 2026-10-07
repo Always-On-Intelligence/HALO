@@ -1,0 +1,76 @@
+{
+  "run": {
+    "models": {
+      "backbone": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "low"
+      },
+      "judge": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "high"
+      }
+    },
+    "samples": 3,
+    "rubric": "A household robot fetches things for this user. Earlier in the same session the user made a request in the same situation; the robot could ask one clarifying question and received the user's feedback. The output shows the robot's decision on a later request in that situation, made without asking. Decide which decision gives the user what they actually want, as stated in the situation; the user's own preference counts, even where it differs from the usual choice. Ignore writing quality and length.",
+    "tests": [
+      {
+        "cut": [
+          "S->M"
+        ],
+        "context_field": "context_same"
+      },
+      {
+        "cut": [
+          "S->M"
+        ],
+        "field": "output_other",
+        "context_field": "context_other",
+        "rubric": "A household robot fetches things for this user. Earlier in the same session the user made a request in a different situation; the robot could ask one clarifying question and received the user's feedback. The output shows the robot's decision on a later request in another situation, made without asking. Decide which decision gives the user what they actually want in this situation, as stated in the situation. Ignore writing quality and length."
+      },
+      {
+        "cut": [
+          "M->A"
+        ],
+        "context_field": "context_same"
+      },
+      {
+        "cut": [
+          "M->A"
+        ],
+        "field": "output_other",
+        "context_field": "context_other",
+        "rubric": "A household robot fetches things for this user. Earlier in the same session the user made a request in a different situation; the robot could ask one clarifying question and received the user's feedback. The output shows the robot's decision on a later request in another situation, made without asking. Decide which decision gives the user what they actually want in this situation, as stated in the situation. Ignore writing quality and length."
+      },
+      {
+        "cut": [
+          "A->S"
+        ],
+        "context_field": "context_same"
+      },
+      {
+        "cut": [
+          "A->S"
+        ],
+        "field": "output_other",
+        "context_field": "context_other",
+        "rubric": "A household robot fetches things for this user. Earlier in the same session the user made a request in a different situation; the robot could ask one clarifying question and received the user's feedback. The output shows the robot's decision on a later request in another situation, made without asking. Decide which decision gives the user what they actually want in this situation, as stated in the situation. Ignore writing quality and length."
+      },
+      {
+        "cut": [
+          "A->M"
+        ],
+        "context_field": "context_same"
+      },
+      {
+        "cut": [
+          "A->M"
+        ],
+        "field": "output_other",
+        "context_field": "context_other",
+        "rubric": "A household robot fetches things for this user. Earlier in the same session the user made a request in a different situation; the robot could ask one clarifying question and received the user's feedback. The output shows the robot's decision on a later request in another situation, made without asking. Decide which decision gives the user what they actually want in this situation, as stated in the situation. Ignore writing quality and length."
+      }
+    ]
+  },
+  "samples": 3,
+  "items_limit": null
+}

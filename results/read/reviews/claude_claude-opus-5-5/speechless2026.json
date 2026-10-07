@@ -1,0 +1,78 @@
+{
+  "id": "speechless2026",
+  "configuration": "SpeechLess six-module implementation: Query Decoding Agent, Contextual Dimension Encoder, Personal Memory Store Manager, Memory Retriever, Response/Answer Composer with an Answer Validation Agent, and User Verification Interface. It has per-user spatial memory, low-confidence Yes/No verification, and Full/Partial/Zero utterance input modes. It is described in §3 and was deployed in Study A (Meta Quest 3 passthrough AR with a GCP server) and Study B (week-long hand-held/mobile AR deployment) of arXiv 2602.00793v2.",
+  "sources_read": [
+    "https://arxiv.org/html/2602.00793v2 (arXiv HTML, version 2602.00793v2). Read with the WebFetch tool in targeted passes: title/abstract, all section headings and figure/table captions, §2.2 Design Goals (DG2, DG3), §3 introduction ('Interaction Paradigm' and the six-module list), §3.1–§3.6 in full, §4.1–§4.6 use cases (§4.2 and §4.5 in full), §5.1 Study A design and technical evaluation, §5.2 Study B design, §5.3 takeaways, §6 Limitation and Discussion, §7 Conclusion."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User speech and sensed context (scene description, object-of-focus, time, space/GPS metadata, intent) are encoded into a dimension sketch and written to the per-user Personal Memory Store. This happens for explicit Remembrance commands and for Question Answering interactions. Removal requests delete entries after confirmation, and writes are gated by user verification. The write path is described as implemented and was exercised: Study A collected 833 memories during use, in addition to the 45 pre-seeded persona memories. So this is not just a static benchmark profile.",
+      "locator": "§3.1 Query Decoding Agent (Remembrance, Removal); §3.2 Contextual Dimension Encoder; §3.5 Personal Memory Store Manager; §5.1 Study A Technical Evaluation",
+      "quote": "Remembrance: applies when a user expresses intent in saving a memory (\"Can you note that..\" or \"Remember that..\") without asking for a response (unidirectional command). ... The scene description, object-of-focus, time, and intent are encoded into an episodic entry and prepared for storage directly via Memory Store Manager. ... [§3.5] A memory is stored by either Remembrance or Question Answering."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The Memory Retriever returns up to five past episodes, ranked by GPS proximity, semantic similarity (text, scene, referent), and temporal filters. The Response Composer combines these with the query and current view to generate the response. 'As-is' memories are recalled directly as answer content.",
+      "locator": "§3.3 Memory Retriever; §3.4 Response Composer",
+      "quote": "It aggregates five candidate memories received from Retriever, and together with the user query and current view, it generates an informed response. ... [§3.3] Static Source Prior Knowledge: If a query involves simple recalling of a prior 'as-is' memory, SpeechLess recalls knowledge directly from Memory Store Manager, combining retrieved episodes with the current scene."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action's uncertainty state decides what is sensed next and how it is read. An in-service Answer Validation Agent scores each composed answer from 1 to 10. A low-confidence response triggers a Yes/No confirmation prompt, and the user's next input is collected and read as accepting or rejecting that specific response. The Removal flow likewise summarizes the matched memory and requests confirmation. In addition, the referent linked to the response is located in the current view by LLM-based open-vocabulary detection with depth cues, so the AR answer can be anchored there.",
+      "locator": "§3.4 Response Composer; §3.6 User Verification Interface and Visualization; §3 introduction (Interaction Paradigm); §3.1 (Removal)",
+      "quote": "The composed answer is validated by an Answer Validation Agent that evaluates the response with a 1-10 confidence score. ... For a low confidence response, the user is asked to verify via Verification Interface. ... [§3.6] Each low-confidence response is paired with a binary confirmation–accept or reject (Yes/No), along with its rationale"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Stored spatial memories are used to interpret the current under-specified utterance itself, not only to supply answer content. For a Partial or Zero query, the dimension sketch goes to an intent-resolution step that refines and infers the query's intent from the user's stored memories. When no prior memory exists, the LLM's generic knowledge is the fallback (§3.3 Fresh Knowledge). Queries are adapted using memories (Fig. 5), and §4.5 shows 'sugar?' being interpreted from prior interest. A secondary example: for live-content memories, the Retriever refreshes the recalled memory through Google Custom Search before returning it. This is the most interpretive label here, because intent inference and answer composition may run in the same LLM pipeline. The protocol says a fused implementation does not negate the flow.",
+      "locator": "§3.2 Contextual Dimension Encoder; §3 introduction (Interaction Paradigm); §3.3 Memory Retriever (Fresh Knowledge; Live Source Prior Knowledge); Figure 5 caption; §4.5 Bistro",
+      "quote": "For under-specified intents under Question Answering queries (Partial or Zero), the encoder passes these dimensions to the intent resolution step, where it attempts to refine and infer the intent of the query based on the user's stored/prior spatial memories. ... [Fig. 5] Proactive Intent Revision. SpeechLess can adapt a query using spatial memories."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The service's own responses and inferred intents are stored in each spatial-memory entry, together with the query and dimension sketch. Study A reports stored memories that contain the system response. Stored responses are later recalled, and for live content they are refreshed (§3.3, §4.2). §4.5 also says SpeechLess records the nutritional detail it answered as part of a memory.",
+      "locator": "§3 introduction (six-module list, item 3); §3.5 Personal Memory Store Manager; §5.1 Study A Technical Evaluation; §4.5",
+      "quote": "Each entry binds the query, its response, and the dimension sketch that contextualizes the interaction (scene description, object, time, intent, and spatial metadata), in the form of a \"Spatial memory.\" ... [§5.1] We collected 833 memories, each containing a dimension sketch, user query, and system response."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps its own delivered responses, with the inferred intent and context, in its per-user memory store so the Retriever can re-access them later. This is memory kept by the service for its own later use. The separate server logs used by the authors are not counted.",
+      "locator": "§3.5 Personal Memory Store Manager; §3 introduction (six-module list, item 3)",
+      "quote": "Each entry binds the query, its response, and the dimension sketch that contextualizes the interaction (scene description, object, time, intent, and spatial metadata), in the form of a \"Spatial memory.\" ... Its design privileges routine-specific recalls, ensuring that personal memories can be re-accessed in future contexts."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Outcome evidence is obtained but not retained. The Yes/No result only decides whether a low-confidence response is recorded; nothing is said about what happens after a rejection. Memory entries hold query, response, and sketch with no verification or rating field. Using Verification Interface feedback is listed as future work (§6).",
+      "locator": "§3.5 Personal Memory Store Manager; §3.6 User Verification Interface; §6 Limitation and Discussion",
+      "quote": "A low-confidence response triggers a user correction/verification rather than being silently recorded, to maintain high-quality memory storage."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The user's accept/reject is paired with the specific low-confidence response it concerns. It is used right away to validate that response and to decide whether the response enters memory. This is an immediate in-service check, not offline scoring by the authors.",
+      "locator": "§3.6 User Verification Interface and Visualization; §3.5 Personal Memory Store Manager; §3.3 Memory Retriever",
+      "quote": "Each low-confidence response is paired with a binary confirmation–accept or reject (Yes/No), along with its rationale ... [§3.5] Furthermore, the store operation is gated by User Verification, with deletions supported at any time, upon confirmation."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Only memory content changes: queries, responses, dimension sketches, inferred intents, and refreshed live responses. A fixed retriever, composer, and validator use that content. No change by the service to its prompts, rules, confidence thresholds, retrieval weights, or model parameters is reported. Learning-based personalization (RL, SFT) from episodic memories and Verification Interface feedback is explicitly future work.",
+      "locator": "§3.3–§3.5; §6 Limitation and Discussion",
+      "quote": "We will extend SpeechLess toward proactivity by modeling predictive intent from user preferences (e.g., OmniActions, Sensible Agent) and personalizing with learning-based methods (e.g., RL, SFT) using episodic memories and feedback from Verification Interface.",
+      "what": "Nothing at the mechanism level. Only per-user spatial-memory content accumulates (query, response, dimension sketch, inferred intent); this is content used by a fixed mechanism."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "There is no revision, so no later run under a revised mechanism is reported. Later sessions only reuse stored memory content with the unchanged pipeline (e.g., §4.1, §4.5, §4.6, Study B).",
+      "locator": "§4 Use cases and Applications; §5 Evaluation; §6 Limitation and Discussion"
+    }
+  },
+  "notes": "Judged the named configuration: the six-module SpeechLess pipeline in §3 (per-user spatial memory, Answer Validation Agent with low-confidence Yes/No verification, Full/Partial/Zero modes), as used in Study A and Study B. The only primary source is the arXiv HTML v2; there is no code repository. A direct download (curl) was not permitted in this environment, so the page was read through WebFetch and the case-file sha256 could not be checked. Every quoted sentence was first extracted by the tool and then confirmed in a separate exact-match pass. That pass ignored hyperlink and italic formatting and normalized quote marks and dashes, so '1-10' may be '1–10' in the source. Quotes joined with '...' or '[§x]' combine separately verified sentences. Contestable calls: (1) M→S rests on stored memories being used to interpret under-specified queries (intent inference and query adaptation), not on answer-time retrieval alone. (2) Outcome is not_stated because verification results gate storage but are never described as retained, and what happens after a rejection is not described. Study A pre-seeded 45 persona memories, but the memory write path is described separately and was exercised (833 memories collected).",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 599,
+    "code_commit": null
+  }
+}

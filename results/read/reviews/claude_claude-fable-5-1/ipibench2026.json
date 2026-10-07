@@ -1,0 +1,86 @@
+{
+  "id": "ipibench2026",
+  "configuration": "Full IPI-Agent (training-free) on the Qwen3-VL-8B base model, i.e. the full row of the component ablation in Table 5 / Section 5.5: Interaction-Control Policy (Intent Router + Memory Tool with Proactive Memory and Interaction Memory) plus Temporal-Gating Mechanism (Response Tool + Gating Tool with Qwen3-VL-Embedding-2B). Judged from the paper text; the repository at the listed commit contains no IPI-Agent code (README.md:126 reads verbatim \"🚧 **IPI-Agent code**: coming soon.\"), only baseline Qwen3-VL-8B inference scripts, offline evaluators and benchmark annotations.",
+  "sources_read": [
+    "https://arxiv.org/html/2605.27074v1 (version v1; read via WebFetch text extraction because shell access to download the raw HTML was denied, so paper quotes are labeled UNVERIFIED although each was consistent across repeated extractions)",
+    "Repository https://github.com/lijinzhao30/IPI at commit 2c96ea86180a979c472207c6ca0fe0c2f1d31383 (confirmed in .git/refs/heads/main)",
+    "README.md (whole file)",
+    "Src/Qwen3_VL_8B/Proactive_Monitoring/Repeated_Proactiveness.py",
+    "Src/Qwen3_VL_8B/Proactive_Task_Management/Task_Modification.py",
+    "Src/Qwen3_VL_8B/Interleaved_Reactive_Proactive/Reactive_after_Proactive.py",
+    "Src/Qwen3_VL_8B/Interleaved_Reactive_Proactive/Reactive_under_Proactive.py (lines 40-239)",
+    "Src/Qwen3_VL_8B/Interleaved_Reactive_Proactive/Reactive_to_Proactive.py (lines 93-187)",
+    "Evaluate/Proactive_Monitoring/Proactive_Timing.py",
+    "Evaluate/Interleaved_Reactive_Proactive/Reactive_after_Proactive.py",
+    "Benchmark/Proactive_Task_Management/Task_Modification.json (first 80 lines)",
+    "Grep over all *.py in the repository for memory/gating/embedding/history"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-supplied instructions arriving in the stream are admitted into Memory: a proactive instruction is converted into a structured proactive task and stored in the Proactive Memory, management instructions modify or cancel stored tasks (a correction path), and the Interaction Memory stores historical interactions. These are dynamic writes during the episode, not a static profile. Retention scope is within one streaming episode.",
+      "locator": "Paper Section 4.2 Interaction-Control Policy; Figure 3 caption",
+      "quote": "UNVERIFIED (WebFetch extraction): \"For proactive instructions, IPI-Agent converts the instruction into a structured proactive task and stores it in the Proactive Memory for continuous monitoring.\" ... \"For management instructions, IPI-Agent accesses the Proactive Memory and updates the corresponding proactive task through modify or cancel operations.\" ... \"an Interaction Memory for storing historical interactions to enhance current user queries with contextual information.\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained content drives Action decisions on content and timing: tasks held in Proactive Memory determine which proactive responses are generated during continuous monitoring, retrieved interaction history is used to generate reactive responses, and the Response Tool enhances task instructions from the Interaction Memory before generating proactive responses.",
+      "locator": "Paper Section 4.2 and Section 4.3",
+      "quote": "UNVERIFIED (WebFetch extraction): \"For reactive queries, IPI-Agent retrieves relevant interaction history from the Interaction Memory and invokes the Response Tool using recent frames to generate an immediate response.\" ... \"During streaming inference, the Response Tool first enhances task instructions using the Interaction Memory to resolve ambiguous references, and then generates proactive responses conditioned on recent video frames.\""
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "No described flow carries Action's intentions, plans or execution state into Sensing. Frame acquisition is a fixed 1 FPS stream with a fixed sliding window x_{t-K:t}; the Gating Tool computes the similarity change Δ_i(t) independently of the Response Tool's decision r_i(t) and uses r_i(t) only as the decision to be suppressed or overridden, so the action decision does not steer what is sensed or how it is interpreted. The textual proposals that steer interpretation are derived from the user's proactive instruction when it enters Proactive Memory, not from an Action decision. The paper does not explicitly exclude the route either, so the link is unknown rather than absent.",
+      "locator": "Paper Section 4.3 Temporal-Gating Mechanism; Section 5.1 Evaluation Protocol",
+      "quote": "UNVERIFIED (WebFetch extraction): \"Let r_i(t)∈{0,1} denote whether the Response Tool triggers task τ_i at time t.\" ... \"If r_i(t)=1 but Δ_i(t)<θ_low, the response is suppressed to avoid premature activation. Conversely, if r_i(t)=0 but Δ_i(t)>θ_high, the Gating Tool activates the corresponding proactive response to recover missed triggers.\""
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained priors shape the interpretation of current observations. When a proactive task enters Proactive Memory, M textual proposals are generated for it and retained; at every time step the Gating Tool compares the embeddings of these retained proposals with the visual embedding of the recent sliding-window frames to compute similarity and its temporal variation, i.e. memory content tells Sensing what to compare the stream against. This is continuous, memory-conditioned interpretation (a fused hand-off), not answer-time retrieval and not a request for a new observation. The retained task instruction, enhanced from Interaction Memory, likewise conditions the Response Tool's reading of recent frames.",
+      "locator": "Paper Section 4.3 Temporal-Gating Mechanism; Section 5.4 (embedding model Qwen3-VL-Embedding-2B)",
+      "quote": "UNVERIFIED (WebFetch extraction): \"Whenever a new proactive instruction is added into the Proactive Memory, the agent automatically generates M candidate textual proposals 𝒫_i={p_i^1, p_i^2,...,p_i^M} for the corresponding task τ_i.\" ... \"Using an embedding model, we compute proposal embeddings 𝐞_i^m=E(p_i^m) and the visual embedding of recent sliding-window frames 𝐯_t=E(𝐱_{t−K:t}).\" ... \"For each proposal, we compute the similarity score s_{i,t}^m=sim(𝐞_i^m,𝐯_t) and its temporal variation Δs_{i,t}^m=s_{i,t}^m−s_{i,t−1}^m.\""
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "The Interaction Memory 'stores historical interactions' and is used to 'resolve ambiguous references', and the Reactive-after-Proactive task requires grounding in the earlier triggering event, which suggests the agent's own proactive triggers or responses may be retained. However, the paper never states when the Interaction Memory is written, never says that assistant utterances, trigger decisions or execution records are stored, and describes nothing that happens after a proactive response is activated. The structured task written to Proactive Memory derives from the user instruction (S→M), not from an action record. A necessary link is therefore unknown.",
+      "locator": "Paper Section 4.2; Section 4.3; Section 3.1 (Reactive-after-Proactive definition); Figure 3 caption",
+      "quote": "UNVERIFIED (WebFetch extraction): \"an Interaction Memory for storing historical interactions to enhance current user queries with contextual information.\" ... \"This task considers scenarios where a reactive query is issued immediately after a proactive trigger, requiring the model to ground its response in both the triggering event and recent visual context.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "The paper never states that the service records its own decisions, outputs or deliveries. The only candidate, the Interaction Memory 'for storing historical interactions', is too vague to establish that the agent's own responses or trigger decisions are kept. The repository holds no IPI-Agent code to settle this.",
+      "locator": "Paper Section 4.2; README.md:126"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No reply, rating, dismissal, correction or observed effect concerning the agent's actions is obtained or retained. Management instructions are pre-scripted changes to the user's request at fixed timestamps in the benchmark (question[].t), not feedback on the agent's behavior, and all scoring is done offline by the authors' evaluator scripts.",
+      "locator": "Paper Section 3.2, Section 5.1; Benchmark/Proactive_Task_Management/Task_Modification.json lines 9-18; Evaluate/Proactive_Monitoring/Proactive_Timing.py:44-55"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No outcome of an action is linked back to the decision it concerns. The Gating Tool cross-checks the Response Tool's tentative trigger against the concurrent visual similarity change, which is independent sensing evidence rather than a later outcome of the action. Benchmark correctness within ±1 s of the ground-truth trigger time is computed offline by the authors.",
+      "locator": "Paper Section 4.3; Section 5.1; Evaluate/Interleaved_Reactive_Proactive/Reactive_after_Proactive.py:67-88"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "IPI-Agent is described throughout as a training-free framework; no model parameters, prompts, rules, thresholds (θ_low, θ_high) or code are changed by the service. The Proactive Memory holds task content consumed by a fixed mechanism, which is not a revision.",
+      "locator": "Paper Abstract; Section 1 contributions; Section 4 opening; Section 4.3",
+      "quote": "Verbatim from README.md:29: \"We propose **IPI-Agent**, a training-free agentic framework with an interaction-control policy and temporal-gating mechanism, improving proactive triggering stability and multi-turn coordination for existing offline MLLMs.\"",
+      "what": "None. No mechanism is revised by the service."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Because no revised mechanism exists, no later run under a revised mechanism is reported; all experiments (Tables in Sections 5.4-5.5) use the fixed framework.",
+      "locator": "Paper Section 5.4, Section 5.5 and Table 5"
+    }
+  },
+  "notes": "Judged the full IPI-Agent configuration with Qwen3-VL-8B as base model and Qwen3-VL-Embedding-2B as the Gating Tool embedding model (Table 5 full row: Proactive Monitoring avg 29.03, Task Management avg 26.74, Interleaved avg 27.18, per WebFetch extraction). The paper has no appendix, no prompts and no pseudo-code; the arXiv HTML could only be read through WebFetch extraction because shell access was denied, so all paper quotes are marked UNVERIFIED even though each was consistent across repeated independent extractions. The repository at commit 2c96ea8 contains only benchmark annotations, baseline Qwen3-VL-8B inference scripts and offline evaluators; a grep for memory/gating/embedding found no agent code. The baseline scripts do feed the model's own earlier output back as an assistant turn within an episode (Reactive_after_Proactive.py:148-155, Reactive_under_Proactive.py:153-154, Reactive_to_Proactive.py:146-149), but that is harness-level in-context carry-over for the baseline, not the judged IPI-Agent Memory Tool. All memory in the judged configuration is scoped to a single streaming episode; nothing persists across benchmark samples.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 401,
+    "code_commit": "2c96ea86180a979c472207c6ca0fe0c2f1d31383"
+  }
+}

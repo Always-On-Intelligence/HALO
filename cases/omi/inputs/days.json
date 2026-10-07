@@ -1,0 +1,798 @@
+{
+  "_about": "Scripted days for one Omi user. Each conversation is what the pendant transcribed; `spk` is the diarization cluster and `voice` is the result of matching that cluster against the enrolled speech profile ('user') or a stored person's voice samples (person id), null when nobody matches. Chat events are questions Alex typed into the Omi app. `expect` lists answer keywords (alternatives separated by |) used only for the chat_expected_hits metric.",
+  "user": {
+    "uid": "u-alex",
+    "name": "Alex",
+    "time_zone": "America/Los_Angeles",
+    "language": "en",
+    "mentor_frequency": 3,
+    "people": [
+      {
+        "id": "p-maya",
+        "name": "Maya"
+      },
+      {
+        "id": "p-sam",
+        "name": "Sam"
+      },
+      {
+        "id": "p-jordan",
+        "name": "Jordan"
+      },
+      {
+        "id": "p-priya",
+        "name": "Priya"
+      }
+    ],
+    "goals": []
+  },
+  "items": [
+    {
+      "id": "tokyo-trip",
+      "judge_context": "Alex wears the Omi pendant; Omi listens to his conversations, keeps what it learns, can push short notifications to his phone during a conversation, and answers his questions in the Omi chat. Day 1 (Mon Oct 5, 09:30): Alex's manager Maya said the Tokyo client demo is on Nov 20 and she needs the final demo slides from Alex by this Friday (Oct 9) for legal review, and Alex said he would send the deck Thursday night to be safe; Alex plans to fly Nov 18; Alex thinks his passport expires in December and Maya warned renewals take about eight weeks; Alex is allergic to shellfish and asked Maya not to book sushi for the team dinner, and Maya said she would pick the yakitori place near the office; the client attendee is Kenji Watanabe. Day 2 (Tue Oct 6, 11:00): on a call with Dana from the travel desk Alex held a Nov 18 flight, promised to email his passport details (Japan requires a passport valid for the whole stay), and agreed to Dana booking a sushi and oyster bar for the team dinner; he also said he still has to finish the demo slides for Maya before Friday. At 18:30 he asked Omi a question in chat.",
+      "days": [
+        {
+          "date": "2026-10-05",
+          "events": [
+            {
+              "type": "conversation",
+              "id": "tokyo-d1-maya",
+              "start": "09:30",
+              "segments": [
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Morning Alex. So the Tokyo client demo is locked for November twentieth, ten in the morning their time."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Great. I'll fly out on the eighteenth so I have a day to get over the jet lag."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Makes sense. I need the final demo slides from you by this Friday so legal can review them."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Friday works. I'll send you the deck Thursday night to be safe."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Perfect. Also, is your passport valid? Half the team had to rush renewals last time."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Honestly I think mine expires sometime this winter, maybe December. I should look."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Look soon, renewals are taking about eight weeks right now."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Okay. And for the team dinner, please don't book the sushi place again, I'm allergic to shellfish."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Oh right, sorry about last time. I'll pick the yakitori place near the office instead."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Thanks, that would be great. Who from the client side is coming to the demo?"
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Kenji Watanabe, their head of operations, and two engineers from his team."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Good. Kenji asked about the reporting dashboard last quarter, so I'll open the demo with that."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "date": "2026-10-06",
+          "events": [
+            {
+              "type": "conversation",
+              "id": "tokyo-d2-travel",
+              "start": "11:00",
+              "segments": [
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Hi Alex, this is Dana from the corporate travel desk, calling about your Tokyo booking."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Hi Dana. I'd like to fly out November eighteenth and come back on the twenty second."
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "I have a nonstop on the eighteenth leaving at eleven forty in the morning. Shall I hold it?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Yes, please hold it. What do you need from me to ticket it?"
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Your passport number and expiry date. Japan needs the passport to be valid for your whole stay."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Sure, I'll email you the passport details this afternoon."
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Great. I'll also book the hotel next to the client office for four nights."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Perfect. Can you also find somewhere for the team dinner on the nineteenth?"
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "There's a very well reviewed sushi and oyster bar right next to the hotel. Want me to book it for six?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Sure, go ahead and book that one."
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Done. I'll email the itinerary once the flight is ticketed."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Thanks Dana. I still need to finish the demo slides for Maya before Friday, so that saves me time."
+                }
+              ]
+            },
+            {
+              "type": "chat",
+              "id": "tokyo-d2-chat",
+              "at": "18:30",
+              "text": "What does Maya need from me before the Tokyo trip, and by when?",
+              "expect": [
+                "slide",
+                "friday"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dentist-thursday",
+      "judge_context": "Alex wears the Omi pendant; Omi listens to his conversations, keeps what it learns, can push short notifications to his phone during a conversation, and answers his questions in the Omi chat. Day 1 (Mon Oct 5, 08:15): at home with his roommate Sam, Alex said he has a dentist appointment with Dr. Patel on Thursday at 4 pm (a crown fitting he keeps postponing); he promised to pick up Sam's birthday cake (chocolate hazelnut, from Lucia's Bakery, which closes at noon) on Saturday morning; rent is now 1,950 each; Alex will call his mom tonight about driving to Sacramento for Thanksgiving. Day 2 (Tue Oct 6, 14:00): a colleague asked Alex to join the Northwind vendor review on Thursday at 4 pm and Alex agreed; Alex also owes a three-year cost comparison by Wednesday end of day. At 19:00 he asked Omi a question in chat.",
+      "days": [
+        {
+          "date": "2026-10-05",
+          "events": [
+            {
+              "type": "conversation",
+              "id": "dentist-d1-sam",
+              "start": "08:15",
+              "segments": [
+                {
+                  "spk": 0,
+                  "voice": "p-sam",
+                  "text": "Hey, are you around Thursday afternoon? The landlord is sending someone to fix the heater."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "No, Thursday at four I have the dentist with Dr. Patel, the crown fitting I keep postponing."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-sam",
+                  "text": "Ah right, good luck with that. I'll be home anyway, no worries."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Thanks. And for your birthday on Saturday I'll pick up the cake from Lucia's Bakery in the morning."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-sam",
+                  "text": "You're the best. Chocolate hazelnut please. They close at noon on Saturdays."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Chocolate hazelnut, before noon. Got it."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-sam",
+                  "text": "Also rent this month is nineteen fifty each, the landlord raised it by fifty."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Okay, I'll transfer my share on the first like usual."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-sam",
+                  "text": "Cool. Did you ever call your mom back about Thanksgiving?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Not yet, I'll call her tonight. She wants to know if we're driving up to Sacramento."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-sam",
+                  "text": "Tell her I'm in, I'll bring the pecan pie."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Will do."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "date": "2026-10-06",
+          "events": [
+            {
+              "type": "conversation",
+              "id": "dentist-d2-work",
+              "start": "14:00",
+              "segments": [
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Alex, can we do the Northwind vendor review this Thursday at four? It's the only slot their CFO has."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Thursday at four, yeah, sure, put it on the calendar."
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Great, it'll be about an hour in the big conference room."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Should I prepare anything for it?"
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Yes, the three-year cost comparison for all three vendors, by Wednesday end of day if you can."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Okay, Wednesday end of day."
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Their account manager Helen Ortiz will join remotely."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Got it. Do they still want the three year contract?"
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "They're pushing for three years, we'd rather do two with an option to extend."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Makes sense, I'll put both options in the comparison."
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Perfect, thanks Alex."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "No problem, see you Thursday."
+                }
+              ]
+            },
+            {
+              "type": "chat",
+              "id": "dentist-d2-chat",
+              "at": "19:00",
+              "text": "What kind of cake am I supposed to get for Sam's birthday, and from where?",
+              "expect": [
+                "hazelnut",
+                "lucia"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knee-physio",
+      "judge_context": "Alex wears the Omi pendant; Omi listens to his conversations, keeps what it learns, can push short notifications to his phone during a conversation, and answers his questions in the Omi chat. Day 1 (Mon Oct 5, 17:30): at his physiotherapy appointment Alex was told his knee tendon is still irritated: keep runs under five miles on flat ground until the next check-up on Oct 21, do the strengthening exercises every morning (three sets of fifteen step-downs and wall sits), ice for ten minutes after runs, and skip the trail race in two weeks; Alex said he would email the race organizers about deferring. Day 2 (Tue Oct 6, 12:30): at lunch his friend Jordan invited him to a ten-mile ridge trail run with lots of climbing on Sunday and Alex said yes; Jordan said race deferrals are only allowed until Friday, and Alex admitted he still hasn't emailed about deferring; they plan tacos after Alex's dashboard launch next week. At 20:00 he asked Omi a question in chat.",
+      "days": [
+        {
+          "date": "2026-10-05",
+          "events": [
+            {
+              "type": "conversation",
+              "id": "knee-d1-physio",
+              "start": "17:30",
+              "segments": [
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Your knee is healing well, but the tendon is still irritated."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "So can I start running again? I was hoping to do the trail race in two weeks."
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Not that yet. Keep your runs under five miles on flat ground until your next check-up on the twenty first."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Under five miles, flat ground, until the twenty first. Okay."
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "And do the strengthening exercises every morning, three sets of fifteen."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "The step-downs and the wall sits?"
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Exactly. And ice it for ten minutes after every run."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Should I cancel the trail race then?"
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "I'd skip it. Better to come back slowly than to re-injure it."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Fair enough. I'll email the race organizers about deferring my entry."
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Good plan. See you on the twenty first."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Thanks, see you then."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "date": "2026-10-06",
+          "events": [
+            {
+              "type": "conversation",
+              "id": "knee-d2-jordan",
+              "start": "12:30",
+              "segments": [
+                {
+                  "spk": 0,
+                  "voice": "p-jordan",
+                  "text": "So, Sunday, the ridge trail loop. Ten miles, a ton of climbing. You in?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Honestly that sounds amazing. Yeah, count me in."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-jordan",
+                  "text": "Sweet. We start at seven from the north parking lot."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Seven, north lot. I'll bring the snacks."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-jordan",
+                  "text": "Are you still doing the trail race in two weeks?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "I still need to email them about deferring, I keep forgetting."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-jordan",
+                  "text": "Do it soon, they only allow deferrals until Friday."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Oh, good to know. I'll do it tomorrow."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-jordan",
+                  "text": "How's work, by the way?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Busy, we're launching the new reporting dashboard next week and everyone is a bit stressed about it."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-jordan",
+                  "text": "Nice, we should celebrate after the launch. Maybe tacos at that new place on Fifth?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Deal, tacos after the launch. I'll text you once we ship it."
+                }
+              ]
+            },
+            {
+              "type": "chat",
+              "id": "knee-d2-chat",
+              "at": "20:00",
+              "text": "What exactly did the physio say I can do for running right now?",
+              "expect": [
+                "five|5",
+                "flat"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "job-offer",
+      "judge_context": "Alex wears the Omi pendant; Omi listens to his conversations, keeps what it learns, can push short notifications to his phone during a conversation, and answers his questions in the Omi chat. Day 1 (Mon Oct 5, 13:00): Erin, a recruiter from Brightline, offered Alex the senior analyst role: base salary $180,000, a 10% bonus target, start date Nov 3, hybrid with two office days downtown; she needs his answer by Wednesday (Oct 7) at noon because the hiring manager leaves on vacation; Alex said he would talk it over with his wife Priya; Erin said she would email the benefits summary. Day 2 (Tue Oct 6, 20:15): at home Alex told Priya he planned to sleep on it and answer Brightline on Friday, and said the salary was one-seventy plus bonus. At 21:30 he asked Omi a question in chat.",
+      "days": [
+        {
+          "date": "2026-10-05",
+          "events": [
+            {
+              "type": "conversation",
+              "id": "offer-d1-recruiter",
+              "start": "13:00",
+              "segments": [
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Hi Alex, it's Erin from Brightline. Good news, the team wants to make you an offer for the senior analyst role."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "That's great to hear. What does the offer look like?"
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Base salary of one hundred eighty thousand, a ten percent bonus target, and a start date of November third."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "That's a bit lower than I hoped. Is there any room on the base?"
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "I can ask, but I need your answer by Wednesday at noon, the hiring manager leaves on vacation after that."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Understood. I want to talk it over with my wife Priya tonight."
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Of course. I'll send you the benefits summary by email today."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Please do. Is the role fully remote?"
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Hybrid, two days a week in the downtown office."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Okay. I'll get back to you before Wednesday noon."
+                },
+                {
+                  "spk": 0,
+                  "voice": null,
+                  "text": "Sounds good, talk soon."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Thanks Erin."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "date": "2026-10-06",
+          "events": [
+            {
+              "type": "conversation",
+              "id": "offer-d2-priya",
+              "start": "20:15",
+              "segments": [
+                {
+                  "spk": 0,
+                  "voice": "p-priya",
+                  "text": "So, did you decide anything about the Brightline offer?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Not yet. I was thinking I'd sleep on it this week and answer them on Friday."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-priya",
+                  "text": "What was the salary again?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "I think it was one-seventy plus a bonus."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-priya",
+                  "text": "Hmm. And how many days in the office?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Two days, downtown."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-priya",
+                  "text": "That commute would be rough with the new parking fees."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "True, I could take the train on those two days, it's only about forty minutes."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-priya",
+                  "text": "Did they say when you would start?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Early November, I think."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-priya",
+                  "text": "Okay, let's make a list of pros and cons tomorrow after dinner, and maybe ask my dad what he thinks."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Good idea, let's do that tomorrow after dinner."
+                }
+              ]
+            },
+            {
+              "type": "chat",
+              "id": "offer-d2-chat",
+              "at": "21:30",
+              "text": "What is the deadline to answer Brightline, and what base salary did they offer?",
+              "expect": [
+                "wednesday",
+                "180"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "budget-reminder",
+      "judge_context": "Alex wears the Omi pendant; Omi listens to his conversations, keeps what it learns, can push short notifications to his phone during a conversation, and answers his questions in the Omi chat. Day 1 (Mon Oct 5, 10:00): his manager Maya asked for the team's Q4 budget draft by Thursday (Oct 8), including contractor costs, with Ben from finance looped in, headcount flat. At 16:00 Alex typed in the Omi chat: 'Remind me to send the Q4 budget draft to Maya and Ben by Thursday.' Day 2 (Tue Oct 6, 15:00): Maya checked in; Alex said the draft is almost done and he still needs to add the contractor costs and send it; the offsite moved from Nov 5 to Nov 12 (full day) and Alex agreed to book the big room at the Harbor Hotel. At 17:30 he asked Omi about the reminder he had asked for.",
+      "days": [
+        {
+          "date": "2026-10-05",
+          "events": [
+            {
+              "type": "conversation",
+              "id": "budget-d1-maya",
+              "start": "10:00",
+              "segments": [
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Alex, finance needs the Q4 budget draft from our team, they're consolidating every department's numbers this week."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "How soon do they need it?"
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "By Thursday, and please include the contractor costs this time, they were missing from the Q3 version."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Okay, I'll pull the contractor invoices from September and add them as their own section."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Also loop in Ben from finance, he's doing the consolidation and he'll have questions about the travel line."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Will do. Should headcount stay flat?"
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Flat for now, we'll revisit hiring in January once the new targets are set."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Got it, flat headcount, contractor costs included, Ben in the loop. I'll get it done."
+                }
+              ]
+            },
+            {
+              "type": "chat",
+              "id": "budget-d1-chat",
+              "at": "16:00",
+              "text": "Remind me to send the Q4 budget draft to Maya and Ben by Thursday.",
+              "expect": []
+            }
+          ]
+        },
+        {
+          "date": "2026-10-06",
+          "events": [
+            {
+              "type": "conversation",
+              "id": "budget-d2-maya",
+              "start": "15:00",
+              "segments": [
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Hey Alex, quick check before my next meeting, how's the Q4 budget draft coming along?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Almost done. I still need to add the contractor costs and send it over to you and Ben."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Great. Ben said he can review it Thursday afternoon, so that timing works for finance."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Perfect timing, I'll make sure it reaches both of you before then."
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Also, heads up, the team offsite moved from November fifth to November twelfth."
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Noted, November twelfth. Is it still a full day?"
+                },
+                {
+                  "spk": 0,
+                  "voice": "p-maya",
+                  "text": "Full day, nine to five. Can you book the room for the offsite?"
+                },
+                {
+                  "spk": 1,
+                  "voice": "user",
+                  "text": "Sure, I'll book the big room at the Harbor Hotel like last year."
+                }
+              ]
+            },
+            {
+              "type": "chat",
+              "id": "budget-d2-chat",
+              "at": "17:30",
+              "text": "What did I ask you to remind me about yesterday, and is it still open?",
+              "expect": [
+                "budget",
+                "thursday"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

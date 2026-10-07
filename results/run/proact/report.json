@@ -1,0 +1,193 @@
+{
+  "case": "proact",
+  "channels": {
+    "S->M": "user messages and acquired search results admitted to memory (session, knowledge store, extracted profile and facts)",
+    "M->A": "memory (dialogue, profile, knowledge, topics) read by Future-State Prediction, push scoring, planning and the reply",
+    "A->S": "predicted needs (FSP intents) and the planner's queries given to the search as its target",
+    "M->S": "conversation history, stored topics and the profile read by the topic monitor and the search planner",
+    "A->M": "assistant replies, direct pushes and the delivery record admitted to memory"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 14,
+      "modified": 1,
+      "tie": 0,
+      "metrics": {
+        "key_fact_recall": {
+          "original": 0.5399,
+          "modified": 0.4593
+        },
+        "idle_facts_stored": {
+          "original": 2.9333,
+          "modified": 0.0
+        },
+        "idle_intents": {
+          "original": 0.8667,
+          "modified": 0.9333
+        },
+        "reply_searched": {
+          "original": 0.9333,
+          "modified": 1.0
+        },
+        "backbone_calls": {
+          "original": 36.1333,
+          "modified": 34.6667
+        },
+        "pushed": {
+          "original": 0.1333,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 13,
+      "modified": 1,
+      "tie": 1,
+      "metrics": {
+        "key_fact_recall": {
+          "original": 0.5399,
+          "modified": 0.4377
+        },
+        "idle_facts_stored": {
+          "original": 2.9333,
+          "modified": 0.0
+        },
+        "idle_intents": {
+          "original": 0.8667,
+          "modified": 0.0
+        },
+        "reply_searched": {
+          "original": 0.9333,
+          "modified": 1.0
+        },
+        "backbone_calls": {
+          "original": 36.1333,
+          "modified": 22.8
+        },
+        "pushed": {
+          "original": 0.1333,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->S"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 6,
+      "modified": 8,
+      "tie": 1,
+      "metrics": {
+        "key_fact_recall": {
+          "original": 0.5399,
+          "modified": 0.6376
+        },
+        "idle_facts_stored": {
+          "original": 2.9333,
+          "modified": 2.0667
+        },
+        "idle_intents": {
+          "original": 0.8667,
+          "modified": 0.7333
+        },
+        "reply_searched": {
+          "original": 0.9333,
+          "modified": 0.7333
+        },
+        "backbone_calls": {
+          "original": 36.1333,
+          "modified": 35.9333
+        },
+        "pushed": {
+          "original": 0.1333,
+          "modified": 0.2667
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->S"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 8,
+      "modified": 5,
+      "tie": 2,
+      "metrics": {
+        "key_fact_recall": {
+          "original": 0.5399,
+          "modified": 0.4924
+        },
+        "idle_facts_stored": {
+          "original": 2.9333,
+          "modified": 2.2
+        },
+        "idle_intents": {
+          "original": 0.8667,
+          "modified": 0.7333
+        },
+        "reply_searched": {
+          "original": 0.9333,
+          "modified": 0.9333
+        },
+        "backbone_calls": {
+          "original": 36.1333,
+          "modified": 34.4667
+        },
+        "pushed": {
+          "original": 0.1333,
+          "modified": 0.0667
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M"
+      ],
+      "field": "output",
+      "pairs": 15,
+      "original": 9,
+      "modified": 5,
+      "tie": 1,
+      "metrics": {
+        "key_fact_recall": {
+          "original": 0.5399,
+          "modified": 0.6882
+        },
+        "idle_facts_stored": {
+          "original": 2.9333,
+          "modified": 2.3333
+        },
+        "idle_intents": {
+          "original": 0.8667,
+          "modified": 0.8
+        },
+        "reply_searched": {
+          "original": 0.9333,
+          "modified": 1.0
+        },
+        "backbone_calls": {
+          "original": 36.1333,
+          "modified": 35.1333
+        },
+        "pushed": {
+          "original": 0.1333,
+          "modified": 0.5333
+        }
+      }
+    }
+  ]
+}

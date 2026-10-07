@@ -1,0 +1,15 @@
+{"cut": "A->S", "field": "output", "item": "example-368", "sample": 0, "verdict": "original", "raw": "B"}
+{"cut": "A->S", "field": "output", "item": "example-368", "sample": 1, "verdict": "original", "raw": "A"}
+{"cut": "A->S", "field": "output", "item": "example-368", "sample": 2, "verdict": "original", "raw": "A"}
+{"cut": "A->S", "field": "output", "item": "example-410", "sample": 0, "verdict": "original", "raw": "A"}
+{"cut": "A->S", "field": "output", "item": "example-410", "sample": 1, "verdict": "original", "raw": "A"}
+{"cut": "A->S", "field": "output", "item": "example-410", "sample": 2, "verdict": "original", "raw": "A"}
+{"cut": "A->S", "field": "output", "item": "example-322", "sample": 0, "verdict": "original", "raw": "A"}
+{"cut": "A->S", "field": "output", "item": "example-322", "sample": 1, "verdict": "original", "raw": "B"}
+{"cut": "A->S", "field": "output", "item": "example-322", "sample": 2, "verdict": "tie", "raw": "TIE"}
+{"cut": "A->S", "field": "output", "item": "example-154", "sample": 0, "verdict": "modified", "raw": "B"}
+{"cut": "A->S", "field": "output", "item": "example-154", "sample": 1, "verdict": "tie", "raw": "TIE"}
+{"cut": "A->S", "field": "output", "item": "example-154", "sample": 2, "verdict": "tie", "raw": "TIE"}
+{"cut": "A->S", "field": "output", "item": "example-373", "sample": 0, "verdict": "original", "raw": "B"}
+{"cut": "A->S", "field": "output", "item": "example-373", "sample": 1, "verdict": "modified", "raw": "A"}
+{"cut": "A->S", "field": "output", "item": "example-373", "sample": 2, "verdict": "tie", "raw": "TIE"}

@@ -1,0 +1,8 @@
+# Imported by the code the run executes: tqdm (src/icl/inference_api.py) and numpy (src/utils.py).
+# Not installed, stubbed by the adapter because the run never executes them: the model clients
+# (openai, ollama -> HALO backbone), the tools' live API clients (requests, geocoder, gcsa, dateparser,
+# ddgs, googlesearch-python, yfinance, pandas, langchain-community) and utils.py's scoring imports
+# (transformers, bert-score, scikit-learn, which pull in torch).
+tqdm
+numpy
+pyyaml

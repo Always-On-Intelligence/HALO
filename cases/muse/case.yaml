@@ -1,0 +1,23 @@
+id: muse
+name: "Muse"
+domain: digital
+kind: product
+report: https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/
+sources:
+  - url: https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/
+    kind: product_documentation
+    version: "content snapshot; version not displayed"
+    sha256: 1d623291730de6b3c788c1c69d46655db788009465c32e4b110b21ee6787550b
+  - url: https://introducing.muse.ai/
+    kind: product_documentation
+    version: "content snapshot; version not displayed"
+    sha256: 68c486d00871858830a5bb4486fb2f4a447bfe6d61e1c51f86cda86b89faeaad
+  - url: https://research.meta.ai/blog/security-and-safety-for-ai-agents-our-approach-with-muse
+    kind: product_documentation
+    version: "content snapshot; version not displayed"
+    sha256: 6a6b0cff7fb4da8c963256684ae8aa67d1e2b052babfa80fb25e6f6913e9e7a6
+variants:
+  - id: metamuse2026
+    label: "Muse"
+    configuration: "September 2026 launch configuration with persistent user VM memory, goals/background work, browser sub-agent and Sentinel controls"
+modes: [read]

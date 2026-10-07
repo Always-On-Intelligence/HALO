@@ -1,0 +1,19 @@
+# Egocentric Co-Pilot orchestrator (main.py, llm_intent.py, api_providers.py) and the HCC script
+# (Egolife/scripts/eval_guide.py). CPU only.
+pyyaml
+numpy
+opencv-python-headless
+pillow
+requests
+httpx
+websockets
+scipy
+tomli
+soundfile
+omegaconf
+tqdm
+openai
+torch
+transformers
+# all-MiniLM-L6-v2 stands in for paraphrase-multilingual-MiniLM-L12-v2 (intent templates)
+sentence-transformers

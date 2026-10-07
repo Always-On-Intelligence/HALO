@@ -1,0 +1,77 @@
+{
+  "id": "vinci",
+  "configuration": "Paper-described wearable/head-mounted wake-word assistant with periodic timestamped activity memory and later history-aware QA; no optional chat-history backend assumed.",
+  "sources_read": [
+    "https://arxiv.org/html/2412.21080v1 — version 2412.21080v1, §§1–6.",
+    "https://github.com/OpenGVLab/vinci — local checkout verified at a3b9dfabc184ded110d5f28daa4f132e5bdcebaa.",
+    "At that commit: README.md; vl_open.py; vinci-inference/README.md; vinci-inference/boot.sh.",
+    "At that commit: vinci-inference/app/models/internvl.py; vinci-inference/app/service/internvl.py; vinci-inference/app/global_var/cache.py; vinci-inference/app/data.py; vinci-inference/app/main.py; vinci-inference/app/service/seine.py.",
+    "At that commit: demovl.py, especially lines 124–369 and 424–510, examined to distinguish the uploaded-video configuration.",
+    "At that commit: vinci-local/README.md; vinci-local/docker/README.md; vinci-local/docker/clone.sh; vinci-local/docker/docker-compose.yaml; vinci-local/docker/mysql/init.sql.",
+    "cases/vinci/case.yaml; halo/read/schema.json."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Periodic video observations become timestamped activity descriptions. The silent inference path appends these descriptions and stores the resulting history in a session cache for subsequent interactions.",
+      "locator": "[Paper v1, §3.3](https://arxiv.org/html/2412.21080v1#S3.SS3); vinci-inference/app/models/internvl.py:139–152, 259–279, 301–310; vinci-inference/app/global_var/cache.py:11–27.",
+      "quote": "storing the resulting textual descriptions along with their corresponding timestamps."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained activity descriptions supply context for answers and planning. The streaming wrapper retrieves session history, formats it into the user-question prompt, and passes that prompt to response generation.",
+      "locator": "[Paper v1, §3.3](https://arxiv.org/html/2412.21080v1#S3.SS3); vinci-inference/app/models/internvl.py:26–69, 204–220, 259–264, 301–320.",
+      "quote": "the memory module provides relevant historical context to EgoVideo-VL"
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "Continuous input processing, wake-word activation, and periodic snapshots are described, but no implemented link from assistant plans, information needs, or execution state to sensing targets or interpretation is established. Passing an already available frame to video generation does not establish that link.",
+      "locator": "[Paper v1, §§3.1, 3.3–3.6](https://arxiv.org/html/2412.21080v1#S3); vinci-inference/app/models/internvl.py:85–100, 139–146, 172–180; vinci-inference/app/data.py:13–20."
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "History is supplied at answer time, establishing M->A. The periodic captioning path constructs its observation prompt without retained history and calls the model with history=None. No other direct memory-guided sampling, attention, compression, or interpretation route is established for this configuration.",
+      "locator": "[Paper v1, §3.3](https://arxiv.org/html/2412.21080v1#S3.SS3); vinci-inference/app/models/internvl.py:102–104, 139–146, 204–213."
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "The cached captions describe observed user activity and therefore implement S->M. Streaming QA accumulates and returns the assistant answer without adding it to activity history. Optional chat-history code and a database schema do not establish action retention in the named configuration, nor explicitly exclude every possible route.",
+      "locator": "vinci-inference/app/models/internvl.py:139–146, 204–234, 297–326; vl_open.py:92, 185–197, 238–254; vinci-local/docker/mysql/init.sql:58–76; cases/vinci/case.yaml."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "Activity memory records the user's observed actions; retention of the wearable assistant's own decisions or delivered replies for later service use is not established.",
+      "locator": "[Paper v1, §3.3](https://arxiv.org/html/2412.21080v1#S3.SS3); vinci-inference/app/models/internvl.py:139–146, 315–326; vinci-inference/boot.sh:23–24, 30–43."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No retained reply, correction, dismissal, task result, or observed effect is identified as evidence about the assistant's own assistance.",
+      "locator": "[Paper v1, §§3.3, 4.1–4.7](https://arxiv.org/html/2412.21080v1); vinci-inference/app/models/internvl.py:113–152, 297–326; vinci-local/docker/mysql/init.sql:58–76."
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No in-service check links an assistance outcome to the decision that produced it; qualitative examples assess answers without implementing such a feedback flow.",
+      "locator": "[Paper v1, §§4.1–4.7](https://arxiv.org/html/2412.21080v1#S4); vinci-inference/app/models/internvl.py:154–234, 266–326."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Training is developer-directed; runtime activity-history updates do not revise a reusable mechanism, and no service-authored durable mechanism change is reported.",
+      "locator": "[Paper v1, §§3.2–3.4](https://arxiv.org/html/2412.21080v1#S3); vl_open.py:111–141; vinci-inference/app/models/internvl.py:26–69, 139–146, 305–324.",
+      "what": "No service-authored revision of model parameters, prompts, skills, reusable rules, code, or harness is stated."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Reported later answers use accumulated activity content; no run under a mechanism durably revised by the service itself is stated.",
+      "locator": "[Paper v1, §§4.3–4.5](https://arxiv.org/html/2412.21080v1#S4); vinci-inference/app/models/internvl.py:301–324; vl_open.py:111–141."
+    }
+  },
+  "notes": "Judgments apply to the named wearable configuration. Silent model-generated captions are classified by their sensing function. Gradio conversation retention and the optional chat-record database are not imported into this variant. Separate backend images/repositories referenced by deployment files were not inspected; incomplete coverage supports insufficient, not absent. No files were modified.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 230,
+    "code_commit": "a3b9dfabc184ded110d5f28daa4f132e5bdcebaa"
+  }
+}

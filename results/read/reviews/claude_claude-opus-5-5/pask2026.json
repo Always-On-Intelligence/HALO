@@ -1,0 +1,83 @@
+{
+  "id": "pask2026",
+  "configuration": "pask2026 is the full Pask service described in arXiv 2604.08000v1. It has three parts. (1) The IntentFlow streaming demand detector picks one control token per step (<silent>, <fast_intervention> or <full_assistance>) and has a MemLoader. (2) Pask-MM is a hierarchical memory with three tiers: user, workspace and global. (3) Pask-PAS is an always-on runtime made of frontend devices, Control and Data layers, and an AI backend. The repo at d54646c holds only the LatentNeeds-Bench construction pipeline, the evaluation harness and results, and the docs and figures. It contains no IntentFlow, Pask-MM or PAS implementation, so these judgments rest mainly on the paper text, with the repo used as supporting evidence.",
+  "sources_read": [
+    "https://arxiv.org/html/2604.08000v1 (v1). Read through WebFetch only, because shell network access was denied. Covered: section and caption structure, Secs. 1, 2.1–2.2, 3 (intro), 3.1, 3.2.2, 3.3.1–3.3.2, 4.1–4.3, 5, 6.5.2–6.5.3, 8, plus whole-paper term searches and two exact-string verification passes.",
+    "cases/pask/case.yaml",
+    "github.com/xzf-thu/Pask @ d54646c52b1555232ce4ab39103768d7f65b8267: README.md",
+    "docs/index.html (project-page text, lines 313-392)",
+    "docs/assets/images/figure1-2-ddmmpas.png (paper Fig. 2), figure2-intentflow.png (Fig. 3 with caption), figure3-memory.png (Fig. 6), figure4-pas.png (Fig. 7), experiments-table5.png (Fig. 9)",
+    "eval/prompts.py, eval/run.py, eval/config.py, eval/score.py (header and grep)",
+    "bench/PIPELINE.md, bench/02_build_turns.py (docstring and memory prompt), bench/03c_memory.py"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed stream content is written into memory. Workspace memory buffers the conversational history and is updated continuously during a session. After a session ends, the system mines the terminated trajectory for candidate user traits and merges them into the user tier (M_user) with a time-decayed Bayesian update that reinforces, overwrites or discards entries. New episodes are inserted as leaves in the global memory tree (M_global) through lazy merging. M_user also stores 'the most salient newly observed signals'. In Fig. 9, the knowledge and preference cases reuse content from earlier sessions. The repo's benchmark memory is a static offline summary and is not relied on here.",
+      "locator": "arXiv 2604.08000v1 Sec. 4 (Fig. 6 caption); Sec. 4.1 (user and workspace tiers); Sec. 4.3 (user-tier and global-tier evolution); Fig. 9 top; repo docs/index.html:346",
+      "quote": "UNVERIFIED (via WebFetch): \"During interaction, workspace memory is updated continuously to support low-latency reasoning, while ℳuser and ℳglobal evolve only after session completion through offline maintenance and compression\" (Fig. 6 caption); \"Given a newly terminated request trajectory Q={q1,…,qn}, the system extracts candidate user traits 𝒰′\" (Sec. 4.3). Verbatim, repo docs/index.html:346: \"These layers evolve automatically after each session — updating the user profile, resolving contradictions, and compressing old records\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained memory feeds Action decisions about silence, timing and content. M_user is injected into IntentFlow's system prompt at every step, so it conditions the choice among <silent>, <fast_intervention> and <full_assistance>. On <full_assistance>, Pask-MM retrieves from all three tiers (including localized RAG on the global tree), and MemLoader distills the result. That result is returned to the Demand Detector, whose final step either generates assistance or stays silent. The Fig. 9 cases show later interventions grounded in background, knowledge and preference memory. In the repo's eval harness, every turn's speak-or-[NO_DEMAND] prompt also carries a memory block.",
+      "locator": "Sec. 3.1 (full-assistance pipeline); Sec. 4.1 (user tier); Sec. 4.2; Fig. 3; Fig. 9 top; repo README.md:174; eval/prompts.py:113-123",
+      "quote": "UNVERIFIED (via WebFetch): M_user is \"a high-priority, dense cache directly injected into the system prompt\" (Sec. 4.1); \"When Demand Detector emits <full_assistance>, the system enters a memory-grounded reasoning pipeline\" ... \"which is then returned to Demand Detector for final decision making\" (Sec. 3.1). Verbatim, README.md:174: \"**User Profile** — compact summary injected into every inference call; always-on, near-zero latency\""
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "No passage describes Action intentions, plans, information needs or execution state steering what is sensed or how it is interpreted. Examples would be requesting a screenshot or camera frame, switching modality, or checking an intervention's expected effect. The whole-paper term search found no 'screenshot', 'camera' or 'active perception'. The only Action-triggered processing of observations is the <full_assistance> step that extracts an observation summary o_t and entities e_t. The paper says these only form a memory retrieval query, so that step is part of answer-time retrieval (M->A), not control of Sensing. PAS tools (web search, code, skills) serve execution, and the frontend perception stream is described as always-on. Nothing explicitly excludes this route, so it is not 'absent'.",
+      "locator": "Sec. 3.1 (full-assistance pipeline); Sec. 5 and Fig. 7; whole-paper term search via WebFetch",
+      "quote": "UNVERIFIED (via WebFetch): \"These signals are combined with the latest input and interaction history to form a retrieval query\" (Sec. 3.1)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "IntentFlow's demand detection combines two functions in one model. It interprets each incoming text segment to infer the user's latent intent (Sensing interpretation) and selects the control token (Action). Retained memory reaches this streaming interpretation at every step, not only when an answer is composed. Per Sec. 3.1, each dialogue step receives x_t, H_t and the external memory bank. M_user (domain expertise, personalized thresholds, behavioral priors) is injected into the detector's system prompt (Sec. 4.1). Sec. 2.2 says MM's role is to let the system interpret current observations in light of accumulated personal context. The same injection also counts toward M->A. The <full_assistance> retrieval on its own would be M->A only.",
+      "locator": "Sec. 2.2; Sec. 3 intro and Sec. 3.1; Sec. 4.1 (user tier); Fig. 3 (repo copy docs/assets/images/figure2-intentflow.png: a System Prompt box with 'User background' feeds the streaming demand detector)",
+      "quote": "UNVERIFIED (via WebFetch): MM \"enables the system to interpret current observations in light of accumulated personal context\" (Sec. 2.2); \"the system receives the latest textualized information segment\" ... \"and the external memory bank ℳ\" (Sec. 3.1); M_user summarizes stable attributes \"(e.g., domain expertise, personalized thresholds, and behavioral priors)\" (Sec. 4.1)"
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "The paper describes memory writes for the observed stream, but never says Pask's own interventions, decision tokens, tool results or delivered help are retained. A targeted WebFetch search found no such statement. The workspace tier's 'internal system states', the global tier's 'comprehensive interaction history' and the post-session 'request trajectory Q={q1,…,qn}' are all left undefined. H_t = {x1,…,xt} contains only information segments. The previous decision sequence d_{1:t-1} appears only as a supervised fine-tuning input (Sec. 3.3.1); the inference rule is d_t = f_det(x_t, H_t). Three figure cues have no explanatory text: the PAS->MM 'Update' arrow (Fig. 2), 'Update after the process ends' (Fig. 6) and 'Feedback persistence' (Fig. 7). In the repo's eval harness, model outputs are never fed back into later prompts.",
+      "locator": "Sec. 3.1 (inference equations); Sec. 3.3.1; Sec. 4.1 (workspace and global tiers); Sec. 4.3; Figs. 2, 6, 7 (repo copies figure1-2-ddmmpas.png, figure3-memory.png, figure4-pas.png); eval/run.py:46-64; eval/prompts.py:92-131",
+      "quote": "UNVERIFIED (via WebFetch): the workspace tier \"buffers the conversational history, intermediate environmental variables, and internal system states\" (Sec. 4.1); \"Given a newly terminated request trajectory Q={q1,…,qn}, the system extracts candidate user traits 𝒰′\" (Sec. 4.3). Neither defines whether Pask's own outputs or decisions are included."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "No passage says the service keeps records of its own decisions, interventions or delivered help for later use. What is retained (conversation history, 'internal system states', request trajectories) is never said to include Pask's actions. d_{1:t-1} is only a training input. Fig. 7's 'Feedback persistence' box has no accompanying text. The repo writes model outputs to eval/results/*.jsonl only for the authors' offline scoring, which is a research log.",
+      "locator": "Sec. 3.3.1; Sec. 4.1; Sec. 4.3; Fig. 7; eval/run.py:171-184"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "The paper describes no in-service capture of evidence about Pask's interventions: no reply, acceptance, dismissal, rating or correction signal. The terms 'user feedback', 'dismiss', 'accept' and 'reject' do not occur. The Sec. 6.5.3 ratings (20 participants) and quiz (5 per group) are research evaluation. 'Feedback circulation' (Sec. 5) is an unexplained list item. The owner and participant edits to LatentNeeds-2K annotations are dataset curation.",
+      "locator": "Sec. 5 (Control Layer); Sec. 6.5.3; Sec. 3.2.2; whole-paper term search",
+      "quote": "UNVERIFIED (via WebFetch): \"resource coordination, and feedback circulation\" (Sec. 5, Control Layer; not defined further)"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Nothing inside the service links an outcome to the decision it concerns or uses it to check or correct assistance. The rule-based timing reward and the LLM-as-judge reward belong to the authors' RL training on LatentNeeds-2K. The LLM-as-judge scoring in eval/score.py is offline benchmark scoring by the authors.",
+      "locator": "Sec. 3.3.2; Sec. 6; eval/score.py:1-11"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "What 'self-evolves' is memory content. The M_user profile (traits, preferences, and the listed 'personalized thresholds' and 'behavioral priors') changes through time-decayed Bayesian updates. The M_global episodic tree changes through lazy merging and compression. Fixed IntentFlow and MemLoader models and prompts read this content, so by role it is not a mechanism revision. The paper never describes these thresholds as rules derived from outcomes. Model parameters change only through the authors' supervised fine-tuning on LatentNeeds-100k and RL on LatentNeeds-2K after human annotation edits, which are developer changes. The service changes no prompts, skills, rules or code itself.",
+      "locator": "Sec. 4.1 (user tier); Sec. 4.3; Sec. 3.2.2; Sec. 3.3",
+      "quote": "UNVERIFIED (via WebFetch): \"we jointly optimize Demand Detector and MemLoader\" (Sec. 3.3.2, author-run RL); \"we invite the information owners or relevant domain participants to refine the annotated demands\" (Sec. 3.2.2)",
+      "what": "The service revises nothing. Only memory content changes (the M_user profile and the M_global tree). The IntentFlow and MemLoader LoRA weights change only through developer-run fine-tuning and RL."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "The service makes no revision, so no later run under a revised mechanism is reported. Later sessions reuse memory content (Fig. 9 cases), and the deployed IntentFlow is the developers' trained model. The 'closed-loop data flywheel' appears only as a hypothetical framing in the Introduction.",
+      "locator": "Sec. 1; Sec. 6.5.2 and Fig. 9; Sec. 8",
+      "quote": "UNVERIFIED (via WebFetch): \"This shift would turn AI from a reactive tool into a system that can anticipate user needs and improve through a closed-loop data flywheel\" (Sec. 1)"
+    }
+  },
+  "notes": "Shell network access was denied, so the paper was read only through WebFetch. WebFetch summarizes pages and caps quotes at about 125 characters, so every paper quote is labelled UNVERIFIED, even though a separate exact-match pass by the same tool reported them EXACT. That tool also gave inconsistent section locations for a few phrases, which is a further reason to treat them as unconfirmed. Quotes from repo files (README.md, docs/index.html) and figure captions read from repo images are verbatim. Code at the commit covers only the benchmark: it injects a static gpt-5-nano summary of earlier turns as memory (bench/02_build_turns.py:12-19, bench/03c_memory.py) into each turn's prompt (eval/prompts.py:118-119) and never feeds model outputs back. It therefore supports M->A in evaluation but not Pask-MM's write paths. Judgment calls: (1) M->S is marked reported because IntentFlow interprets the stream and makes the Action choice in one model, and the paper explicitly gives memory an interpretive role (Sec. 2.2). A stricter reading would treat the same injection as M->A only. (2) A->M and Record hinge on undefined terms: 'internal system states', 'comprehensive interaction history', 'request trajectory' and the Fig. 6 and Fig. 7 labels. If these were defined to include Pask's own interventions, both would change.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 774,
+    "code_commit": "d54646c52b1555232ce4ab39103768d7f65b8267"
+  }
+}

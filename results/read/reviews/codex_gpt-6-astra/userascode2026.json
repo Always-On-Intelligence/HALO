@@ -1,0 +1,82 @@
+{
+  "id": "userascode2026",
+  "configuration": "Two-phase executable personal memory with Active Service constraint pipeline.",
+  "sources_read": [
+    "https://arxiv.org/html/2606.16707v1 — version 2606.16707v1, particularly §§3.1–3.4, 4.4–4.5, 5–6 and Appendix F.",
+    "https://github.com/19PINE-AI/user-as-code — checkout verified at commit 3d473617a27e7ace8cbbde531b667d515864c21e.",
+    "README.md; prototype/README.md; prototype/runner.py; prototype/jessica_thompson/manifest.py.",
+    "experiments/user_as_code_v5.py; experiments/user_as_code_full.py; experiments/active_service_experiment.py.",
+    "experiments/analytical_bench/runners.py; experiments/analytical_bench/tools.py; experiments/results/analytical_uac_v5.json.",
+    "evaluation/README.md; evaluation/ACTIVE_SERVICE_V2.md; evaluation/ACTIVE_SERVICE_V3.md.",
+    "experiments/run_active_service_v2.py; experiments/active_service_sandbox.py; experiments/run_active_service_v3.py.",
+    "experiments/results/active_service_v2_gpt_5_6_luna/traces/deadline_05.json; corresponding programs/deadline_05/01_pretrigger.py and 02_trigger.py."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Session evidence enters an append-only fact list and indexed conversation archive; accumulated facts subsequently produce the structured memory view. This is an implemented ingestion path.",
+      "locator": "experiments/user_as_code_v5.py:65–89, 134–160, 166–213.",
+      "quote": "self.fact_list.extend(new_facts)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Stored state, facts and conversation excerpts enter answer generation. Executable constraints also read retained user state to decide whether to emit an alert.",
+      "locator": "experiments/user_as_code_v5.py:221–294; experiments/results/active_service_v2_gpt_5_6_luna/programs/deadline_05/02_trigger.py:19–48."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The agent selects execution and inspection calls that determine which current REPL values and execution failures it observes. The recorded meal-query run responds to a failed query by requesting inspection of data[0], then correcting its computation.",
+      "locator": "experiments/analytical_bench/tools.py:263–280; experiments/results/analytical_uac_v5.json, by_case.meals_meals_avg_cost_n50.log; [paper v1](https://arxiv.org/html/2606.16707v1), Appendix F.3, Listing 17."
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "The extractor receives current session text and its timestamp, without a demonstrated retained-prior input guiding observation or interpretation. Answer retrieval and manifest-based decisions establish M->A, not an independent M->S route.",
+      "locator": "experiments/user_as_code_v5.py:91–124, 221–294; prototype/jessica_thompson/manifest.py:1–7."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Agent-authored checks are retained as persistent constraints. The executable pipeline saves generated rule modules, while the tool loop retains assistant messages and chosen calls for subsequent model turns.",
+      "locator": "[paper v1](https://arxiv.org/html/2606.16707v1), §3.3.2; experiments/run_active_service_v2.py:558–577; experiments/analytical_bench/tools.py:229–252."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains its assistant messages, including chosen tool calls, and supplies that history to subsequent model invocations. This counts within the assistance episode independently of author-only benchmark logs.",
+      "locator": "experiments/analytical_bench/tools.py:229–252.",
+      "quote": "messages.append(assistant_message)"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Execution stdout and errors are retained as tool messages associated with the originating call and reused on subsequent turns. This establishes execution-result retention, without establishing later user feedback.",
+      "locator": "experiments/analytical_bench/tools.py:265–280; experiments/results/analytical_uac_v5.json, by_case.meals_meals_avg_cost_n50.log.",
+      "quote": "messages.append({\n                    \"role\": \"tool\",\n                    \"tool_call_id\": call.id,\n                    \"content\": json.dumps(payload),\n                })"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "A failed computation is linked to its erroneous field assumption; the agent inspects a record and corrects the query. This is immediate in-system correction, not external correctness scoring.",
+      "locator": "[paper v1](https://arxiv.org/html/2606.16707v1), Appendix F.3, Listing 17; experiments/results/analytical_uac_v5.json, by_case.meals_meals_avg_cost_n50.log[0–2].",
+      "quote": "dropped the bad filter, and re-ran."
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The method explicitly promotes agent-generated checks into persistent executable rules. Those rules change alerting behavior; merely regenerating user facts or typed state does not establish this step.",
+      "locator": "[paper v1](https://arxiv.org/html/2606.16707v1), §3.3.2; experiments/run_active_service_v2.py:558–577.",
+      "quote": "When an ad-hoc check proves useful, the agent promotes it to a persistent constraint.",
+      "what": "Reusable Python constraint functions governing proactive alerts."
+    },
+    "later_use": {
+      "label": "stated",
+      "rationale": "The committed deadline_05 trace records actual execution after the generated constraint module was saved, producing a deadline alert. This establishes a subsequent execution step under generated rules, not cross-session reuse without regeneration or longitudinal improvement.",
+      "locator": "evaluation/ACTIVE_SERVICE_V2.md:44–47; experiments/results/active_service_v2_gpt_5_6_luna/traces/deadline_05.json, systems.uac.updates[1].source_path and execution.alerts[0]; corresponding 02_trigger.py:19–48.",
+      "quote": "The espresso machine return window for the $400 purchase from Williams-Sonoma ends on 2024-11-01 (3 days remaining)."
+    }
+  },
+  "notes": "The listed paper and pinned repository differ: the repository deprecates the original alert pilot and supplies a later executable evaluation. Pilot scores and developer-authored v3 changes were not counted as service self-evolution. Record, outcome and attribution evidence includes retained context within an assistance episode; later use is supported narrowly by recorded execution of persisted generated rules.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 346,
+    "code_commit": "3d473617a27e7ace8cbbde531b667d515864c21e"
+  }
+}

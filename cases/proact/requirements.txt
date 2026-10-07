@@ -1,0 +1,10 @@
+# ProAct's vector store and external fact store (core/memory/vector_store.py, core/experiments/ProactiveBench/eval/external_fact_store.py)
+chromadb
+# all-MiniLM-L6-v2 on CPU as the chromadb embedding function (replaces chromadb's downloaded ONNX default)
+sentence-transformers
+# imported by core/tools/llm_client.py (the adapter subclasses LLMClient; no OpenAI client is created)
+openai
+# imported by core/core/config.py (load_dotenv is replaced by a no-op) and core/tools/web_fetcher.py (never called)
+python-dotenv
+requests
+pyyaml

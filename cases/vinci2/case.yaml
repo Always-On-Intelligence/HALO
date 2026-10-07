@@ -1,0 +1,18 @@
+id: vinci2
+name: "Vinci2"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2607.11523
+sources:
+  - url: https://arxiv.org/html/2607.11523v1
+    kind: paper
+    version: "2607.11523v1"
+    sha256: b0a336de46fab2b499cb6aa0c39fc9ce25245c77d7a72b9af109ac8ec7e07436
+code:
+  repo: https://github.com/SitongGong/EgoMemo
+  commit: 0029a33fd83bb93cb6a7bb012bbdd3477b4c6b35
+variants:
+  - id: vinci2
+    label: "Vinci2"
+    configuration: "EgoMemo streaming proactive configuration on EgoServe, with GPT-5-mini reasoning"
+modes: [read, run]

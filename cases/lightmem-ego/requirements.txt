@@ -1,0 +1,24 @@
+# LightMem-Ego backend runtime subset (CPU only). Pins follow src/backend/requirements.txt where they exist.
+pyyaml
+numpy==2.0.2
+opencv-python-headless==4.13.0.92
+pillow==12.2.0
+tqdm
+pydantic==2.13.4
+python-dotenv
+tenacity
+requests
+httpx
+filelock
+packaging
+networkx==3.4.2
+python-igraph==1.0.0
+faiss-cpu
+tiktoken
+pandas
+scikit-learn
+openai==2.41.0
+accelerate==1.13.0
+# all-MiniLM-L6-v2 stands in for the Qwen3-Embedding / NV-Embed text embedders
+sentence-transformers
+torch

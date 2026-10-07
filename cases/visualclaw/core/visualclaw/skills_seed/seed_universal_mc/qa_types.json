@@ -1,0 +1,38 @@
+{
+  "answer-format-completion": [
+    "multi_choice"
+  ],
+  "behavioral-inference-validation": [
+    "multi_choice"
+  ],
+  "critical-action-identification-and-ranking": [
+    "multi_choice"
+  ],
+  "multi-option-contextual-elimination": [
+    "multi_choice"
+  ],
+  "multiple-choice-precision-matching": [
+    "multi_choice"
+  ],
+  "option-elimination-by-accuracy": [
+    "multi_choice"
+  ],
+  "semantic-precision-matching": [
+    "multi_choice"
+  ],
+  "video-action-identification": [
+    "multi_choice"
+  ],
+  "video-action-purpose-alignment": [
+    "multi_choice"
+  ],
+  "video-context-grounding": [
+    "multi_choice"
+  ],
+  "video-sequence-comprehension": [
+    "multi_choice"
+  ],
+  "visual-detail-matching": [
+    "multi_choice"
+  ]
+}

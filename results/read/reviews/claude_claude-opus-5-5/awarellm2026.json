@@ -1,0 +1,79 @@
+{
+  "id": "awarellm2026",
+  "configuration": "AwareLLM treatment condition (variant awarellm2026). Preferences from each participant's pre-study survey are embedded in the system prompt (Sec. 4.2; Sec. 5 step 1; App. D.1.2). Chat context (chat history and the last 5 user prompts) is retained within the session. Both sensor reasoning loops run: the 1-minute HF loop (Sec. 4.4.2; App. D.4) and the 3-minute LF loop (App. D.5), on top of a session-specific physiological baseline (Sec. 4.3). The control condition (a plain gpt-4o-mini chat without AwareLLM functions) was not judged.",
+  "sources_read": [
+    "https://arxiv.org/html/2605.09625v3 (version 2605.09625v3), read via WebFetch from the abstract through Section 4 and the opening of Section 5. The tool's copy of the page stopped mid-Section 5. The sha256 was not checked because shell access was unavailable.",
+    "https://arxiv.org/pdf/2605.09625v3 (same version, stamped 'arXiv:2605.09625v3 [cs.HC] 30 Aug 2026'), full text layer: Sections 1–9, Tables 1–5, figure captions, and Appendices A–E (B preprocessing, C data JSONs, D loop prompts D.1–D.5, E interface)."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed and user-supplied evidence is written into retained state that later cycles use. (i) 60 s of resting ECG and eye data become a personalized baseline kept for the whole session. (ii) Each HF minute is condensed into a summary that is carried into the next call (prev_min_summary), and the last three summaries are buffered for the LF loop. (iii) The last 5 user prompts are retained and fed to both loops. (iv) Pre-study survey answers are embedded in the system prompt. The retention scope is stated: one lab session. The paper says data were deleted after use and never stored persistently, so nothing carries across sessions.",
+      "locator": "Sec. 4.3 'Personalized Baselining and State Classification'; Sec. 4.4.2 (LF loop bullet); App. D.4.1; Sec. 5 (privacy sentence and step 1); Sec. 7.2 'Limited Temporal Scope'",
+      "quote": "It then establishes a personalized, session-specific baseline by analyzing the subsequent 60 seconds of data while the user is in a resting state. This baseline acts as a personal benchmark. (Sec. 4.3) | Every three minutes, the system aggregates (i) the last three HF summaries and (ii) 3-minute windows of physiological data (HRV, pupil metrics). (Sec. 4.4.2) | prev_min_summary: A string summarizing the user’s last minute activity. (App. D.4.1)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information drives action decisions about content, channel, timing and silence. The loop LLM is prompted with the carried-forward JSON summary and the system-prompt preferences. In-chat suggestions are generated from chat history and preferences. The HF prompt withholds a suggestion when the retained summary shows one was just given. A policy layer then filters outputs by preferences, do-not-disturb status and debounce.",
+      "locator": "Sec. 4.4.4; Sec. 4.5.3 'Task-Focused Interventions (In-Chat)'; App. D.4.4, D.4.6",
+      "quote": "The LLM is then prompted with: (1) The structured JSON summary from either the HF or LF loop, (2) User preferences (tone, frequency of intervention, notification style), (3) Few-shot exemplars demonstrating desired reasoning strategies. (Sec. 4.4.4) | Generated primarily from on-screen context, chat history, and user preferences, they provide direct support for the work at hand (Sec. 4.5.3) | Context Matters: Do not give suggestions if the summary indicates one was just given (App. D.4.6)"
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "The paper describes no flow in which Action's intentions, plans or delivered interventions steer what or how the system senses. Sampling is on a fixed period (15 s snapshots, 1-minute HF, 3-minute LF). The screenshot and egocentric prompts are fixed and follow the task setup written by the developers (App. D.2, D.3). Table 3's 'contextual confirmation' is sensing gating an action (S→A), not an action redirecting sensing. No expected-effect check follows an intervention. The paper does not explicitly exclude this route, so the label is insufficient rather than absent.",
+      "locator": "Sec. 4.4.2 (HF/LF bullets); Table 3 (Potential distraction row); App. D.2, D.3, D.4.2",
+      "quote": "Every 15 seconds, posture, screenshot, and egocentric samples are captured. (Sec. 4.4.2) | System notification. Trigger only after contextual confirmation. (Table 3, Potential distraction)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained priors are used to interpret current observations. The session baseline, computed at the start and kept, is the reference for assigning stress and cognitive-load classes (App. B.0.3 step 5; B.0.4). Past chat history is combined with biosignals to infer the user's affective state. The LF loop reads the current minute summaries against the retained previous 3-minute summary to judge trends. This is interpretation of incoming signals, not retrieval at answer time for an action.",
+      "locator": "Sec. 4.3 'Personalized Baselining and State Classification' and 'Cardiac Activity Estimation'; App. B.0.3 (5), B.0.4 (3)-(4); Sec. 4.1 'Tone-Adaptiveness'; App. D.5.2",
+      "quote": "High-level classifications such as “High Stress” or “High Cognitive Load” are not determined by absolute values, but by tracking the magnitude and duration of significant deviations in the processed metrics (e.g., HRV, pupil diameter) from this established baseline. (Sec. 4.3) | By analyzing biosignals such as heart rate variability and pupil dilation, alongside behavioral cues and past chat history, AwareLLM infers the user’s affective state (Sec. 4.1) | Review the min_summary fields and compare them with the previous session_summary to understand trends in activity, posture, and focus over the 3 minutes. (App. D.5.2)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The LLM in its Action role writes a record of its own behaviour into retained state. The HF prompt requires its output summary to say whether an intervention or suggestion was given. That summary is carried into the next HF call (prev_min_summary) and into the LF call (min_summary). The policy layer's debounce and Table 3's rule to suppress repeated cues after a recent intervention also depend on retained intervention records. Retention is limited to the session.",
+      "locator": "App. D.4.5, D.4.1, D.4.6, D.5.1; Sec. 4.4.4; Table 3 (Poor posture row)",
+      "quote": "Include whether the user was given an intervention or suggestion in the previous minute. (App. D.4.5) | min_summary: Summary from the 1-minute analysis for that interval. (App. D.5.1) | filtered through a lightweight policy layer (user preferences, do-not-disturb status, and debounce to prevent over-notification) (Sec. 4.4.4) | Suppress repeated cues after a recent intervention. (Table 3, Poor posture)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The rolling minute summaries record whether the service gave an intervention or suggestion. Later cycles check that record to avoid repeating a suggestion. The service keeps and uses this record itself, so it is not a research log. The record is short-lived and lasts only for the session.",
+      "locator": "App. D.4.5 'Session Summary'; App. D.4.6 'Frequency and Important Considerations'; App. D.4.1 (prev_min_summary input)",
+      "quote": "Include whether the user was given an intervention or suggestion in the previous minute. (App. D.4.5) | Context Matters: Do not give suggestions if the summary indicates one was just given (App. D.4.6)"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "The paper never says the system captures or retains evidence of how its interventions were received or what they changed (dismissals, replies, ratings, or later state framed as a result). Dismissals and the Table 5 ratings appear only as study feedback the researchers collected and analysed.",
+      "locator": "Sec. 6.1.4 (P6 quote); Sec. 6.3 and Table 5; App. D.4–D.5 (no outcome inputs)",
+      "quote": "“The focus reminders were helpful overall” P6 explained, “but sometimes I was just trying to find the right music to help me concentrate, and I had to dismiss the interventions.” (Sec. 6.1.4)"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Nothing links an intervention to a later result, or uses such a result to check or correct assistance. Repeat suppression depends only on the record that an intervention was given, not on its effect. Expert scoring and the questionnaires are offline research evaluation.",
+      "locator": "App. D.4.6; Sec. 4.4.4; Sec. 6.3–6.4"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service makes no durable change to its own mechanism. Preferences are participants' survey answers inserted by the study setup. The baseline is per-session calibration content used by a fixed rule. Summaries are task state. Prompts, examples and the policy layer are written by the developers. Adapting over days or weeks is raised only as a question for future longitudinal work.",
+      "locator": "Sec. 5 step (1); Sec. 4.2 'User Preferences'; Sec. 4.3; App. D (prompts); Sec. 7.2 'Limited Temporal Scope'",
+      "quote": "A longitudinal study would be necessary to understand how users’ productivity, trust, and interaction patterns evolve over time, and whether AwareLLM can adapt its suggestions meaningfully over days or weeks. (Sec. 7.2) | The responses were used to personalize the behavior of the AwareLLM system. (Sec. 5, step 1)",
+      "what": "Nothing. The candidate items are not revisions: survey-derived preferences in the system prompt (content supplied by users), the per-session physiological baseline (content used by a fixed classifier), and the rolling HF/LF summaries (task state)."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revision is reported, so no later run under a revised mechanism is reported. Each participant used AwareLLM in a single lab session.",
+      "locator": "Sec. 7.2 'Limited Temporal Scope'",
+      "quote": "Our study is cross-sectional in nature: each participant engaged with AwareLLM for a single lab session. (Sec. 7.2)"
+    }
+  },
+  "notes": "I judged the AwareLLM treatment condition of the single-session lab study, not the control. There is no code repository: the paper says the codebase 'will be publicly released upon publication'. WebFetch's copy of the listed HTML v3 stopped mid-Section 5, so Sections 5–9 and the appendices were read from the PDF of the same arXiv version (v3). All quotes are verbatim from the v3 PDF text layer, with typographic quotes and apostrophes kept. Quotes from Sections 4.1–4.5 also matched the HTML v3 wording returned by WebFetch. Appendix D quotes come from the system's own loop prompts, which the paper says were 'restructured for better readability'; they were checked only against the PDF. All retention is limited to the session: the baseline, the rolling HF/LF summaries, the last 5 user prompts and the system-prompt preferences. The paper says data were deleted after use and never stored persistently, so there is no memory across sessions. The self-evolution chain stops after Record: the service records its interventions only to avoid repeats, and nothing is learned from their results.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 680,
+    "code_commit": null
+  }
+}

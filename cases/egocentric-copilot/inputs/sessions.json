@@ -1,0 +1,543 @@
+{
+  "note": "Scripted inputs for Egocentric Co-Pilot. Each item has (1) a 60 s live session for the orchestrator: segments of what the glasses camera sees ('view', plus 'fine' small print that the scripted camera resolves only at JPEG quality >= 50) and four utterances; and (2) the day's earlier event history for the reasoning core's HCC script: 30 s clip captions per activity block, key captions, and transcribed speech, with one multiple-choice question about the early morning. Turn 1 ('Remember the positions of these three pieces') is spoken in Chinese because llm_intent.py's high-frame-rate templates are Chinese only; the English phrasing routes to the exit template. 'summary', 'label_expect', 'memory_expect', and the history 'summary' are for the judge and metrics only.",
+  "sessions": [
+    {
+      "id": "pill_morning",
+      "situation": "A weekday at home. The wearer plays a short memory game with three chess pieces, then gets ready for the day while wearing the glasses.",
+      "duration_s": 60,
+      "segments": [
+        {
+          "start": 0,
+          "end": 6,
+          "view": "Three face-down round Chinese chess pieces in a row on a wooden table; the wearer's hands rest beside them.",
+          "summary": "Three face-down chess pieces on the table."
+        },
+        {
+          "start": 6,
+          "end": 14,
+          "view": "The wearer's hands quickly swap the left and middle face-down chess pieces on the wooden table.",
+          "summary": "The wearer shuffles the pieces."
+        },
+        {
+          "start": 14,
+          "end": 24,
+          "view": "A hallway cabinet; the wearer's hand drops a ring of house keys with a green tag into the open top drawer, next to a torch.",
+          "summary": "The wearer puts the house keys into the top drawer of the hallway cabinet."
+        },
+        {
+          "start": 24,
+          "end": 40,
+          "view": "A kitchen counter; the wearer pours hot water from a kettle into a mug with a tea bag.",
+          "summary": "The wearer makes tea in the kitchen."
+        },
+        {
+          "start": 40,
+          "end": 52,
+          "view": "A white medicine box labelled 'Lisinopril 10 mg - 28 tablets' held close to the camera.",
+          "fine": "The small print on the side reads: 'Take ONE tablet once a day in the morning. Do not take potassium supplements. Keep below 25 C.'",
+          "fine_blurred": "There is a block of small print on the side of the box, but it is too blurry to read.",
+          "summary": "The wearer holds the medicine box; the side reads 'Take ONE tablet once a day in the morning. Do not take potassium supplements.'"
+        },
+        {
+          "start": 52,
+          "end": 60,
+          "view": "A living room with a grey sofa and a coffee table with a magazine; no keys are visible.",
+          "summary": "The wearer sits on the sofa."
+        }
+      ],
+      "utterances": [
+        {
+          "t": 2,
+          "text": "记住这三个棋子的位置。"
+        },
+        {
+          "t": 13,
+          "text": "I've finished moving."
+        },
+        {
+          "t": 46,
+          "text": "What does this label say?"
+        },
+        {
+          "t": 56,
+          "text": "Where did I put my keys?"
+        }
+      ],
+      "label_turn": 3,
+      "memory_turn": 4,
+      "label_expect": [
+        "once a day",
+        "potassium"
+      ],
+      "memory_expect": [
+        "drawer"
+      ],
+      "history": {
+        "blocks": [
+          {
+            "from": "08:00",
+            "to": "08:20",
+            "captions": [
+              "The wearer eats oatmeal with banana slices at the kitchen table.",
+              "The wearer drinks orange juice at the kitchen table while scrolling a phone.",
+              "The wearer's partner sits across the kitchen table eating toast."
+            ]
+          },
+          {
+            "from": "08:20",
+            "to": "09:00",
+            "captions": [
+              "The wearer types an email on a laptop at the study desk.",
+              "The wearer reads a long document on the laptop at the study desk.",
+              "The wearer sips coffee at the study desk while looking at a spreadsheet."
+            ]
+          },
+          {
+            "from": "09:00",
+            "to": "09:30",
+            "captions": [
+              "The wearer folds laundry on the bed.",
+              "The wearer hangs shirts in the wardrobe.",
+              "The wearer vacuums the bedroom carpet."
+            ]
+          },
+          {
+            "from": "09:30",
+            "to": "10:00",
+            "captions": [
+              "The wearer waters the plants on the balcony.",
+              "The wearer reads a newspaper on the balcony chair.",
+              "The wearer sweeps the balcony floor."
+            ]
+          }
+        ],
+        "key_captions": {
+          "08:12:30": "The wearer takes a white pill from a bottle labelled 'Lisinopril 10 mg' and swallows it with water at the kitchen table.",
+          "08:41:00": "At the study desk the wearer answers a phone call and listens, then writes 'blood test OK - Friday cancelled' on a sticky note."
+        },
+        "speech": [
+          {
+            "time": "08:13:00",
+            "text": "Partner: Good, you took your blood pressure pill already."
+          },
+          {
+            "time": "08:41:20",
+            "text": "Caller: This is Dr. Hassan's clinic. Your blood test results are all normal, so you don't need to come in on Friday."
+          },
+          {
+            "time": "09:45:00",
+            "text": "Neighbour: Morning! The bins go out tonight, not tomorrow."
+          }
+        ],
+        "summary": [
+          "08:12 the wearer takes the Lisinopril pill at breakfast; the partner remarks on it at 08:13.",
+          "08:41 Dr. Hassan's clinic calls: blood test results are normal, no need to come in on Friday.",
+          "09:45 the neighbour says the bins go out tonight."
+        ],
+        "question": {
+          "time": "10:00:00",
+          "question": "What did the clinic say on the phone this morning?",
+          "choices": [
+            "Come in on Friday at nine for a repeat test",
+            "The results are normal and Friday's visit is not needed",
+            "Bring the pill bottle to the next appointment",
+            "The appointment is moved to Monday"
+          ],
+          "answer": "B"
+        }
+      }
+    },
+    {
+      "id": "parcel_office",
+      "situation": "A workday at the office. The wearer plays a quick memory game with three chess pieces during a break, then handles a parcel.",
+      "duration_s": 60,
+      "segments": [
+        {
+          "start": 0,
+          "end": 6,
+          "view": "Three face-down Chinese chess pieces lined up on an office desk next to a keyboard.",
+          "summary": "Three face-down chess pieces on the desk."
+        },
+        {
+          "start": 6,
+          "end": 14,
+          "view": "The wearer's hands slide the right face-down piece to the far left of the row.",
+          "summary": "The wearer reorders the pieces."
+        },
+        {
+          "start": 14,
+          "end": 24,
+          "view": "The wearer's hand places a black office key card into the front pocket of a grey backpack on the chair.",
+          "summary": "The wearer puts the key card into the backpack's front pocket."
+        },
+        {
+          "start": 24,
+          "end": 38,
+          "view": "The office kitchenette; the wearer rinses a coffee cup at the sink.",
+          "summary": "The wearer rinses a cup in the kitchenette."
+        },
+        {
+          "start": 38,
+          "end": 52,
+          "view": "A brown cardboard parcel held up to the camera with a white shipping label; the large text reads 'FRAGILE'.",
+          "fine": "The small print on the label reads: 'To: Priya Nair, Floor 7, Desk 7-21. Sender: Lumen Optics Ltd. Ref: LO-55832.'",
+          "fine_blurred": "The address lines on the label are small and too blurry to read.",
+          "summary": "A parcel addressed to Priya Nair, Floor 7, Desk 7-21, from Lumen Optics, ref LO-55832."
+        },
+        {
+          "start": 52,
+          "end": 60,
+          "view": "A corridor with a lift lobby; the parcel is under the wearer's arm.",
+          "summary": "The wearer walks to the lifts with the parcel."
+        }
+      ],
+      "utterances": [
+        {
+          "t": 2,
+          "text": "记住这三个棋子的位置。"
+        },
+        {
+          "t": 13,
+          "text": "I've finished moving."
+        },
+        {
+          "t": 44,
+          "text": "Who is this parcel for?"
+        },
+        {
+          "t": 56,
+          "text": "Where did I put my key card?"
+        }
+      ],
+      "label_turn": 3,
+      "memory_turn": 4,
+      "label_expect": [
+        "priya",
+        "7-21"
+      ],
+      "memory_expect": [
+        "backpack"
+      ],
+      "history": {
+        "blocks": [
+          {
+            "from": "08:00",
+            "to": "08:30",
+            "captions": [
+              "The wearer commutes on a train, standing near the door.",
+              "The wearer reads news on a phone on the train.",
+              "The wearer walks from the station to the office building."
+            ]
+          },
+          {
+            "from": "08:30",
+            "to": "09:00",
+            "captions": [
+              "The wearer sits in a meeting room with four colleagues around a table.",
+              "A colleague presents slides on a wall screen in the meeting room.",
+              "The wearer takes notes in a notebook during the meeting."
+            ]
+          },
+          {
+            "from": "09:00",
+            "to": "10:00",
+            "captions": [
+              "The wearer writes code on a laptop at the desk.",
+              "The wearer reviews a pull request on a large monitor.",
+              "The wearer drinks water at the desk."
+            ]
+          }
+        ],
+        "key_captions": {
+          "08:44:00": "In the meeting room the manager points at a slide titled 'Demo plan' where 'Tuesday' is crossed out and 'Thursday 2 pm' is written."
+        },
+        "speech": [
+          {
+            "time": "08:44:10",
+            "text": "Manager: The client demo moves from Tuesday to Thursday at two, and Lena will run it instead of me."
+          },
+          {
+            "time": "09:20:00",
+            "text": "Colleague: Lunch at the noodle place at twelve thirty?"
+          }
+        ],
+        "summary": [
+          "08:44 in the meeting the manager says the client demo moves from Tuesday to Thursday at 2 pm and Lena will run it.",
+          "09:20 a colleague suggests lunch at 12:30."
+        ],
+        "question": {
+          "time": "10:00:00",
+          "question": "What changed about the client demo in this morning's meeting?",
+          "choices": [
+            "It was cancelled",
+            "It moved to Tuesday morning",
+            "It moved to Thursday at 2 pm and Lena will run it",
+            "It will be run by the manager on Friday"
+          ],
+          "answer": "C"
+        }
+      }
+    },
+    {
+      "id": "recipe_kitchen",
+      "situation": "A Saturday at home. After a short memory game with chess pieces, the wearer starts baking.",
+      "duration_s": 60,
+      "segments": [
+        {
+          "start": 0,
+          "end": 6,
+          "view": "Three face-down Chinese chess pieces on a kitchen table beside a bag of flour.",
+          "summary": "Three face-down chess pieces on the kitchen table."
+        },
+        {
+          "start": 6,
+          "end": 14,
+          "view": "The wearer's hands swap the middle and right face-down pieces.",
+          "summary": "The wearer shuffles the pieces."
+        },
+        {
+          "start": 14,
+          "end": 24,
+          "view": "The wearer's hand puts a silver measuring spoon set into the second drawer from the top, next to the oven.",
+          "summary": "The wearer puts the measuring spoons into the second drawer next to the oven."
+        },
+        {
+          "start": 24,
+          "end": 38,
+          "view": "The wearer cracks two eggs into a glass mixing bowl.",
+          "summary": "The wearer cracks eggs into a bowl."
+        },
+        {
+          "start": 38,
+          "end": 52,
+          "view": "A printed recipe card titled 'Lemon Drizzle Cake' held close to the camera.",
+          "fine": "The small print under the title reads: 'Bake at 180 C (160 C fan) for 45 minutes; skewer should come out clean. Drizzle while warm.'",
+          "fine_blurred": "The instructions under the title are in small print that is too blurry to read.",
+          "summary": "The recipe card says bake at 180 C (160 C fan) for 45 minutes, drizzle while warm."
+        },
+        {
+          "start": 52,
+          "end": 60,
+          "view": "The open oven with an empty baking tin on the counter.",
+          "summary": "The wearer opens the oven."
+        }
+      ],
+      "utterances": [
+        {
+          "t": 2,
+          "text": "记住这三个棋子的位置。"
+        },
+        {
+          "t": 13,
+          "text": "I've finished moving."
+        },
+        {
+          "t": 45,
+          "text": "What temperature does this recipe say?"
+        },
+        {
+          "t": 56,
+          "text": "Where did I put the measuring spoons?"
+        }
+      ],
+      "label_turn": 3,
+      "memory_turn": 4,
+      "label_expect": [
+        "180",
+        "45"
+      ],
+      "memory_expect": [
+        "drawer"
+      ],
+      "history": {
+        "blocks": [
+          {
+            "from": "08:00",
+            "to": "08:40",
+            "captions": [
+              "The wearer jogs along a riverside path.",
+              "The wearer stretches on a bench by the river.",
+              "The wearer jogs past a playground."
+            ]
+          },
+          {
+            "from": "08:40",
+            "to": "09:10",
+            "captions": [
+              "The wearer showers and dresses in the bedroom.",
+              "The wearer dries hair in the bathroom.",
+              "The wearer makes the bed."
+            ]
+          },
+          {
+            "from": "09:10",
+            "to": "10:00",
+            "captions": [
+              "The wearer unpacks grocery bags in the kitchen.",
+              "The wearer puts vegetables into the fridge.",
+              "The wearer wipes the kitchen counter."
+            ]
+          }
+        ],
+        "key_captions": {
+          "09:12:00": "At the front door a delivery driver hands over two grocery bags and points at an egg carton labelled 'Free range'."
+        },
+        "speech": [
+          {
+            "time": "09:12:15",
+            "text": "Driver: Your regular eggs were out of stock, so we substituted free-range at no extra charge. The lemons are on back order until Monday."
+          },
+          {
+            "time": "09:40:00",
+            "text": "Radio: Sunny all afternoon with highs of twenty six."
+          }
+        ],
+        "summary": [
+          "09:12 the grocery driver says regular eggs were replaced by free-range at no extra charge, and lemons are on back order until Monday.",
+          "09:40 the radio forecasts a sunny afternoon."
+        ],
+        "question": {
+          "time": "10:00:00",
+          "question": "What did the delivery driver say about the order?",
+          "choices": [
+            "The order will arrive on Monday",
+            "The lemons were replaced by limes",
+            "There is an extra delivery charge for eggs",
+            "The eggs were replaced by free-range and the lemons come on Monday"
+          ],
+          "answer": "D"
+        }
+      }
+    },
+    {
+      "id": "boarding_trip",
+      "situation": "A travel day. The wearer passes time at the hotel with a chess-piece memory game, then checks the boarding pass.",
+      "duration_s": 60,
+      "segments": [
+        {
+          "start": 0,
+          "end": 6,
+          "view": "Three face-down Chinese chess pieces on a hotel desk next to a passport.",
+          "summary": "Three face-down chess pieces on the hotel desk."
+        },
+        {
+          "start": 6,
+          "end": 14,
+          "view": "The wearer's hands move the left piece to the right end of the row.",
+          "summary": "The wearer rearranges the pieces."
+        },
+        {
+          "start": 14,
+          "end": 24,
+          "view": "The wearer's hand slips a dark red passport into the inner zip pocket of a black jacket hanging on the chair.",
+          "summary": "The wearer puts the passport into the inner zip pocket of the black jacket."
+        },
+        {
+          "start": 24,
+          "end": 38,
+          "view": "The wearer zips a blue suitcase on the hotel bed.",
+          "summary": "The wearer packs the suitcase."
+        },
+        {
+          "start": 38,
+          "end": 52,
+          "view": "A paper boarding pass held close to the camera; the large text reads 'SQ 318 SINGAPORE - LONDON'.",
+          "fine": "The small print reads: 'Gate B12. Boarding 10:35. Seat 44K. Gate closes 20 minutes before departure.'",
+          "fine_blurred": "The gate, boarding time and seat fields are printed small and are too blurry to read.",
+          "summary": "The boarding pass: SQ 318 to London, gate B12, boarding 10:35, seat 44K."
+        },
+        {
+          "start": 52,
+          "end": 60,
+          "view": "The hotel room door with a 'Do not disturb' sign; the suitcase stands by the door.",
+          "summary": "The wearer moves the suitcase to the door."
+        }
+      ],
+      "utterances": [
+        {
+          "t": 2,
+          "text": "记住这三个棋子的位置。"
+        },
+        {
+          "t": 13,
+          "text": "I've finished moving."
+        },
+        {
+          "t": 46,
+          "text": "Which gate does this say?"
+        },
+        {
+          "t": 56,
+          "text": "Where did I put my passport?"
+        }
+      ],
+      "label_turn": 3,
+      "memory_turn": 4,
+      "label_expect": [
+        "b12"
+      ],
+      "memory_expect": [
+        "jacket"
+      ],
+      "history": {
+        "blocks": [
+          {
+            "from": "08:00",
+            "to": "08:30",
+            "captions": [
+              "The wearer eats breakfast at the hotel buffet.",
+              "The wearer pours coffee at the hotel buffet counter.",
+              "The wearer sits by the window in the hotel restaurant."
+            ]
+          },
+          {
+            "from": "08:30",
+            "to": "09:00",
+            "captions": [
+              "The wearer stands at the hotel reception desk.",
+              "The wearer waits in the hotel lobby with a suitcase.",
+              "The wearer looks at a phone in the hotel lobby."
+            ]
+          },
+          {
+            "from": "09:00",
+            "to": "10:00",
+            "captions": [
+              "The wearer walks around a park near the hotel.",
+              "The wearer sits on a park bench.",
+              "The wearer buys a bottle of water at a kiosk."
+            ]
+          }
+        ],
+        "key_captions": {
+          "08:36:00": "At the hotel reception the receptionist hands over a printed invoice and points at a note 'Taxi 10:05 - main entrance'."
+        },
+        "speech": [
+          {
+            "time": "08:36:20",
+            "text": "Receptionist: Your late checkout is approved until ten, and your taxi to the airport is booked for five past ten at the main entrance."
+          },
+          {
+            "time": "09:30:00",
+            "text": "Kiosk seller: That's two dollars fifty, thank you."
+          }
+        ],
+        "summary": [
+          "08:36 the receptionist approves late checkout until 10:00 and books the airport taxi for 10:05 at the main entrance.",
+          "09:30 the wearer buys water at a kiosk."
+        ],
+        "question": {
+          "time": "10:00:00",
+          "question": "When is the taxi to the airport booked?",
+          "choices": [
+            "At 10:05 at the main entrance",
+            "At 9:15 at the side entrance",
+            "At 10:35 from the airport hotel shuttle stop",
+            "It was not booked"
+          ],
+          "answer": "A"
+        }
+      }
+    }
+  ]
+}

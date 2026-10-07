@@ -1,0 +1,41 @@
+{
+  "run": {
+    "models": {
+      "backbone": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "low"
+      },
+      "judge": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "high"
+      }
+    },
+    "samples": 3,
+    "rubric": "The assistant runs on smart glasses and answers what the wearer asks about the thing they are holding up to the camera. The situation lists what was actually in view, including the small print. Prefer the reply that answers the question correctly and specifically from what is in view; saying the text cannot be read is worse than a correct reading but better than a wrong one. Ignore writing style and length.",
+    "tests": [
+      {
+        "cut": [
+          "A->S"
+        ]
+      },
+      {
+        "cut": [
+          "S->M"
+        ],
+        "field": "output_hcc",
+        "context_field": "context_hcc",
+        "rubric": "The assistant answers a multiple-choice question about the wearer's morning from its record of the day. The situation gives the key events and the correct option. Prefer the output that chose the correct option. If both outputs chose the same option, or both chose wrong options, answer TIE. No answer is worse than the correct option and no better than a wrong one."
+      },
+      {
+        "cut": [
+          "M->A"
+        ],
+        "field": "output_hcc",
+        "context_field": "context_hcc",
+        "rubric": "The assistant answers a multiple-choice question about the wearer's morning from its record of the day. The situation gives the key events and the correct option. Prefer the output that chose the correct option. If both outputs chose the same option, or both chose wrong options, answer TIE. No answer is worse than the correct option and no better than a wrong one."
+      }
+    ]
+  },
+  "samples": 3,
+  "items_limit": null
+}

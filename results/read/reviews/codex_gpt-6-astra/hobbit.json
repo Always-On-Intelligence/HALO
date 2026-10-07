@@ -1,0 +1,70 @@
+{
+  "id": "hobbit",
+  "configuration": "Hobbit PT2 household assistance in the 2018 integrated-system paper, including its tested device and Mutual Care modes.",
+  "sources_read": [
+    "https://onlinelibrary.wiley.com/doi/10.1155/2018/1754657 — published 3 June 2018; full article.",
+    "cases/hobbit/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-edited calendar reminders and learned objects persist for subsequent assistance.",
+      "locator": "[Paper](https://onlinelibrary.wiley.com/doi/10.1155/2018/1754657), §§4.3, 6.1.4."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Calendar entries trigger scheduled behavior; remembered obstacles determine safe approach positions.",
+      "locator": "[Paper](https://onlinelibrary.wiley.com/doi/10.1155/2018/1754657), §§4.1, 4.3, 4.7."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Navigation directs camera tilt; pickup directs object observations and post-grasp checks.",
+      "locator": "[Paper](https://onlinelibrary.wiley.com/doi/10.1155/2018/1754657), §§4.2, 4.9; Figure 13 caption."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Previously learned objects enable later recognition; the accumulated map supports interpreting camera motion and visual points.",
+      "locator": "[Paper](https://onlinelibrary.wiley.com/doi/10.1155/2018/1754657), §§4.8, 6.1.4."
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "Research logs are described; retention of action context for subsequent service use is unspecified.",
+      "locator": "[Paper](https://onlinelibrary.wiley.com/doi/10.1155/2018/1754657), §§5, 6.1.2, 6.1.6."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "Logs support researchers' trial analysis; service use of retained action records is unstated.",
+      "locator": "[Paper](https://onlinelibrary.wiley.com/doi/10.1155/2018/1754657), §5; §§6.1.2–6.1.6."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Grasp results are checked, but their retention for later service use is unspecified.",
+      "locator": "[Paper](https://onlinelibrary.wiley.com/doi/10.1155/2018/1754657), §§4.9, 5."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The robot checks grasp success and retries.",
+      "locator": "[Paper](https://onlinelibrary.wiley.com/doi/10.1155/2018/1754657), §4.9, opening paragraph.",
+      "quote": "subsequently checks if the grasp was successful and will try to do so a second time if it was not."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Researchers changed behavior; object learning supplies content, without stated autonomous revision of reusable mechanisms.",
+      "locator": "[Paper](https://onlinelibrary.wiley.com/doi/10.1155/2018/1754657), §§6.1.4, 6.3."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Subsequent trials concern researcher-made changes, not stated service-generated mechanism revisions.",
+      "locator": "[Paper](https://onlinelibrary.wiley.com/doi/10.1155/2018/1754657), §§3.2, 5, 6.3."
+    }
+  },
+  "notes": "Text-only assessment; no code repository supplied.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 184,
+    "code_commit": null
+  }
+}

@@ -1,0 +1,1 @@
+run: pask/astra-20261007

@@ -1,0 +1,15 @@
+# HALO run mode for PASK. Inputs and the backbone are fixed across arms; only the cut sites differ.
+models:
+  backbone: {backend: "codex:gpt-6-astra", effort: low}   # stands in for IntentFlow (demand detection) and gpt-5.2 (memory writer)
+  judge: {backend: "codex:gpt-6-astra", effort: high}
+samples: 3
+rubric: >-
+  The assistant listens to a live conversation on behalf of one person, the primary user, and at each turn
+  of the later part either stays silent or speaks up. Decide which output serves the primary user better:
+  speaking up at the turn where the user is about to miss something that matters, including facts or
+  constraints raised earlier in the conversation, with correct and specific content, and staying silent when
+  nothing is needed. An intervention that misstates facts or interrupts without need counts against an
+  output. Ignore writing style and length.
+tests:
+  - cut: [S->M]
+  - cut: [M->A]

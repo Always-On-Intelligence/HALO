@@ -1,0 +1,88 @@
+{
+  "id": "lightmemego2026",
+  "configuration": "Phone/glasses client with hierarchical event memory and experience QA, using paper 2607.11487v1 and repository commit 3c023dfec301bb2f9624f82cee76007ac3ac0646, including the interaction cache and asynchronous QA path.",
+  "sources_read": [
+    "https://arxiv.org/html/2607.11487v1",
+    "https://github.com/zjunlp/LightMem-Ego/tree/3c023dfec301bb2f9624f82cee76007ac3ac0646",
+    "README.md; src/backend/README.md",
+    "src/backend/online_current/mcur_updater.py; src/backend/online_current/mcur_query.py",
+    "src/backend/online_short_term/frame_stream_event_builder.py; src/backend/online_short_term/micro_event_refiner.py",
+    "src/backend/online_query/query_engine.py; src/backend/online_query/memory_plan.py; src/backend/online_query/evidence_sufficiency.py",
+    "src/backend/online_query/interaction_cache.py; src/backend/online_query/coreference_resolver.py",
+    "src/backend/online_qa_history.py; src/backend/online_query_worker.py; src/backend/online_preprocess/task_queue.py; src/backend/api_server.py",
+    "src/backend/online_memory_edit/service.py; src/backend/online_preprocess/tts_xfyun.py",
+    "src/frontend/online_web/src/hooks/useAskLightMemEgo.js; src/frontend/online_web/src/hooks/useRealtimeStream.js; src/frontend/online_web/src/api/lightmem_egoApi.js",
+    "src/ai_glass_app/app/src/main/java/cn/zjukg/lightmem/glass/activities/lightmem_ego/LightMemEgoGlassViewModel.kt",
+    "src/ai_glass_app/app/src/main/java/cn/zjukg/lightmem/glass/lightmem_ego/LightMemEgoConfig.kt; src/ai_glass_app/app/src/main/java/cn/zjukg/lightmem/glass/lightmem_ego/LightMemEgoDiagnostics.kt"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Captured frames and audio-derived transcripts update current memory and stored micro-events; stable events are consolidated into episodic and semantic memory. The code explicitly appends events constructed from incoming frames.",
+      "locator": "[Paper v1, §§3.1–3.4](https://arxiv.org/html/2607.11487v1#S3); src/backend/online_current/mcur_updater.py:54–74; src/backend/online_short_term/frame_stream_event_builder.py:57–85.",
+      "quote": "appended = self.store.append_events(closed_events)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved current, short-term, and long-term evidence determines answer content. The implementation supplies retained context, transcripts, and selected frames to answer generation.",
+      "locator": "[Paper v1, §3.5](https://arxiv.org/html/2607.11487v1#S3.SS5); src/backend/online_query/query_engine.py:3822–3946; src/backend/online_current/mcur_query.py:48–54.",
+      "quote": "generates an answer from retrieved evidence."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The QA execution path supplies its submitted task ID to an in-system polling loop, directing observation of that particular task's completion or failure before delivering the answer. This establishes execution-state sensing, without establishing adaptive camera sampling.",
+      "locator": "src/frontend/online_web/src/hooks/useAskLightMemEgo.js:451–513; src/frontend/online_web/src/api/lightmem_egoApi.js:1221–1257; src/ai_glass_app/app/src/main/java/cn/zjukg/lightmem/glass/activities/lightmem_ego/LightMemEgoGlassViewModel.kt:819–835.",
+      "quote": "const task = await getQueryTask(taskId, options)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The coreference resolver reads retained interaction context, entities, and time ranges to interpret pronouns and temporal references in incoming user questions, producing a resolved question before routing. This is direct memory-supported input interpretation beyond answer-time evidence retrieval.",
+      "locator": "src/backend/online_query/coreference_resolver.py:46–121; src/backend/online_query/query_engine.py:1747–1766.",
+      "quote": "context = interaction_cache.latest_context()"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Successful QA stores the assistant's answer, query type, routing decision, and selected evidence in a persistent session interaction cache for subsequent turns. QA history additionally retains answers and execution status.",
+      "locator": "src/backend/online_query/query_engine.py:2548–2568; src/backend/online_query/interaction_cache.py:116–123,177–214; src/backend/online_qa_history.py:42–78.",
+      "quote": "\"answer\": result.get(\"answer\", \"\"),\n                \"query_type\": result.get(\"query_type\"),\n                \"route_decision\": result.get(\"route_decision\", {}),"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains generated answers and routing decisions across interactions, flushes them to disk, and reads that context for follow-up resolution; these are operational records rather than author-only trial logs.",
+      "locator": "src/backend/online_query/interaction_cache.py:53–56,116–123,177–214; src/backend/online_query/query_engine.py:1761–1764,2562–2568.",
+      "quote": "It stores recent dialogue,\n    entities, hot time ranges, and hot memories for follow-up resolution."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "For submitted QA execution, the worker obtains completion/failure and returned results or errors, then persists them with the original task. The client subsequently reads these task results. This establishes operational outcomes, not user satisfaction or answer-correctness feedback.",
+      "locator": "src/backend/online_query_worker.py:529–606,615–649; src/backend/online_preprocess/task_queue.py:1273–1298,1321–1329; src/frontend/online_web/src/api/lightmem_egoApi.js:1221–1257.",
+      "quote": "task[\"status\"] = status\n    task[\"error\"] = error\n    if result is not None:\n        task[\"result\"] = result"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Answer-generation failures are linked to the attempted generation and used immediately to retry or replace it with text-only/local-evidence assistance. This is a narrow execution-success check and correction, not a semantic evaluation of delivered advice.",
+      "locator": "src/backend/online_query/query_engine.py:391–416,3903–3946.",
+      "quote": "answer, fallback_debug = _llm_generate_with_retries(\n                        _get_short_term_answer_model(),\n                        prompt_text,\n                        _env_int(\"EM2MEM_MCUR_ANSWER_RETRIES\", 1),\n                    )\n                answer_debug[\"text_only_fallback_debug\"] = fallback_debug"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Consolidation, dialogue caching, user memory edits, and fixed retry/fallback branches change content or per-query execution, with no reported service-authored durable mechanism change.",
+      "locator": "[Paper v1, §3.3 and Limitations](https://arxiv.org/html/2607.11487v1); src/backend/online_query/interaction_cache.py:177–214; src/backend/online_memory_edit/service.py:85–89,138–160; src/backend/online_query/query_engine.py:3903–3946.",
+      "what": "No qualifying revision to parameters, prompts, skills, reusable rules, code, or harness is reported."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "The demonstration and evaluation use accumulated memories, but no later execution under a service-revised mechanism is stated.",
+      "locator": "[Paper v1, §§4–5 and Limitations](https://arxiv.org/html/2607.11487v1); src/backend/online_query/query_engine.py:1747–1766,3903–3946."
+    }
+  },
+  "notes": "Read independently without modifying files; verified the checkout commit. Code-backed dialogue and task-lifecycle findings supplement the specified paper version. Outcome and attribution are limited to operational execution feedback. Offline LLM/human benchmark judgments do not count as in-system feedback, and semantic routines/preferences do not establish mechanism revision.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 312,
+    "code_commit": "3c023dfec301bb2f9624f82cee76007ac3ac0646"
+  }
+}

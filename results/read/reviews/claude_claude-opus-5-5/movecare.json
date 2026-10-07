@@ -1,0 +1,81 @@
+{
+  "id": "movecare",
+  "configuration": "Variant `movecare`: the MoveCare platform in the with-robot condition of the 10-week home pilot. It comprises the Giraff-X socially assistive robot, environmental IoT sensors (PIR, door switch, bed/sofa accelerometers, TV smart plug, microphones), smart objects (grip ball, ink pen, insoles, Bluetooth scale), the Community-Based Activity Centre (CBAC), and the cloud Virtual Caregiver (VC). The VC includes the scenario modules, Reminders, Report Generation, User Location and the Orchestrator.",
+  "sources_read": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC8853423/ (the listed source, version unspecified). Fetching it directly returned only a reCAPTCHA page, so the same PMC article was read through the two renderings below. The listed sha256 could not be checked.",
+    "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8853423/fullTextXML (Europe PMC full-text XML of PMC8853423: Luperto et al., 'Integrating Social Assistive Robots, IoT, Virtual Communities and Smart Objects to Assist at-Home Independently Living Elders: the MoveCare Project', Int J Soc Robot 2022, doi:10.1007/s12369-021-00843-0). Read Sects. 1-5 and the figure and table captions.",
+    "https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json/PMC8853423/unicode (NCBI BioC JSON of the same PMC article, used to cross-check the exact wording of quotes and the section structure)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed data and data the user generates are written to the cloud/central database, and VC modules read them later. Insole gait data are stored in the cloud and processed into daily gait parameters. CBAC activity reports (usage statistics and scores) are stored in a cloud repository that the VC reads through APIs. The periodic VC workflows collect from the database all new data generated since their last activation (see also the Fig. 7 caption).",
+      "locator": "Sect. 4.3 Smart Objects; Sect. 4.4 Community-Based Activity Centre; Sect. 4.5 Intelligent Virtual Caregiver (definition of the periodic workflow); Fig. 7 caption",
+      "quote": "\"Gait data is then stored on the cloud, and automatic post-processing obtains daily spatio-temporal parameters of gait.\" (Sect. 4.3); \"This data is stored in a cloud repository and accessible for analysis to the VC through a set of APIs.\" (Sect. 4.4); \"during which it collects from the database the new data generated since its last activation\" (Sect. 4.5)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Stored data decide what the VC does and when. The Body Weight Measurement module checks the past week's stored measurements and issues a reminder if there are none. The Neuropsychological Tests module checks when the tests were last done and triggers an intervention when a new test is due. The Reminders module prompts the user about scenarios not done for a set time and gives 'positive feedback' when they are done regularly. Report Generation queries the database and emails the clinician. The robot's navigation goal is the room where the user was last detected.",
+      "locator": "Sect. 4.5 (Intelligent Virtual Caregiver), Body Weight Measurement and Neuropsychological Tests module paragraphs; Sect. 4.5.2 Reminders; Sect. 4.5.3 Report Generation; Sect. 4.1.1 Autonomous Navigation",
+      "quote": "\"activated weekly and checks if the user measured their body weight at least once during the past week\" … \"If not, the module generates a reminder for it.\" (Body Weight Measurement module); \"Moreover, it checks when the test was last performed\" … \"if the date for a new test has arrived, it triggers an intervention for the user to perform the tests\" (Neuropsychological Tests module); \"Upon activation, the module queries the relevant data from the database and sends it by email to the clinician responsible for the user.\" (Sect. 4.5.3); \"When the robot is required to navigate to the user, it first searches in the last room they were detected\" (Sect. 4.1.1)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Interventions chosen by Action decide what is sensed next and how the result is read. In Call for Help, the first escalation step is an intervention in which the robot reaches the user and asks for confirmation. The reply is read against that request: no confirmation means a false positive, while confirmation or no answer continues the escalation. After a weight anomaly, the VC issues an intervention asking the user to repeat the measurement, and the new reading is checked for confirmation. In the lost-object service, the object the user names becomes the robot's search target, located with RFID antennas or computer vision. When sent to the user, the robot locates them and searches the apartment if they are not found.",
+      "locator": "Sect. 4.5 (Intelligent Virtual Caregiver), Call for Help and Body Weight Measurement module paragraphs; Sect. 4.1.3 Robot Functionalities (service sequence; search for lost objects)",
+      "quote": "\"first, an intervention is generated to ask the user to confirm the help need. The robot performs this step and, upon reaching the user, asks him to confirm the request.\" (Call for Help module); \"If such a change is detected, the VC generates an intervention to ask the user to repeat the measurement.\" (Body Weight Measurement module); \"In the search for lost objects service, the user commands the robot to search a specified object to which an RFID tag has been previously attached.\" (Sect. 4.1.3)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Stored information is used directly to interpret current sensor readings. The User Location module turns PIR and door-sensor events into the user's room by combining them with the stored, semantically annotated apartment map, which records where each sensor is. If no PIR sensor is active, it marks the user as 'outdoor' when the door sensor fired recently. The Body Weight Measurement module flags a new scale reading as anomalous relative to the previously registered weight. The robot starting its search in the last room the user was detected in is an M->A->S composition and was not used for this label.",
+      "locator": "Sect. 4.5.4 User Location (with the Fig. 4 annotated map); Sect. 4.5 (Intelligent Virtual Caregiver), Body Weight Measurement module paragraph",
+      "quote": "\"This is done by combining the data from the PIR and the door sensor with the a priori knowledge of the apartment map where the position of the installed sensors are semantically annotated\" … \"their location is marked as outdoor if the door sensor has been activated recently\" (Sect. 4.5.4); \"In the reactive workflow, the VC analyses the data gathered from the smart scale to detect anomalous weight variations (more than 2% of the previously registered weight).\" (Body Weight Measurement module)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Action outputs and their outcomes are kept. Interventions generated by the scenario modules are stored in the Orchestrator's priority-sorted list of pending interventions. The list is cleared each evening and interventions are regenerated the next day if still needed. An intervention is rescheduled when no answer to the robot's question comes back from the cloud speech service. The executed Call for Help scenario is logged as a true positive, or archived as a false positive, and the VC later puts it in the periodic caregiver report.",
+      "locator": "Sect. 4.5.5 Orchestrator; Sect. 4.1.2 Human Robot Interface; Sect. 4.5 (Intelligent Virtual Caregiver), Call for Help module paragraph",
+      "quote": "\"The intervention is stored in a list of pending interventions, sorted by priority.\" (Sect. 4.5.5); \"The Call for Help scenario is then logged as a true positive and, the VC will later include it in the periodic report for caregivers.\" (Call for Help module)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service logs the Call for Help scenario it ran (or archives the request as a false positive), and the VC itself later uses that log to build the periodic caregiver report. The Orchestrator also keeps pending interventions until they are sent. The technical team's remote-monitoring tool and central issue log (Sect. 5.2.2) are operator tools and were not counted.",
+      "locator": "Sect. 4.5 (Intelligent Virtual Caregiver), Call for Help module paragraph; Sect. 4.5.5 Orchestrator",
+      "quote": "\"The Call for Help scenario is then logged as a true positive and, the VC will later include it in the periodic report for caregivers.\""
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "After the robot asks the user to confirm a detected help request, the system obtains the user's reply (or silence) and keeps it as the classification of that episode: an archived false positive or a logged true positive. The user's answers to the Spot Questions the system asks are also kept and included in the weekly report.",
+      "locator": "Sect. 4.5 (Intelligent Virtual Caregiver), Call for Help module paragraph; Sect. 4.5.3 Report Generation",
+      "quote": "\"If the user does not confirm, then the request is archived as a false positive, and the scenario is aborted. If the user does confirm or does not answer, the escalation proceeds\" (Call for Help module); \"the report contains the answer given to the Spot Questions asked during the week\" (Sect. 4.5.3)"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Each outcome is tied to the decision it concerns and used at once to correct the assistance. A help request the user does not confirm is labelled a false positive and its escalation is stopped. When no answer to the robot's question comes back from the cloud after two 30 s timeouts, the robot apologises and the VC reschedules that intervention.",
+      "locator": "Sect. 4.5 (Intelligent Virtual Caregiver), Call for Help module paragraph; Sect. 4.1.2 Human Robot Interface",
+      "quote": "\"If the user does not confirm, then the request is archived as a false positive, and the scenario is aborted.\" (Call for Help module); \"the VC reschedules the intervention as it could be a temporal connectivity issue\" (Sect. 4.1.2)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The paper reports no lasting change that the service makes to its own rules, models, schedules or code. Scenario frequencies and Orchestrator rules are predefined. Changes between pilot rounds were made by the project team. The microphones' built-in adaptation to noise level and voice pitch (Sect. 4.2) is designed signal processing, not a revision driven by outcomes. Archived false positives are not said to change detection.",
+      "locator": "Sect. 5.2.3 Deployment Modalities; Sect. 4.2 Environmental Sensors; Sect. 4.5.5 Orchestrator",
+      "quote": "\"we removed the possibility for the robot to move at night unless an emergency was triggered\" (Sect. 5.2.3, a change made by the authors); \"Microphones were also updated to reduce false positives in commands due to external noise\" (Sect. 5.2.3)",
+      "what": "Nothing is revised by the service itself. The only mechanism changes reported are developer changes made between pilot rounds R1 and R2."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Because the service makes no revision of its own, no later run under a self-revised mechanism is reported. Round R2 ran with improvements the team introduced, which does not count.",
+      "locator": "Sect. 5.2.3 Deployment Modalities",
+      "quote": "\"These improvements introduced between the two pilot rounds allowed, as expected, getting a more robust system\""
+    }
+  },
+  "notes": "I judged the with-robot configuration of the home pilot, where 13 elders used the whole system including Giraff-X for 10 weeks each. I did not judge the without-robot configuration (11 elders; its scenario changes are in the appendix), and I did not read the appendix. The listed PMC page returned only a reCAPTCHA, so I read the same article through Europe PMC full-text XML and NCBI BioC JSON. The fetch tool summarises pages, so I checked every quote used here as an exact string, most of them against both renderings. Wording was kept only where the renderings agreed; for example, the Reminders sentence was quoted only in part. Neither rendering contained the body of Table 2 (Orchestrator rules and constraints). I did not count operator tools (remote monitoring, the central issue log) or the authors' questionnaires as service records. The case README showed another agent's provisional labels. I did not open that review and judged from the source alone.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 755,
+    "code_commit": null
+  }
+}

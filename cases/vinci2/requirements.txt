@@ -1,0 +1,13 @@
+# Vinci2 / EgoMemo run mode, CPU only. The model clients are replaced (see README.md).
+pyyaml
+sentence-transformers   # all-MiniLM-L6-v2 stands in for text-embedding-3-small and the ImageBind encoders
+torch                   # imported by videorag (CPU)
+torchvision             # videorag/_storage/vdb_nanovectordb.py imports transforms
+transformers            # imported by videorag modules
+numpy
+pillow
+networkx                # knowledge graph storage (NetworkXStorage)
+nano-vectordb           # vector stores (chunks, entities, visual features)
+tenacity                # videorag/_llm.py retry decorators
+openai                  # imported by videorag/_llm.py and the replaced clients
+tqdm

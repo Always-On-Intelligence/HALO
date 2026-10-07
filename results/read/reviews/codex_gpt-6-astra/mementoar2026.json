@@ -1,0 +1,72 @@
+{
+  "id": "mementoar2026",
+  "configuration": "Quest 3 prototype with RSAM storage, context-triggered resurfacing, referent checking, and permanent removal.",
+  "sources_read": [
+    "https://arxiv.org/html/2601.17622v4 (version 2601.17622v4; full primary text)",
+    "cases/memento/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Queries and sensed spatial/activity context enter persistent RSAMs.",
+      "locator": "[Paper §2.2.3](https://arxiv.org/html/2601.17622v4)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Matched RSAMs determine proactive display timing, content, and anchors.",
+      "locator": "[Paper §§2.2.4–2.2.5](https://arxiv.org/html/2601.17622v4)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Answering information needs drives Google Search acquisition, including fresh information on recall cycles.",
+      "locator": "[Paper §§2.2.1, 2.2.5](https://arxiv.org/html/2601.17622v4)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Stored referent identities directly guide object detection in the current view.",
+      "locator": "[Paper §2.2.5, Referent detection](https://arxiv.org/html/2601.17622v4)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Generated answers and their sources are stored in RSAMs.",
+      "locator": "[Paper §2.2.3; Figure 2 caption](https://arxiv.org/html/2601.17622v4)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "RSAMs retain assistant responses for subsequent recall.",
+      "locator": "[Paper §2.2.3](https://arxiv.org/html/2601.17622v4)",
+      "quote": "the response, the source of the response"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Dismissal persists as permanent exclusion of the rejected memory.",
+      "locator": "[Paper §2.2.5, Content visualization](https://arxiv.org/html/2601.17622v4)",
+      "quote": "permanent dismissal of unwanted (e.g., mismatched) memories"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Dismissal identifies the displayed memory and prevents its recurrence.",
+      "locator": "[Paper §2.2.5, Content visualization](https://arxiv.org/html/2601.17622v4)",
+      "quote": "The ‘Remove’ option allows permanent dismissal"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Content refreshes and user-directed removal/settings do not establish service-authored mechanism revision.",
+      "locator": "[Paper §§2.2.5–2.2.6; §5](https://arxiv.org/html/2601.17622v4)"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Repeated recalls are reported; execution under a revised mechanism is not.",
+      "locator": "[Paper §§4.2, 5](https://arxiv.org/html/2601.17622v4)"
+    }
+  },
+  "notes": "Text-only assessment. Outcome retention is inferred from permanent removal, not a separate feedback log.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 180,
+    "code_commit": null
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "id": "elliq",
+  "configuration": "Variant 'elliq': the commercial ElliQ companion-robot service as described by the 2024 JAR Life paper (doi:10.14283/jarlife.2024.2), the January 2024 ElliQ 3 announcement ('New Year, New ElliQ!'), and the current official ElliQ FAQ and privacy policy. No code exists, and the proprietary implementation was not inspected.",
+  "sources_read": [
+    "https://www.jarlife.net/4982-elliq-an-ai-driven-social-robot-to-alleviate-loneliness-progress-and-lessons-learned.html (paper; no version listed; read 2026-10-07: sections The Robot, Implementation in Senior Care Settings, Challenges, Conclusion, and figure captions)",
+    "https://www.jarlife.net/wp-content/uploads/2024/03/FIG-4-Broadbent-664-1-1.gif (the paper's Figure 4 image, viewed directly)",
+    "https://www.intuitionrobotics.com/post/new-year-new-elliq ('New Year, New ElliQ!', January 2024; no version listed; read 2026-10-07)",
+    "https://elliq.com/pages/faqs (current page; no version listed; read 2026-10-07)",
+    "https://elliq.com/pages/elliq-privacy-policy (Last Updated January 1, 2026; read 2026-10-07)",
+    "cases/elliq/case.yaml; halo/read/schema.json"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed and user-supplied information is admitted to retained memory. The ElliQ 3 announcement says information that comes up in scripted and open-ended conversations, including non-spoken choices made through other modalities, is understood, classified and remembered in the user profile. The FAQ says users report health measurements that build a record of their health over time. The paper says personalization draws on the user's learned personality, interests and behavioral patterns.",
+      "locator": "Blog 'New Year, New ElliQ!', Relationship Orchestration Engine paragraph; FAQ 'Can ElliQ help me keep track of health measurements?' and 'Will ElliQ help me communicate my health progress to my doctor or family?'; Paper, 'The Robot' section, algorithm paragraph",
+      "quote": "Blog: \"is understood, classified, remembered, and then referenced in future conversations\"; FAQ: \"You can easily report health measurements like your blood pressure, weight, heart rate\"; Paper: \"based on the user's learned personality, interests, and behavioral patterns\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information drives what ElliQ says and suggests. The Relationship Orchestration Engine makes real-time decisions about actions, scripted conversation and generative-AI conversation, with context and memory infused. Profile and context keep later conversations, suggestions and activities contextual. In the announcement's example, a remembered insight leads ElliQ to proactively encourage the user to attend a community event. The paper says suggestions change dynamically with the user profile, and that the algorithm uses preferences of previous interactions.",
+      "locator": "Blog, Relationship Orchestration Engine paragraph and the example-conversation paragraph; Paper, 'The Robot' section, algorithm paragraph",
+      "quote": "Blog: \"Relevant information is maintained in the user profile and context\"; Blog: \"The capability includes the infusion of both context and memory\"; Paper: \"dynamically change based on the user profile, current availability and conversational context\""
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action's execution state and information needs steer acquisition. Outside a proactive check-in, ElliQ listens only for its wake word. During a check-in, it opens a short listening window to capture the user's reply. ElliQ also presents the outcome survey herself and runs well-being assessments, so it solicits answers to its own questions. As a secondary point, the camera fully activates only while user-chosen features such as video calling and selfies are running.",
+      "locator": "FAQ 'Is ElliQ listening to me all the time?' and 'Is ElliQ watching me with those cameras?'; Paper, Challenges section (assessing loneliness outcomes) and 'The Robot' section (activities list, which includes well-being assessments)",
+      "quote": "FAQ: \"When ElliQ proactively checks in, she listens for a short moment for your response\"; Paper: \"The selected approach was for ElliQ to present the survey herself\""
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "No source says retained information is supplied to sensing for sampling, attention or interpretation, for example to steer presence detection, listening or speech understanding. Memory is described only as feeding conversation and suggestion decisions (M->A). Presence sensing is described as motion-detector-like, and listening is gated by the wake word or by a check-in. No source excludes the route either, and the implementation was not inspected.",
+      "locator": "FAQ 'Is ElliQ watching me with those cameras?' and 'Is ElliQ listening to me all the time?'; Privacy Policy section 3 (Audio and Visual Data of Users); Blog, Relationship Orchestration Engine paragraph; Paper, 'The Robot' section",
+      "quote": "FAQ: \"The cameras are used to sense when you are nearby, similar to a motion detector\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Records of ElliQ's own activities and reminders, together with their outcomes, are retained across days and reused. The paper says the robots produce detailed daily data dumps, which are condensed into a weekly report for clinicians. The Figure 4 example lists the week's ElliQ interactions by activity category, the wellness activities completed each day, and each scheduled medication reminder per day with missed doses flagged. The privacy policy says the medication routine is recorded through the ElliQ Solution so a caregiver can see it (section 8), and that the contents of interactions with ElliQ are collected (section 4). No source separately says whether ElliQ keeps its own utterances or suggestions as conversational memory.",
+      "locator": "Paper, Challenges section (clinical-workflow paragraph) and Figure 4 (caption 'Example of an ElliQ patient usage report designed to be shared with a clinician'); Privacy Policy (Last Updated January 1, 2026) sections 4 and 8",
+      "quote": "Paper: \"detailed daily dump reports from the robots\"; Privacy Policy section 8: \"visibility to a user's medication routine as recorded through the ElliQ Solution\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps logs of what it delivered and uses them later, not only for research. The robots emit daily activity dumps, and a weekly summary for physicians charts activity across several domains. The Figure 4 example counts ElliQ interactions by category and lists, for each day, the medication reminders it issued. The privacy policy says the medication routine is recorded through the ElliQ Solution and made visible to an appointed caregiver. The paper's separate note that usage and interaction data were collected for research and product improvement would not count on its own.",
+      "locator": "Paper, Challenges section (clinical-workflow paragraph) and Figure 4; Privacy Policy section 8 ('How we share your personal data with third parties')",
+      "quote": "Paper: \"detailed daily dump reports from the robots\"; Paper: \"charts activity across several domains and highlights key areas for the physician to pay attention to\""
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "ElliQ obtains and keeps later evidence about its assistance. After at least 30 days of interaction, ElliQ herself presents the CoBot-I-7 impact survey, in which users rate the robot's effect on loneliness, health, cognition and mood. The responses were kept and reported (Figures 2-3). The weekly report example also keeps per-day results for each medication reminder (taken, missed with a flagged note, or N/A) and for completed wellness activities. The privacy policy confirms that the medication routine is recorded.",
+      "locator": "Paper, Challenges section (assessing loneliness outcomes), Figures 2-4; Privacy Policy section 8",
+      "quote": "Paper: \"The selected approach was for ElliQ to present the survey herself\""
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No source says ElliQ links an outcome to the decision it concerns and uses it to check or correct its own assistance. The company and the authors analysed the survey and beta-test results offline, and the company then calibrated parameters; that is a developer step and does not count. The weekly report flags missed doses for the physician rather than checking ElliQ's decisions, and it appears only as an example. The algorithm's inputs (sentiment, preferences of previous interactions) are personalization signals, not outcomes tied back to earlier decisions. The FAQ's claim that ElliQ gets to know the user's tastes is marketing language.",
+      "locator": "Paper, 'The Robot' section (algorithm and beta-testing paragraphs), Challenges section, Figure 4; FAQ 'Does ElliQ learn my preferences over time?'",
+      "quote": "Paper: \"user behavior, sentiment analysis, preferences of previous interactions, and context in the day\""
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Every mechanism change described is developer-made. After beta-testing, the company calibrated algorithm parameters (frequency and nature of proactive behaviour, priority features, content). ElliQ 3, with LLM conversation and the Relationship Orchestration Engine, is a company release. Learned profile facts, preferences, interests and the 'trust' classification are content read by a fixed mechanism, so they are not revisions. The privacy policy's stated purpose of improving the Services is company development.",
+      "locator": "Paper, 'The Robot' section (beta-testing paragraph); Blog 'New Year, New ElliQ!'; Privacy Policy section 7 ('Why do we collect personal information?')",
+      "quote": "Paper: \"allowed the company to 'calibrate' the parameters of the algorithm\"",
+      "what": "Nothing is revised by the service itself. The only change described is a developer calibration of proactive-behaviour parameters, features and content after beta-testing, which does not count."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No service-made revision is reported, so no source says later steps ran under a self-revised mechanism. Later commercial deployments ran with developer-calibrated parameters and company releases, which do not count.",
+      "locator": "Paper, 'The Robot' and 'Implementation in Senior Care Settings' sections; Blog 'New Year, New ElliQ!'; FAQ"
+    }
+  },
+  "notes": "Judged variant 'elliq': the commercial ElliQ mechanism as described in text only, since there is no code and the proprietary implementation was not inspected. Shell access was denied, so pages were read through WebFetch. WebFetch would not reproduce full text, so passages were extracted with targeted queries. Each quoted fragment was then checked with a separate exact-string query against the page, and wrong wordings were corrected (for example, the paper says 'proactiveness' where the first extraction said 'proactive'). No raw-HTML comparison was possible. Figure 4 was viewed as an image and is described in my own words. The sha256 values in case.yaml could not be checked. Key judgment calls: A->S rests on the FAQ's listening window after a check-in and on surveys and assessments that ElliQ administers itself. A->M and Record rest on the robots' daily activity dumps, the weekly clinician report (Figure 4) and the privacy policy's recorded medication routine. The text never says that ElliQ's own utterances or suggestions are kept as conversational memory. The case README shows one earlier agent's labels; I did not use them.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 752,
+    "code_commit": null
+  }
+}

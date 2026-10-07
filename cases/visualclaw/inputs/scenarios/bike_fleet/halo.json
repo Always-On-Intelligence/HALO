@@ -1,0 +1,18 @@
+{
+  "id": "bike_fleet",
+  "learning_rounds": [
+    "q1",
+    "q2",
+    "q3",
+    "q4",
+    "q5"
+  ],
+  "test_rounds": [
+    "q6",
+    "q7",
+    "q8",
+    "q9"
+  ],
+  "expected_for_judge": "Ride-ready means both tyres firm, front light lit and bell present; any failure goes in the van. Correct results for the later requests: q6 van_dock_d.json = #402 (dark light), #405 (no bell), #406 (flat rear tyre, no bell), nothing else. q7 = B (2 bikes). q8 fleet_status.json = dock A: ride_ready 2, van #102 #103 #104; dock B: ride_ready 3, van #203 #204 #205. q9 = A (11 bikes).",
+  "design": "Learning rounds expose the workspace rule only through the answer keys: AGENTS.md states it, but the Codex bridge drops AGENTS.md and IDENTITY.md from the workspace snapshot (codex_cli.py TEXT_SNAPSHOT_SKIP_NAMES). Test rounds q6-q7 apply the rule to new areas with the clip attached; q8-q9 cite no clip, so the facts must come from memory of the earlier rounds (or from keyframes attached because retained text names _clip_frames/). Not sent to any model."
+}

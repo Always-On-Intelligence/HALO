@@ -1,0 +1,15 @@
+id: long-term-toa
+name: "Long-term TOA"
+domain: digital
+kind: research
+report: https://arxiv.org/abs/2601.09382
+sources:
+  - url: https://arxiv.org/html/2601.09382v1
+    kind: paper
+    version: "2601.09382v1"
+    sha256: d0fb03be2540b6183cbb62f50adf756122f7aee876ca86c166adcabb5d2d930a
+variants:
+  - id: longtermtoa2026
+    label: "Long-term TOA"
+    configuration: "Full hybrid-triggered Task-oriented Agent with task-state/reminder tracking; Qwen3-32B-Finetuned ChronosBench configuration"
+modes: [read]

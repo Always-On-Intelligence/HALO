@@ -1,0 +1,77 @@
+{
+  "id": "chatgptdots2026",
+  "configuration": "OpenAI dots with saved notes, self-timed follow-up, delegated tasks, and approval checks. The requested October 5 Markdown version could not be verified; findings below use the accessible HTML documentation.",
+  "sources_read": [
+    "https://learn.chatgpt.com/docs/dots — Meet dots; live HTML retrieved 2026-10-07.",
+    "https://learn.chatgpt.com/docs/dots/tasks-and-memory — Tasks and memory; live HTML retrieved 2026-10-07.",
+    "cases/dot/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Research findings enter private notes; interaction-derived decisions and priorities can update persistent notes.",
+      "locator": "[Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory), Persistent memory; Proactive research.",
+      "quote": "keep private notes about useful findings"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Saved preferences, decisions, and work context inform subsequent assistance across conversations and contact methods.",
+      "locator": "[Meet dots](https://learn.chatgpt.com/docs/dots), Memory and context.",
+      "quote": "notes carry forward across conversations"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The dot checks results of tasks it created, directing observation toward its delegated execution.",
+      "locator": "[Meet dots](https://learn.chatgpt.com/docs/dots), Tasks and conversations.",
+      "quote": "check results"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Background research relates new information to earlier work, exemplified by detecting conflict with a previously shared draft. Functionally, retained material supports interpretation.",
+      "locator": "[Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory), Proactive research.",
+      "quote": "connect new information to earlier work"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Dot-issued task instructions enter separate conversations that remain available for continued coordination; saved schedules retain planned work.",
+      "locator": "[Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory), Assigned work; Recurring tasks."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "Delegation instructions and context enter task conversations that can be reopened and continued, retaining records of the service's commitments.",
+      "locator": "[Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory), Assigned work, paragraph beginning 'A new task receives instructions'.",
+      "quote": "It has its own conversation;"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Delegated execution returns results to the dot, and task-specific progress and results remain inspectable in Activity.",
+      "locator": "[Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory), Assigned work, background-agent and Activity paragraphs.",
+      "quote": "progress, files, results"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Results are associated with the tasks the dot initiated and checked to support task-specific follow-up instructions.",
+      "locator": "[Meet dots](https://learn.chatgpt.com/docs/dots), Tasks and conversations.",
+      "quote": "Your dot can check results and send follow-up instructions to tasks it created."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Updating task content and preferences is not mechanism revision; the described custom controls are user-supplied, with no service-authored mechanism change reported.",
+      "locator": "[Meet dots](https://learn.chatgpt.com/docs/dots), Permissions and approvals; [Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory), Persistent memory."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Later assistance uses retained context, but no execution under a self-revised mechanism is reported.",
+      "locator": "[Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory), Persistent memory; Assigned work."
+    }
+  },
+  "notes": "Independent text-only review; no code repository supplied. Quotes match the fetched HTML. Markdown retrieval failed, and no matching local snapshots were found, so the case-file hashes could not be checked. These judgments are provisional for the specified historical version. Pre-action approval checks were not counted as outcome attribution or self-revision.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 220,
+    "code_commit": null
+  }
+}

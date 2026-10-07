@@ -1,0 +1,898 @@
+import logging
+import re
+from datetime import datetime
+from collections.abc import Mapping
+from typing import Annotated, Any, Dict, List, Literal, Optional, Union
+
+from pydantic.json_schema import SkipJsonSchema
+
+import config.speaker_match_scores as match_scores
+
+from pydantic import BaseModel, Field, field_validator, model_serializer, model_validator
+
+from models.audio_file import AudioFile
+from models.calendar_context import CalendarMeetingContext
+from models.chat import Message
+from models.client_processing import ClientProcessing
+from models.conversation_enums import (
+    CategoryEnum,
+    ConversationProcessingState,
+    ConversationSource,
+    ConversationStatus,
+    ConversationVisibility,
+    ExternalIntegrationConversationSource,
+    PostProcessingModel,
+    PostProcessingStatus,
+)
+from models.conversation_photo import ConversationPhoto
+from models.geolocation import Geolocation
+from models.note_claims import compact_claim_projection, current_note_claims
+from pydantic import field_serializer
+from models.other import Person
+from models.structured import MeetingType, Structured
+from models.transcript_segment import legacy_conversation_segment_id, TranscriptSegment
+
+# Only locally-defined symbols are exported. Use canonical modules for moved types:
+#   models.conversation_enums, models.structured, models.audio_file, etc.
+__all__ = [
+    'AppResult',
+    'AudioTimelineProvenance',
+    'BulkAssignSegmentsRequest',
+    'CalendarEventLink',
+    'Conversation',
+    'ConversationFinalizationStatusResponse',
+    'ConversationMutationResponse',
+    'ConversationSyncConflictResponse',
+    'ConversationSyncOperation',
+    'ConversationSyncMutationRequest',
+    'ConversationSyncMutationResponse',
+    'ConversationSyncState',
+    'ConversationPostProcessing',
+    'CreateConversation',
+    'CreateConversationResponse',
+    'CreateMemoryResponse',
+    'DeleteActionItemRequest',
+    'ExternalIntegrationCreateConversation',
+    'MergeConversationsRequest',
+    'MergeConversationsResponse',
+    'PluginResult',
+    'SearchRequest',
+    'SetConversationStarredOperation',
+    'SetConversationTitleOperation',
+    'TranscriptMatchSnippet',
+    'SharedActionItem',
+    'SharedAppResult',
+    'SharedConversationChatHistoryMessage',
+    'SharedConversationChatRequest',
+    'SharedConversationChatResponse',
+    'SharedConversationResponse',
+    'SharedEvent',
+    'SharedParticipant',
+    'SharedPerson',
+    'SharedPluginResult',
+    'SharedSection',
+    'SharedStructured',
+    'SharedTranscriptSegment',
+    'project_shared_conversation',
+    'SetConversationActionItemsStateRequest',
+    'SetConversationEventsStateRequest',
+    'TestPromptRequest',
+    'UpdateActionItemDescriptionRequest',
+    'UpdateConversation',
+    'UpdateSegmentTextRequest',
+    'UpdateSummaryRequest',
+]
+
+
+class UpdateConversation(BaseModel):
+    title: Optional[str] = None
+    overview: Optional[str] = None
+
+
+class SharedConversationChatHistoryMessage(BaseModel):
+    model_config = {'extra': 'forbid'}
+
+    role: Literal['user', 'assistant']
+    content: str = Field(min_length=1, max_length=2000, strict=True)
+
+    @field_validator('content')
+    @classmethod
+    def validate_content(cls, value: str) -> str:
+        stripped = value.strip()
+        if not stripped:
+            raise ValueError('content must not be blank')
+        return stripped
+
+
+class SharedConversationChatRequest(BaseModel):
+    model_config = {'extra': 'forbid'}
+
+    conversation_id: str = Field(min_length=1, max_length=128, strict=True)
+    question: str = Field(min_length=1, max_length=2000, strict=True)
+    history: List[SharedConversationChatHistoryMessage] = Field(max_length=8)
+
+    @field_validator('conversation_id', 'question')
+    @classmethod
+    def validate_non_blank_text(cls, value: str) -> str:
+        stripped = value.strip()
+        if not stripped:
+            raise ValueError('value must not be blank')
+        return stripped
+
+
+class SharedConversationChatResponse(BaseModel):
+    model_config = {'extra': 'forbid'}
+
+    message: str = Field(min_length=1, strict=True)
+    remaining_free_questions: int | None = Field(default=None, ge=0)
+
+
+_EMAIL_RE = re.compile(r'[^\s@]+@[^\s@]+\.[^\s@]+')
+
+
+class SharedActionItem(BaseModel):
+    """Public share projection of an action item."""
+
+    model_config = {'extra': 'ignore'}
+
+    description: str
+    completed: bool = False
+    owner_name: Optional[str] = None
+    due_at: Optional[datetime] = None
+    context: Optional[str] = None
+
+    @field_validator('owner_name', mode='before')
+    @classmethod
+    def drop_email_shaped_owner(cls, value):
+        # owner_name is a display name. An address here is not a public name.
+        if isinstance(value, str) and _EMAIL_RE.search(value):
+            return None
+        return value
+
+
+class SharedSection(BaseModel):
+    """Public note content, without internal transcript evidence IDs."""
+
+    model_config = {'extra': 'ignore'}
+
+    heading: str
+    body_markdown: str
+    kind: Literal['main', 'side_notes'] = 'main'
+
+
+class SharedEvent(BaseModel):
+    """Public share projection of a structured event."""
+
+    model_config = {'extra': 'ignore'}
+
+    title: str
+    description: str = ''
+    start: datetime
+    duration: int = 30
+    created: bool = False
+
+
+class SharedParticipant(BaseModel):
+    """Public share projection of a meeting participant — never an email."""
+
+    model_config = {'extra': 'ignore'}
+
+    name: Optional[str] = None
+    organization: Optional[str] = None
+    role: Optional[str] = None
+    is_ai_agent: bool = False
+    source: Optional[Literal['roster', 'transcript']] = None
+
+
+class SharedStructured(BaseModel):
+    """Public share projection of conversation structure."""
+
+    model_config = {'extra': 'ignore'}
+
+    title: str = ''
+    overview: str = ''
+    emoji: str = '🧠'
+    category: CategoryEnum = CategoryEnum.other
+    sections: List[SharedSection] = Field(default_factory=list)
+    action_items: List[SharedActionItem] = Field(default_factory=list)
+    events: List[SharedEvent] = Field(default_factory=list)
+    meeting_type: Optional[MeetingType] = None
+    participants: List[SharedParticipant] = Field(default_factory=list)
+
+    @model_serializer(mode='wrap')
+    def _omit_unset_rich_fields(self, handler):
+        # Same contract as Structured: rich-only keys absent from the source
+        # document must not materialize as null/[] on the public payload.
+        data = handler(self)
+        for field_name in ('meeting_type', 'participants'):
+            if field_name not in self.model_fields_set:
+                data.pop(field_name, None)
+        return data
+
+    @field_validator('participants', mode='before')
+    @classmethod
+    def drop_unidentifiable_participants(cls, value):
+        # A participant with no public name carries no identifying public
+        # information (emails never leave the private note), so it drops out of
+        # the share projection rather than surfacing as an empty shell.
+        if not isinstance(value, list):
+            return value
+        kept = []
+        for item in value:
+            name = item.get('name') if isinstance(item, Mapping) else getattr(item, 'name', None)
+            if isinstance(name, str) and name.strip():
+                kept.append(item)
+        return kept
+
+
+class SharedTranscriptSegment(BaseModel):
+    """Public share projection of a transcript turn."""
+
+    model_config = {'extra': 'ignore'}
+
+    id: Optional[str] = None
+    text: str
+    speaker: Optional[str] = 'SPEAKER_00'
+    speaker_id: Optional[int] = None
+    is_user: bool
+    person_id: Optional[str] = None
+    start: float
+    end: float
+
+
+class SharedAppResult(BaseModel):
+    model_config = {'extra': 'ignore'}
+
+    app_id: Optional[str]
+    content: str
+
+
+class SharedPluginResult(BaseModel):
+    model_config = {'extra': 'ignore'}
+
+    plugin_id: Optional[str]
+    content: str
+
+
+class SharedPerson(BaseModel):
+    """Speaker-label projection for a shared conversation."""
+
+    model_config = {'extra': 'ignore'}
+
+    id: str
+    name: str
+
+
+# Explicit allowlist: do not inherit Conversation and do not extra='allow'.
+# New Conversation fields and stored-document extras must not appear here.
+class SharedConversationResponse(BaseModel):
+    """Public unauthenticated shared-conversation payload. Only declared fields are returned."""
+
+    model_config = {'extra': 'ignore'}
+
+    id: str
+    created_at: datetime
+    started_at: Optional[datetime]
+    finished_at: Optional[datetime]
+    language: Optional[str] = None
+    source: Optional[ConversationSource] = ConversationSource.omi
+    status: Optional[ConversationStatus] = ConversationStatus.completed
+    visibility: ConversationVisibility = ConversationVisibility.private
+    structured: SharedStructured
+    transcript_segments: List[SharedTranscriptSegment] = Field(default_factory=list)
+    apps_results: List[SharedAppResult] = Field(default_factory=list)
+    plugins_results: List[SharedPluginResult] = Field(default_factory=list)
+    people: List[SharedPerson] = Field(default_factory=list)
+
+
+def project_shared_conversation(conversation: 'Conversation', people: List[Person]) -> SharedConversationResponse:
+    payload = conversation.model_dump()
+    payload['people'] = [{'id': person.id, 'name': person.name} for person in people]
+    return SharedConversationResponse.model_validate(payload)
+
+
+# TODO: remove this class when the app is updated to use apps_results
+class PluginResult(BaseModel):
+    plugin_id: Optional[str]
+    content: str
+
+
+class AppResult(BaseModel):
+    app_id: Optional[str]
+    content: str
+
+
+class CalendarEventLink(BaseModel):
+    """Links a conversation to a Google Calendar event."""
+
+    event_id: str = Field(description="Google Calendar event ID")
+    title: str = Field(description="Calendar event title")
+    attendees: List[str] = Field(default=[], description="List of attendee display names for UI")
+    attendee_emails: List[str] = Field(default=[], description="List of attendee email addresses")
+    start_time: datetime = Field(description="Event start time")
+    end_time: datetime = Field(description="Event end time")
+    html_link: Optional[str] = Field(default=None, description="Direct link to open event in Google Calendar")
+
+
+class ConversationPostProcessing(BaseModel):
+    status: PostProcessingStatus
+    model: PostProcessingModel
+    fail_reason: Optional[str] = None
+
+
+class ConversationAudioSpan(BaseModel):
+    """Maps one captured audio_file part into the dense conversation MP3.
+
+    wall_offset is seconds relative to conversation.started_at (the same basis
+    as TranscriptSegment.start); artifact_offset is seconds into the MP3. The
+    >90s inter-part gaps are collapsed in the artifact, so segment-level seek is
+    span arithmetic: artifact_pos = artifact_offset + (segment.start - wall_offset).
+    """
+
+    file_id: str
+    wall_offset: float
+    artifact_offset: float
+    len: float
+
+
+class AudioTimelineProvenance(BaseModel):
+    """Audio-timeline v2 provenance marker on eligible conversation rows.
+
+    Present only on single-channel, server-STT live captures admitted under
+    AUDIO_TIMELINE_V2: both transcript segment offsets and audio chunk starts
+    are projections of one capture sample cursor anchored at the conversation's
+    first accepted audio sample (started_at is that origin, pinned once).
+    Absent on legacy, resumed-v1, multi-channel, custom-STT, sync-merged or
+    mixed-source rows.
+    """
+
+    version: int
+
+
+class ConversationAudio(BaseModel):
+    """Stamp for the conversation-level playback artifact (playback/{uid}/{conv}/conversation.mp3).
+
+    audio_files_fingerprint identifies the audio_files content the artifact was
+    built from; a mismatch with the doc's current audio_files means the artifact
+    is stale and must be rebuilt.
+    """
+
+    audio_files_fingerprint: str
+    duration: float  # wall-clock seconds: last span wall_offset + len
+    captured_duration: float  # seconds of actual audio: sum of span lens
+    spans: List[ConversationAudioSpan] = []
+    content_type: str = 'audio/mpeg'
+    built_at: Optional[datetime] = None
+
+
+class TranscriptMatchSnippet(BaseModel):
+    """Grep-style transcript hit returned on conversation search for seek-to-moment UX."""
+
+    text: str
+    segment_id: Optional[str] = None
+    start: Optional[float] = None
+    end: Optional[float] = None
+    start_ms: Optional[int] = None
+    end_ms: Optional[int] = None
+    speaker_id: Optional[int] = None
+
+
+class CaptureGroupMember(BaseModel):
+    id: str
+    source: Optional[str] = None
+    started_at: Optional[datetime] = None
+    finished_at: Optional[datetime] = None
+
+
+class CaptureGroup(BaseModel):
+    """Conversations from different capture surfaces that recorded one event.
+
+    Server-authored by ``database.capture_groups`` only after the captures are
+    shown to share speech. ``id`` is the event identity and never changes when
+    ``primary_id`` (the longest capture) does. Clients present the group as one
+    row and keep every member reachable.
+    """
+
+    id: str
+    primary_id: str
+    revision: int = 1
+    members: List[CaptureGroupMember] = []
+
+
+class ConversationSpeakers(BaseModel):
+    """Server-authored meaning of this conversation's ``speaker_id`` values.
+
+    ``resolved``: re-diarized from the stored audio, so each ``speaker_id`` is one
+    voice for the whole conversation. ``capture``: one uninterrupted capture
+    diarized it, so capture's ids are that diarization. ``unavailable``: capture
+    restarted its numbering (reconnects, failovers, uploaded chunks) and no
+    stored audio could resolve it, so ids are not people and must not be counted.
+    ``participant_speaker_ids`` lists the voices that spoke enough to count as
+    participants; it is empty when the status is ``unavailable``.
+    """
+
+    status: Literal['resolved', 'capture', 'unavailable']
+    version: int = 1
+    participant_speaker_ids: List[int] = []
+
+
+class CaptureEvidenceMetadata(BaseModel):
+    """Internal S1 receipt. Missing source positions are explicitly unknown."""
+
+    version: Literal[1] = 1
+    capability: Literal['source_position', 'stable_artifact', 'unknown']
+    coverage: Optional[Literal['unknown', 'incomplete', 'mapped']] = None
+    origin: Optional[str] = None
+    reason: Optional[str] = None
+    capture_root: Optional[str] = None
+    channel: Optional[str] = None
+    clock_epoch: Optional[str] = None
+    source_start: Optional[int] = None
+    source_end: Optional[int] = None
+    runs: Optional[List[Dict[str, Any]]] = None
+    receipts: Optional[List[Dict[str, Any]]] = None
+    conflicts: Optional[int] = None
+
+
+class Conversation(BaseModel):
+    sync_content_revision: Optional[int] = None
+    sync_relevance: Optional[Literal['keep', 'review']] = None
+    id: str
+    created_at: datetime
+    # Firestore's document update time, attached by the database read layer.
+    # This is the canonical server revision clients use for cache reconciliation;
+    # it is deliberately not derived from started_at/finished_at.
+    updated_at: Optional[datetime] = None
+    started_at: Optional[datetime]
+    finished_at: Optional[datetime]
+
+    source: Optional[ConversationSource] = ConversationSource.omi
+    language: Optional[str] = None  # applies only to Friend # TODO: once released migrate db to default 'en'
+
+    # True when this conversation was transcribed on a third-party (custom STT)
+    # provider, so no Omi transcription credits were consumed. Provenance for
+    # the isolated fair-use lane and the conversation-processing credit gate:
+    # custom-STT still hits LLM/post-processing metering (#7690).
+    uses_custom_stt: bool = False
+
+    structured: Structured
+
+    @field_serializer('structured', mode='wrap')
+    def _serialize_current_note_claims(self, structured, handler):
+        data = handler(structured)
+        if isinstance(data, dict) and isinstance(data.get('note_claims'), list):
+            data['note_claims'] = compact_claim_projection(current_note_claims(data))
+        return data
+
+    # Untrusted client-authored display projection. Sibling of structured, never
+    # inside it or external_data. Display only — never an input to intelligence.
+    client_processing: Optional[ClientProcessing] = None
+    # Why `structured` holds the §1.7 deterministic minimum instead of an
+    # enriched summary. Server-authored; absent on every enriched conversation.
+    # Clients read `client_processing` first — see the enum's docstring.
+    processing_state: Optional[ConversationProcessingState] = None
+    # Server-authored. True only when durable finalization exhausted its retry
+    # budget on a transient provider/parser/worker failure and the row has
+    # transcript or photos, so ``POST /v1/conversations/{id}/reprocess`` can
+    # still produce a summary. ``structured.title`` then holds the
+    # deterministic title. Never set when the model ran and found nothing to
+    # summarize. Successful enrichment clears it. A separate field rather than
+    # a ``processing_state`` value: released clients decode that enum strictly.
+    summary_retryable: Optional[bool] = None
+    transcript_segments: List[TranscriptSegment] = []
+    transcript_segments_compressed: Optional[bool] = False
+    geolocation: Optional[Geolocation] = None
+    photos: List[ConversationPhoto] = []
+    audio_files: List[AudioFile] = []
+    conversation_audio: Optional[ConversationAudio] = None
+    private_cloud_sync_enabled: bool = False
+    # Audio-timeline v2 provenance (absent on legacy and ineligible rows).
+    audio_timeline: Optional[AudioTimelineProvenance] = None
+    # S1 internal receipt is written explicitly at existing persistence seams.
+    capture_evidence: Optional[CaptureEvidenceMetadata] = Field(default=None, exclude=True)
+    # Absent on conversations processed before speakers were resolved: count no ids as people.
+    speaker_resolution: Optional[ConversationSpeakers] = None
+    speaker_match_scores: SkipJsonSchema[Optional[List[Dict[str, Any]]]] = Field(default=None, exclude=True)
+
+    @field_validator('speaker_match_scores', mode='before')
+    @classmethod
+    def _validate_match_scores(cls, value):
+        # Some mutation owners return a stored document with a readable
+        # transcript. Without a uid this model must omit, never decrypt, its
+        # optional raw score blob. Covers factory and direct model callers.
+        if value is None:
+            return None
+        try:
+            return match_scores.normalize(value)
+        except Exception:
+            match_scores.record_failure(logging.getLogger(__name__), reason='malformed_doc')
+            return None
+
+    @model_validator(mode='after')
+    def _collect_match_scores(self):
+        try:
+            updates = [s.speaker_match_scores for s in self.transcript_segments if s.speaker_match_scores]
+            if updates and match_scores.enabled():
+                self.speaker_match_scores = match_scores.merge(self.speaker_match_scores, updates)
+        except Exception:
+            self.speaker_match_scores = None
+            match_scores.record_failure(logging.getLogger(__name__), reason='malformed_doc')
+        return self
+
+    @model_serializer(mode='wrap')
+    def _serialize_match_scores(self, handler, info):
+        data = handler(self)
+        if info.mode == 'python' and self.speaker_match_scores is not None:
+            excluded = info.exclude or ()
+            included = info.include
+            if 'speaker_match_scores' not in excluded and (included is None or 'speaker_match_scores' in included):
+                try:
+                    data['speaker_match_scores'] = match_scores.merge(None, self.speaker_match_scores)
+                except Exception:
+                    match_scores.record_failure(logging.getLogger(__name__), reason='malformed_doc')
+        return data
+
+    # Meeting-note screenshots are deliberately NOT a field here. Building the set means minting
+    # fresh 60-minute signed URLs for every persisted frame, which no ordinary conversation read
+    # should pay for, so nothing ever populated it and the field was permanently None. A field
+    # that always says nothing is worse than absent on the most widely consumed model in the
+    # product: it tells every client — iOS, Android, web — that a conversation carries its
+    # screenshots inline, when the only way to get them is
+    # GET /v1/conversations/{id}/screenshots. It also pulled ConversationScreenFrameSet into the
+    # mobile Dart schema group, where the generator could not resolve it. Callers that want the
+    # set inline: utils.screen_frames.enforcement.build_frame_set_response.
+    # Per-conversation opt-out of including screenshots in the public shared
+    # note. Default true (David's ruling 2026-08-20) — shared notes include
+    # screenshots unless the owner explicitly turns this off.
+    screenshot_sharing_enabled: bool = True
+
+    apps_results: List[AppResult] = []
+    suggested_summarization_apps: List[str] = []
+
+    # TODO: plugins_results for backward compatibility with the old memories routes and app
+    plugins_results: List[PluginResult] = []
+
+    external_data: Optional[Dict] = None
+    app_id: Optional[str] = None
+    # Cross-surface event membership (#3244). Read-only for every writer except database.capture_groups.
+    capture_group: Optional[CaptureGroup] = None
+
+    discarded: bool = False
+    # True for conversations created via an external data import (e.g. Limitless ZIP).
+    # Distinct from source=limitless, which also covers pendant/sync uploads of Limitless audio.
+    imported: bool = False
+    visibility: ConversationVisibility = ConversationVisibility.private
+    starred: bool = False
+
+    # TODO: processing_memory_id for backward compatibility with the old memories routes and app
+    processing_memory_id: Optional[str] = None
+
+    processing_conversation_id: Optional[str] = None
+
+    status: Optional[ConversationStatus] = ConversationStatus.completed
+    is_locked: bool = False
+    # Lazy processing (freemium cost cut): True when this desktop conversation was stored as a
+    # raw transcript with no LLM enrichment yet — enrichment runs on first open
+    # (get_conversation_by_id → process_conversation). Cleared once enriched.
+    deferred: bool = False
+    data_protection_level: Optional[str] = None
+    folder_id: Optional[str] = Field(default=None, description="ID of the folder this conversation belongs to")
+    call_id: Optional[str] = Field(default=None, description="Twilio call SID for phone call conversations")
+
+    # Calendar event link - set when conversation overlaps with a Google Calendar event
+    calendar_event: Optional[CalendarEventLink] = None
+
+    # Capture-device provenance (optional; absent on legacy conversations).
+    client_device_id: Optional[str] = None
+    client_platform: Optional[str] = None
+
+    # Read projection of the authoritative finalization-job meeting receipt.
+    meeting_treatment_eligible: bool = False
+    meeting_treatment_reason: Optional[str] = None
+    meeting_duration_s: Optional[float] = None
+    meeting_dedup_speech_s: Optional[float] = None
+
+    def __init__(self, **data):
+        raw_segments = data.get('transcript_segments')
+        conversation_id = data.get('id')
+        if isinstance(raw_segments, list) and conversation_id:
+            normalized_segments = []
+            for index, raw_segment in enumerate(raw_segments):
+                if isinstance(raw_segment, Mapping):
+                    segment = dict(raw_segment)
+                    if not segment.get('id'):
+                        segment['id'] = legacy_conversation_segment_id(conversation_id, index)
+                    normalized_segments.append(segment)
+                else:
+                    normalized_segments.append(raw_segment)
+            data['transcript_segments'] = normalized_segments
+
+        super().__init__(**data)
+        # Update plugins_results based on apps_results
+        self.plugins_results = [PluginResult(plugin_id=app.app_id, content=app.content) for app in self.apps_results]
+        self.processing_memory_id = self.processing_conversation_id
+
+    def get_transcript(self, include_timestamps: bool, people: List[Person] = None, user_name: str = None) -> str:
+        # Warn: missing transcript for workflow source, external integration source
+        return TranscriptSegment.segments_as_string(
+            self.transcript_segments, include_timestamps=include_timestamps, user_name=user_name, people=people
+        )
+
+    def get_photos_descriptions(self, include_timestamps: bool = False) -> str:
+        return ConversationPhoto.photos_as_string(self.photos, include_timestamps=include_timestamps)
+
+    def get_person_ids(self) -> List[str]:
+        if not self.transcript_segments:
+            return []
+        return list(set(segment.person_id for segment in self.transcript_segments if segment.person_id))
+
+    def as_dict_cleaned_dates(self):
+        def convert_datetime_to_iso(obj):
+            """Recursively convert datetime objects to ISO format strings"""
+            if isinstance(obj, datetime):
+                return obj.isoformat()
+            elif isinstance(obj, dict):
+                return {key: convert_datetime_to_iso(value) for key, value in obj.items()}
+            elif isinstance(obj, list):
+                return [convert_datetime_to_iso(item) for item in obj]
+            else:
+                return obj
+
+        conversation_dict = self.model_dump()
+        # Convert all datetime objects recursively
+        conversation_dict = convert_datetime_to_iso(conversation_dict)
+        return conversation_dict
+
+
+class ConversationMutationResponse(BaseModel):
+    """Canonical conversation snapshot returned after a user mutation."""
+
+    status: str
+    conversation: Conversation
+
+
+class SetConversationTitleOperation(BaseModel):
+    """User-owned title mutation carried by the durable sync endpoint."""
+
+    model_config = {'extra': 'forbid'}
+
+    type: Literal['set_title'] = 'set_title'
+    title: str = Field(min_length=1, max_length=256, strict=True)
+
+
+class SetConversationStarredOperation(BaseModel):
+    """User-owned starred mutation carried by the durable sync endpoint."""
+
+    model_config = {'extra': 'forbid'}
+
+    type: Literal['set_starred'] = 'set_starred'
+    starred: bool = Field(strict=True)
+
+
+ConversationSyncOperation = Annotated[
+    Union[SetConversationTitleOperation, SetConversationStarredOperation],
+    Field(discriminator='type'),
+]
+
+
+class ConversationSyncMutationRequest(BaseModel):
+    """One immutable client intent against a known canonical revision."""
+
+    model_config = {'extra': 'forbid'}
+
+    client_mutation_id: str = Field(
+        min_length=1,
+        max_length=128,
+        pattern=r'^[A-Za-z0-9][A-Za-z0-9._:-]*$',
+        strict=True,
+    )
+    base_revision: datetime
+    operation: ConversationSyncOperation
+
+
+class ConversationSyncState(BaseModel):
+    """Compact canonical projection needed to settle an optimistic mutation."""
+
+    revision: datetime
+    title: Optional[str] = None
+    starred: bool = False
+    folder_id: Optional[str] = None
+    visibility: ConversationVisibility = ConversationVisibility.private
+
+
+class ConversationSyncMutationResponse(BaseModel):
+    """Durable response replayed byte-for-byte for one mutation id."""
+
+    status: Literal['ok'] = 'ok'
+    client_mutation_id: str
+    conversation_id: str
+    conversation: ConversationSyncState
+
+
+class ConversationSyncConflictResponse(BaseModel):
+    """Typed immutable conflict recorded for a stale mutation attempt."""
+
+    status: Literal['conflict'] = 'conflict'
+    code: Literal['base_revision_mismatch', 'mutation_id_reused', 'revision_unavailable']
+    client_mutation_id: str
+    conversation_id: str
+    conversation: Optional[ConversationSyncState] = None
+
+
+class CreateConversation(BaseModel):
+    started_at: datetime
+    finished_at: datetime
+    transcript_segments: List[TranscriptSegment]
+    geolocation: Optional[Geolocation] = None
+
+    photos: List[ConversationPhoto] = []
+
+    source: ConversationSource = ConversationSource.omi
+    language: Optional[str] = None
+
+    processing_conversation_id: Optional[str] = None
+    calendar_meeting_context: Optional[CalendarMeetingContext] = None
+    is_locked: bool = False
+    private_cloud_sync_enabled: bool = False
+
+    client_device_id: Optional[str] = None
+    client_platform: Optional[str] = None
+    # Capture provenance carried through the normal processing write. Keeping
+    # this on the create model prevents ID-less uploads from assigning role
+    # only after process_conversation has already persisted the row.
+    external_data: Optional[Dict] = None
+
+    def get_transcript(self, include_timestamps: bool, people: List[Person] = None, user_name: str = None) -> str:
+        return TranscriptSegment.segments_as_string(
+            self.transcript_segments, include_timestamps=include_timestamps, user_name=user_name, people=people
+        )
+
+    def get_person_ids(self) -> List[str]:
+        if not self.transcript_segments:
+            return []
+        return list(set(segment.person_id for segment in self.transcript_segments if segment.person_id))
+
+
+class ExternalIntegrationCreateConversation(BaseModel):
+    started_at: Optional[datetime] = None
+    finished_at: Optional[datetime] = None
+    text: str
+    text_source: ExternalIntegrationConversationSource = ExternalIntegrationConversationSource.audio
+    text_source_spec: Optional[str] = None
+    geolocation: Optional[Geolocation] = None
+
+    source: ConversationSource = ConversationSource.workflow
+    language: Optional[str] = None
+
+    app_id: Optional[str] = None
+
+    client_device_id: Optional[str] = None
+    client_platform: Optional[str] = None
+
+    def get_transcript(self, include_timestamps: bool) -> str:
+        return self.text
+
+    def get_person_ids(self) -> List[str]:
+        return []
+
+
+class CreateConversationResponse(BaseModel):
+    conversation: Conversation
+    messages: List[Message] = []
+
+
+class ConversationFinalizationStatusResponse(BaseModel):
+    """Customer-visible projection of one durable finalization job."""
+
+    job_id: str
+    status: str
+    terminal: bool
+    retryable: bool
+    attempt_count: int
+    task_retry_count: int
+    meeting_treatment_eligible: bool = False
+    terminal_outcome: Literal['success', 'failure', 'stale', 'unknown'] = 'unknown'
+    fanout_status: Literal['pending', 'leased', 'completed', 'fenced', 'unknown'] = 'unknown'
+
+
+# MIGRATE: For backward compatibility with the old memories routes and app
+class CreateMemoryResponse(BaseModel):
+    memory: Conversation
+    messages: List[Message] = []
+
+
+class SetConversationEventsStateRequest(BaseModel):
+    events_idx: List[int]
+    values: List[bool]
+
+    @model_validator(mode='after')
+    def validate_parallel_arrays(self):
+        if len(self.events_idx) != len(self.values):
+            raise ValueError('events_idx and values must have the same length')
+        return self
+
+
+class SetConversationActionItemsStateRequest(BaseModel):
+    items_idx: List[int]
+    values: List[bool]
+
+    @model_validator(mode='after')
+    def validate_parallel_arrays(self):
+        if len(self.items_idx) != len(self.values):
+            raise ValueError('items_idx and values must have the same length')
+        return self
+
+
+class BulkAssignSegmentsRequest(BaseModel):
+    segment_ids: List[str]
+    assign_type: str
+    value: Optional[str] = None
+
+
+class UpdateSegmentTextRequest(BaseModel):
+    segment_id: str = Field(min_length=1)
+    text: str = Field(min_length=1, max_length=10000)
+
+
+class UpdateSummaryRequest(BaseModel):
+    app_id: Optional[str] = None
+    content: str = Field(min_length=1, max_length=10000)
+
+
+class DeleteActionItemRequest(BaseModel):
+    description: str
+    completed: bool
+
+
+class UpdateActionItemDescriptionRequest(BaseModel):
+    old_description: str
+    description: str
+
+
+class SearchRequest(BaseModel):
+    query: str = ''
+    page: Optional[int] = 1
+    per_page: Optional[int] = 10
+    include_discarded: Optional[bool] = True
+    start_date: Optional[str] = None  # ISO format datetime string
+    end_date: Optional[str] = None  # ISO format datetime string
+    speaker_id: Optional[str] = None
+
+
+class TestPromptRequest(BaseModel):
+    prompt: str
+
+
+class MergeConversationsRequest(BaseModel):
+    """Request model for merging multiple conversations."""
+
+    conversation_ids: List[str] = Field(description="IDs of conversations to merge (minimum 2)", min_length=2)
+    reprocess: bool = Field(default=True, description="Whether to regenerate summary from merged transcript")
+
+
+class MergeConversationsResponse(BaseModel):
+    """Response model for merge initiation."""
+
+    status: str = Field(default="merging", description="Current merge status")
+    message: str = Field(default="Merge started", description="Status message")
+    warning: Optional[str] = Field(default=None, description="Warning message (e.g., large time gaps)")
+    conversation_ids: List[str] = Field(description="All conversation IDs being merged")
+
+
+class SpeakerAnalytics(BaseModel):
+    speaker: str  # "You", a person's name, or a "Speaker N" diarization label
+    person_id: Optional[str] = None
+    is_user: bool = False
+    talk_seconds: float
+    word_count: int
+    words_per_minute: float
+    talk_share: float  # fraction of total talk time, 0..1
+
+
+class ConversationAnalytics(BaseModel):
+    conversation_id: str
+    total_seconds: float
+    total_words: int
+    words_per_minute: float
+    speaker_count: int
+    speakers: List[SpeakerAnalytics] = []

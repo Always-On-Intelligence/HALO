@@ -1,0 +1,289 @@
+{
+  "scenario": "kitchen_labels",
+  "rounds": [
+    {
+      "id": "q1",
+      "type": "multi_choice",
+      "question": "Closing check: using the walkthrough [clip @ 00:05], how many of the three containers on the left of the top shelf are properly labelled?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "3 containers",
+          "B": "1 container",
+          "C": "2 containers",
+          "D": "0 containers"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:05]: only the salsa verde label shows both dates.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 1,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q2",
+      "type": "multi_choice",
+      "question": "From the walkthrough [clip @ 00:21], which containers on the front row of the middle shelf must go in the discard bin at close?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "Lime juice only",
+          "B": "Lime juice and guacamole base",
+          "C": "None of them",
+          "D": "Guacamole base only"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:21]: lime juice has no label and the guacamole base has no use-by date.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 2,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q3",
+      "type": "exec_check",
+      "question": "Write docs/discard_top_shelf.json listing the containers on the top shelf in the walkthrough [clip @ 00:05] and [clip @ 00:13] that go in the discard bin at close, as a JSON list of objects with the keys container and reason.",
+      "update_ids": [],
+      "eval": {
+        "command": "python ${eval_dir}/${agent_id}/scripts/check_discard_top_shelf.py ${workspace}",
+        "expect_exit": 0,
+        "timeout": 30
+      },
+      "feedback": {
+        "correct": "Pico de gallo, crema and rice, each with its missing date or label.",
+        "incorrect": "Deliverable missing, or it does not apply the workspace's rule."
+      },
+      "meta": {
+        "round": 3,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q4",
+      "type": "multi_choice",
+      "question": "Using the walkthrough [clip @ 00:37], how many containers on the bottom shelf are properly labelled?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "2 containers",
+          "B": "1 container",
+          "C": "0 containers",
+          "D": "3 containers"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:37]: the shrimp label has no prep date.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 4,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q5",
+      "type": "multi_choice",
+      "question": "From the walkthrough [clip @ 00:45], is the cilantro oil on the door rack properly labelled?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "Yes, its label names it",
+          "B": "No",
+          "C": "Yes, door-rack sauces are exempt",
+          "D": "Cannot tell from the clip"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:45]: the tape names the oil but shows no dates.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 5,
+        "phase": "learning",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q6",
+      "type": "exec_check",
+      "question": "Write docs/discard_tonight.json for the speed rack and the floor dunnage in the walkthrough [clip @ 00:53] and [clip @ 01:01]: a JSON list of objects with the keys container and reason, listing only the containers that go in the discard bin at close.",
+      "update_ids": [],
+      "eval": {
+        "command": "python ${eval_dir}/${agent_id}/scripts/check_discard_tonight.py ${workspace}",
+        "expect_exit": 0,
+        "timeout": 30
+      },
+      "feedback": {
+        "correct": "Masa (no label) and horchata base (no use-by date).",
+        "incorrect": "Deliverable missing, or it does not apply the workspace's rule."
+      },
+      "meta": {
+        "round": 6,
+        "phase": "test",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q7",
+      "type": "multi_choice",
+      "question": "Using the walkthrough [clip @ 00:29], how many containers on the back row of the middle shelf go in the discard bin at close?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "2 containers",
+          "B": "1 container",
+          "C": "0 containers",
+          "D": "3 containers"
+        },
+        "answer": [
+          "C"
+        ]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:29]: both labels show prep and use-by dates.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Does not follow the workspace's rule.",
+          "C": "Correct.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 7,
+        "phase": "test",
+        "required_modalities": [
+          "video",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "q8",
+      "type": "exec_check",
+      "question": "Write docs/closing_summary.json for the middle shelf front row and the bottom shelf as checked earlier tonight: a JSON list of objects with the keys area (middle shelf front row or bottom shelf), labelled_ok (number of properly labelled containers) and discard (list of the container names that go in the discard bin).",
+      "update_ids": [],
+      "eval": {
+        "command": "python ${eval_dir}/${agent_id}/scripts/check_closing_summary.py ${workspace}",
+        "expect_exit": 0,
+        "timeout": 30
+      },
+      "feedback": {
+        "correct": "Middle shelf front row: 2 ok, discard lime juice and guacamole base. Bottom shelf: 1 ok, discard shrimp.",
+        "incorrect": "Deliverable missing, or it does not apply the workspace's rule."
+      },
+      "meta": {
+        "round": 8,
+        "phase": "test",
+        "required_modalities": [
+          "text"
+        ],
+        "depends_on": [
+          "q2",
+          "q4"
+        ]
+      }
+    },
+    {
+      "id": "q9",
+      "type": "multi_choice",
+      "question": "Across every area checked tonight, how many containers go in the discard bin at close?",
+      "update_ids": [],
+      "eval": {
+        "options": {
+          "A": "2 containers",
+          "B": "9 containers",
+          "C": "6 containers",
+          "D": "12 containers"
+        },
+        "answer": [
+          "B"
+        ]
+      },
+      "feedback": {
+        "correct": "Pico, crema, rice, lime juice, guacamole base, shrimp, cilantro oil, masa and horchata base.",
+        "options": {
+          "A": "Does not follow the workspace's rule.",
+          "B": "Correct.",
+          "C": "Does not follow the workspace's rule.",
+          "D": "Does not follow the workspace's rule."
+        }
+      },
+      "meta": {
+        "round": 9,
+        "phase": "test",
+        "required_modalities": [
+          "text"
+        ],
+        "depends_on": [
+          "q1",
+          "q2",
+          "q3",
+          "q4",
+          "q5",
+          "q6",
+          "q7"
+        ]
+      }
+    }
+  ]
+}

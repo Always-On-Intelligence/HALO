@@ -1,0 +1,86 @@
+{
+  "id": "assistantx",
+  "configuration": "Variant 'assistantx': the AssistantX PPDR4X office assistant. Four LLM agents (Perception, Planning, Decision, Reflection) run WeChat/phone 'cyber' actions and a mobile robot with a QR-code smart locker. Memory was judged as the persistent relational graph: the long-term undirected topological graph of humans, public facilities, personal items and locations, with location and ownership edges and a human availability attribute. Transient task buffers were not counted as retention evidence. In the paper these are the short-term instruction, dialogue data, embodied state and inference process, reset after each user instruction. In the code they are thought/summary/action histories, user/group chat histories, locker_info, error_flag and reflect_history, cleared at Stop.",
+  "sources_read": [
+    "https://arxiv.org/html/2409.17655v3, read via WebFetch because shell/curl was denied. Covered: section and caption map; §III Problem Formulation; §IV intro; §IV-A Memory Unit; §IV-B Perception of Focus Content; §IV-C Hierarchical Problem Solving; §IV-D Self-Reflection Mechanism; §V-A/V-B (initial long-term memory, simulation protocol, ablations); §V-C (1.5-month deployment, 289-response survey, Fig. 9 case study); §VI Conclusion; captions of Figs. 1-10 and Tables I-VI",
+    "https://github.com/AssistantX-Agent/AssistantX at 35ab2715f7371d935d78907d90dc4131e414fcb7 (local checkout): README.md, index.html (project page)",
+    "OfficeAssistant/main.py (full)",
+    "OfficeAssistant/prompt_test.py (full; this is the prompt module main.py imports)",
+    "OfficeAssistant/prompt.py (full); OfficeAssistant/prompt_init.py (lines 1-120, plus grep for read_prior_knowledge and 'Items location')",
+    "OfficeAssistant/chat.py, chat_test.py, api.py, controller.py (full); crop.py, text_localization.py, icon_localization.py (definitions only)",
+    "common/global_var.py, common/LockApi.py, common/robot_api.py, common/andro_operation.py, common/wechat.py (full)",
+    "image/method111.jpg (framework figure) and image/agent_thought33.jpg (agent input/output figure)",
+    "HALO cases/assistantx/case.yaml and halo/read/schema.json"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "After each action, the Reflection Agent compares sensed incremental information Δℳ with ℳt and writes into the Memory Unit. Δℳ is new chat messages from a message-retrieval thread, robot location from ROS AMCL, and the smart-lock open/close signal. §IV-A says the Reflection Agent updates the long-term graph's edges (location, ownership) and human-node availability states during execution. That is a described write path from sensed and user-supplied evidence into the persistent relational graph, beyond the author-built initial graph (§V-A). Code caveat: the released code never writes the persistent store. priori_knowledge is re-read from prompt_txt/priori_knowledge.txt on every loop iteration (main.py:165; prompt_test.py:385-388), and that file is not in the repo. So the label rests on the paper's description of the implemented system.",
+      "locator": "arXiv 2409.17655v3 §IV-A (Memory Unit), §IV-D (Self-Reflection Mechanism), §V-A; code OfficeAssistant/main.py:165, prompt_test.py:385-388",
+      "quote": "Reflection Agent will update the edges and human node states during task execution to reflect changes in the dynamic environment. … The incremental information (denoted as Δℳ) acquired will be reflected by Reflection Agent by comparing it with ℳt and adds the insights in reflection to Memory Unit."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The memory package ℳt, which includes the long-term environment graph ℰ (Fig. 4/5), is rendered as text into every agent. The Planning Agent builds its plan from ℳt and the perception package. The Decision Agent selects cyber and real-world tasks from ℳt, the perception package and the plan. Fig. 9 shows the system searching memory for an alternative helper (Wu) when Mao is unavailable. Code: the retained item/person distribution (priori_knowledge) is inserted under '### Distribution ###' into the planning and action prompts (main.py:222-235; prompt_test.py:20-22, 462-463).",
+      "locator": "arXiv 2409.17655v3 §IV-A, §IV-C (Hierarchical Problem Solving), Fig. 9 caption (§V-C; also project page index.html:258); code OfficeAssistant/main.py:222-235, prompt_test.py:20-22, 462-463",
+      "quote": "Planning Agent is first prompted to creates a strategic roadmap 𝒫ℒt based on the current memory state ℳt and perception package 𝒫𝒞t … When Mao is unavailable for printing, it actively searches memory for alternatives, identifying Wu."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The Perception Agent interprets the current scene. It receives the previous plan, the completed cyber and real-world tasks, and the last reflection result, and focuses its description on the individuals and items involved in upcoming tasks. So Action's plans and execution state steer Sensing's attention and interpretation. The Reflection Agent also checks whether observed incremental information matches the expected outcomes of the executed tasks, which is an expected-effect check. The short-term store that carries these is a transient hand-off, not Memory, under this configuration. Code: a 'Send QR code(person, item)' action starts the ocSelect locker-monitor thread for that person and item (main.py:318-322). Its locker_info feeds the perception prompt (main.py:190-192); a commented reference version is at common/LockApi.py:64-85. The assistant's own Inform/Ask messages are also appended to the chat buffers that Perception reads (main.py:276-306).",
+      "locator": "arXiv 2409.17655v3 §IV-B (Perception of Focus Content), §IV-D; code OfficeAssistant/main.py:190-192, 276-306, 318-322; common/LockApi.py:64-85",
+      "quote": "If t≠0, given a memory package ℳt, which contains ℐ, the previous plan 𝒫ℒt−1, the completed tasks 𝒯ℛt−1, 𝒯𝒞t−1, and the reflection result ℛt−1, Perception Agent is prompted to generate a fine-grained text description of the focus content (see Fig. 5)."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Perception is computed from ℳt, which includes the long-term graph; Fig. 5 shows Environment Information ℰ in the Memory Package feeding the Perception Agent. Perception uses the retained location and ownership priors to describe where the robot is relative to people, and which individuals and items matter for upcoming tasks. These priors serve interpretation and attention in a separate Sensing stage, so this is not just answer-time retrieval and not an M→A→S composition. Code: get_perception_prompt inserts priori_knowledge ('The distribution of items in the office scene') and asks the model to turn the raw robot_status into 'which person's position is currently in, what personal things he has, what facilities are around' (prompt_test.py:414-416, 435; main.py:190-192).",
+      "locator": "arXiv 2409.17655v3 §IV-A, §IV-B, Fig. 5; code OfficeAssistant/prompt_test.py:391-448, main.py:189-194",
+      "quote": "We denote the memory package at time step t as ℳt, which is converted into descriptive text and provided as part of the input to the foundational LLM of each agent as contextual information. … This includes a descriptive observation of the local environment, location and ownership information of individuals and items involved in upcoming tasks, as well as the active chat group or person in cyberspace, to better guide the next plan."
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "Action records (agent thoughts, executed cyber and real-world tasks), reflection results and assistant utterances are kept only in short-term memory that is reset after each instruction. Those are transient task buffers, excluded by this configuration. The Reflection Agent does take the executed tasks and plan as inputs and does update graph edges and human-node states. But the paper does not say whether action context or outcomes, as opposed to sensed environment changes, are written into the persistent graph. It also does not say where 'the insights in reflection' are retained. Code: at Stop, item locations derived from the action history (prompt.py:511, 517) are appended to an in-process string (main.py:367-370). read_prior_knowledge() overwrites that string on the next loop iteration (main.py:165), and all short-term histories are cleared (main.py:375-397). So the retention scope of action-derived content is unknown.",
+      "locator": "arXiv 2409.17655v3 §IV-A, §IV-D; code OfficeAssistant/main.py:165, 367-397, prompt.py:511-517",
+      "quote": "The short-term memory includes user instructions ℐ, dialogue data 𝒟, embodied states 𝒮 (such as the robot's current location and locker state), and the inference process 𝒫 (which includes agent thoughts, executed tasks 𝒯𝒞 and 𝒯ℛ). … Task-specific information stored in short-term memory will also be updated during execution and reset after the completion of each user instruction."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "The service's records of its own actions live only in short-term memory that is reset after each user instruction. In the paper this is the inference process (thoughts, executed tasks); in the code it is thought/summary/action_history. These are transient task buffers, excluded by this configuration. The persistent graph stores environment facts (locations, ownership, availability), not action records. The only file write, Result/gpt4o/{instruction}.txt (main.py:372-374), is an author result log, not something the service reads later. It also writes the global result, which stays empty (main.py:32; its assignment at main.py:462 is commented out).",
+      "locator": "arXiv 2409.17655v3 §IV-A; code OfficeAssistant/main.py:32, 372-397, 458-462",
+      "quote": "Task-specific information stored in short-term memory will also be updated during execution and reset after the completion of each user instruction."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Outcome evidence is obtained after each action: replies, robot location, and smart-lock open/close signals. But the paper calls this 'short-term data', kept in short-term memory and reset per instruction, which this configuration excludes. The persistent graph gets only the resulting environment-state changes (edges, availability), not outcome evidence kept as such about the service's actions. The 289 post-interaction survey responses were analysed by the authors (Fig. 10); no use by the service is stated.",
+      "locator": "arXiv 2409.17655v3 §IV-D, §IV-A, §V-C/Fig. 10",
+      "quote": "After the execution of 𝒯𝒞t and 𝒯ℛt, corresponding information changes or emerges, such as newly generated dialogue data from cyberspace via the cyber actions or new messages from human contacts, and the updates of robot's embodied states, including location and the smart lock signal information. … To monitor these short-term data, we have set up a thread on a cloud server to track new messages through the social platform's message retrieval API, providing real-time updates."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "After each step, the Reflection Agent links the incremental information Δℳ to the executed tasks and plan that produced it. It judges Y/N whether the results match expectations, gives its reasoning, and that guides the next planning and decision step. The ablation reports +24% success rate on L3 tasks. This is an immediate in-service check, which counts even though nothing durable is kept. Code: get_reflect_prompt asks whether the action's result meets the expectation of the thought (prompt_test.py:207-210). An 'N' is meant to inject '### Your last action is not reasonable...' into the next action prompt (prompt_test.py:65-68). However, in the released main.py the Y/N parse is gated by reflect_flag, which is never set True (main.py:180, 417). So at this commit the check is computed and printed but not applied.",
+      "locator": "arXiv 2409.17655v3 §IV-D (reflect formula and following paragraph), Table V; code OfficeAssistant/prompt_test.py:65-68, 132-220, main.py:180, 405-455",
+      "quote": "where reflect(·) represents the reflective process of the LLM, which is prompted to carefully consider whether the results of the executed action align with the expected outcomes, and then generates a reflection result ℛt (see Fig. 5). … The reflection result also summarizes the reasoning behind this judgment, providing guidance for future planning and decision-making."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No durable change made by the service to its own prompts, rules, skills, code or model parameters is described. Graph updates (locations, ownership, availability) are content used by fixed, developer-written prompts. Reflection guidance applies only to the next step and is reset per instruction. The code's in-process priori_knowledge append is content and is not persisted. The conclusion's future-work items are author plans.",
+      "locator": "arXiv 2409.17655v3 §IV (agents built on 'well-crafted prompts'), §IV-A, §IV-D, §VI; code OfficeAssistant/prompt_test.py (static prompt builders), main.py:165, 367-370",
+      "quote": "Long-term memory is represented using an undirected topological graph, where nodes represent humans, public facilities, personal items, and locations.",
+      "what": "Nothing. Only environment content (graph edges and availability states) and step-local reflection text change; the mechanism itself is not revised."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "There is no revision, so no later run under a revised mechanism is reported. The 1.5-month deployment reports user-survey results, not runs under a changed mechanism.",
+      "locator": "arXiv 2409.17655v3 §V-C, §VI"
+    }
+  },
+  "notes": "Paper quotes were extracted with WebFetch because shell access was denied. Each quote used was re-checked with a separate exact-match query, and all returned exact matches. Two verifier replies said 'DIFFERS' but quoted the identical text, including the paper's own 'prompted to creates'. Math symbols are transcribed as rendered in the arXiv HTML, and ' … ' separates distinct sentences. Code statements come directly from the checkout. Three code–paper discrepancies at this commit: (1) The persistent store is never written: read_prior_knowledge() re-reads prompt_txt/priori_knowledge.txt (absent from the repo) every loop iteration (main.py:165), so the Stop-time append at main.py:370 is lost. The paper's Reflection-Agent graph update has no counterpart in the released code. (2) The reflection Y/N parse that sets error_flag and reflect_history never runs, because reflect_flag is never set True (main.py:180, 417). (3) main.py imports modules missing from the repo: handing (which holds ocSelect), socket_server_dabai/armcar, handle_dabai/armcar, and OfficeAssistant/prompt_assx (only a .pyc exists). Because the release is incomplete, channel labels rest on the paper's description of the implemented system, with code as corroboration. The initial long-term graph is author-built (§V-A). The paper never says outright that the graph persists across instructions or across days of the deployment; persistence is inferred from the 'long-term' versus 'reset after each instruction' contrast and from the case configuration. I did not read the case README or any other reviewer's output.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 661,
+    "code_commit": "35ab2715f7371d935d78907d90dc4131e414fcb7"
+  }
+}

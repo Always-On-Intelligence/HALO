@@ -1,0 +1,332 @@
+{
+  "case": "pahf",
+  "channels": {
+    "S->M": "user answers and post-action feedback admitted as preference notes to the per-user SQLite memory",
+    "M->A": "retrieved preference notes summarized into the action prompt",
+    "A->S": "the robot's clarification question delivered to the user, whose answer is acquired",
+    "A->M": "the robot's clarification question summarized together with the user's answer into the memory note"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 18,
+      "original": 16,
+      "modified": 0,
+      "tie": 2,
+      "metrics": {
+        "learn_correct": {
+          "original": 0.7778,
+          "modified": 0.7778
+        },
+        "test2_correct": {
+          "original": 0.0,
+          "modified": 0.3333
+        },
+        "test_accuracy": {
+          "original": 0.4444,
+          "modified": 0.1667
+        },
+        "notes_after_learning": {
+          "original": 1.7222,
+          "modified": 0.0
+        },
+        "test1_correct": {
+          "original": 0.8889,
+          "modified": 0.0
+        },
+        "backbone_calls": {
+          "original": 19.1111,
+          "modified": 19.1111
+        },
+        "learn_asked": {
+          "original": 0.7778,
+          "modified": 0.7778
+        }
+      }
+    },
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output_other",
+      "pairs": 18,
+      "original": 0,
+      "modified": 6,
+      "tie": 12,
+      "metrics": {
+        "learn_correct": {
+          "original": 0.7778,
+          "modified": 0.7778
+        },
+        "test2_correct": {
+          "original": 0.0,
+          "modified": 0.3333
+        },
+        "test_accuracy": {
+          "original": 0.4444,
+          "modified": 0.1667
+        },
+        "notes_after_learning": {
+          "original": 1.7222,
+          "modified": 0.0
+        },
+        "test1_correct": {
+          "original": 0.8889,
+          "modified": 0.0
+        },
+        "backbone_calls": {
+          "original": 19.1111,
+          "modified": 19.1111
+        },
+        "learn_asked": {
+          "original": 0.7778,
+          "modified": 0.7778
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 18,
+      "original": 16,
+      "modified": 0,
+      "tie": 2,
+      "metrics": {
+        "learn_correct": {
+          "original": 0.7778,
+          "modified": 0.7778
+        },
+        "test2_correct": {
+          "original": 0.0,
+          "modified": 0.3333
+        },
+        "test_accuracy": {
+          "original": 0.4444,
+          "modified": 0.1667
+        },
+        "notes_after_learning": {
+          "original": 1.7222,
+          "modified": 1.7222
+        },
+        "test1_correct": {
+          "original": 0.8889,
+          "modified": 0.0
+        },
+        "backbone_calls": {
+          "original": 19.1111,
+          "modified": 19.1111
+        },
+        "learn_asked": {
+          "original": 0.7778,
+          "modified": 0.7778
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output_other",
+      "pairs": 18,
+      "original": 0,
+      "modified": 6,
+      "tie": 12,
+      "metrics": {
+        "learn_correct": {
+          "original": 0.7778,
+          "modified": 0.7778
+        },
+        "test2_correct": {
+          "original": 0.0,
+          "modified": 0.3333
+        },
+        "test_accuracy": {
+          "original": 0.4444,
+          "modified": 0.1667
+        },
+        "notes_after_learning": {
+          "original": 1.7222,
+          "modified": 1.7222
+        },
+        "test1_correct": {
+          "original": 0.8889,
+          "modified": 0.0
+        },
+        "backbone_calls": {
+          "original": 19.1111,
+          "modified": 19.1111
+        },
+        "learn_asked": {
+          "original": 0.7778,
+          "modified": 0.7778
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->S"
+      ],
+      "field": "output",
+      "pairs": 18,
+      "original": 2,
+      "modified": 2,
+      "tie": 14,
+      "metrics": {
+        "learn_correct": {
+          "original": 0.7778,
+          "modified": 0.0
+        },
+        "test2_correct": {
+          "original": 0.0,
+          "modified": 0.1111
+        },
+        "test_accuracy": {
+          "original": 0.4444,
+          "modified": 0.5
+        },
+        "notes_after_learning": {
+          "original": 1.7222,
+          "modified": 0.9444
+        },
+        "test1_correct": {
+          "original": 0.8889,
+          "modified": 0.8889
+        },
+        "backbone_calls": {
+          "original": 19.1111,
+          "modified": 17.4444
+        },
+        "learn_asked": {
+          "original": 0.7778,
+          "modified": 0.7778
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->S"
+      ],
+      "field": "output_other",
+      "pairs": 18,
+      "original": 0,
+      "modified": 2,
+      "tie": 16,
+      "metrics": {
+        "learn_correct": {
+          "original": 0.7778,
+          "modified": 0.0
+        },
+        "test2_correct": {
+          "original": 0.0,
+          "modified": 0.1111
+        },
+        "test_accuracy": {
+          "original": 0.4444,
+          "modified": 0.5
+        },
+        "notes_after_learning": {
+          "original": 1.7222,
+          "modified": 0.9444
+        },
+        "test1_correct": {
+          "original": 0.8889,
+          "modified": 0.8889
+        },
+        "backbone_calls": {
+          "original": 19.1111,
+          "modified": 17.4444
+        },
+        "learn_asked": {
+          "original": 0.7778,
+          "modified": 0.7778
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M"
+      ],
+      "field": "output",
+      "pairs": 18,
+      "original": 0,
+      "modified": 2,
+      "tie": 16,
+      "metrics": {
+        "learn_correct": {
+          "original": 0.7778,
+          "modified": 0.7778
+        },
+        "test2_correct": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "test_accuracy": {
+          "original": 0.4444,
+          "modified": 0.5
+        },
+        "notes_after_learning": {
+          "original": 1.7222,
+          "modified": 1.6111
+        },
+        "test1_correct": {
+          "original": 0.8889,
+          "modified": 1.0
+        },
+        "backbone_calls": {
+          "original": 19.1111,
+          "modified": 19.1111
+        },
+        "learn_asked": {
+          "original": 0.7778,
+          "modified": 0.7778
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M"
+      ],
+      "field": "output_other",
+      "pairs": 18,
+      "original": 0,
+      "modified": 0,
+      "tie": 18,
+      "metrics": {
+        "learn_correct": {
+          "original": 0.7778,
+          "modified": 0.7778
+        },
+        "test2_correct": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "test_accuracy": {
+          "original": 0.4444,
+          "modified": 0.5
+        },
+        "notes_after_learning": {
+          "original": 1.7222,
+          "modified": 1.6111
+        },
+        "test1_correct": {
+          "original": 0.8889,
+          "modified": 1.0
+        },
+        "backbone_calls": {
+          "original": 19.1111,
+          "modified": 19.1111
+        },
+        "learn_asked": {
+          "original": 0.7778,
+          "modified": 0.7778
+        }
+      }
+    }
+  ]
+}

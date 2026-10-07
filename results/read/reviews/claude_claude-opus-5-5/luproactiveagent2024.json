@@ -1,0 +1,101 @@
+{
+  "id": "luproactiveagent2024",
+  "configuration": "Section 3.4 Proactive Agent in the Environment Gym (arXiv 2410.12361v3; code gym/ at commit 3fcf9be). The ProactiveAgent component works on a shared codelinker event store that keeps, for one scenario run, the gym's events, the agent's proposals (null proposals are stored silently), the user agent's accept/reject verdicts and the agent's executed actions. Accepted proposals are executed with the scenario's operations, and the environment simulator turns each action into new events. The draft-feedback retry loop described in §3.4 is the code path with USE_ACTIVERM=True. Out of scope: the real-world demo (agent/, envs/), ProactiveBench scoring, and the authors' offline fine-tuning.",
+  "sources_read": [
+    "https://arxiv.org/html/2410.12361v3 (v3: §3.1–3.5 including the 'Task Execution' paragraph, Figure 2 and Figure 3 captions, §4.2 setting sentence, §4.3 'Feedback From the Reward Model', and a whole-paper keyword sweep for memory/history/feedback/learn/update; read through WebFetch extractions because direct download was not permitted here)",
+    "https://arxiv.org/pdf/2410.12361v3 (fetched to cross-check; the PDF could not be rendered in this environment, so it was not read)",
+    "gym/components/activeagent.py",
+    "gym/components/base.py",
+    "gym/components/environment.py",
+    "gym/components/user.py",
+    "gym/components/reward.py",
+    "gym/components/__init__.py",
+    "gym/main.py",
+    "gym/config.py",
+    "gym/channel.py",
+    "gym/models/user.py",
+    "gym/models/env.py",
+    "gym/example.yaml",
+    "gym/README.md",
+    "dataset/run_datagen.py",
+    "dataset/build_agent_trainset.py",
+    "dataset/README.md",
+    "README.md",
+    "pyproject.toml",
+    "requirements.txt",
+    "cases/proactive-agent/.venv/lib/python3.11/site-packages/codelinker/events/sink.py and processer.py (codelinker 0.3.27, the installed version of an unpinned dependency; read to confirm how the store, gather roles and listeners work)",
+    "cases/proactive-agent/case.yaml (the assignment); cases/proactive-agent/README.md and run.yaml were read for orientation only and are not used as evidence"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "The paper says the agent first updates its memory with each new event, and the Figure 3 caption says the same. In code, that memory is the run's shared codelinker event store. The environment appends every generated event to it (environment.py:154), and the user agent appends its verdict on each proposal (user.py:143-144). EventSink.add keeps every entry in all_events for the whole run (sink.py:228-231). The agent re-reads all of it on every proposal step (activeagent.py:111-121) and every execution step (67-68). Retention lasts one gym episode, with one process per scene (dataset/run_datagen.py).",
+      "locator": "arXiv 2410.12361v3 §3.4 para. 1 and Figure 3 caption; gym/components/environment.py:148-154; gym/components/user.py:143-144; gym/components/activeagent.py:67-68, 111-121; codelinker/events/sink.py:228-231",
+      "quote": "UNVERIFIED (WebFetch; identical wording in 3 extractions) §3.4: \"upon the agent receiving new event E_t at time t, it first updates its memory with the event.\" | gym/components/environment.py:154 (verbatim): self.add(tags=sinkChannels.events, content=eve.event)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained event and dialogue history feeds the decision to propose a task or stay silent, the content of the proposal, and each execution step. The paper says new events are combined with historical ones and with conversations with the user to raise tasks; otherwise the agent stays silent. In code, step() rebuilds the full history from the store: past events, the agent's earlier proposals as assistant turns, user verdicts, and the available-operations list. It then calls the LLM with messages=self.memory + hist and the instruction to analyze the history events (activeagent.py:33, 108-130). exec() likewise gathers activity, events, proposals and ops before choosing each action (activeagent.py:62-74).",
+      "locator": "arXiv 2410.12361v3 §3.4 para. 1; gym/components/activeagent.py:33, 62-74, 108-130",
+      "quote": "UNVERIFIED (WebFetch; identical wording in 3 extractions) §3.4: \"Combining new events with historical ones and conversations with the user, the agent incorporates user characteristics to raise potential tasks.\" | gym/components/activeagent.py:129 (verbatim): messages=self.memory + hist"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "During simulated execution of an accepted task, the agent's execution state controls when it observes and what it reads next.\n- Paper ('Task Execution'): each agent action makes the gym generate a new event. The agent then detects the new environment state and acts on those events until it finishes or the user interrupts. After proposing, the agent waits for the user agent's judgment (§3.4).\n- Trigger: exec() runs when the user's verdict arrives on agent.proactive (activeagent.py:60; user.py:143-144).\n- Gating: exec() turns off event-triggered proposal processing while it executes (line 64) and turns it back on at exit (line 80). step() also skips or waits while a proposal or execution is pending (lines 101-104).\n- Act-then-observe: exec() posts each chosen operation as an activity (line 84) and waits until the environment has turned that activity into events with the agent as subject (line 86; environment.py:61, 121-154). It then re-reads those events together with its own action records to pick the next operation or stop (lines 67-83). This is an act-then-observe check of its own actions.\nCaveat: the event generator is the simulated world, not part of the agent. What is credited here is the agent-side gating and checking.",
+      "locator": "arXiv 2410.12361v3 §3.4 para. 1 and 'Task Execution' paragraph; gym/components/activeagent.py:60-86, 100-104; gym/components/environment.py:61, 121-154; gym/components/user.py:143-144",
+      "quote": "UNVERIFIED (WebFetch; identical wording in 2 extractions, math rendered as S_{t+1}) §3.4 Task Execution: \"After that, the proactive agent detects the new environment state S_{t+1} and takes new actions according to the events generated by the gym.\" | gym/components/activeagent.py:64, 84, 86 (verbatim): self.unlisten(self.step) ... self.add(sinkChannels.activity, content=res) ... await self.wait(sinkChannels.activity)"
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Retained history reaches the agent only inside the calls that produce the proposal or the next action, which is M->A. The proposal format does ask for the 'Purpose' of the user's last action, and the rules say to deduce the user's purpose based on event history (activeagent.py:17, 28). But that interpretation is produced inside the same decision call, not by a separate sensing step that receives memory. Neither the paper nor the code describes retained information steering which events are acquired, attended to, filtered, compressed or interpreted before the decision. Every gathered event is passed on unfiltered (activeagent.py:111-124), and the gym, not the agent, produces the events. Nothing explicitly excludes such a route, so it is not marked absent.",
+      "locator": "arXiv 2410.12361v3 §3.4; gym/components/activeagent.py:11-30, 100-130",
+      "quote": "gym/components/activeagent.py:28 (verbatim): - Deduce the user's purpose and whether they need help based on event history."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The agent's own proposals and executed actions are written to the shared store and come back to it as history. The paper says a detected task is raised as a new event, and later predictions combine events with conversations with the user. In code, every prediction is appended to agent.proactive (activeagent.py:174), including null (silent) ones, because codelinker stores an entry before checking the silent flag (sink.py:228-233). Every executed action is appended to the activity channel (line 84). gather() returns the agent's own entries as assistant turns (processer.py:82-88). step() splices them into its history (activeagent.py:116-119), and exec() re-reads them (67-68).",
+      "locator": "arXiv 2410.12361v3 §3.4 para. 1; gym/components/activeagent.py:67-68, 84, 116-119, 174; codelinker/events/processer.py:82-88; codelinker/events/sink.py:228-233",
+      "quote": "gym/components/activeagent.py:174 (verbatim): self.add(sinkChannels.agent.proactive, content=json.dumps(pred),silent=pred.get(\"Proactive Task\", None) is None) | UNVERIFIED (WebFetch; identical wording in 2 extractions) §3.4: \"If the agent detects potential tasks, it will raise the task as a new event and wait for the judgment of the user agent.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "Within a gym run, the service keeps its own decisions in the shared event store: task proposals, null (silence) decisions, and executed actions. It reuses them as assistant turns in later proposal and execution prompts. The paper says detected tasks are raised as new events and that later predictions draw on conversations with the user. The jsonl dump of all events (gym/main.py:24-32) is research data for the authors and is not counted on its own.",
+      "locator": "gym/components/activeagent.py:84, 116-119, 174; arXiv 2410.12361v3 §3.4 para. 1",
+      "quote": "gym/components/activeagent.py:84 (verbatim): self.add(sinkChannels.activity, content=res) | gym/components/activeagent.py:174 (verbatim): self.add(sinkChannels.agent.proactive, content=json.dumps(pred),silent=pred.get(\"Proactive Task\", None) is None)"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Evidence about the agent's actions is obtained and kept. On each proposal, the user agent adds its accept/reject verdict and its reasoning to agent.proactive (user.py:136-144). The verdict stays in the store and the agent re-reads it in exec() and in later step() calls (activeagent.py:67-68, 111-115). The gym turns each executed action into events with the agent as subject (environment.py:121-154), and those events are kept too. The paper says the agent waits for the user agent's judgment and that each agent action makes the gym generate a new event.",
+      "locator": "gym/components/user.py:136-144; gym/components/environment.py:121-154; gym/components/activeagent.py:67-68, 111-115; arXiv 2410.12361v3 §3.4 para. 1 and 'Task Execution'",
+      "quote": "gym/components/user.py:144 (verbatim): content=f\"{res.thought}\\nIs Accepted: {res.is_accepted}\") | UNVERIFIED (WebFetch; identical wording in 2 extractions) §3.4 Task Execution: \"Each time the proactive agent takes an action, the gym will generate a new event, which is further processed by the gym and the user agent to update the environment state.\""
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Feedback is tied to the specific prediction it concerns and is used at once to correct or gate assistance.\n- Draft feedback (USE_ACTIVERM=True, the path §3.4 and §3.5 describe): the reward model stands in for the user's judgment and judges the draft 'Proactive Task'. If the draft is rejected, the agent is re-prompted with that prediction, Status 'Rejected' and the feedback, and told to make a different prediction, up to 3 retries. A prediction still rejected is dropped (activeagent.py:134-159; reward.py:16-34).\n- In every mode: the execution prompt ties the user's verdict to the proposal and sets Action to null when the proposal is rejected (activeagent.py:43).\nThis is an immediate in-run check, not offline scoring. The paper's §4.3 'w/ RM' setting reuses the same logic on ProactiveBench.",
+      "locator": "arXiv 2410.12361v3 §3.4 para. 1 (also §4.3 'Feedback From the Reward Model'); gym/components/activeagent.py:43, 134-159; gym/components/reward.py:16-34",
+      "quote": "UNVERIFIED (WebFetch; identical wording in 3 extractions) §3.4: \"To improve the quality of the prediction, it also accepts feedback from the user agent on its draft prediction.\" | gym/components/activeagent.py:141-144 (verbatim): step_obj[\"Previous Prediction\"] = pred ... step_obj[\"Status\"] = \"Rejected\" ... step_obj[\"User Feedback\"] = res.thought ... step_obj[\"Instructions\"] = f\"Your previous prediction is rejected! You must make a different prediction.\""
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Nothing in the gym changes the agent's own mechanism, during a run or across runs.\n- The SYSTEM, STEP_OBJ and EXEC prompts are module constants. The backbone is fixed by configuration. No rule, skill or code is written.\n- Retained events, proposals and verdicts are content used by a fixed mechanism.\n- The retry instruction after a rejection applies to one step and is not kept.\n- Accepted predictions saved on agent.response (activeagent.py:161-172) are never read back by the agent. They become training data that the authors turn into a trainset offline (dataset/build_agent_trainset.py; dataset/README.md).\n- Fine-tuning LLaMA-3.1-8B and Qwen2-7B on that data is a change made by the developers. The paper's 'models can learn' sentence refers to this offline training.",
+      "locator": "gym/components/activeagent.py:11-45, 161-174; dataset/build_agent_trainset.py; dataset/README.md 'Build the Proactive Agent Trainset'; arXiv 2410.12361v3 §3.2, §4.2",
+      "quote": "UNVERIFIED (WebFetch; identical wording in 3 extractions) §3.2: \"Through this pipeline, models can learn when to generate predictions and which predictions are likely to be accepted by users.\"",
+      "what": "Nothing is revised by the service. The only parameter change is the authors' offline fine-tuning of LLaMA-3.1-8B-Instruct and Qwen2-7B-Instruct on gym-generated data, which is a developer change."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "The service makes no revision, so no later step runs under a revised mechanism. The fine-tuned '-Proactive' models evaluated on ProactiveBench were trained and evaluated by the authors outside the gym loop.",
+      "locator": "arXiv 2410.12361v3 §4.2; gym/components/activeagent.py:11-45 (fixed prompts)",
+      "quote": "UNVERIFIED (WebFetch; single extraction) §4.2: \"We use the training set of ProactiveBench to obtain the Proactive Agent based on the two open-source models: LLaMA-3.1-8B-Instruct and Qwen2-7B-Instruct.\""
+    }
+  },
+  "notes": "Paper quotes come from WebFetch extractions of the v3 HTML, because downloads through Bash were not permitted and the PDF could not be rendered here. Each paper quote is labelled UNVERIFIED and records how many separate extractions gave identical wording; E_t and S_{t+1} are renderings of math. Code quotes are verbatim from commit 3fcf9be. Two flags in the code matter: the agent is only created when SETUP_PROACTIVE_AGENT=True (gym/main.py:39-40), and the draft-feedback loop and the reward-model user judge only run when USE_ACTIVERM=True, which defaults to False (activeagent.py:134, user.py:119). The configuration was judged as §3.4 and §3.5 describe it, with that flag on. One discrepancy: §3.4 says the agent 'incorporates user characteristics', but the agent's prompts carry no user profile. The profile exists only in the user simulator, so characteristics can only be inferred from retained events and verdict text. codelinker is unpinned in requirements.txt; its store, gather and listener behaviour was checked in the installed 0.3.27. Channel labels most open to disagreement: A->S rests on the agent's gating of execution and its act-then-observe loop, since the event generator itself is the simulated world. M->S is insufficient because history is used only inside the decision calls, which the protocol counts as M->A.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 806,
+    "code_commit": "3fcf9beebe256b86871659fbb12541c41c9381b9"
+  }
+}

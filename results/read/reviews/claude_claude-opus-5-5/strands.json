@@ -1,0 +1,80 @@
+{
+  "id": "strands",
+  "configuration": "Variant 'strands': the STRANDS Core System, meaning the application-neutral architecture described in Sections 5, 7 and 8 (task executive, monitored navigation, adaptive topological navigation, MongoDB store, FreMEn), as used in the 2015 Haus der Barmherzigkeit (HdB) care deployment. This includes the care-specific HRI prediction and scheduling in Section 9. Excluded: the security-only activity learning (Section 10, Figs. 8-9, Table 3) and other security-only evidence (Figs. 3 and 6).",
+  "sources_read": [
+    "https://arxiv.org/pdf/1604.04384v2 — arXiv:1604.04384v2 [cs.RO], margin stamp 14 Oct 2016, document dated October 17, 2016. All 14 pages read from the PDF text layer and page images. The case.yaml sha256 was not recomputed because there was no shell access.",
+    "cases/strands/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "In the HdB care deployment, sensed user input is written to Memory. The robot logs touch-screen interactions to MongoDB while serving information at topological nodes. FreMEn then turns these logs into per-node spatio-temporal models of interaction probability. More generally, the core system saves observations to MongoDB, and FreMEn integrates them into spatio-temporal environment models.",
+      "locator": "Section 9 (Predicting Human-Robot Interaction), p. 10; Section 5 (The Core STRANDS System), p. 5",
+      "quote": "To achieve this, each node in the topological map is associated with a FreMEn model that represents the probability of someone interacting with the robot’s screen at a given time. This is built from logs of screen interactions stored in MongoDB. [Section 5:] Database contents (e.g. observations of doors being opened or closed) can then be interpreted by the Frequency Map Enhancement (FreMEn) component [14], which integrates sparse and irregular observations into spatio-temporal models representing (pseudo-)periodic environment variations."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained FreMEn interaction models decide when and where the information-terminal task runs, which sets the timing and location of assistance. The schedule is drawn by Monte Carlo sampling over location/time pairs, weighted by predicted interaction probability and entropy. Retained edge success/duration models also set the MDP action probabilities and durations from which the navigation policy is solved (Section 8).",
+      "locator": "Section 9, p. 10; Figure 7 caption, p. 11; Section 8, p. 10",
+      "quote": "These FreMEn models are used to predict the likelihood of interactions at given times and locations. These predictions are used by the robot to schedule where and when it should provide information during the day."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action execution state guides Sensing. The monitored-navigation layer watches each topological navigation action for failure while it runs, which is an expected-effect check, and triggers recoveries. The backtrack recovery points the PTU-mounted depth camera backwards while the robot reverses along its own path, so the action sets the sensing target. Table 2 and the care panel of Fig. 5 show these recoveries, including Backtrack, ran in the 2015 care deployment. Exploration scheduling (Section 9) also sends the robot to location/time pairs where interaction probability is uncertain, to gather new observations.",
+      "locator": "Section 7 (Monitored Navigation), p. 9; Table 2 and Figure 5 (right panel, Care 2015), p. 9; Section 9, p. 10",
+      "quote": "We therefore developed a framework that executes topological navigation actions and monitors them for failure. ... We also developed a backtrack behaviour which uses the PTU-mounted depth camera to sense backwards whilst reversing along the path it took to the failure location."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "A fixed metric map is built from laser data at deployment and kept for the whole run. Adaptive Monte Carlo localisation uses it to interpret live laser scans. A stored dock location is also used to reset the position estimate while the robot is docked. Both are retained priors supplied to localisation, a sensing and interpretation function. A static map does not negate the flow. Not relied on: the FreMEn→Continuous Nav 'map/state predictions' arrow in Fig. 2, which has no supporting text, and the Section 9 exploration, which is an M→A→S composition.",
+      "locator": "Section 5 (The Core STRANDS System), p. 5",
+      "quote": "When deploying we build a fixed map from laser, localise in it using adaptive Monte Carlo localisation, and navigate using the dynamic window approach (DWA) over 3D obstacle information. ... We also take advantage of the the robot regularly docking with a charging station by resetting the robot’s position to this known location whilst docked."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The robot writes execution records of its own navigation actions to its database: the edge traversed, the duration and whether it succeeded. FreMEn integrates these into a temporal predictive model. The core system also saves generated ROS messages, including inter-component communication, to MongoDB.",
+      "locator": "Section 8 (Adaptive Topological Navigation), p. 10; Section 5, p. 5; Figure 2 label 'components log data to long-term store', p. 4",
+      "quote": "Every time the robot navigates an edge, the duration and success of the traversal is logged to the robot’s database. These logs are processed by FreMEn (see Section 5) to produce a temporal predictive model that allows the actions of the MDP to be assigned probabilities and travel durations appropriate for the time of execution [11]."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The robot logs each of its own edge traversals to its own database. FreMEn processes those logs inside the system, so they are kept for the service's later use and not only for author analysis. The core system also logs ROS messages to MongoDB for learning and monitoring.",
+      "locator": "Section 8, p. 10; Section 5, p. 5",
+      "quote": "Every time the robot navigates an edge, the duration and success of the traversal is logged to the robot’s database."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "The success (the task result) and duration of each traversal are obtained and kept in the database. In the care deployment, users' screen interactions after the robot offers information are kept as MongoDB logs.",
+      "locator": "Section 8, p. 10; Section 9, p. 10",
+      "quote": "Every time the robot navigates an edge, the duration and success of the traversal is logged to the robot’s database. [Section 9:] This is built from logs of screen interactions stored in MongoDB."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Each traversal outcome is tied to the specific edge and time of execution. These outcomes set the MDP action probabilities and durations, so the solved policy avoids edges where failures happened. Monitored navigation also checks each navigation action for failure immediately and triggers recovery. In the care deployment, interaction outcomes are tied to node/time pairs and used to schedule where and when information is offered.",
+      "locator": "Section 8, p. 10; Section 7, p. 9; Section 9, p. 10",
+      "quote": "This MDP is then solved for a target location to produce a policy for topological navigation that prefers low duration edges with high success probabilities (see [15] for details). This improves the system’s robustness by making it avoid areas where it previously encountered navigation failures."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The source does not state any durable change the service makes to its own mechanism. What the service updates itself are FreMEn spatio-temporal models: per-edge success/duration predictions and per-node interaction probabilities. Their stated role is predicting environment states, so they are map and routine content read by fixed mechanisms: the MDP built from the topological map and solved per target, and the Monte Carlo probability/entropy scheduler. The resulting policies and schedules are recomputed each time and are not described as stored reusable rules. The software robustness fixes and the firmware update were made by developers. Extending failure learning beyond navigation is stated only as future work. Section 10's nightly QSTAG re-clustering is security-only and excluded by the configuration.",
+      "locator": "Section 5, p. 5; Section 8, p. 10; Section 9, p. 10; Section 6, p. 7; Section 11, p. 13",
+      "quote": "Database contents (e.g. observations of doors being opened or closed) can then be interpreted by the Frequency Map Enhancement (FreMEn) component [14], which integrates sparse and irregular observations into spatio-temporal models representing (pseudo-)periodic environment variations. These can be used to predict future environment states (see Section 8).",
+      "what": "Nothing is revised at the mechanism level. The candidate considered was the FreMEn spatio-temporal models (edge traversal success/duration and per-node screen-interaction probability), which feed a fixed MDP planner and a fixed scheduler. They were classified as content."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No mechanism revision is stated, so no later run under a revised mechanism is stated. Noted but not marked: the source says the robot chose interaction times and locations using FreMEn models learnt during the 2015 care deployment, and that successful interactions per day rose over the deployment. That is later use of updated content by a fixed scheduler.",
+      "locator": "Figure 7 caption, p. 11; Section 9, p. 10",
+      "quote": "The results of the robot selecting interaction times and locations using FreMEn models learnt during the 2015 care deployment."
+    }
+  },
+  "notes": "Judged the STRANDS Core System together with the 2015 HdB care deployment. The core-system Sections 5, 7 and 8 are in scope because the configuration names the core system. Care-specific evidence comes from Section 9, Fig. 7, the care panel of Fig. 5, Table 2 ('used in our 2015 deployments') and Table 1 (Care 2015). Section 10 activity learning and the security-only Figs. 3, 6, 8 and 9 and Table 3 were excluded. Source: the arXiv v2 PDF, fetched and read in full (14 pages) from its text layer and page images. Quotes were checked against both. Footnote markers were dropped, and '...' or '[Section N:]' marks where non-adjacent text was joined. The case.yaml sha256 was not recomputed because there was no shell access. No code repository was read (the case file has commit null, not cloned), and the cited works [8, 9, 11, 15, 16] were not consulted. Two calls were borderline. M→S rests on the fixed laser map used by AMCL and on the dock-pose reset. Revision treats the FreMEn models as environment and routine content under the protocol's 'classify by role' rule. If they were instead counted as mechanism parameters, Section 9 and Fig. 7 would supply the later-use evidence.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 401,
+    "code_commit": null
+  }
+}

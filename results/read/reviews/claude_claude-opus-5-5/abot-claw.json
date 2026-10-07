@@ -1,0 +1,83 @@
+{
+  "id": "abot-claw",
+  "configuration": "ABot-Claw variant 'abot-claw'. The OpenClaw orchestration layer (MISSION/ROBOT/SERVICE/HEARTBEAT workspace files plus abotclaw-* skills) generates Python programs and dispatches them to robot agent servers (only the Piper arm server is released). It uses the shared multi-robot SpatialMemory service (object, place, semantic-frame and keyframe memory) and the online VLAC progress critic, as described in arXiv 2604.10096v2 and the repo at 39c9ffc.",
+  "sources_read": [
+    "https://arxiv.org/html/2604.10096v2 (arXiv v2 HTML, dated April 11, 2026). Read via WebFetch: section list, paragraph structure of §2.3/§2.4/§2.5, and sentence-level checks of every quoted sentence. v2 adds an empty '7 Appendix'.",
+    "tech_report/ABot-Claw_Technical_Report.pdf in the repo at 39c9ffc. Full text read directly. Same paper, same date. Differs from v2 in the wording of the §2.3 memory entities, one §2.5 sentence, and the Fig. 3 and Fig. 4 captions.",
+    "repo github.com/amap-cvlab/ABot-Claw @ 39c9ffc94a84f2e6baac431a9bff9771111f8539: README.md",
+    "openclaw_layer/: README.md, MISSION.md, ROBOT.md, HEARTBEAT.md, SERVICE.md, setup.sh, docs/ABOTCLAW_SDK_DISCOVERY.md, skills/{abotclaw-memory, abotclaw-progress-critic, abotclaw-run-robot-task, abotclaw-active-services, abotclaw-bundle, abotclaw-robot-connection, abotclaw-robot-hardware, abotclaw-sdk-discovery}/SKILL.md",
+    "robot_layer/README.md; robot_layer/arm_piper/agent_server/: server.py, code_executor.py, execution_recorder.py, workspace_teacher.py, routes/code_routes.py, routes/system_guide.py, routes/rewind_routes.py, routes/sdk_docs.py (grep), robot_sdk/memory_sdk.py, robot_sdk/config.yaml, robot_sdk/yolo_sdk.py and robot_sdk/grasp_sdk.py (public APIs); robot_layer/arm_piper/system_logger/README.md",
+    "service_layer/README.md; service_layer/SpatialMemory/: README.md, SERVICE_AGENT.md, app/api/routes.py, app/services/memory_service.py, app/services/task_service.py, app/storage.py, app/schemas.py, app/embeddings.py, app/config.py, pipelines/offline_keyframe_pipeline.py",
+    "service_layer/VLAC/: main.py, SERVICE_AGENT.md"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed evidence is written into the shared memory by every robot: detector outputs with 3D poses, camera frames with notes and tags, user or automatic place registration, and patrol keyframes. The code implements the write path. SpatialMemory has upsert/ingest endpoints backed by SQLite and an image store. MemorySDK.upsert_object is pre-created as `memory` in every robot program. The memory skill tells the agent to capture a live frame and ingest it. The code embeddings are placeholders and the offline keyframe pipeline is simulated, but this does not negate the write path.",
+      "locator": "arXiv v2 §2.3 'Memory entities' (Object-centric and Place-anchor memory) and 'Shared memory across embodiments'; service_layer/SpatialMemory/app/api/routes.py:28-42; app/services/memory_service.py:64-183; robot_layer/arm_piper/agent_server/robot_sdk/memory_sdk.py:116-159; code_executor.py:700-701; openclaw_layer/skills/abotclaw-memory/SKILL.md:134-206,222-226",
+      "quote": "Continuous visual detectors identify salient objects in the scene and store their category labels, observation timestamps, source robot identifiers, and associated spatial information like 3D poses."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The runtime queries retained object, place and semantic memories before and during execution. It uses them to pick embodiments and targets, to reassign tasks (Fig. 8: the last known location of a disconnected quadruped), and to replan. In code, SpatialMemory returns an action-ready target_pose with confidence and evidence. The memory skill hands target_pose to navigation or manipulation, and MISSION.md rule 8 tells the agent to use memory when it helps.",
+      "locator": "arXiv v2 §2.5 'Instruction grounding and embodiment selection' and 'Memory-assisted action generation'; §2.4 'Adaptive correction and strategy switching'; §4.3.2 / Fig. 8; openclaw_layer/skills/abotclaw-memory/SKILL.md:208-214,245-247; openclaw_layer/MISSION.md:41; service_layer/SpatialMemory/app/services/memory_service.py:185-278",
+      "quote": "Instead of terminating, ABot-Claw queries the shared memory to recover the quadruped’s last known location and uses that information to reassign the task."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The goal of the current instruction or subtask, set by Action, guides the in-system critic's check on the current observation. Action's information needs also drive acquisition: a generated search procedure adjusts the viewpoint and repeats perception (§4.2.1), and local refinement updates the viewpoint (§2.4). In code, the critic skill has the agent write a task_description matching the intended goal and choose the camera that best shows progress. Generated programs pass the planned target object_name to YoloSDK.segment_3d and GraspSDK.get_grasp_pose, which filter detections and request grasps for that target.",
+      "locator": "arXiv v2 §2.5 'Execution and progress evaluation'; §2.4 'Adaptive correction and strategy switching'; §4.2.1; openclaw_layer/skills/abotclaw-progress-critic/SKILL.md:75-98,123-143; robot_layer/arm_piper/agent_server/robot_sdk/grasp_sdk.py:422-470; robot_sdk/yolo_sdk.py:302-325; service_layer/VLAC/main.py:54-59,122-141",
+      "quote": "During or after execution, the critic module evaluates task progress with respect to the original instruction and current observation, returning a signal that reflects whether the subtask is advancing toward completion."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The orchestration skill tells the agent to retrieve a remembered success or evidence image from SpatialMemory and pass it as the VLAC critic's reference_image. A retained prior therefore directly shapes how the critic (Sensing) interprets the current frame; this is a direct hand-off, not just a memory-guided action that asks for a new observation. The plumbing exists: memory results carry evidence.image_path, and /critic accepts reference_image as a path, URL or base64. The paper text does not state this. Its memory-to-perception passages (keyframes for 'viewpoint revisiting' in §2.3; memory that 'helps localize the target and reduce unnecessary search' in §2.5) are only M→A→S compositions.",
+      "locator": "openclaw_layer/skills/abotclaw-progress-critic/SKILL.md:100-107,166-172; service_layer/SpatialMemory/app/services/memory_service.py:206-221; service_layer/VLAC/main.py:54-59,131-141; arXiv v2 §2.3 and §2.5 (compositions only)",
+      "quote": "use memory to retrieve a prior successful evidence image as `reference_image`"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The paper says successful executions are written back into memory, and execution traces are logged with critic scores and fed back to the runtime as structured experience (§2.4). The code retains action records across interactions and exposes them to the agent via /code/history and /code/recordings: every submitted program is saved under logs/code_executions/; each execution's frames, state_log.jsonl and metadata are recorded; status, stdout and stderr go to history and code_execution.log. Caveats: retention is rolling. No code writes execution records or critic scores into SpatialMemory (its only types are object, place, semantic_frame and keyframe).",
+      "locator": "arXiv v2 §2.5 'Update, refinement, or replanning'; §2.4 'Closing the execution loop'; robot_layer/arm_piper/agent_server/code_executor.py:376-395,436-442,553-555,717-723; execution_recorder.py:109-192,232-244,285-302; routes/code_routes.py:162-181,325-429",
+      "quote": "Successful executions are written back into memory when appropriate."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of what it executed for its own later use, not just for author analysis. The paper logs execution traces and feeds them back into the runtime. The code saves every submitted program and records per-execution camera frames, state trajectories and results. The robot's system guide tells the agent to use these recordings after execution to verify results.",
+      "locator": "arXiv v2 §2.4 'Closing the execution loop'; §3.2 (generated Python file 'ensuring reproducibility and traceability'); robot_layer/arm_piper/agent_server/code_executor.py:436-442,717-723; execution_recorder.py; routes/code_routes.py:325-429; routes/system_guide.py:286-297,316-321",
+      "quote": "We log execution traces together with critic scores and feed them back into the runtime as structured experience."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later evidence about each action is obtained and kept. Critic progress scores are logged together with the execution traces (paper). The code keeps execution status, exit code, stdout and stderr, plus frames and state captured during execution. Code gap: no repo code saves VLAC critic outputs; the VLAC agent doc says the service does not store long-term memory.",
+      "locator": "arXiv v2 §2.4 'Closing the execution loop'; §2.5 'Update, refinement, or replanning'; robot_layer/arm_piper/agent_server/code_executor.py:55-81,487-555,376-395; execution_recorder.py:109-192; service_layer/VLAC/SERVICE_AGENT.md:16-19",
+      "quote": "We log execution traces together with critic scores and feed them back into the runtime as structured experience."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Outcomes are linked to the subtask or action they assess and used to correct it online. Critic thresholds mark a subtask complete, continue local refinement, or trigger replanning (§2.4). A failed grasp is detected and replanned with a recomputed grasp pose (§4.2.2). In code, the critic skill maps results to continue, retry, replan or stop. The robot guide tells the agent to monitor execution and verify results from recordings.",
+      "locator": "arXiv v2 §4.2.2 / Fig. 6; §2.4 'Adaptive correction and strategy switching'; Fig. 4 caption; openclaw_layer/skills/abotclaw-progress-critic/SKILL.md:145-154; robot_layer/arm_piper/agent_server/routes/system_guide.py:270-322",
+      "quote": "In addition, when the initial grasp fails, the monitoring module detects the unsuccessful outcome and triggers replanning, recomputing the grasp pose for a new attempt."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No durable change to a mechanism made by the service is named. The 'structured experience' fed back (§2.4) is unspecified content, not a stated rule, prompt, skill or parameter. Generated per-task scripts are saved for traceability, not reused as rules. The §1 sentence on OpenClaw 'dynamic skill evolution' describes the base runtime's general capability. The repo's skills and prompts are written by the developers; MISSION.md and HEARTBEAT.md only direct user-requested skill development or 'Suggest' refactors, with no reported persistence. The VLAC and other model weights are not updated.",
+      "locator": "arXiv v2 Abstract, §1 (OpenClaw background paragraph), §2.4 'Closing the execution loop', §3.2-3.3; openclaw_layer/MISSION.md:11,49,58; openclaw_layer/HEARTBEAT.md:22-25; service_layer/VLAC/main.py:88-99",
+      "what": "None reported. Candidates considered: OpenClaw workspace skills and the 'structured experience' fed back to the runtime. Neither is reported as a durable mechanism change made by the service."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No later run under a revised prompt, skill, rule or model is reported. The Fig. 5 agent line 'Next time I can't find something, I'll make sure to look around carefully' appears as figure text in the repo PDF (UNVERIFIED in the v2 HTML). It is a promise, with no stored rule or subsequent run reported.",
+      "locator": "arXiv v2 §4 (all demonstrations); repo tech_report PDF Fig. 5 (p. 13)"
+    }
+  },
+  "notes": "Judged the named configuration: OpenClaw layer, Piper robot agent server, shared SpatialMemory and the VLAC critic. Paper quotes were read verbatim from the repo PDF. Each was confirmed present in the v2 HTML by WebFetch sentence-match checks; because WebFetch paraphrases, the v2 match is tool-confirmed rather than byte-compared. Implementation caveats that do not change any label: (1) only the Piper arm robot layer is released; there is no G1 or Go2 code. (2) SpatialMemory embeddings are hash and colour-statistics placeholders, not the vision-language encoder the paper describes. (3) The offline keyframe pipeline is simulated. (4) The VLAC service is stateless and no repo code saves critic scores. (5) No code writes execution records into SpatialMemory. (6) Execution logs are rolling: 20 recordings, 50 scripts, 10 in-process results, 30 days of logs. (7) setup.sh copies from a workspace/ subdirectory that is missing from the repo. (8) The rewind and workspace routes are not wired into server.py. The base OpenClaw runtime's own session memory (MEMORY.md and memory/ notes referenced by the setup.sh AGENTS.md patch) is outside the listed sources and was not relied on. The self-evolution wording ('progressively self-evolving' in the abstract; 'continuous learning, adaptation, and evolution' in §1) is treated as unsupported claims for the revision and later-use steps.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 538,
+    "code_commit": "39c9ffc94a84f2e6baac431a9bff9771111f8539"
+  }
+}

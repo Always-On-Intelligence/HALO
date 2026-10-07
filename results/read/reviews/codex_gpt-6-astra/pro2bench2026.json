@@ -1,0 +1,72 @@
+{
+  "id": "pro2bench2026",
+  "configuration": "Full predicted-plan PWR: trained planner and duplex interaction model with online plan updates; excludes oracle plans.",
+  "sources_read": [
+    "https://arxiv.org/html/2606.04970v1 (v1; method, experiments, qualitative results, limitations, Appendices A and G)",
+    "cases/plan-watch-recover/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Current video evidence updates the cached plan's progress and recovery state.",
+      "locator": "[§§2.2–2.4](https://arxiv.org/html/2606.04970v1#S2.SS2)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Cached plans and dialogue history condition interruption, silence, and guidance.",
+      "locator": "[§§2.2, 2.5](https://arxiv.org/html/2606.04970v1#S2.SS5)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Planner-generated visual expectations guide interpretation; plan-update timestamps determine sampled clips.",
+      "locator": "[§§2.3–2.4](https://arxiv.org/html/2606.04970v1#S2.SS4)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained plan cues directly guide visual interpretation; retained update timestamps anchor clip selection.",
+      "locator": "[§§2.2–2.4](https://arxiv.org/html/2606.04970v1#S2.SS4)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Duplex decisions and utterances enter planner updates retained as the next cached plan.",
+      "locator": "[§2.2, equations 2–3](https://arxiv.org/html/2606.04970v1#S2.SS2)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "Generated procedural decisions persist in cached plans for subsequent passes.",
+      "locator": "[§2.4, Planner input; §2.2](https://arxiv.org/html/2606.04970v1#S2.SS4)",
+      "quote": "procedural memory lives in the plan"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Observed completion or deviation of guided steps is retained in updated plan status.",
+      "locator": "[§2.3, plan updates/status tags; §2.5](https://arxiv.org/html/2606.04970v1#S2.SS3)",
+      "quote": "as steps complete or the user deviates."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Observations are checked against the previous guidance-consistent plan to advance or correct assistance.",
+      "locator": "[§2.5, OOP handling; §2.2, Planner](https://arxiv.org/html/2606.04970v1#S2.SS5)",
+      "quote": "inspecting $o_{t}$ against $P_{t-1}$ and emitting the appropriate updated plan."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Online changes concern task state; supervised training is external. Baseline prompt-rewriting ablations are outside this configuration.",
+      "locator": "[§§2.3, 2.6; Appendix G.2](https://arxiv.org/html/2606.04970v1#S2.SS6)"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Subsequent passes use updated task plans, without a reported service-revised mechanism.",
+      "locator": "[§2.2, Figure 3; Appendix G.2](https://arxiv.org/html/2606.04970v1#S2.SS2)"
+    }
+  },
+  "notes": "Text-only review; memory is session-local. Outcome and attribution concern procedural monitoring, not author-side benchmark grading.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 182,
+    "code_commit": null
+  }
+}

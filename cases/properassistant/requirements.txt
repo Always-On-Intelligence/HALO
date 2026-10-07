@@ -1,0 +1,6 @@
+# all-MiniLM-L6-v2 on CPU stands in for OpenAI text-embedding-3-small (memory retrieval);
+# it also brings torch (CPU), transformers, numpy and tqdm, which the upstream modules import.
+sentence-transformers
+# persona/cognitive_modules/evaluation.py compares the two candidates with Levenshtein.distance
+levenshtein
+pyyaml

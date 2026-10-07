@@ -1,0 +1,8 @@
+# the gym's event bus and request layer (imported by gym/config.py, gym/channel.py, gym/components/*);
+# brings openai, pydantic, jsonschema, tenacity, toml
+codelinker
+# gym/config.py
+colorlog
+toml
+# the scene file (dataset/new_scenes_good.yaml) and the harness
+pyyaml

@@ -1,0 +1,42 @@
+variant,system,domain,kind,S->M,M->A,A->S,M->S,A->M,Rec.,Out.,Attr.,Rev.,Use.
+ai4service,Alpha-Service,wearable,research,reported,reported,reported,insufficient,reported,stated,not_stated,not_stated,not_stated,not_stated
+aiget,AiGet,wearable,research,reported,reported,reported,reported,reported,stated,not_stated,not_stated,not_stated,not_stated
+contextagent,ContextAgent,wearable,research,absent,reported,reported,insufficient,insufficient,not_stated,not_stated,not_stated,not_stated,not_stated
+egocopilot2026,Egocentric Co-Pilot,wearable,research,reported,reported,reported,reported,reported,stated,stated,stated,not_stated,not_stated
+ipibench2026,IPI-Agent,wearable,research,reported,reported,insufficient,reported,reported,stated,not_stated,not_stated,not_stated,not_stated
+lightmemego2026,LightMem-Ego,wearable,research,reported,reported,insufficient,reported,reported,stated,not_stated,not_stated,not_stated,not_stated
+m3agent,M3-Agent,wearable,research,reported,reported,absent,reported,absent,not_stated,not_stated,not_stated,not_stated,not_stated
+mementoar2026,Memento,wearable,research,reported,reported,reported,reported,reported,stated,stated,stated,not_stated,not_stated
+pro2assist2026,Pro²Assist,wearable,research,reported,reported,insufficient,reported,insufficient,not_stated,not_stated,not_stated,not_stated,not_stated
+pro2bench2026,"Plan, Watch, Recover",wearable,research,reported,reported,reported,reported,reported,stated,stated,stated,not_stated,not_stated
+proagent,ProAgent,wearable,research,reported,reported,reported,insufficient,reported,stated,stated,stated,not_stated,not_stated
+sensibleagent2025,Sensible Agent,wearable,research,absent,reported,reported,absent,absent,not_stated,not_stated,stated,not_stated,not_stated
+socialmind,SocialMind,wearable,research,reported,reported,insufficient,reported,reported,stated,not_stated,not_stated,not_stated,not_stated
+speechless2026,SpeechLess,wearable,research,reported,reported,reported,reported,reported,stated,not_stated,stated,not_stated,not_stated
+vinci,Vinci,wearable,research,reported,reported,insufficient,insufficient,insufficient,not_stated,not_stated,not_stated,not_stated,not_stated
+vinci2,Vinci2,wearable,research,reported,reported,absent,absent,reported,stated,not_stated,not_stated,not_stated,not_stated
+visionclaw2026,VisionClaw,wearable,research,reported,reported,reported,insufficient,reported,stated,stated,stated,not_stated,not_stated
+bee2026,Bee,wearable,product,reported,reported,insufficient,insufficient,reported,stated,not_stated,not_stated,not_stated,not_stated
+omi2026,Omi,wearable,product,reported,reported,reported,reported,reported,stated,stated,stated,not_stated,not_stated
+abot-claw,ABot-Claw,physical,research,reported,reported,reported,reported,reported,stated,stated,stated,not_stated,not_stated
+assistantx,AssistantX,physical,research,reported,reported,reported,reported,insufficient,not_stated,not_stated,stated,not_stated,not_stated
+hobbit,Hobbit,physical,research,reported,reported,reported,reported,insufficient,not_stated,not_stated,stated,not_stated,not_stated
+movecare,MoveCare,physical,research,reported,reported,reported,reported,reported,stated,stated,stated,not_stated,not_stated
+philia,PHILIA,physical,research,reported,reported,reported,reported,reported,stated,not_stated,stated,not_stated,not_stated
+strands,STRANDS,physical,research,reported,reported,reported,reported,reported,stated,stated,stated,not_stated,not_stated
+elliq,ElliQ,physical,product,reported,reported,reported,insufficient,insufficient,not_stated,stated,stated,not_stated,not_stated
+awarellm2026,AwareLLM,digital,research,reported,reported,insufficient,reported,reported,stated,not_stated,not_stated,not_stated,not_stated
+longtermtoa2026,Long-term TOA,digital,research,reported,reported,reported,reported,reported,stated,stated,stated,not_stated,not_stated
+lunchnow2025,PITCH,digital,research,reported,reported,reported,insufficient,reported,stated,stated,stated,not_stated,not_stated
+luproactiveagent2024,Proactive Agent,digital,research,reported,reported,reported,insufficient,reported,stated,stated,stated,not_stated,not_stated
+ouroboros2026,Ouroboros,digital,research,reported,reported,reported,reported,reported,stated,stated,stated,stated,stated
+pahf2026,PAHF,digital,research,reported,reported,reported,insufficient,reported,not_stated,stated,stated,not_stated,not_stated
+pask2026,PASK,digital,research,reported,reported,reported,reported,insufficient,not_stated,not_stated,not_stated,not_stated,not_stated
+proact2026,ProAct,digital,research,reported,reported,reported,reported,reported,stated,not_stated,not_stated,not_stated,not_stated
+propersim,ProPerAssistant,digital,research,reported,reported,insufficient,insufficient,reported,stated,stated,stated,stated,stated
+userascode2026,User as Code,digital,research,reported,reported,reported,insufficient,reported,stated,not_stated,stated,stated,not_stated
+visualclaw2026-claude-code,VisualClaw,digital,research,reported,reported,reported,insufficient,reported,stated,stated,stated,stated,stated
+visualclaw2026-codex,VisualClaw,digital,research,reported,reported,absent,insufficient,reported,stated,stated,stated,stated,stated
+chatgptdots2026,Dot,digital,product,reported,reported,reported,reported,reported,stated,stated,stated,not_stated,not_stated
+langchaineai2025,EAIA,digital,product,reported,reported,reported,reported,reported,stated,stated,stated,stated,not_stated
+metamuse2026,Muse,digital,product,reported,reported,reported,reported,reported,stated,stated,stated,stated,not_stated

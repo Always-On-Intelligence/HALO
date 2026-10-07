@@ -1,0 +1,21 @@
+# HALO run mode for ProPerAssistant (ProPerSim). Inputs and the backbone are fixed across arms; only the cut sites differ.
+models:
+  # stands in for Llama-3.3-70B (+ LoRA) and gpt-4o-mini on the assistant side; the user agent (Gemini 2.0 and
+  # gpt-4o-mini in ProPerSim) is a second LLM role on the same backend (tags 'user:')
+  backbone: {backend: "codex:gpt-6-astra", effort: low}
+  judge: {backend: "codex:gpt-6-astra", effort: high}
+samples: 3
+rubric: >-
+  A home assistant watches what the user is doing and, at each listed moment of one day, either makes one suggestion
+  or answers "No Recommendation" (stays silent). Decide which output better fits this particular user's stated
+  preferences: whether the user wants a suggestion at that moment at all (timing and frequency), whether the content
+  suits what the user is doing and likes, and whether the tone matches the communication style the user asked for.
+  Staying silent is right at moments when the user does not want to be interrupted. Ignore writing quality and length.
+tests:
+  - cut: [S->M]
+  - cut: [M->A]
+  - cut: [A->M]
+  - cut: [record]
+  - cut: [outcome]
+  - cut: [attribution]
+  - cut: [revision]

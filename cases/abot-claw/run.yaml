@@ -1,0 +1,18 @@
+# HALO run mode for ABot-Claw. Inputs and the backbone are fixed across arms; only the cut sites differ.
+models:
+  backbone: {backend: "codex:gpt-6-astra", effort: low}    # stands in for the OpenClaw agent's model and the VLAC critic (InternVL2)
+  judge: {backend: "codex:gpt-6-astra", effort: high}
+samples: 3
+rubric: >-
+  One agent runs a robot fleet with a shared memory and a progress critic. Each output records one run: the
+  human's requests, what the robots did, what memory and the critic returned, the agent's replies, and the end
+  state. Decide which run served the human better on the last request: the requested end state reached, with
+  fewer wasted robot actions and no claim in a reply that the end state contradicts. A run that reaches the
+  requested end state beats one that does not. Ignore wording and formatting.
+tests:
+  - cut: [S->M]
+  - cut: [M->A]
+  - cut: [A->S]
+  - cut: [M->S]
+  - cut: [A->M]
+  - cut: [attribution]

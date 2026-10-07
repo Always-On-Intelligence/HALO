@@ -1,0 +1,85 @@
+{
+  "id": "langchaineai2025",
+  "configuration": "EAIA reference implementation, variant langchaineai2025 (source snapshot 2026-09-22), at commit 758db7174223da7864feea7c9f8d1aba12923037. This commit is still GitHub main HEAD (committed 2026-02-27), so the four listed blob/main URLs resolve to this code. Judged with: config.yaml memory: true; LangGraph Platform cron ingestion (scripts/setup_cron.py on a */10 schedule, eaia/cron_graph.py); the persistent LangGraph store with its embedding index (langgraph.json); the main graph's triage -> draft_response/rewrite -> Agent Inbox interrupts, including the Question tool; and Agent Inbox feedback triggering save_email and multi_reflection_graph.",
+  "sources_read": [
+    "https://github.com/langchain-ai/executive-ai-assistant/blob/main/eaia/main/human_inbox.py (main = 758db71; read from the local checkout)",
+    "https://github.com/langchain-ai/executive-ai-assistant/blob/main/eaia/main/draft_response.py (main = 758db71; read from the local checkout)",
+    "https://github.com/langchain-ai/executive-ai-assistant/blob/main/eaia/main/fewshot.py (main = 758db71; read from the local checkout)",
+    "https://github.com/langchain-ai/executive-ai-assistant/blob/main/eaia/reflection_graphs.py (main = 758db71; read from the local checkout)",
+    "Local checkout @758db7174223da7864feea7c9f8d1aba12923037: README.md, CONTRIBUTING.md, langgraph.json, pyproject.toml, eaia/cron_graph.py, eaia/gmail.py, eaia/schemas.py, eaia/main/graph.py, eaia/main/triage.py, eaia/main/rewrite.py, eaia/main/find_meeting_time.py, eaia/main/config.py, eaia/main/config.yaml, scripts/setup_cron.py, scripts/run_ingest.py, scripts/run_single.py, scripts/setup_gmail.py",
+    "https://api.github.com/repos/langchain-ai/executive-ai-assistant/commits/main (checked 2026-10-07: HEAD = 758db7174223da7864feea7c9f8d1aba12923037)",
+    "https://www.langchain.com/blog/introducing-ambient-agents (case-file report, Harrison Chase, 2025-01-14; read via WebFetch, which paraphrases, so quotes from it are UNVERIFIED)",
+    "cases/eaia/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Evidence from the user is written to the persistent store at runtime. When an Agent Inbox interrupt returns and memory is true, save_email admits the sensed email into the (assistant_id, 'triage_examples') namespace with a label set by the user's response: 'email' for respond/edit/accept, 'no' for ignore. The user's free-text feedback or corrected draft is also sent to multi_reflection_graph, whose update_general overwrites the stored preference and instruction blocks. The cron also stores each ingested email id in thread metadata.",
+      "locator": "eaia/main/human_inbox.py:61-70 (save_email), 103-117, 131-132, 212-230; eaia/reflection_graphs.py:64-93; eaia/cron_graph.py:40; eaia/main/config.yaml:52",
+      "quote": "data = {\"input\": state[\"email\"], \"triage\": status} [...] await store.aput(namespace, str(uuid.uuid4()), data)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained store content reaches behaviour selection on every run. draft_response reads schedule_preferences, random_preferences and response_preferences from the store into the system prompt that chooses among Question, ResponseEmailDraft, SendCalendarInvite, MeetingAssistant and NewEmailDraft. rewrite reads rewrite_instructions to reshape the outgoing draft. triage_input runs a semantic search for the top 5 stored triage examples and uses them as few-shot context for the no/notify/email decision. That decision routes the email to silence (mark as read), a notification, or drafting.",
+      "locator": "eaia/main/fewshot.py:32-40; eaia/main/triage.py:46-67; eaia/main/graph.py:30-42; eaia/main/draft_response.py:101-133; eaia/main/rewrite.py:38-58",
+      "quote": "result = await store.asearch(namespace, query=str({\"input\": email}), limit=5) [...] schedule_preferences = result.value[\"data\"]"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action's information needs and intentions direct new acquisition. When draft_response lacks information it calls Question. take_action routes this to send_message, which raises an Agent Inbox interrupt carrying the question as the action_request. The user's answer comes back to draft_response as a tool message. When drafting decides a meeting is being arranged it calls MeetingAssistant. find_meeting_time then runs a ReAct agent that reads the user's Google Calendar (get_events_for_days) for the days it selects. Calendar-invite execution results and errors are captured as ToolMessages for the drafting step.",
+      "locator": "eaia/main/draft_response.py:27-38, 63-68 (first quote: line 29); eaia/main/graph.py:59-66, 99-100, 115-130; eaia/main/human_inbox.py:73-102; eaia/main/find_meeting_time.py:15-21, 66-96 (second quote: line 17)",
+      "quote": "First, get all required information to respond. You can use the Question tool to ask {name} for information if you do not know it. [...] Your SOLE purpose is to survey {name}'s calendar and schedule meetings for {name}."
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "This flow is minimal but implemented. On every cron tick, ingestion reads the email_id it stored in LangGraph thread metadata on earlier runs. It stops admitting emails ('break') when it reaches one already processed, so a retained record decides which sensed emails enter the service (sampling). Whether the retained thread exists also decides whether a user's own reply is skipped. The README describes the same seen-email check for manual ingest. The learned preference blocks and triage examples never reach Sensing: the Gmail query and the calendar lookup use static config only. Triage few-shot retrieval is counted under M->A because its output selects silence, notification, or drafting.",
+      "locator": "eaia/cron_graph.py:21-47 (quote: lines 37-39); scripts/setup_cron.py:18; README.md:87-88; eaia/gmail.py:187-198",
+      "quote": "recent_email = thread_info[\"metadata\"].get(\"email_id\") [...] if recent_email == email[\"id\"]: [...] break"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Action context reaches Memory's update step. On each Agent Inbox response with memory true, human_inbox starts multi_reflection_graph with the agent's trajectory: state['messages'], including its own tool calls such as drafts, questions and invites. In the edit branch the input explicitly pairs the assistant's original draft with the user's correction. determine_what_to_update and update_general render this trajectory and use it to decide whether and how to rewrite the stored blocks (rewrite_instructions, response_preferences, schedule_preferences, random_preferences).",
+      "locator": "eaia/main/human_inbox.py:105-117, 171-183, 212-230, 266-278, 332-344, 373-387; eaia/reflection_graphs.py:14-18, 41-44, 150-178",
+      "quote": "\"content\": state[\"messages\"][-1].tool_calls[0][\"args\"][\"content\"], [...] await LGC.runs.create(None, \"multi_reflection_graph\", input=rewrite_state)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of its own decisions in its checkpointed thread state for later use. draft_response appends its tool-call message (the proposed draft, question or invite, with arguments) to State.messages, an add_messages channel. That record survives the Agent Inbox interrupt. It is read back afterwards to build the interrupt request, to execute the approved tool call (send_email_node, send_cal_invite_node), and as the trajectory or original draft handed to reflection. This is the service's own operating state, not a trial log analysed by the authors.",
+      "locator": "eaia/schemas.py:91-94; eaia/main/draft_response.py:154; eaia/main/human_inbox.py:144, 215-225; eaia/main/graph.py:115-145",
+      "quote": "return {\"draft\": response, \"messages\": [response]} [...] tool_call = state[\"messages\"][-1].tool_calls[0]"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later evidence about each proposed action is obtained through interrupt(): the user's Agent Inbox verdict (accept, edit, free-text response or ignore). It is kept in three places: as a triage label in the store ('no' on dismissal, 'email' otherwise), as a feedback ToolMessage or edited tool call in thread state, and as feedback text passed to reflection. Calendar-invite execution results and errors are also kept as ToolMessages.",
+      "locator": "eaia/main/human_inbox.py:155-237 (send_email_draft; quotes at lines 155, 198, 226), 61-70; eaia/main/graph.py:115-130",
+      "quote": "response = interrupt([request])[0] [...] await save_email(state, config, store, \"no\") [...] \"feedback\": f\"A better response would have been: {corrected}\","
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Outcomes are linked to the decision they concern and used to correct assistance. Free-text feedback comes back as a ToolMessage carrying the draft's tool_call_id, and enter_after_human routes it to draft_response for an immediate redraft. For lasting correction, the edit branch pairs the assistant's original draft with the user's corrected text. The reflection prompt then sets the agent's trajectory beside the user's feedback to decide what to change.",
+      "locator": "eaia/main/human_inbox.py:162-168, 212-230; eaia/main/graph.py:88-100; eaia/reflection_graphs.py:34-61 (lines 41, 46)",
+      "quote": "\"content\": f\"Error, {user} interrupted and gave this feedback: {response['args']}\", [...] \"tool_call_id\": tool_call[\"id\"], [...] Here was the agent's trajectory: [...] Here is the user's feedback:"
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The service itself rewrites its own prompt instructions. multi_reflection_graph is registered in langgraph.json and launched by human_inbox, not by a developer. It chooses which prompt types to update; update_general then has an o1 model return a full new prompt that overwrites the stored block. The reflection prompt describes this as changing the agent's system prompt. Three of the blocks are behavioural instructions that later drafting and rewriting apply as rules: tone/style/format, response content and when to respond, and calendar-invite conventions. By role this is a prompt/rule revision, not only content. The background block (people, emails, addresses) and the triage few-shot examples are content used by a fixed mechanism, so they are not counted.",
+      "locator": "eaia/reflection_graphs.py:8-11, 34-61, 64-93, 103-120, 150-178 (quotes at lines 34, 92); eaia/main/human_inbox.py:117, 183, 230, 278, 344, 387; langgraph.json:10",
+      "quote": "You are helping an AI agent improve. You can do this by changing their system prompt. [...] namespace, key, {\"data\": output[\"new_prompt\"]}, index=False",
+      "what": "System-prompt instruction blocks in the LangGraph store under (assistant_id,): rewrite_instructions (tone/style/format rules used by rewrite.py), response_preferences (content and when-to-respond instructions in the drafting prompt) and schedule_preferences (calendar-invite rules in the drafting prompt). The o1 reflection model rewrites them from Agent Inbox feedback. random_preferences (background facts) is also rewritten but is content, not a revision."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "The code would load revisions, since draft_response and rewrite re-read the stored blocks on every run. But no listed source reports a later run under a reflection-revised prompt. The blog only says agents should learn over time and can update 'memory' after human-in-the-loop interactions.",
+      "locator": "eaia/main/draft_response.py:101-133; eaia/main/rewrite.py:38-58; https://www.langchain.com/blog/introducing-ambient-agents"
+    }
+  },
+  "notes": "Judged the code at 758db71 (= GitHub main as checked 2026-10-07) under the named configuration (memory: true, cron, persistent store, Question tool, Agent Inbox reflection). Code quotes are verbatim from the local checkout, with omitted spans marked [...]. The case-file blog was read only through WebFetch, which paraphrases, so its text (e.g. UNVERIFIED: \"This makes it easy for agents to update their 'memory' after human-in-the-loop interactions.\") served as context only and supports no label. Triage counts as an Action decision because its no/notify/email output selects silence, notification or drafting, so its few-shot retrieval is M->A. M->S rests only on the cron's seen-email cursor in thread metadata; it would drop to insufficient if that bookkeeping is not treated as Memory. Implementation quirks do not negate the reported flows: save_email checks the email id but writes under a random uuid, and update_general assumes the target block was already seeded. The README-linked Notion docs for the hosted version were not used: they are not a listed source and describe a different deployment.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 530,
+    "code_commit": "758db7174223da7864feea7c9f8d1aba12923037"
+  }
+}

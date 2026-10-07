@@ -1,0 +1,96 @@
+{
+  "id": "visualclaw2026-claude-code",
+  "configuration": "VisualClawArena / Claude Code (Sonnet 4.6), Cascade-8 + FullEvo Cat.",
+  "sources_read": [
+    "https://arxiv.org/html/2606.16295v1 — particularly §§3.2–3.4, 4.2, 5.3 and Appendix A.5",
+    "cases/visualclaw/case.yaml",
+    "https://github.com/UCSC-VLAA/VisualClaw/tree/f6de05bb8f03e8ba44ec5ee458961cd70002a6d5 — verified checkout commit; following code paths refer to this revision",
+    "README.md",
+    "docs/visualclawarena.md",
+    "scripts/run_visualclawarena_self_evolve.sh",
+    "benchmark/visualclawarena/runner.py",
+    "benchmark/visualclawarena/engines/claude_code.py",
+    "benchmark/visualclawarena/work_copy.py",
+    "benchmark/visualclawarena/cascade_frames.py",
+    "benchmark/skill_wire.py",
+    "visualclaw/modules/skill/evolver.py",
+    "visualclaw/modules/skill/manager.py",
+    "visualclaw/modules/memory/manager.py",
+    "visualclaw/modules/memory/store.py",
+    "visualclaw/modules/multimodal/video/change_gate.py",
+    "visualclaw/skills_seed/seed_visualclawarena/video-context-grounding/SKILL.md",
+    "visualclaw/skills_seed/seed_visualclawarena/visual-detail-matching/SKILL.md"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "The runner admits the current task question and obtained pass/fail evidence into a scenario-scoped episodic memory. MemoryManager persists these units, including their outcome, in the memory store.",
+      "locator": "benchmark/visualclawarena/runner.py:752–797, 1015–1025; visualclaw/modules/memory/manager.py:320–347; visualclaw/modules/memory/store.py:434–479",
+      "quote": "content = f\"{label} — Q: {q}\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained skills are retrieved for each round and inserted into Claude Code's prompt before workspace execution. Newly generated skills enter the same manager, supplying reusable instructions to later answer and execution decisions.",
+      "locator": "benchmark/visualclawarena/runner.py:847–909, 936–942, 1774–1777; visualclaw/modules/skill/manager.py:663–727",
+      "quote": "The LLM receives the most-relevant skills inline (directly actionable)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Claude Code selects native Read, Glob, Grep and Bash operations during its tool loop. Its information needs therefore determine which workspace files or staged keyframes are acquired, and it can request validation observations. This judgment does not count the external evaluator as an Action-to-Sensing flow.",
+      "locator": "benchmark/visualclawarena/engines/claude_code.py:12–16, 33–36, 140–150, 171–191; benchmark/visualclawarena/runner.py:519–524, 562–588",
+      "quote": "the agent's Read tool returns them as\nimage content blocks to the underlying multimodal model."
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Retained skills and episodes reach decision prompts, but direct use of across-interaction memory for sensing is not established. Arena extracts frames before its round loop; the cascade's within-clip rolling references do not establish that retention scope. Excluding streaming StateMemory does not explicitly exclude every possible M-to-S route.",
+      "locator": "benchmark/visualclawarena/runner.py:847–934, 1574–1619, 1714–1740; benchmark/visualclawarena/cascade_frames.py:11–14, 111–165; visualclaw/modules/multimodal/video/change_gate.py:80–145",
+      "quote": "Stage 4 (StateMemory) and Stage 5 (ContextBuilder) of the cascade are\nnot used here"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The assistant's delivered answer is retained in episodic memory, and complete answers and prompts are saved as round logs. The evolution loop subsequently reads these logs as failure samples, establishing retention for system use.",
+      "locator": "benchmark/visualclawarena/runner.py:769–797, 945–954, 1015–1025, 1793–1828",
+      "quote": "content += f\"\\nConclusion: {tail}\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains its answer conclusions in episodic memory and saves complete round answers. Failed-round answer logs are read back into the evolver, so these records serve subsequent assistance.",
+      "locator": "benchmark/visualclawarena/runner.py:752–797, 945–954, 1793–1818",
+      "quote": "Store one round's outcome as an episodic memory unit for later rounds."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "After execution, the runner obtains answer correctness or executable-check results and stores a passed/failed outcome alongside the round's question and assistant conclusion.",
+      "locator": "benchmark/visualclawarena/runner.py:779–797, 981–1002, 1015–1025; visualclaw/modules/memory/store.py:434–479",
+      "quote": "round_passed=bool(result.get(\"passed\")),"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Round IDs connect failed evaluations to the corresponding prompt and assistant answer. These linked failures are automatically submitted to an evolver instructed to prevent recurrence, making the evaluation feedback part of the assistance-correction loop.",
+      "locator": "benchmark/visualclawarena/runner.py:1785–1874; visualclaw/modules/skill/evolver.py:414–440, 467–482; [Paper v1, §4.2](https://arxiv.org/html/2606.16295v1#S4.SS2)",
+      "quote": "Your job: analyze the failed conversations below and generate NEW skills that would have prevented those failures."
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The evolver generates reusable procedural instructions from failed interactions, adds them to the active skill manager and writes SKILL.md files. This changes the instructions applied by future rounds through an automated system operation.",
+      "locator": "benchmark/skill_wire.py:482–575; visualclaw/modules/skill/evolver.py:197–270, 479–489; visualclaw/modules/skill/manager.py:782–823, 894–920",
+      "quote": "if self._manager.add_skill(skill_obj, write_to_disk=True):",
+      "what": "The reusable skill bank: generated Markdown instructions, procedures and anti-patterns injected into subsequent agent prompts."
+    },
+    "later_use": {
+      "label": "stated",
+      "rationale": "The paper reports executed Claude Code Cat. runs across early, middle and late scenario steps and explicitly attributes later behavior to self-evolved skills. The runner corroborates how additions become available to subsequent rounds; the judgment relies on the reported runs as well as implementation.",
+      "locator": "[Paper v1, §5.3, Temporal Trends on VisualClawArena, Table 7 and Figure 5](https://arxiv.org/html/2606.16295v1#S5.SS3); benchmark/visualclawarena/runner.py:1719–1740, 1774–1879",
+      "quote": "After this adaptation period, VisualClaw benefits from both accumulated scenario context and self-evolved skills"
+    }
+  },
+  "notes": "Judged the named Arena configuration, not the live-glasses gateway or Guide variant. The paper reports Cat. memory-to-evolver concatenation, but this commit's build_related_evolver_memory_context returns empty unless the mode is related_prefix (runner.py:1501–1512), despite simple_concat callers at 1840–1844 and 1960–1964. This discrepancy limits code corroboration of that particular fusion path; retained-skill injection and failure-driven revision remain implemented. Paper-facing run artifacts are excluded from this checkout (docs/visualclawarena.md:3–5), so later-use evidence comes from the paper's reported experiments.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 237,
+    "code_commit": "f6de05bb8f03e8ba44ec5ee458961cd70002a6d5"
+  }
+}

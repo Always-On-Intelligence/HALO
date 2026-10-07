@@ -1,0 +1,60 @@
+{
+  "run": {
+    "models": {
+      "backbone": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "low"
+      },
+      "judge": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "high"
+      }
+    },
+    "samples": 3,
+    "rubric": "The assistant is a workspace agent for one stakeholder. It answers multiple-choice checks and writes the requested files from a walkthrough video (given as keyframe descriptions) and the workspace documents. Decide which output better completes the later requests for this stakeholder: counts, lists and choices that follow the workspace's operating contract and the walkthrough evidence given in the situation, and the requested files present with the requested keys. A missing file or a wrong count is worse than a terse reply. Ignore writing style and length.",
+    "tests": [
+      {
+        "cut": [
+          "M->A"
+        ]
+      },
+      {
+        "cut": [
+          "A->M"
+        ]
+      },
+      {
+        "cut": [
+          "S->M"
+        ]
+      },
+      {
+        "cut": [
+          "M->S"
+        ]
+      },
+      {
+        "cut": [
+          "record"
+        ]
+      },
+      {
+        "cut": [
+          "outcome"
+        ]
+      },
+      {
+        "cut": [
+          "attribution"
+        ]
+      },
+      {
+        "cut": [
+          "revision"
+        ]
+      }
+    ]
+  },
+  "samples": 3,
+  "items_limit": null
+}

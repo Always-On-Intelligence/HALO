@@ -1,0 +1,15 @@
+id: pro2assist
+name: "Pro²Assist"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2605.04227
+sources:
+  - url: https://arxiv.org/html/2605.04227v2
+    kind: paper
+    version: "2605.04227v2"
+    sha256: f56e7e75a606d2a766f49fb48e187162102c4e7de9c938de0ac577e8492a1826
+variants:
+  - id: pro2assist2026
+    label: "Pro²Assist"
+    configuration: "Continuous single-task procedural guidance with session-reset progress history"
+modes: [read]

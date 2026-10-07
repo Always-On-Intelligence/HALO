@@ -1,0 +1,725 @@
+{
+  "case": "ouroboros",
+  "channels": {
+    "S->M": "the owner's messages written to the room's chat log (dialogue memory)",
+    "M->A": "memory blocks (story, room, identity, scratchpad, knowledge, Pattern Register, reflections, backlog) assembled into the action context",
+    "A->M": "Ouroboros's replies, execution reflections and their memory actions written to memory"
+  },
+  "steps": {
+    "record": "the experience review receives Ouroboros's own tool calls and final answer",
+    "outcome": "tool results (the `make check` verdicts) reach the experience review and its trigger",
+    "attribution": "each task's results are attached to that task's own calls",
+    "revision": "a reviewed commit of the application prompt lands in the repository the runtime loads",
+    "later_use": "test tasks build their context from the landed prompts/SYSTEM.md (cut together with revision)"
+  },
+  "tests": [
+    {
+      "cut": [
+        "record"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 0,
+      "modified": 0,
+      "tie": 12,
+      "metrics": {
+        "learn_ci_pass": {
+          "original": 1.75,
+          "modified": 1.75
+        },
+        "review_passed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "revision_landed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "learn_failed_checks": {
+          "original": 1.5833,
+          "modified": 1.5
+        },
+        "backbone_calls": {
+          "original": 23.1667,
+          "modified": 22.0833
+        },
+        "test_ci_pass": {
+          "original": 2.0,
+          "modified": 2.0
+        },
+        "test_failed_checks": {
+          "original": 0.25,
+          "modified": 0.25
+        },
+        "review_attempts": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "test_first_check_pass": {
+          "original": 1.75,
+          "modified": 1.75
+        },
+        "reflections": {
+          "original": 1.4167,
+          "modified": 1.25
+        },
+        "reviewer_calls": {
+          "original": 0.1667,
+          "modified": 0.0
+        },
+        "promoted": {
+          "original": 0.0833,
+          "modified": 0.0
+        },
+        "plan_reviews": {
+          "original": 0.0833,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "outcome"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 12,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "learn_ci_pass": {
+          "original": 1.75,
+          "modified": 1.5833
+        },
+        "review_passed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "revision_landed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "learn_failed_checks": {
+          "original": 1.5833,
+          "modified": 2.3333
+        },
+        "backbone_calls": {
+          "original": 23.1667,
+          "modified": 25.0
+        },
+        "test_ci_pass": {
+          "original": 2.0,
+          "modified": 1.8333
+        },
+        "test_failed_checks": {
+          "original": 0.25,
+          "modified": 2.1667
+        },
+        "review_attempts": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "test_first_check_pass": {
+          "original": 1.75,
+          "modified": 0.0
+        },
+        "reflections": {
+          "original": 1.4167,
+          "modified": 0.0
+        },
+        "reviewer_calls": {
+          "original": 0.1667,
+          "modified": 0.0
+        },
+        "promoted": {
+          "original": 0.0833,
+          "modified": 0.0
+        },
+        "plan_reviews": {
+          "original": 0.0833,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "attribution"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 3,
+      "modified": 1,
+      "tie": 8,
+      "metrics": {
+        "learn_ci_pass": {
+          "original": 1.75,
+          "modified": 1.5833
+        },
+        "review_passed": {
+          "original": 0.0,
+          "modified": 0.1667
+        },
+        "revision_landed": {
+          "original": 0.0,
+          "modified": 0.1667
+        },
+        "learn_failed_checks": {
+          "original": 1.5833,
+          "modified": 2.3333
+        },
+        "backbone_calls": {
+          "original": 23.1667,
+          "modified": 27.75
+        },
+        "test_ci_pass": {
+          "original": 2.0,
+          "modified": 1.9167
+        },
+        "test_failed_checks": {
+          "original": 0.25,
+          "modified": 0.4167
+        },
+        "review_attempts": {
+          "original": 0.0,
+          "modified": 0.1667
+        },
+        "test_first_check_pass": {
+          "original": 1.75,
+          "modified": 1.6667
+        },
+        "reflections": {
+          "original": 1.4167,
+          "modified": 1.0
+        },
+        "reviewer_calls": {
+          "original": 0.1667,
+          "modified": 1.3333
+        },
+        "promoted": {
+          "original": 0.0833,
+          "modified": 0.6667
+        },
+        "plan_reviews": {
+          "original": 0.0833,
+          "modified": 0.5833
+        }
+      }
+    },
+    {
+      "cut": [
+        "revision"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 0,
+      "modified": 0,
+      "tie": 12,
+      "metrics": {
+        "learn_ci_pass": {
+          "original": 1.75,
+          "modified": 1.75
+        },
+        "review_passed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "revision_landed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "learn_failed_checks": {
+          "original": 1.5833,
+          "modified": 1.5833
+        },
+        "backbone_calls": {
+          "original": 23.1667,
+          "modified": 23.1667
+        },
+        "test_ci_pass": {
+          "original": 2.0,
+          "modified": 2.0
+        },
+        "test_failed_checks": {
+          "original": 0.25,
+          "modified": 0.25
+        },
+        "review_attempts": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "test_first_check_pass": {
+          "original": 1.75,
+          "modified": 1.75
+        },
+        "reflections": {
+          "original": 1.4167,
+          "modified": 1.4167
+        },
+        "reviewer_calls": {
+          "original": 0.1667,
+          "modified": 0.1667
+        },
+        "promoted": {
+          "original": 0.0833,
+          "modified": 0.0833
+        },
+        "plan_reviews": {
+          "original": 0.0833,
+          "modified": 0.0833
+        }
+      }
+    },
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 0,
+      "modified": 1,
+      "tie": 11,
+      "metrics": {
+        "learn_ci_pass": {
+          "original": 1.75,
+          "modified": 1.75
+        },
+        "review_passed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "revision_landed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "learn_failed_checks": {
+          "original": 1.5833,
+          "modified": 1.6667
+        },
+        "backbone_calls": {
+          "original": 23.1667,
+          "modified": 22.6667
+        },
+        "test_ci_pass": {
+          "original": 2.0,
+          "modified": 2.0
+        },
+        "test_failed_checks": {
+          "original": 0.25,
+          "modified": 0.1667
+        },
+        "review_attempts": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "test_first_check_pass": {
+          "original": 1.75,
+          "modified": 1.8333
+        },
+        "reflections": {
+          "original": 1.4167,
+          "modified": 1.5
+        },
+        "reviewer_calls": {
+          "original": 0.1667,
+          "modified": 0.0
+        },
+        "promoted": {
+          "original": 0.0833,
+          "modified": 0.0
+        },
+        "plan_reviews": {
+          "original": 0.0833,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 11,
+      "original": 10,
+      "modified": 0,
+      "tie": 1,
+      "metrics": {
+        "learn_ci_pass": {
+          "original": 1.7273,
+          "modified": 1.5455
+        },
+        "review_passed": {
+          "original": 0.0,
+          "modified": 0.0909
+        },
+        "revision_landed": {
+          "original": 0.0,
+          "modified": 0.0909
+        },
+        "learn_failed_checks": {
+          "original": 1.6364,
+          "modified": 2.3636
+        },
+        "backbone_calls": {
+          "original": 23.3636,
+          "modified": 30.2727
+        },
+        "test_ci_pass": {
+          "original": 2.0,
+          "modified": 1.7273
+        },
+        "test_failed_checks": {
+          "original": 0.2727,
+          "modified": 2.0909
+        },
+        "review_attempts": {
+          "original": 0.0,
+          "modified": 0.0909
+        },
+        "test_first_check_pass": {
+          "original": 1.7273,
+          "modified": 0.1818
+        },
+        "reflections": {
+          "original": 1.4545,
+          "modified": 2.0
+        },
+        "reviewer_calls": {
+          "original": 0.1818,
+          "modified": 0.7273
+        },
+        "promoted": {
+          "original": 0.0909,
+          "modified": 0.2727
+        },
+        "plan_reviews": {
+          "original": 0.0909,
+          "modified": 0.2727
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 11,
+      "modified": 1,
+      "tie": 0,
+      "metrics": {
+        "learn_ci_pass": {
+          "original": 1.75,
+          "modified": 1.6667
+        },
+        "review_passed": {
+          "original": 0.0,
+          "modified": 0.1667
+        },
+        "revision_landed": {
+          "original": 0.0,
+          "modified": 0.1667
+        },
+        "learn_failed_checks": {
+          "original": 1.5833,
+          "modified": 2.3333
+        },
+        "backbone_calls": {
+          "original": 23.1667,
+          "modified": 27.9167
+        },
+        "test_ci_pass": {
+          "original": 2.0,
+          "modified": 1.8333
+        },
+        "test_failed_checks": {
+          "original": 0.25,
+          "modified": 2.0
+        },
+        "review_attempts": {
+          "original": 0.0,
+          "modified": 0.1667
+        },
+        "test_first_check_pass": {
+          "original": 1.75,
+          "modified": 0.1667
+        },
+        "reflections": {
+          "original": 1.4167,
+          "modified": 2.0
+        },
+        "reviewer_calls": {
+          "original": 0.1667,
+          "modified": 0.6667
+        },
+        "promoted": {
+          "original": 0.0833,
+          "modified": 0.1667
+        },
+        "plan_reviews": {
+          "original": 0.0833,
+          "modified": 0.1667
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M",
+        "record"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 12,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "learn_ci_pass": {
+          "original": 1.75,
+          "modified": 1.6667
+        },
+        "review_passed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "revision_landed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "learn_failed_checks": {
+          "original": 1.5833,
+          "modified": 2.3333
+        },
+        "backbone_calls": {
+          "original": 23.1667,
+          "modified": 27.25
+        },
+        "test_ci_pass": {
+          "original": 2.0,
+          "modified": 1.75
+        },
+        "test_failed_checks": {
+          "original": 0.25,
+          "modified": 2.25
+        },
+        "review_attempts": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "test_first_check_pass": {
+          "original": 1.75,
+          "modified": 0.0
+        },
+        "reflections": {
+          "original": 1.4167,
+          "modified": 2.0
+        },
+        "reviewer_calls": {
+          "original": 0.1667,
+          "modified": 0.0
+        },
+        "promoted": {
+          "original": 0.0833,
+          "modified": 0.0
+        },
+        "plan_reviews": {
+          "original": 0.0833,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M",
+        "outcome"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 12,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "learn_ci_pass": {
+          "original": 1.75,
+          "modified": 1.6667
+        },
+        "review_passed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "revision_landed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "learn_failed_checks": {
+          "original": 1.5833,
+          "modified": 2.3333
+        },
+        "backbone_calls": {
+          "original": 23.1667,
+          "modified": 25.25
+        },
+        "test_ci_pass": {
+          "original": 2.0,
+          "modified": 1.75
+        },
+        "test_failed_checks": {
+          "original": 0.25,
+          "modified": 2.25
+        },
+        "review_attempts": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "test_first_check_pass": {
+          "original": 1.75,
+          "modified": 0.0
+        },
+        "reflections": {
+          "original": 1.4167,
+          "modified": 0.0
+        },
+        "reviewer_calls": {
+          "original": 0.1667,
+          "modified": 0.0
+        },
+        "promoted": {
+          "original": 0.0833,
+          "modified": 0.0
+        },
+        "plan_reviews": {
+          "original": 0.0833,
+          "modified": 0.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M",
+        "attribution"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 12,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "learn_ci_pass": {
+          "original": 1.75,
+          "modified": 1.6667
+        },
+        "review_passed": {
+          "original": 0.0,
+          "modified": 0.0833
+        },
+        "revision_landed": {
+          "original": 0.0,
+          "modified": 0.0833
+        },
+        "learn_failed_checks": {
+          "original": 1.5833,
+          "modified": 2.3333
+        },
+        "backbone_calls": {
+          "original": 23.1667,
+          "modified": 29.1667
+        },
+        "test_ci_pass": {
+          "original": 2.0,
+          "modified": 1.75
+        },
+        "test_failed_checks": {
+          "original": 0.25,
+          "modified": 2.25
+        },
+        "review_attempts": {
+          "original": 0.0,
+          "modified": 0.0833
+        },
+        "test_first_check_pass": {
+          "original": 1.75,
+          "modified": 0.0
+        },
+        "reflections": {
+          "original": 1.4167,
+          "modified": 1.0
+        },
+        "reviewer_calls": {
+          "original": 0.1667,
+          "modified": 1.0
+        },
+        "promoted": {
+          "original": 0.0833,
+          "modified": 0.6667
+        },
+        "plan_reviews": {
+          "original": 0.0833,
+          "modified": 0.5
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M",
+        "revision"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 12,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "learn_ci_pass": {
+          "original": 1.75,
+          "modified": 1.6667
+        },
+        "review_passed": {
+          "original": 0.0,
+          "modified": 0.1667
+        },
+        "revision_landed": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "learn_failed_checks": {
+          "original": 1.5833,
+          "modified": 2.3333
+        },
+        "backbone_calls": {
+          "original": 23.1667,
+          "modified": 28.25
+        },
+        "test_ci_pass": {
+          "original": 2.0,
+          "modified": 1.75
+        },
+        "test_failed_checks": {
+          "original": 0.25,
+          "modified": 2.25
+        },
+        "review_attempts": {
+          "original": 0.0,
+          "modified": 0.1667
+        },
+        "test_first_check_pass": {
+          "original": 1.75,
+          "modified": 0.0
+        },
+        "reflections": {
+          "original": 1.4167,
+          "modified": 2.0
+        },
+        "reviewer_calls": {
+          "original": 0.1667,
+          "modified": 0.6667
+        },
+        "promoted": {
+          "original": 0.0833,
+          "modified": 0.1667
+        },
+        "plan_reviews": {
+          "original": 0.0833,
+          "modified": 0.1667
+        }
+      }
+    }
+  ]
+}

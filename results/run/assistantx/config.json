@@ -1,0 +1,41 @@
+{
+  "run": {
+    "models": {
+      "backbone": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "low"
+      },
+      "judge": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "high"
+      }
+    },
+    "samples": 3,
+    "rubric": "An office robot carries items in a QR-locked locker and messages people on WeChat to carry out one request. Each output records one run: what the robot sent and did, what people did, and where the items ended up. Decide which run served the people in the office better: the requested item reaches the right person in the right state, with fewer unnecessary messages, QR codes, trips and people bothered, and nothing handed to the wrong person. A run that completes the request beats one that does not. Ignore wording and formatting.",
+    "tests": [
+      {
+        "cut": [
+          "M->S"
+        ]
+      },
+      {
+        "cut": [
+          "M->A"
+        ]
+      },
+      {
+        "cut": [
+          "M->S",
+          "M->A"
+        ]
+      },
+      {
+        "cut": [
+          "A->S"
+        ]
+      }
+    ]
+  },
+  "samples": 3,
+  "items_limit": null
+}

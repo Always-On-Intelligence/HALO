@@ -1,0 +1,18 @@
+id: contextagent
+name: "ContextAgent"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2505.14668
+sources:
+  - url: https://arxiv.org/html/2505.14668v2
+    kind: paper
+    version: "2505.14668v2"
+    sha256: 9f0588c65fc559e64c9d9a92914859f2996bbd2e2c58d780963b7a7303722729
+code:
+  repo: https://github.com/openaiotlab/ContextAgent
+  commit: f4674bf2a1385ce829c6a7f2ea9c53871dd1a8ce
+variants:
+  - id: contextagent
+    label: "ContextAgent"
+    configuration: "ContextAgentBench/CAB-Lite evaluated reasoner with supplied per-sample personas and planned tool chains"
+modes: [read, run]

@@ -1,0 +1,100 @@
+{
+  "id": "lightmemego2026",
+  "configuration": "LightMem-Ego online runtime as described in arXiv 2607.11487v1 and implemented under src/backend plus the Rokid glasses Android client (src/ai_glass_app) and web/phone-browser client (src/frontend): continuous frame+audio streaming into the three-tier memory (M_cur current, M_st short-term micro-events, M_lt long-term episodic/semantic built by EM2Mem), with the memory router / retrieval / evidence-grounded experience QA path. The offline EM2Mem benchmark pipeline under research/em2mem (EgoLife, Video-MME) is not the judged configuration.",
+  "sources_read": [
+    "https://arxiv.org/html/2607.11487v1 (version 2607.11487v1; read via WebFetch, so all paper quotes are labelled UNVERIFIED)",
+    "README.md (repo root, commit 3c023df)",
+    "research/em2mem/README.md",
+    "src/backend/README.md",
+    "src/backend/CHANGELOG_FOR_SERVER.md",
+    "src/backend/docs/online_stream_api_contract.md",
+    "src/backend/online_qa_history.py",
+    "src/backend/online_query_worker.py (lines 560-650)",
+    "src/backend/api_server.py (grep: /ask, qa_history, memories/30sec, close_open_event)",
+    "src/backend/online_query/query_engine.py (lines 1-1250, 1725-1800, 2470-2600, 4380-4440; grep for coreference/interaction_cache)",
+    "src/backend/online_query/coreference_resolver.py",
+    "src/backend/online_query/interaction_cache.py",
+    "src/backend/online_query/memory_router.py",
+    "src/backend/online_query/stream_query_context.py",
+    "src/backend/online_current/mcur_updater.py",
+    "src/backend/online_current/mcur_selector.py",
+    "src/backend/online_short_term/micro_event_refiner.py",
+    "src/backend/online_preprocess/vlm_captioner.py",
+    "src/backend/online_memory_edit/service.py",
+    "src/backend/online_pipeline/realtime_ingest.py (grep: ingest_frame, ingest_audio_chunk, MCurStore)",
+    "src/ai_glass_app/app/src/main/java/cn/zjukg/lightmem/glass/activities/lightmem_ego/LightMemEgoGlassViewModel.kt",
+    "src/ai_glass_app/app/src/main/java/cn/zjukg/lightmem/glass/lightmem_ego/LightMemEgoApiClient.kt",
+    "src/frontend/online_web/src (grep: qa_history, memories/30sec, rollback)",
+    "grep across src/ for feedback/rating/thumbs/dislike (no answer-feedback mechanism found)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed frames and audio chunks uploaded by the glasses/phone client are written into current and short-term memory and, after rolling ASR and refinement, consolidated into long-term memory; transcripts are backfilled onto existing segments. User-supplied corrections also reach memory: the web client can rewrite 30-second episodic records through PUT /session/{id}/memories/30sec, after which the service re-derives multiscale, graph and semantic memory from the edited records (online_memory_edit/service.py). Both the paper and the code describe the implemented write path.",
+      "locator": "src/backend/docs/online_stream_api_contract.md lines 5-6; src/backend/online_pipeline/realtime_ingest.py line 108 (MCurStore(session_dir).update_from_frame_stream); src/backend/api_server.py line 1260; paper Sec. 3.2 and 3.3",
+      "quote": "Code doc (verified): \"frame input -> `ingest_frame(...)` -> `M_cur` / `M_st`\" / \"audio input -> `ingest_audio_chunk(...)` -> rolling ASR window queue -> transcript backfill\". Paper Sec. 3.2 (UNVERIFIED): \"As more evidence arrives, transcripts and refined descriptions are asynchronously attached to existing segments.\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Answering is explicitly memory-grounded: a keyword router chooses which memory tiers to retrieve from, retrieved event records, transcripts, frames and semantic facts are fused into an evidence view, and the answer is generated from that view. The retained interaction cache also feeds the routing decision (M_cache priority, follow-up time routing). Implemented in the query engine and router.",
+      "locator": "paper Sec. 3.4 and 3.5; src/backend/online_query/memory_router.py line 9 and lines 106-237; src/backend/online_query/query_engine.py lines 1795-1799, 1910, 2495",
+      "quote": "Paper Sec. 3.5 (UNVERIFIED): \"Given a user query q, LightMem-Ego first routes the query to appropriate memory sources and then generates an answer from retrieved evidence.\" Code (verified): \"\"\"Stage 7 level-1 router: choose memory sources before retrieval mode.\"\"\" and \"short_term_results = self._retrieve_short_term(resolved_question, route_decision, cache_context)\""
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "No flow from Action to Sensing is described. The client captures frames on a fixed interval and audio in fixed chunks independent of any query or answer state (reserveFrameCapture only checks FRAME_INTERVAL_MS), and the ask path reads already-stored M_cur/M_st/M_lt and open-event state without requesting a capture, an ASR flush, or an event refine; the only on-demand close/refine trigger sits in the stream-end endpoint invoked when the user stops capture (api_server.py lines 3999-4004). No expected-effect checks on delivered answers exist. The paper describes the capture layer as a lightweight forwarder but does not explicitly exclude action-guided sensing, so the route is unknown rather than excluded.",
+      "locator": "src/ai_glass_app/.../LightMemEgoGlassViewModel.kt lines 657-663; src/backend/online_query/query_engine.py lines 1760-1799; src/backend/api_server.py lines 3999-4004; paper Sec. 3.1",
+      "quote": "Code (verified): \"if (now - lastFrameCaptureElapsedMs < LightMemEgoConfig.FRAME_INTERVAL_MS) return false\". Paper Sec. 3.1 (UNVERIFIED): \"The capture layer is lightweight: it collects, normalizes, and timestamps raw inputs from smartphones or wearable devices, and forwards them to the backend without heavy client-side reasoning.\""
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained dialogue state (recent interactions, hot entities, hot time ranges; persisted in em2mem/cache/interaction_cache.json with 20-turn / 3600 s retention) is supplied to a rule-based coreference resolver that interprets the incoming user question before any retrieval: pronoun or follow-up questions are rewritten into a resolved question carrying the prior entities and time ranges, and that resolved question is what retrieval then consumes. This is retained priors guiding interpretation of current input, distinct from answer-time retrieval. Caveat: no memory priors reach the frame/audio side (frame-diff detection, captioner and refiner prompts contain only the segment's own keyframes and transcript, vlm_captioner.py lines 24-40, micro_event_refiner.py lines 31-45), and the paper itself does not describe this step; the evidence is code-only.",
+      "locator": "src/backend/online_query/coreference_resolver.py lines 28, 46-121 (esp. 101-107); src/backend/online_query/interaction_cache.py lines 53-56, 165-175; src/backend/online_query/query_engine.py lines 1761-1766",
+      "quote": "Code (verified): \"\"\"Lightweight rule-based follow-up/coreference resolver.\"\"\"; \"resolved_question = (f\\\"Using the previous context\\\" f\\\"{self._entity_clause(entity_names)}\\\" f\\\"{self._time_clause(range_text)}, answer: {q}\\\")\"; \"cache_context = CoreferenceResolver().resolve(question, self.interaction_cache)\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "After each successful answer the service writes its own utterance and action context into retained stores: the interaction cache turn record holds the question, resolved question, answer, route_decision, retrieved memory/segment ids and evidence frames, and merges hot entities/time ranges for later turns; every question/answer with status, client source, input method and task id is appended to qa_history.jsonl (served back via GET /session/{id}/qa_history and loaded by the web client); a query_answered event is appended to the session timeline. The paper does not mention this; evidence is code-only.",
+      "locator": "src/backend/online_query/interaction_cache.py lines 177-214; src/backend/online_query/query_engine.py lines 2562-2568 and 1149-1162; src/backend/online_qa_history.py lines 42-79; src/backend/online_query_worker.py lines 584-596; src/backend/api_server.py line 2583; src/frontend/online_web/src/api/lightmem_egoApi.js line 1199",
+      "quote": "Code (verified): \"cache_update = self.interaction_cache.update_from_query_result(question=question, resolved_question=resolved_question, result=result,)\"; turn record fields \"\\\"answer\\\": result.get(\\\"answer\\\", \\\"\\\"),\" and \"\\\"route_decision\\\": result.get(\\\"route_decision\\\", {}),\"; \"append_qa_history(sessions_root / session_id, session_id=session_id, question=question, answer=str(result.get(\\\"answer\\\") or result.get(\\\"answer_text\\\") or \\\"\\\"), ...\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of what it decided and delivered for its own later use: the persisted interaction cache stores each answered turn (answer, route decision, retrieved ids, evidence frames) and is read by the coreference resolver and router on subsequent questions; qa_history.jsonl records every question/answer with status and client source and is served to the web client. These are runtime records used by the service, not author-only trial logs (the separate eval export in scripts/build_session_eval.py is author-only and not relied on here). The paper text itself does not describe this recording.",
+      "locator": "src/backend/online_query/interaction_cache.py lines 53-56 and 177-214; src/backend/online_qa_history.py lines 42-79; src/backend/api_server.py line 2583",
+      "quote": "Code (verified): \"This is separate from SessionEngineCache. It stores recent dialogue, entities, hot time ranges, and hot memories for follow-up resolution.\"; \"\\\"answer\\\": result.get(\\\"answer\\\", \\\"\\\"),\""
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No later evidence about delivered answers (rating, dismissal, correction, receipt, task result) is obtained or retained: a repository-wide search finds no feedback/rating endpoint or UI, the glasses client only displays and plays the answer, and later user turns are stored in the interaction cache only as fresh dialogue context with no link to the prior answer as an outcome. The 30-second memory editor corrects memory records, not answers, and the paper lists user-controlled memory editing only as future work; LLM-judge/human accuracy in Sec. 5.3 is offline author scoring.",
+      "locator": "grep of src/ for feedback|rating|thumbs|dislike (no hits); src/backend/online_query/interaction_cache.py lines 177-214; src/backend/api_server.py line 1260; paper Sec. 5.3 and Ethical and Privacy Considerations",
+      "quote": "Paper, Ethical and Privacy Considerations (UNVERIFIED): \"Future work will integrate privacy protection into the memory lifecycle, including on-device preprocessing, selective capture, sensitive-content filtering, encrypted storage, user-controlled memory editing and deletion, and privacy-aware consolidation ...\""
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No outcome is captured, so nothing is linked back to a decision to check or correct assistance; the only answer scoring is the authors' offline LLM-judge and human evaluation over 27 queries (Sec. 5.3), which does not count.",
+      "locator": "paper Sec. 5.1 and 5.3; src/backend/online_query/query_engine.py (no outcome-to-decision linkage in the query path)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service makes no durable change to its own mechanism: captioner/refiner system prompts are fixed string constants, the router's keyword tables are static class attributes, and no parameters, rules, skills or code are updated from experience. Semantic memory of routines/preferences and edited episodic records are content consumed by a fixed mechanism, and memory edits are written by the user. The paper's Limitations section itself says the memory update mechanism lacks any revising policy.",
+      "locator": "src/backend/online_preprocess/vlm_captioner.py lines 14-21; src/backend/online_short_term/micro_event_refiner.py lines 22-28; src/backend/online_query/memory_router.py lines 11-104; src/backend/online_memory_edit/service.py lines 138-233; paper Limitations",
+      "quote": "Paper, Limitations (UNVERIFIED): \"The memory update mechanism is also preliminary: it lacks a principled policy for revising, merging, forgetting, or promoting memories.\"",
+      "what": "Nothing is revised by the service; only user-authored edits to 30-second episodic memory content (and their re-derived multiscale/semantic views) change between runs."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Since no self-made revision exists, no later step is reported to run under a revised mechanism; later queries only consume updated memory content (user edits, consolidated events) through the unchanged router and prompts.",
+      "locator": "src/backend/online_memory_edit/service.py lines 917-945 (publishes edited content snapshot to the same query engine); paper Sec. 5"
+    }
+  },
+  "notes": "Judged the online LightMem-Ego runtime (phone/glasses client + src/backend three-tier memory + experience QA), not the offline research/em2mem benchmark pipeline. Paper text was obtained through WebFetch (a summarizing tool), so every paper quote is marked UNVERIFIED; all code quotes were read directly from the checked-out commit and are verbatim. The paper describes S->M and M->A explicitly; the interaction cache (A->M write, M->S read for follow-up interpretation, M->A for routing) and qa_history recording exist only in code and are not mentioned in the paper. M->S is reported solely on the coreference resolver's use of retained dialogue state to reinterpret user questions; no memory priors guide frame/audio sensing. A->S is left insufficient because the fixed-rate capture loop and ask path show no action-guided sensing, but the sources do not explicitly exclude it. No answer-feedback, attribution, or self-revision mechanism exists; the Limitations section confirms the memory update policy is preliminary.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 406,
+    "code_commit": "3c023dfec301bb2f9624f82cee76007ac3ac0646"
+  }
+}

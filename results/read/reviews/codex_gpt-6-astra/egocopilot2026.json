@@ -1,0 +1,92 @@
+{
+  "id": "egocopilot2026",
+  "configuration": "Smart-glasses assistant with event/query history, HCC, MCP tools, and clarifier, including its integrated board-game assistance tool.",
+  "sources_read": [
+    "https://arxiv.org/html/2603.01104v1 — paper version 2603.01104v1, including methodology, experiments, limitations, and Appendices A–E",
+    "https://github.com/YoungSeng/Egocentric-Co-Pilot — local checkout verified at 4bdc1c49f72d6b20e3daf0d35ce06b6b5ca2ee43; all code paths below refer to this commit",
+    "README.md",
+    "Egocentric-Reasoning-Core/Readme.md",
+    "Egocentric-Reasoning-Core/Egolife/scripts/video_captions_contextual.py",
+    "Egocentric-Reasoning-Core/Egolife/scripts/eval_refine.py",
+    "Egocentric-Reasoning-Core/Qwen2.5-VL/qwen-vl-finetune/qwenvl/train/train_qwen.py",
+    "LLM-Orchestrated-Neuro-Symbolic-Execution/README.md",
+    "LLM-Orchestrated-Neuro-Symbolic-Execution/main.py",
+    "LLM-Orchestrated-Neuro-Symbolic-Execution/chess_engine.py",
+    "LLM-Orchestrated-Neuro-Symbolic-Execution/vision_core.py",
+    "LLM-Orchestrated-Neuro-Symbolic-Execution/External-Tools-Support/README.md",
+    "LLM-Orchestrated-Neuro-Symbolic-Execution/External-Tools-Support/simple-mcp/README.md",
+    "LLM-Orchestrated-Neuro-Symbolic-Execution/External-Tools-Support/simple-mcp/mcp_client.py",
+    "LLM-Orchestrated-Neuro-Symbolic-Execution/External-Tools-Support/simple-mcp/memory_server.py",
+    "On-Device-Perception-and-Interaction/MainActivity.kt",
+    "Proactive-Multimodal-Intent-Disambiguation/README.md"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Video narrations and transcribed user speech enter the retained event history. The backend also places incoming timestamped frames in a persistent bounded queue for subsequent requests.",
+      "locator": "[Paper v1, §3.1 and Appendix A](https://arxiv.org/html/2603.01104v1); LLM-Orchestrated-Neuro-Symbolic-Execution/main.py:329–363, 418, 823–830.",
+      "quote": "These visual entries are merged with ASR transcripts into a single, time-ordered sequence of events."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "HCC supplies historical summaries to answer generation. In the backend's memory-query branch, retained frames are retrieved and supplied with the user's question to the answering model.",
+      "locator": "[Paper v1, §3.1](https://arxiv.org/html/2603.01104v1); LLM-Orchestrated-Neuro-Symbolic-Execution/main.py:739–747; Egocentric-Reasoning-Core/Egolife/scripts/eval_refine.py:190–209.",
+      "quote": "memory_frames = image_queue.get_all(timestamp_tracking)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The selected interaction mode sends frame interval and image-quality settings to the glasses; the Android client applies them to sampling and encoding. The paper also describes targeted clarification questions that obtain additional user evidence.",
+      "locator": "LLM-Orchestrated-Neuro-Symbolic-Execution/main.py:675–682, 749–761; On-Device-Perception-and-Interaction/MainActivity.kt:246–253, 355, 379–386; [paper v1, §3.4](https://arxiv.org/html/2603.01104v1).",
+      "quote": "await send_text_parameters(websocket, 200, 25)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The long-lived board tool retains its previous committed board across calls. Perception initializes the next interpreted board from that prior and replaces cells only when new detections meet the stability threshold.",
+      "locator": "[Paper v1, Appendix A, Eq. (3)](https://arxiv.org/html/2603.01104v1); LLM-Orchestrated-Neuro-Symbolic-Execution/vision_core.py:62–114; LLM-Orchestrated-Neuro-Symbolic-Execution/chess_engine.py:152–153, 229–233; LLM-Orchestrated-Neuro-Symbolic-Execution/main.py:602–604, 893.",
+      "quote": "smoothed_board = np.copy(self.previous_smoothed_board)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The board assistant retains its generated move recommendation in an instance field across calls, later consults it when checking the user's move, and writes the previous strategy alongside board states to its own log.",
+      "locator": "LLM-Orchestrated-Neuro-Symbolic-Execution/chess_engine.py:163, 262–291, 395–406; LLM-Orchestrated-Neuro-Symbolic-Execution/main.py:893.",
+      "quote": "log_entry += f\"Last Strategy: {strategy_to_save}\\n\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The assistant stores its selected recommendation in self.chess_strategy_translate and consults it on later board observations; the runtime also records that recommendation in chess_log.txt. This establishes retained action records independently of the authors' evaluation logs.",
+      "locator": "LLM-Orchestrated-Neuro-Symbolic-Execution/chess_engine.py:37, 163, 262–272, 281–291, 395–406.",
+      "quote": "log_entry += f\"Last Strategy: {strategy_to_save}\\n\""
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Subsequent observed board changes are retained in all_game_states. The runtime log associates the newly observed FEN with the previous strategy and previous FEN, retaining evidence of what happened after a recommendation.",
+      "locator": "LLM-Orchestrated-Neuro-Symbolic-Execution/chess_engine.py:248–259, 278–291.",
+      "quote": "log_entry += f\"FEN Data: {fen_data}\\n\""
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "For one hard-coded previous recommendation, the service compares the subsequent FEN against expected and alternative positions and returns corrective or victory feedback. The quoted correction identifies both the recommended move and the user's differing move. This is a narrow in-service check.",
+      "locator": "LLM-Orchestrated-Neuro-Symbolic-Execution/chess_engine.py:262–276; LLM-Orchestrated-Neuro-Symbolic-Execution/main.py:602–634.",
+      "quote": "chess_strategy = \"推荐走法是马五进三，你的走法是马五退三，当前劣势很大\""
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Runtime updates change task state and contextual content; no service-authored durable mechanism change is reported, and the documented fine-tuning is developer-run training.",
+      "locator": "LLM-Orchestrated-Neuro-Symbolic-Execution/chess_engine.py:262–272, 395–401; Egocentric-Reasoning-Core/Readme.md:64–75; Egocentric-Reasoning-Core/Qwen2.5-VL/qwen-vl-finetune/qwenvl/train/train_qwen.py:95–178; [paper v1, Appendix A](https://arxiv.org/html/2603.01104v1)."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "The sources report deployment and evaluation, but no later step running under a mechanism durably revised by the service itself.",
+      "locator": "[Paper v1, §§4.1–4.4 and Appendix D](https://arxiv.org/html/2603.01104v1); Egocentric-Reasoning-Core/Readme.md:49–75; LLM-Orchestrated-Neuro-Symbolic-Execution/chess_engine.py:262–276."
+    }
+  },
+  "notes": "Read-only source review; the assistant was not executed. Board-tool findings concern code directly called by the assistant, and attribution is limited to its explicit special-case check. HCC and clarifier scope follows the paper; the pinned clarifier directory points to a separate implementation. External MCP examples are documented integration templates, so their presence alone was not counted as deployed flows. Offline ratings and benchmark scoring were excluded from self-evolution evidence.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 304,
+    "code_commit": "4bdc1c49f72d6b20e3daf0d35ce06b6b5ca2ee43"
+  }
+}

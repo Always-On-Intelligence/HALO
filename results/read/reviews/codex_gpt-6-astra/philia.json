@@ -1,0 +1,71 @@
+{
+  "id": "philia",
+  "configuration": "OpenClaw-based PHILIA assistant on Astribot S1 gateways; durable semantic state distinguished from 128-step policy buffers.",
+  "sources_read": [
+    "https://arxiv.org/html/2607.11377v1 (arXiv v1; main text, sections 1–6)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "PHILIA stores a user-supplied breakfast preference for later retrieval.",
+      "locator": "[§3.3, Agent-to-Policy Long-Term Memory Grounding](https://arxiv.org/html/2607.11377v1#S3.SS3)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved preferences inform task planning and robot dispatch.",
+      "locator": "[§2.4.1, Agentic Memory](https://arxiv.org/html/2607.11377v1#S2.SS4.SSS1)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The planner requests current-scene observations through gateway perception capabilities.",
+      "locator": "[§2.4.1, Agentic Memory](https://arxiv.org/html/2607.11377v1#S2.SS4.SSS1)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Saved anchor poses directly inform re-localization against current odometry. Functionally, this supplies a persistent spatial reference to observation interpretation.",
+      "locator": "[§2.5, Site Mapping and Per-Session Re-localization Calibration](https://arxiv.org/html/2607.11377v1#S2.SS5)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Persistent semantic state includes plans and task history, subsequently available for retrieval.",
+      "locator": "[§2.2, Semantic State; §2.4.1, Agentic Memory](https://arxiv.org/html/2607.11377v1#S2)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains its plans and task history.",
+      "locator": "[§2.2, Semantic State and Long-Horizon Context](https://arxiv.org/html/2607.11377v1#S2.SS2)",
+      "quote": "maintains persistent semantic state, including user preferences, long-horizon plans, semantic place names, and task history"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Outcome delivery is described; durable retention of those outcomes is unspecified.",
+      "locator": "[§2.2, Plans and Workflows; Semantic State](https://arxiv.org/html/2607.11377v1#S2.SS2)"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Action outcomes guide immediate corrective decisions.",
+      "locator": "[§2.2, Plans and Workflows](https://arxiv.org/html/2607.11377v1#S2.SS2)",
+      "quote": "recovery, or termination based on action outcomes"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Researcher-managed post-training does not establish service-performed revision.",
+      "locator": "[§2.3, Closing the Deployment Loop](https://arxiv.org/html/2607.11377v1#S2.SS3)",
+      "what": "Robot-policy parameters are post-trained; service ownership of updating is unestablished."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No reported subsequent execution is explicitly linked to the described post-training update.",
+      "locator": "[§2.3 and §3.3](https://arxiv.org/html/2607.11377v1)"
+    }
+  },
+  "notes": "Text-only assessment; no repository supplied. Transient 128-step histories do not establish cross-interaction retention.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 212,
+    "code_commit": null
+  }
+}

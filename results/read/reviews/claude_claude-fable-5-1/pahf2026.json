@@ -1,0 +1,96 @@
+{
+  "id": "pahf2026",
+  "configuration": "Full PAHF with both feedback channels (pre-action clarification + post-action feedback), agent and human-simulator LLM GPT-4o, default SQLite per-user memory bank (mem_style=sql, DRAGON+ embeddings), judged in the feedback-enabled learning/adaptation phases (Phase 1 and Phase 3, learning_iter=3) exactly as run by `python run_agent.py --agent embodied|shopping` defaults, where enable_memory=enable_pre_feedback=enable_post_feedback=True (run_agent.py:28-76, 83-161). Phases 2/4 (feedback disabled) are only referenced for retention scope.",
+  "sources_read": [
+    "https://arxiv.org/html/2602.16173v1 (version 2602.16173v1; read via WebFetch in six targeted passes incl. abstract, Sec. 1, 3.1-3.4, 4.1-4.2, 5, Appendix B/E, Fig. 2 caption, Table 1 caption; raw download was blocked, so all paper quotes are UNVERIFIED at character level)",
+    "code @ 7a11213360a82d5f437a035e3a31c92d6307f8cf: README.md",
+    "code: run_agent.py",
+    "code: agents/base.py",
+    "code: agents/shopping_agent.py",
+    "code: agents/embodied_agent.py",
+    "code: agents/shopping_agent_old.py (grep only; not used by run_agent.py)",
+    "code: memory/banks.py",
+    "code: memory/utils.py",
+    "code: memory/__init__.py",
+    "code: prompts/shopping_prompts.py",
+    "code: prompts/embodied_prompts.py",
+    "code: utils/agent_utils.py",
+    "code: utils/llm.py",
+    "code: utils/json_utils.py",
+    "code: data/embodied/personas/original_persona.py (grep excerpts: POST-ACTION FEEDBACK rules, persona list)",
+    "code: data/embodied/personas/evolved_persona.py (head)",
+    "code: data/shopping/original_persona.json (head, Emma persona), data/shopping/persona_info.json (head), data/shopping/phase1.json (head)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-supplied evidence is written to the per-user memory in both feedback paths. Pre-action: the simulated user's answer to the clarification question is summarized by the LLM into a one-sentence preference note and stored with memory.add. Post-action: the user's feedback passes an LLM 'feedback detector' gate (does it contain personalized information?), is summarized, and is then merged into the most similar existing note (find_similar_memory -> integration_prompt -> update_memory) or added as a new note. Retention scope is explicit: notes persist per person_id in a shared SQLite database across tasks, learning iterations and phases, and Phases 2/4 evaluate on the memory learned in Phases 1/3.",
+      "locator": "Paper Sec. 3.2 (Pre-Action Interaction, Eq. 1; Post-Action Feedback Integration, Eq. 3), Sec. 3.4 (memory design/writing), Sec. 4.2 (Phase 2 uses memory learned in Phase 1); code agents/base.py:126-145, agents/embodied_agent.py:242-306, agents/shopping_agent.py:247-305 and 430-435, memory/banks.py:309-341 (SQLiteMemoryBank.add) and 270-300 (update_memory), utils/agent_utils.py:106-115 (shared SQLite db per agent, person_id per user)",
+      "quote": "UNVERIFIED (Sec. 3.2): \"This feedback is parsed and written to memory before acting\"; UNVERIFIED (Sec. 3.2): \"We then prompt an LLM as a feedback detector to determine whether f_t^post contains salient, personalized information that should be stored\". Code verbatim agents/base.py:137-143: summ = f\"{qa}\\n\\nAccording to this Q&A, please summarize the personalized information of {name} in one brief sentence.\" ... memory.add(summ_info)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Before each decision the agent retrieves the top-k notes from the user's memory bank by dense retrieval, has the LLM summarize them into a 'Context:' string, appends that string to the policy prompt, and the policy LLM then selects the option letter or 'Ask human'. The paper's Eq. 2 conditions the action on the retrieved preferences m_t. In Phases 2/4 the agent decides solely on this memory.",
+      "locator": "Paper Sec. 3.2 (retrieval step, Eq. 2 a_t = pi_act(I_t, O_t, m_t, q_t, f_t^pre)), Sec. 3.4 (top-k dense retrieval), Sec. 4.2 Phase 2; code agents/base.py:45-79 (retrieve_memory_context), agents/shopping_agent.py:376-387, agents/embodied_agent.py:185-196, memory/utils.py:69-84 (simple_memory_retrieval), memory/banks.py:343-370 (SQLiteMemoryBank.search)",
+      "quote": "UNVERIFIED (Sec. 3.2): \"It first queries its memory M_t for relevant preferences, m_t = Retrieve(M_t, I_t, O_t)\"; UNVERIFIED (Sec. 4.2): \"there is no human feedback involved, so the agent makes decisions solely on its memory\". Code verbatim agents/shopping_agent.py:380-386: context_str = self.retrieve_memory_context(memory, task_query, whole_scenario) ... prompt_final += \"\\n\\n\" + context_str ... gen_text = self.llm_client.generate(prompt_final).strip()"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Two Action-originated flows direct what the service senses. (1) When the policy outputs 'Ask human', the agent generates a targeted one-feature clarification question (an information need) that is sent to the user; the user's answer to that specific question is acquired (the persona is instructed to answer only what was asked) and interpreted together with the question in the next policy call. (2) After committing, the executed action is delivered to the user ('Robot Action: {final_action}' in the embodied domain; the chosen option letter to the rule-based judge in shopping) to elicit outcome feedback about that action, i.e. an expected-effect check driven by execution state. The simulated user is the sensed environment, not an external grader, so these are in-system flows.",
+      "locator": "Paper Sec. 3.2 (clarification query q_t and pre-action feedback f_t^pre; post-action feedback after observing the outcome), Sec. 4.1 (persona answers clarification questions; rule-based judge checks the committed choice); code agents/base.py:109-133 (question generation; scenario + inject_question sent to human model), agents/shopping_agent.py:400-416 and 418-424, agents/embodied_agent.py:199-215 and 226-236, data/shopping/original_persona.json (Emma persona: 'Only answer the SPECIFIC question asked'), data/embodied/personas/original_persona.py:78-83",
+      "quote": "UNVERIFIED (Sec. 3.2): \"it then proactively generates a clarification query q_t to the user, receiving pre-action feedback f_t^pre\"; UNVERIFIED (Sec. 4.1): \"After the agent commits (A/B/C/D), the rule-based evaluator programmatically checks the choice against the acceptance policy\". Code verbatim agents/embodied_agent.py:233: \"content\": scenario + \"\\n\\n\" + f\"Robot Action: {final_action}\","
+    },
+    "M->S": {
+      "label": "absent",
+      "rationale": "The complete code identifies every memory-read site, and none supplies retained priors to a sensing step. Memory is read (a) in retrieve_memory_context, whose output goes only into the policy prompt (M->A), and (b) inside the post-feedback write path (find_similar_memory/get_memory feeding integration_prompt), which is memory integration during admission (S->M), not interpretation of observations. The question generator takes only prompt_question + whole_scenario (no memory), the feedback detector and feedback summarizer take only the feedback (plus scenario text in shopping), and the human simulator never sees the agent's memory. The memory-conditioned decision to ask a question is the composition M->A->S, which the protocol says not to count. The paper likewise describes retrieval only as input to the policy (Eq. 2).",
+      "locator": "Code agents/base.py:112-115 (question prompt = prompt_question + whole_scenario), agents/embodied_agent.py:245-251 (detector/summarizer use feedback only), agents/shopping_agent.py:253-270 (detector/summarizer use whole_scenario + feedback only), agents/base.py:66-79 (retrieved memory -> policy context only), memory/utils.py:69-84; paper Sec. 3.2 Eq. 2 and retrieval step",
+      "quote": "Code verbatim agents/base.py:113: prompt_final2 = self.prompt_question + \"\\n\\n\" + whole_scenario; agents/embodied_agent.py:245: feedback_prompt = f\"Human feedback: {feedback}.\\nDoes the feedback contain any personalized information? Answer a single word 'Yes' or 'No'.\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Action-side content is delivered to the memory update. Implemented: in the pre-action path the agent's own clarification question (an assistant utterance produced by the Action module) is concatenated with the user's answer into a Q&A string, and that Q&A (not the answer alone) is what the LLM summarizes into the stored note; the question is needed to interpret the answer. Formally: the paper's Eq. 1 lists q_t among the inputs of the pre-action memory update and Eq. 3 lists the executed action a_t and q_t among the inputs of the post-action update. Caveat: in code the post-action write passes only the human feedback (plus scenario text in shopping), so the implemented post-action path is S->M with the action referenced only inside the user's feedback text; what is retained are preference notes, not action records.",
+      "locator": "Paper Sec. 3.2 Eq. (1) and Eq. (3); code agents/base.py:112-117 (question generated by the agent), 133-143 (qa = qa_prompt.format(question, human_a) -> summarized -> memory.add), agents/shopping_agent.py:247-270 (post path inputs), agents/embodied_agent.py:249-251",
+      "quote": "UNVERIFIED (Sec. 3.2, Eq. 1): \"M'_t = F_update^pre(M_t, I_t, O_t, m_t, q_t, f_t^pre)\"; UNVERIFIED (Sec. 3.2, Eq. 3): \"M_{t+1} = F_update^post(M'_t, I_t, m_t, q_t, f_t^pre, a_t, f_t^post)\". Code verbatim agents/base.py:133 and 137: qa = self.qa_prompt.format(question, human_a) ... summ = f\"{qa}\\n\\nAccording to this Q&A, please summarize the personalized information of {name} in one brief sentence.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "The service keeps no record of its own decisions or actions for later use. Memory entries are one-sentence user-preference notes derived from Q&A or feedback; the agent's action, thought and prompt are written per task to output JSON files (write_json to output/...) only for metric computation, and nothing in the service reads them back (read_json/append_to_json_list are unused by the agents). The paper describes memory entries as short natural-language preference notes and does not describe action logs kept by the agent.",
+      "locator": "Code agents/shopping_agent.py:437-453 and 646-652 (test_data['action'], ['whole_prompt'] -> write_json), agents/embodied_agent.py:308-325 and 485-491, utils/json_utils.py:11-39; paper Sec. 3.4",
+      "quote": "UNVERIFIED (Sec. 3.4): \"Each memory entry is a short natural-language note paired with an embedding.\""
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "After the agent commits, post-action feedback about that action is obtained from the (simulated) user; when the LLM feedback detector finds personalized content, the feedback is summarized and retained in the per-user memory (merged into or added as a note). Bare confirmations such as 'Right!' are obtained but filtered out, so only preference-bearing outcome evidence is retained.",
+      "locator": "Paper Sec. 3.2 Post-Action Feedback Integration; Sec. 4.1 (persona post-action feedback; shopping rule-based judge); code agents/embodied_agent.py:226-306, agents/shopping_agent.py:161-245 (_generate_post_feedback), 418-435 and 247-305 (_process_feedback_into_memory)",
+      "quote": "UNVERIFIED (Sec. 3.2): \"After observing the outcome, the user provides post-action feedback f_t^post. We then prompt an LLM as a feedback detector to determine whether f_t^post contains salient, personalized information\". Code verbatim agents/shopping_agent.py:432-435: if enable_post_feedback and enable_memory and memory and feedback: post_feedback_occurred = self._process_feedback_into_memory(feedback, whole_scenario, name, memory, aug_mem)"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The feedback is produced for the specific action just taken (the embodied simulator is shown 'Robot Action: {final_action}'; the shopping judge computes feedback from the chosen option against the acceptance policy, naming the offending feature or stating that the preference changed) and the agent uses it in the same step to correct its assistance: an LLM checks whether the feedback changes a previously stated preference, retrieves the most similar existing note, and rewrites it so the outdated preference is overwritten. This is an in-loop check and correction, distinct from the authors' offline correctness scoring against gt_option.",
+      "locator": "Paper Sec. 3.2 (corrective feedback when the action is incorrect or applies an outdated preference), Sec. 4.1 (targeted feedback pinpointing the offending feature), Sec. 5 (post-action feedback overwrites outdated beliefs); code agents/embodied_agent.py:228-236 and 253-300 (check_update_prompt -> update_prompt -> find_similar_memory -> integration_prompt -> update_memory), agents/shopping_agent.py:121-245 and 272-305, prompts/embodied_prompts.py:481-490 and 517-522",
+      "quote": "UNVERIFIED (Sec. 5): \"the Post-action Only agent captures the reactive signal to overwrite outdated beliefs\"; UNVERIFIED (Sec. 4.1): \"If the choice is incorrect, the evaluator returns minimal, targeted feedback that pinpoints the specific offending feature.\" Code verbatim agents/shopping_agent.py:224-227: return (f\"Actually, my preferences have changed. \" f\"I used to like {changed_feature}, but now I don't want it anymore.\")"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The only thing the service changes is the per-user preference memory (natural-language notes added or merged), which is content consumed by a fixed mechanism: prompts are static constants in prompts/*.py, retrieval/merge logic is fixed code, and GPT-4o is called through the chat-completions API with no parameter updates. No prompt, rule, skill, parameter, code or harness is modified by the service; the paper frames learning entirely as memory updates and states it focuses on feedback mechanisms rather than memory designs.",
+      "locator": "Paper Sec. 3.4 (memory notes; dense-retrieval backends), Appendix B (limitations); code memory/banks.py:309-341 and 270-300, prompts/shopping_prompts.py and prompts/embodied_prompts.py (static prompts), utils/llm.py:90-96",
+      "quote": "UNVERIFIED (Sec. 1): \"PAHF uses explicit per-user memory updated from pre- and post-action feedback to continually refine the agent's behavior.\"",
+      "what": "Nothing at mechanism level. Only per-user preference notes in the SQLite memory (content used by the fixed retrieval+prompt mechanism) are added or rewritten."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No mechanism revision exists, so no later run under a revised mechanism is reported. Later phases do run with the updated memory content (Phase 2 evaluates on memory learned in Phase 1; Phase 4 on memory adapted in Phase 3; the memory dict is threaded through all phases in code), but that is later use of content by the unchanged mechanism, not of a revised mechanism.",
+      "locator": "Paper Sec. 4.2 (Phase 2 and Phase 4 descriptions); code agents/shopping_agent.py:625-676 and 678-755 (memory passed across phases), agents/embodied_agent.py:463-573",
+      "quote": "UNVERIFIED (Sec. 4.2): \"We evaluate the agent (using the memory learned in Phase 1) on a corresponding test set\""
+    }
+  },
+  "notes": "Judged variant pahf2026: full PAHF (pre+post feedback) with GPT-4o and the default SQLite per-user memory during the feedback-enabled learning phases (Phase 1 with original personas, Phase 3 with evolved/updated personas, 3 learning iterations each), matching run_agent.py defaults. Sources: arXiv HTML 2602.16173v1 via WebFetch (six targeted passes) and the repository at commit 7a11213. Raw page download was denied in this sandbox, so paper quotes are those returned by the fetch tool as exact but are labelled UNVERIFIED; cross-pass inconsistencies were observed (e.g. 'instantiated with GPT-4o' vs 'we instantiate the agent with GPT-4o'), which is why none are marked verbatim. Code quotes are verbatim from the files read. The simulated user (LLM persona in embodied; persona LLM for clarification plus deterministic rule-based judge for post-purchase feedback in shopping) is treated as the environment. Output JSON logs are written only for the authors' metrics and never read by the service; SQLite notes are the only retained state. README notes the released shopping agent has minor prompt/feedback-logic refinements relative to the paper, which does not change any channel or step judgment.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 482,
+    "code_commit": "7a11213360a82d5f437a035e3a31c92d6307f8cf"
+  }
+}

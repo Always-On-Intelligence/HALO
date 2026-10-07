@@ -1,0 +1,96 @@
+{
+  "id": "propersim",
+  "configuration": "Full ProPerAssistant with AR interaction history and retrieval, daily per-persona DPO updates, and 4-bit LLaMA 3.3 70B with LoRA. Repository settings: DPO, ret_suggest, ranking, AS, equally200, recnorev; AS denotes user actions plus assistant suggestions.",
+  "sources_read": [
+    "https://arxiv.org/html/2509.21730v2 — §§3–7 and Appendices C–D",
+    "cases/properassistant/case.yaml",
+    "https://github.com/jiho283/ProPerSim/tree/013b9eefd618b075875a2ce0ce6089138c30c82f — checked-out commit verified",
+    "README.md",
+    "reverie/backend_server/reverie.py",
+    "reverie/backend_server/agent/agent.py",
+    "reverie/backend_server/agent/cognitive_modules/suggestion.py",
+    "reverie/backend_server/agent/cognitive_modules/retrieve.py",
+    "reverie/backend_server/agent/cognitive_modules/perceive.py",
+    "reverie/backend_server/agent/cognitive_modules/plan.py",
+    "reverie/backend_server/agent/cognitive_modules/execute.py",
+    "reverie/backend_server/agent/memory_structures/associative_memory.py",
+    "reverie/backend_server/agent/memory_structures/eval_memory.py",
+    "reverie/backend_server/agent/memory_structures/scratch.py",
+    "reverie/backend_server/agent/prompt_template/run_gpt_prompt.py",
+    "reverie/backend_server/agent/prompt_template/gpt_structure.py",
+    "reverie/backend_server/agent/prompt_template/v1/system_prompt_suggestion_wo_r.txt",
+    "reverie/backend_server/persona/persona.py",
+    "reverie/backend_server/persona/cognitive_modules/evaluation.py",
+    "reverie/backend_server/opensource_training_methods.py",
+    "reverie/backend_server/opensource_inference.py"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Observed user activities enter the assistant's AS interaction records, summaries, and retained evaluation-memory nodes. Received candidate ratings also enter its preference buffer. These are runtime writes, not merely a supplied persona.",
+      "locator": "reverie/backend_server/persona/cognitive_modules/evaluation.py:157–242; reverie/backend_server/agent/agent.py:294–362, 419–435; reverie/backend_server/reverie.py:451–464."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The assistant retrieves prior interactions, combines them with retained summaries, and inserts this context into the recommendation prompt. The prompt uses this history to choose recommendation content or No Recommendation.",
+      "locator": "Under reverie/backend_server/: agent/cognitive_modules/suggestion.py:55–108; agent/cognitive_modules/retrieve.py:197–291; agent/prompt_template/run_gpt_prompt.py:2483–2505; agent/prompt_template/v1/system_prompt_suggestion_wo_r.txt:1–7."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "In the active assistant movement loop, an action plan identifies the target persona. Execution uses that plan to acquire the target's current position, then reads occupancy events at candidate destination tiles. Action context therefore selects live state acquisition within a fused execution/sensing function. This evidence is independent of the simulated user's recommendation grader.",
+      "locator": "Under reverie/backend_server/: reverie.py:481–483; agent/agent.py:249–260; agent/cognitive_modules/plan.py:823–854, 937–963; agent/cognitive_modules/execute.py:60–80, 112–132.",
+      "quote": "target_p_tile = (personas[plan.split(\"<persona>\")[-1].strip()]\n                       .scratch.curr_tile)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The assistant's active perception loop compares current event triples with retained recent events. This memory determines which observations are treated as novel, embedded, and returned as percepts for subsequent processing. This is memory-guided novelty filtering, separate from recommendation-time retrieval.",
+      "locator": "Under reverie/backend_server/: agent/agent.py:112–138, 249–251; agent/cognitive_modules/perceive.py:103–140, 175–181; agent/memory_structures/associative_memory.py:265–269; reverie.py:481–483.",
+      "quote": "if p_event not in latest_events:"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Assistant-generated suggestions are explicitly included in AS interaction records and stored in summary queues and evaluation memory. Candidate assistant responses and their prompting context are also retained as chosen/rejected training conversations.",
+      "locator": "reverie/backend_server/persona/cognitive_modules/evaluation.py:193–204, 240–242; reverie/backend_server/agent/agent.py:273–312, 360–362."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The assistant retains its generated responses in the preference buffer and interaction memory for later training and retrieval; retention is not limited to author-facing trial logs.",
+      "locator": "reverie/backend_server/agent/agent.py:294–312, 360–362, 419–435; reverie/backend_server/persona/cognitive_modules/evaluation.py:193–242.",
+      "quote": "self.preference_records[\"chosen\"].append(conversation_chosen)"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "After generating candidates, the service obtains simulated-user ratings and retains scores with preference examples and recommendation records. These immediate outcomes are retained even though scores are omitted from the AS recommendation-history prompt.",
+      "locator": "reverie/backend_server/reverie.py:445–464; reverie/backend_server/agent/agent.py:315, 360–362, 419–435, 493–497.",
+      "quote": "self.preference_records[\"score\"].append(score)"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Ratings are associated with the two specific candidate recommendations, compared to identify the preferred response, and converted into chosen/rejected examples consumed by daily DPO. This feedback corrects assistance rather than serving only offline benchmark scoring.",
+      "locator": "reverie/backend_server/reverie.py:451–464; reverie/backend_server/agent/agent.py:294–315, 456–457.",
+      "quote": "if float(eval_score_reason_1[0]) > float(eval_score_reason_2[0]):"
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The daily simulation loop invokes the assistant's model-update method, which samples accumulated preferences and runs DPO on LoRA parameters. The trained model is saved and returned to the assistant.",
+      "locator": "Under reverie/backend_server/: reverie.py:389–392; agent/agent.py:386–457; opensource_inference.py:90–109; opensource_training_methods.py:90–117. Also [paper v2, §§5–6.2](https://arxiv.org/html/2509.21730v2#S5).",
+      "quote": "dpo_trainer.train()",
+      "what": "The assistant recommendation policy's trainable LoRA adapter parameters on LLaMA 3.3 70B."
+    },
+    "later_use": {
+      "label": "stated",
+      "rationale": "The paper reports subsequent recommendations after training and simulation results through Day 14, establishing actual later use of the revised policy. The code additionally routes the returned trained model into subsequent suggestion inference.",
+      "locator": "[Paper v2, §§6.3–6.4, Table 1 and Appendix D](https://arxiv.org/html/2509.21730v2#S6); reverie/backend_server/agent/agent.py:456–457; reverie/backend_server/agent/prompt_template/gpt_structure.py:269–275.",
+      "quote": "Moreover, the assistant evolved from offering generic recommendations before training to delivering suggestions tailored to each user’s background"
+    }
+  },
+  "notes": "All repository locators refer to commit 013b9eefd618b075875a2ce0ce6089138c30c82f. A->S and M->S are supported by the assistant's actively called simulation code, not by the user simulator's grading memory. The paper specifies five retrieved neighbors; the README configuration's code defaults to three, with five under _rag. This discrepancy does not change the channel judgments. Reported later use is in simulation.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 325,
+    "code_commit": "013b9eefd618b075875a2ce0ce6089138c30c82f"
+  }
+}

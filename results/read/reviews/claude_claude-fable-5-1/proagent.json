@@ -1,0 +1,82 @@
+{
+  "id": "proagent",
+  "configuration": "Default ProAgent (arXiv 2512.06721v2): Qwen3-VL-4B base reasoner fine-tuned offline by LoRA context-aware CoT distillation; initial user personas plus LLM-inferred personas from interaction records (context-aware persona updating) stored in a scenario-grouped persona database; scenario-based persona retrieval (k=30, all-MiniLM-L6-v2); on-demand tiered perception with low-cost motion/POI cue triggering and agent-in-the-loop adaptive sampling (5 s / 60 s, suppression interval 20 s); short-term history L=4; proactive delivery control (ORB focus threshold 0.2, BERT redundancy threshold 0.5).",
+  "sources_read": [
+    "https://arxiv.org/html/2512.06721v2 (paper, version 2512.06721v2; fetched via WebFetch, which truncated the page after Section 5.6.1)",
+    "https://arxiv.org/abs/2512.06721 (submission history: v1 7 Dec 2025, v2 7 May 2026; v2 is latest)",
+    "https://web.scraper.workers.dev/?url=https://arxiv.org/html/2512.06721v2&selector=[id='S4.SS1'] | [id='S4.SS2.SSS1'] | [id='S4.SS4.SSS2'] | [id='S5.SS1.SSS1'] | [id='S5.SS1.SSS2'] | [id='S5.SS2.SSS1'] | [id='S5.SS3.SSS2'] | [id='S5.SS4.SSS1'] | [id='S5.SS4.SSS3'] | [id='S5.SS6'] | [id='S5.SS7'] | #S6,#S7 | #A1 (per-section text extracts of the same v2 HTML page, used for Sections 5.6.2, 5.7, 6, 7 and Appendix A captions that the direct fetch could not reach)",
+    "https://arxiv.org/pdf/2512.06721v2 (attempted; exceeded the fetch tool's 10 MB limit, not read)",
+    "https://ar5iv.labs.arxiv.org/html/2512.06721v2 (served v1 content without Section 5.6.2; not used for judgments)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Section 4.2.2 describes a write path from sensed/user-supplied evidence to Memory: the current sensory context (timestamps, location) and the user's verbal feedback (audio is transcribed into dialogue per 4.2.1) are recorded as interaction records r_i=(c_i,a_i,f_i), accumulated into history H, from which an LLM infers personas that are admitted into the scenario-grouped persona database with conflict replacement and merging (integration/correction). Section 4.2.1 additionally states that a short-term history stores recent sensory contexts. This goes beyond the static initial personas P_init.",
+      "locator": "Section 4.2.2 Context-Aware Persona Updating; Section 4.2.1 Hierarchical Context Modeling (Sensory Contexts and Persona Contexts paragraphs); Section 5.6.2",
+      "quote": "UNVERIFIED (WebFetch extraction, wording consistent across two fetches): \"ProAgent records the current sensory context (e.g., timestamps and location), the delivered proactive assistance, and the user's verbal feedback as an interaction record r_i=(c_i,a_i,f_i) ... Over time, these records accumulate into an interaction history H. ProAgent uses an LLM to infer personas from H ... All personas, including P_init and P_inf, are maintained in a scenario-grouped persona database D_persona ... Each newly inferred persona is compared against existing entries for similarity and conflict. Conflicting personas are replaced, while similar ones are merged.\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information is delivered to the Action decision: scenario-relevant personas retrieved from the persona database and the short-term history are fed to the VLM reasoner's text encoder, which decides whether to stay silent, what assistance to give, and which tools to call (4.2.3, 4.3.1); retained recent responses are compared by BERT similarity to suppress redundant delivery (4.3.3). Ablations w/o P and w/o H (Figure 21a) report F1 drops of 15.1% and 21.2%, with history described as helping identify repeated or redundant assistance from recent interactions (5.4.3).",
+      "locator": "Section 4.2.3 (final sentences); Section 4.3.1 Reasoner Inputs / Proactive Predictions; Section 4.3.3 Temporal Redundancy Suppression; Section 5.4.3 and Figure 21",
+      "quote": "UNVERIFIED (WebFetch extraction, consistent across two fetches): \"Only the personas P_s from the target scenario are incorporated into the reasoning process (§ 4.3).\" / \"raw visual data are fed into the visual encoder, while the remaining contexts, including location, motion, audio, and personas, are sent to the text encoder.\" / \"ProAgent therefore measures the semantic similarity between a newly generated response and recent responses using BERT, and suppresses the response when the similarity exceeds a redundancy threshold\""
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Section 4.4.2 states that the reasoner's proactive-need prediction (an Action decision) is used as the signal for subsequent visual sampling: it keeps high-rate sampling after a positive prediction and returns to low-rate sampling after a negative one, coordinated with low-cost cue triggers by an adaptive sampling scheduler with a suppression interval. This is Action state guiding Sensing acquisition inside the service. The ablation without agent-in-the-loop sampling (w/o A, Figure 21b) is reported in 5.4.2.",
+      "locator": "Section 4.4.2 Agent-in-the-Loop Adaptive Perception (Fine-Grained Decisions with Agent Reasoning; Adaptive Sampling Scheduler); Section 4.1; Section 5.4.2",
+      "quote": "UNVERIFIED (WebFetch extraction, identical wording in three fetches): \"The reasoner first predicts whether proactive assistance is needed at the current moment. ProAgent then uses this prediction as a lightweight signal for subsequent visual sampling: moments that require proactive assistance suggest that continued high-rate observation may be useful, while moments without proactive need allow the system to return to low-rate sampling.\" / \"Low-cost cues can activate high-rate sampling, while the agent's decision can either maintain high-rate sampling or return the system to the low-rate mode.\""
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Sampling-mode decisions are driven by always-on cues (IMU motion state, GPS/POI via Google Geocoding and Places APIs) and by the reasoner's prediction (4.4.1-4.4.2). Personas and history influence sampling only through the reasoner's decision, which is the M->A->S composition the protocol excludes. Coarse-grained scene recognition for persona retrieval uses a scenario-object bank B (4.2.3), but the text does not say B is retained or updated from interactions (it reads as a configured static resource), and no passage states that personas or history set sampling rates, attention, compression, or interpretation directly. The source neither describes nor explicitly excludes a direct retained-prior input to Sensing.",
+      "locator": "Section 4.4.1 Low-Cost Contextual Cue Triggering; Section 4.4.2; Section 4.2.3 (scenario-object bank); Section 5.1.2 Configuration"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Action outputs are delivered to Memory: the delivered proactive assistance a_i is written into interaction records that accumulate into history H and feed persona inference (4.2.2); the short-term history stores recent proactive responses with timestamps for the reasoner (4.2.1, L=4 per 5.1.2); and recent responses are retained for temporal redundancy suppression (4.3.3).",
+      "locator": "Section 4.2.2; Section 4.2.1 (Sensory Contexts paragraph); Section 4.3.3; Section 5.1.2",
+      "quote": "UNVERIFIED (WebFetch extraction, consistent across two fetches): \"ProAgent also maintains a short-term history for temporal reasoning through a context window of length L, which stores recent records of sensory contexts and proactive responses with their timestamps.\" / \"ProAgent records the current sensory context (e.g., timestamps and location), the delivered proactive assistance, and the user's verbal feedback as an interaction record\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service itself keeps records of what it delivered: each interaction record includes the delivered proactive assistance a_i, records accumulate into history H kept for persona inference, and the short-term history retains recent proactive responses with timestamps for later reasoning. These are system mechanisms, not author-only trial logs.",
+      "locator": "Section 4.2.2 Context-Aware Persona Updating; Section 4.2.1 Hierarchical Context Modeling",
+      "quote": "UNVERIFIED (WebFetch extraction): \"ProAgent records the current sensory context (e.g., timestamps and location), the delivered proactive assistance, and the user's verbal feedback as an interaction record r_i=(c_i,a_i,f_i) ... Over time, these records accumulate into an interaction history H.\""
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later evidence about the delivered assistance, namely the user's verbal feedback f_i, is obtained and retained in the interaction record alongside the assistance and its sensory context; 5.6.2 gives the example of a user verbally indicating they do not care about bus schedule information at a specific stop.",
+      "locator": "Section 4.2.2; Section 5.6.2 Impact of Human Feedback",
+      "quote": "UNVERIFIED (WebFetch extraction): \"ProAgent also infers context-aware personas from user feedback and the associated sensory contexts.\" / \"if a user verbally indicates that they do not care about school bus schedule information at a specific bus stop, ProAgent combines this feedback with contextual cues such as the current GPS location (Lat A, Lon A) and employ an LLM to infer a context-aware persona\""
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The record tuple binds the feedback f_i to the specific assistance a_i and context c_i it concerns, and the personas inferred from H are used to correct assistance: 5.6.2 states feedback-derived personas correct false detections, reduce FD by 5.8% and improve F1 by 5.1% (Figure 28), and suppress unnecessary assistance when a similar context recurs; Figure 29 marks false detections mitigable by feedback-inferred personas.",
+      "locator": "Section 4.2.2; Section 5.6.2 and Figure 28 (caption: Human feedback impact.); Figure 29 caption",
+      "quote": "UNVERIFIED (WebFetch extraction): \"The results show that such personas help correct some false detections by reducing unnecessary proactive assistance.\" / \"When the user later encounters a similar context, this persona helps ProAgent suppress unnecessary proactive assistance.\""
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The only change the service makes at runtime is to persona-database entries, which are natural-language user preference statements (e.g., the user does not want bus schedule notifications at a given stop) retrieved and fed as context into the fixed VLM reasoner; under the protocol, user facts and preferences consumed by a fixed mechanism are content, not a mechanism revision. The reasoner's parameters are changed only by developer-run offline LoRA fine-tuning on the human-annotated, CoT-augmented dataset (4.3.2, 5.1.2); sampling policy, thresholds (suppression interval, focus, redundancy, L), prompts (Appendix A, Figures 32-35) and the tool set are fixed; Section 6 lists reinforcement learning as orthogonal work that could be integrated in future.",
+      "locator": "Section 4.2.2; Section 4.3.2 Context-Aware CoT Distillation; Section 5.1.2 Configuration; Section 6 Discussion",
+      "quote": "UNVERIFIED (WebFetch extraction): \"Finally, we fine-tune the VLM on D~ and apply Low-Rank Adaptation (LoRA) to reduce training cost.\" / \"Recent advances in reasoning-enhanced perception (e.g., reinforcement learning), Model Context Protocol (MCP), and efficient LLM inference techniques are orthogonal to this work.\"",
+      "what": "No mechanism is revised by the service. The runtime change is limited to persona-database content (LLM-inferred preference statements added, replaced on conflict, or merged). Model weights are revised only offline by the developers via LoRA context-aware CoT distillation."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revision of the mechanism is reported, so no later run under a revised mechanism can be stated. Section 5.6.2 does report later proactive reasoning using feedback-inferred personas (FD -5.8%, F1 +5.1%), but that is later use of updated memory content by the unchanged reasoner. The text also does not state how the feedback for that experiment was collected or that persona updating ran online during the user study, where participants rated assistance generated from captured sensory contexts (5.7).",
+      "locator": "Section 5.6.2 Impact of Human Feedback; Section 5.7 User Study",
+      "quote": "UNVERIFIED (WebFetch extraction): \"Next, we evaluate the effectiveness of using personas inferred from user feedback for proactive assistance.\" / \"Participants evaluated the proactive assistance generated by different approaches based on real-world sensory contexts captured by our prototype\""
+    }
+  },
+  "notes": "Judged the default full ProAgent configuration (Qwen3-VL-4B, persona updating and retrieval, low-cost cues plus agent-in-the-loop tiered sensing, delivery control) as described in arXiv 2512.06721v2. Read from the text only (no code repository). Access constraints: shell was unavailable, so the case-file SHA-256 could not be checked; the WebFetch tool truncated the v2 HTML after Section 5.6.1 and rejected the PDF for size, so Sections 5.6.2, 5.7, 6, 7 and Appendix A were read through per-section extracts of the same v2 page via a CSS-selector proxy; the Appendix A prompts (Figures 32-35) are images whose text could not be read. All quotes are tool extractions labelled UNVERIFIED; key quotes were cross-checked for identical wording across two or three independent fetches. Main judgment calls: M->S left insufficient because persona/history influence on sampling runs only through the reasoner's decision (M->A->S), and revision not_stated because feedback-inferred personas are preference content consumed by a fixed reasoner while fine-tuning is offline and developer-run. Open uncertainty: the paper does not say whether the verbal feedback used in Section 5.6.2 was collected live or derived from participant annotations.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 701,
+    "code_commit": null
+  }
+}

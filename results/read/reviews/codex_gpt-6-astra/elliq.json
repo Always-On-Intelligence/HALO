@@ -1,0 +1,76 @@
+{
+  "id": "elliq",
+  "configuration": "ElliQ product mechanism described by the 2024 paper and official ElliQ 3/current FAQ; proprietary implementation not inspected.",
+  "sources_read": [
+    "https://www.jarlife.net/4982-elliq-an-ai-driven-social-robot-to-alleviate-loneliness-progress-and-lessons-learned.html — published March 5, 2024; J Aging Res & Lifestyle 13:22–28.",
+    "https://www.intuitionrobotics.com/post/new-year-new-elliq — January 9, 2024.",
+    "https://elliq.com/pages/faqs — current page accessed October 7, 2026.",
+    "https://elliq.com/pages/elliq-privacy-policy — last updated January 1, 2026; accessed October 7, 2026."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Information supplied through conversations and other interaction modalities is classified and retained in the user profile for future conversations.",
+      "locator": "[ElliQ 3 announcement](https://www.intuitionrobotics.com/post/new-year-new-elliq), paragraphs describing the Relationship Orchestration Engine and user profile.",
+      "quote": "is understood, classified, remembered, and then referenced in future conversations."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Learned personality, interests, behavioral patterns and preferences from previous interactions inform autonomous initiation and personalization of suggestions.",
+      "locator": "[2024 paper](https://www.jarlife.net/4982-elliq-an-ai-driven-social-robot-to-alleviate-loneliness-progress-and-lessons-learned.html), The Robot, paragraphs beginning 'ElliQ initiates social interaction' and 'ElliQ’s proactiveness'.",
+      "quote": "preferences of previous interactions"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "A proactive check-in opens a brief response-listening window, which closes upon nonresponse. Action execution therefore controls sensing acquisition.",
+      "locator": "[Current FAQ](https://elliq.com/pages/faqs), Your Privacy, 'Is ElliQ listening to me all the time?'"
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Retained profiles guide subsequent conversations and suggestions, but no direct use of retained priors for sensing acquisition or interpretation is specified.",
+      "locator": "[ElliQ 3 announcement](https://www.intuitionrobotics.com/post/new-year-new-elliq), Relationship Orchestration Engine and user-profile paragraphs; [2024 paper](https://www.jarlife.net/4982-elliq-an-ai-driven-social-robot-to-alleviate-loneliness-progress-and-lessons-learned.html), The Robot."
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "User information and generic interaction/usage data are retained, but the sources do not specify that ElliQ's own decisions, utterances, plans or execution records enter retained memory.",
+      "locator": "[Privacy policy](https://elliq.com/pages/elliq-privacy-policy), sections 4, 5(b), 9 and 11; [ElliQ 3 announcement](https://www.intuitionrobotics.com/post/new-year-new-elliq), memory description and user-facts example."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "Generic interaction logs do not specify retention of ElliQ's own actions; the paper's trial records are described for research and product improvement.",
+      "locator": "[Privacy policy](https://elliq.com/pages/elliq-privacy-policy), sections 4 and 5(b); [2024 paper](https://www.jarlife.net/4982-elliq-an-ai-driven-social-robot-to-alleviate-loneliness-progress-and-lessons-learned.html), Implementation in Senior Care Settings, data-collection paragraph."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Automatically collected response latency and timestamps are retained by the service, providing evidence of replies to interactions without establishing attribution of longer-term effects.",
+      "locator": "[Privacy policy](https://elliq.com/pages/elliq-privacy-policy), section 5(b), Technical Data; sections 7, 9 and 11 establish service use, storage and retention.",
+      "quote": "the User’ response time, and other related timestamps and metadata."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Nonresponse is checked specifically after ElliQ's proactive check-in and ends that listening attempt. This establishes an immediate action-linked response check, not evaluation of long-term benefit.",
+      "locator": "[Current FAQ](https://elliq.com/pages/faqs), Your Privacy, 'Is ElliQ listening to me all the time?'",
+      "quote": "When ElliQ proactively checks in, she listens for a short moment for your response, and if there is no response, she stops listening."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "User-profile updates change content; algorithm calibration and training, prompting and scripting are attributed to the company or design team, not the service itself.",
+      "locator": "[2024 paper](https://www.jarlife.net/4982-elliq-an-ai-driven-social-robot-to-alleviate-loneliness-progress-and-lessons-learned.html), The Robot, beta-testing/calibration paragraph; [ElliQ 3 announcement](https://www.intuitionrobotics.com/post/new-year-new-elliq), user-profile and Character Design team paragraphs.",
+      "what": "No service-authored durable mechanism revision is identified."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Later personalized conversations and software upgrades are described, but no run is identified as operating under a service-authored mechanism revision.",
+      "locator": "[ElliQ 3 announcement](https://www.intuitionrobotics.com/post/new-year-new-elliq), remembered-information example and software-rollout paragraph."
+    }
+  },
+  "notes": "Independent text-only review of the named configuration. Proprietary code was not inspected. Outcome and attribution are judged independently of action-record retention and mechanism revision; insufficient does not mean absent.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 212,
+    "code_commit": null
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "id": "awarellm2026",
+  "configuration": "Personalized treatment prototype with user-configurable system-prompt preferences, retained chat context and both sensor reasoning loops",
+  "sources_read": [
+    "https://arxiv.org/html/2605.09625v3"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User settings enter the system prompt; sensor summaries and recent user prompts persist between cycles.",
+      "locator": "[§4.2; §4.4.2; Appendix D.4.1](https://arxiv.org/html/2605.09625v3)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Preferences, chat history, and previous intervention summaries shape assistance and suppress repeated suggestions.",
+      "locator": "[§4.5.3; Appendix D.4.6](https://arxiv.org/html/2605.09625v3)"
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "Periodic acquisition is described, but no action-generated sensing request, interpretation guidance, or expected-effect check is specified.",
+      "locator": "[§4.4.2; Appendices D.2–D.5](https://arxiv.org/html/2605.09625v3)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained session baselines interpret new physiological readings; past chat history also informs affect inference.",
+      "locator": "[§4.1; §4.3; Appendix B.0.3](https://arxiv.org/html/2605.09625v3)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Intervention occurrence enters summaries consumed by subsequent cycles.",
+      "locator": "[Appendix D.4.1, D.4.5–D.4.7](https://arxiv.org/html/2605.09625v3)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains intervention occurrence for later notification decisions.",
+      "locator": "[Appendix D.4.5–D.4.6](https://arxiv.org/html/2605.09625v3)",
+      "quote": "Include whether the user was given an intervention or suggestion in the previous minute."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Retention of observations as intervention outcomes is unspecified; questionnaires provide researcher evaluations.",
+      "locator": "[§6.3; Appendix D.4.5; Appendix D.5.5](https://arxiv.org/html/2605.09625v3)"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No service-side outcome-to-intervention checking is stated; repetition suppression alone does not establish attribution.",
+      "locator": "[§6.4; Appendix D.4.6; Appendix D.5.2–D.5.3](https://arxiv.org/html/2605.09625v3)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "User configuration and contextual adaptation do not establish service-authored changes to reusable mechanisms.",
+      "locator": "[§4.2; Appendices D.1, D.4–D.5](https://arxiv.org/html/2605.09625v3)"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No run under a service-revised mechanism is reported.",
+      "locator": "[§5; §7.2](https://arxiv.org/html/2605.09625v3)"
+    }
+  },
+  "notes": "Text-only treatment review. Memory includes within-session retention; permanent raw-sensor storage is not inferred.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 154,
+    "code_commit": null
+  }
+}

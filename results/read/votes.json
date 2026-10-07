@@ -1,0 +1,4397 @@
+{
+ "agents": [
+  "claude_claude-fable-5-1",
+  "claude_claude-opus-5-5",
+  "codex_gpt-6-astra"
+ ],
+ "variants": {
+  "abot-claw": {
+   "work": "abot-claw",
+   "name": "ABot-Claw",
+   "label": "ABot-Claw",
+   "domain": "physical",
+   "kind": "research",
+   "configuration": "ABot-Claw OpenClaw orchestration with shared multi-robot spatial/visual memory and online critic",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "aiget": {
+   "work": "aiget",
+   "name": "AiGet",
+   "label": "AiGet",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "Gemini-based AiGet prototype with participant-provided profile, focus/familiarity rules, and interaction history",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "ai4service": {
+   "work": "alpha-service",
+   "name": "Alpha-Service",
+   "label": "Alpha-Service",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "Initial Alpha-Service runtime with task dispatch, visual trigger/streaming models, web search, and JSON memory",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "assistantx": {
+   "work": "assistantx",
+   "name": "AssistantX",
+   "label": "AssistantX",
+   "domain": "physical",
+   "kind": "research",
+   "configuration": "PPDR4X office robot with persistent relational graph; transient task buffers excluded from retention evidence",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "awarellm2026": {
+   "work": "awarellm",
+   "name": "AwareLLM",
+   "label": "AwareLLM",
+   "domain": "digital",
+   "kind": "research",
+   "configuration": "Personalized treatment prototype with user-configurable system-prompt preferences, retained chat context and both sensor reasoning loops",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "insufficient",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "bee2026": {
+   "work": "bee",
+   "name": "Bee",
+   "label": "Bee",
+   "domain": "wearable",
+   "kind": "product",
+   "configuration": "Shipped wearable capture, personal facts/conversation store, Daily Insights, Actions and retained to-do suggestions as documented September 22; excludes future Templates.",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "insufficient",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "contextagent": {
+   "work": "contextagent",
+   "name": "ContextAgent",
+   "label": "ContextAgent",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "ContextAgentBench/CAB-Lite evaluated reasoner with supplied per-sample personas and planned tool chains",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "absent",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "absent",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "A->M": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "chatgptdots2026": {
+   "work": "dot",
+   "name": "Dot",
+   "label": "Dot",
+   "domain": "digital",
+   "kind": "product",
+   "configuration": "OpenAI dots as described in the ChatGPT documentation pages 'Meet dots' and 'Tasks and memory' (Markdown versions fetched 2026-10-05): saved notes, self-timed follow-up, delegated tasks, and approval checks",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "langchaineai2025": {
+   "work": "eaia",
+   "name": "EAIA",
+   "label": "EAIA",
+   "domain": "digital",
+   "kind": "product",
+   "configuration": "Executive AI Assistant reference implementation with cron email ingestion, persistent LangGraph store, Question tool, and Agent Inbox feedback/reflection enabled; source snapshots from 2026-09-22.",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "egocopilot2026": {
+   "work": "egocentric-copilot",
+   "name": "Egocentric Co-Pilot",
+   "label": "Egocentric Co-Pilot",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "Smart-glasses assistant with event/query history, HCC, MCP tools, and clarifier",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "elliq": {
+   "work": "elliq",
+   "name": "ElliQ",
+   "label": "ElliQ",
+   "domain": "physical",
+   "kind": "product",
+   "configuration": "ElliQ product mechanism described by the 2024 paper and official ElliQ 3/current FAQ; proprietary implementation not inspected",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "A->M": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "hobbit": {
+   "work": "hobbit",
+   "name": "Hobbit",
+   "label": "Hobbit",
+   "domain": "physical",
+   "kind": "research",
+   "configuration": "Hobbit PT2 household assistance as described in the 2018 integrated-system paper",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "insufficient",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "ipibench2026": {
+   "work": "ipi-agent",
+   "name": "IPI-Agent",
+   "label": "IPI-Agent",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "Full IPI-Agent with Interaction-Control Policy, Memory Tool and Temporal-Gating Mechanism (Qwen3-VL-8B component-ablation configuration)",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "lightmemego2026": {
+   "work": "lightmem-ego",
+   "name": "LightMem-Ego",
+   "label": "LightMem-Ego",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "Phone/glasses client with hierarchical event memory and experience QA",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "longtermtoa2026": {
+   "work": "long-term-toa",
+   "name": "Long-term TOA",
+   "label": "Long-term TOA",
+   "domain": "digital",
+   "kind": "research",
+   "configuration": "Full hybrid-triggered Task-oriented Agent with task-state/reminder tracking; Qwen3-32B-Finetuned ChronosBench configuration",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "m3agent": {
+   "work": "m3-agent",
+   "name": "M3-Agent",
+   "label": "M3-Agent",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "M3-Agent long-video QA configuration: memory-7b-sft plus trained control-32b-rl, with an external multimodal graph",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "absent",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "absent",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "absent",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "absent",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "mementoar2026": {
+   "work": "memento",
+   "name": "Memento",
+   "label": "Memento",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "Quest 3 prototype with RSAM storage, context-triggered resurfacing, referent checking, and permanent removal",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "movecare": {
+   "work": "movecare",
+   "name": "MoveCare",
+   "label": "MoveCare",
+   "domain": "physical",
+   "kind": "research",
+   "configuration": "MoveCare platform in the 10-week home pilot: Giraff-X robot, environmental sensors, smart objects, community activity centre, and the cloud Virtual Caregiver",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "metamuse2026": {
+   "work": "muse",
+   "name": "Muse",
+   "label": "Muse",
+   "domain": "digital",
+   "kind": "product",
+   "configuration": "September 2026 launch configuration with persistent user VM memory, goals/background work, browser sub-agent and Sentinel controls",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "omi2026": {
+   "work": "omi",
+   "name": "Omi",
+   "label": "Omi",
+   "domain": "wearable",
+   "kind": "product",
+   "configuration": "Wearable capture with enrolled speech profile, retained personal backend, authorized agentic chat tools and a proactive-notification app; excludes rollout-gated desktop JIT features.",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "ouroboros2026": {
+   "work": "ouroboros",
+   "name": "Ouroboros",
+   "label": "Ouroboros",
+   "domain": "digital",
+   "kind": "research",
+   "configuration": "Hope live deployment with reviewed experience-driven core evolution",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "later_use": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    }
+   }
+  },
+  "pahf2026": {
+   "work": "pahf",
+   "name": "PAHF",
+   "label": "PAHF",
+   "domain": "digital",
+   "kind": "research",
+   "configuration": "Full pre-action plus post-action PAHF with GPT-4o and the default SQLite per-user memory, in feedback-enabled learning/adaptation phases",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "pask2026": {
+   "work": "pask",
+   "name": "PASK",
+   "label": "PASK",
+   "domain": "digital",
+   "kind": "research",
+   "configuration": "IntentFlow demand detection with PASK-MM and PASK-PAS",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "philia": {
+   "work": "philia",
+   "name": "PHILIA",
+   "label": "PHILIA",
+   "domain": "physical",
+   "kind": "research",
+   "configuration": "OpenClaw-based PHILIA assistant on Astribot S1 gateways; durable semantic state distinguished from 128-step policy buffers",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "lunchnow2025": {
+   "work": "pitch",
+   "name": "PITCH",
+   "label": "PITCH",
+   "domain": "digital",
+   "kind": "research",
+   "configuration": "Slack morning planning and evening reflection, fixed/rotating-goal variants",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "pro2bench2026": {
+   "work": "plan-watch-recover",
+   "name": "Plan, Watch, Recover",
+   "label": "Plan, Watch, Recover",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "Full predicted-plan PWR: trained planner plus trained duplex interaction model, with online plan updates; not the oracle-plan condition",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "pro2assist2026": {
+   "work": "pro2assist",
+   "name": "Pro²Assist",
+   "label": "Pro²Assist",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "Continuous single-task procedural guidance with session-reset progress history",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "insufficient",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "insufficient",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "proact2026": {
+   "work": "proact",
+   "name": "ProAct",
+   "label": "ProAct",
+   "domain": "digital",
+   "kind": "research",
+   "configuration": "Directed Idle: full Future-State Prediction plus Idle-Time Acquisition and delivery policy with the persistent memory layer",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "luproactiveagent2024": {
+   "work": "proactive-agent",
+   "name": "Proactive Agent",
+   "label": "Proactive Agent",
+   "domain": "digital",
+   "kind": "research",
+   "configuration": "Section 3.4 Proactive Agent in the Environment Gym, including retained event/dialogue history and simulated accepted-task execution",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "proagent": {
+   "work": "proagent",
+   "name": "ProAgent",
+   "label": "ProAgent",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "Default Qwen3-VL-4B ProAgent with persona updating/retrieval and agent-in-the-loop tiered sensing",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "propersim": {
+   "work": "properassistant",
+   "name": "ProPerAssistant",
+   "label": "ProPerAssistant",
+   "domain": "digital",
+   "kind": "research",
+   "configuration": "Full ProPerAssistant with AR history/retrieval and daily per-persona DPO updates (LLaMA 3.3 70B, LoRA)",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "later_use": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    }
+   }
+  },
+  "sensibleagent2025": {
+   "work": "sensible-agent",
+   "name": "Sensible Agent",
+   "label": "Sensible Agent",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "WebXR prototype with context-conditioned prompts and response modalities",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "absent",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "absent",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "absent",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "absent",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "absent",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "absent",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "absent",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "socialmind": {
+   "work": "socialmind",
+   "name": "SocialMind",
+   "label": "SocialMind",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "RayNEO X2 SocialMind with identity-indexed persona database and multi-tier suggestion generation",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "insufficient",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "speechless2026": {
+   "work": "speechless",
+   "name": "SpeechLess",
+   "label": "SpeechLess",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "SpeechLess six-module implementation with per-user spatial memory, low-confidence verification, and Full/Partial/Zero input modes",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "strands": {
+   "work": "strands",
+   "name": "STRANDS",
+   "label": "STRANDS",
+   "domain": "physical",
+   "kind": "research",
+   "configuration": "STRANDS core system with the 2015 HdB care deployment; no security-only activity-learning evidence combined into the row",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    }
+   }
+  },
+  "userascode2026": {
+   "work": "user-as-code",
+   "name": "User as Code",
+   "label": "User as Code",
+   "domain": "digital",
+   "kind": "research",
+   "configuration": "Two-phase executable personal memory with Active Service constraint pipeline",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    }
+   }
+  },
+  "vinci": {
+   "work": "vinci",
+   "name": "Vinci",
+   "label": "Vinci",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "Paper-described wearable/head-mounted wake-word assistant with periodic timestamped activity memory and later history-aware QA; no optional chat-history backend assumed.",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "insufficient",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "A->M": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "vinci2": {
+   "work": "vinci2",
+   "name": "Vinci2",
+   "label": "Vinci2",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "EgoMemo streaming proactive configuration on EgoServe, with GPT-5-mini reasoning",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "absent",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "absent",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "absent",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "absent",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "attribution": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "visionclaw2026": {
+   "work": "visionclaw",
+   "name": "VisionClaw",
+   "label": "VisionClaw",
+   "domain": "wearable",
+   "kind": "research",
+   "configuration": "Composed Gemini Live + OpenClaw system with connected personal stores and delegated tools",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "insufficient",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "revision": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    },
+    "later_use": {
+     "label": "not_stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "not_stated",
+      "claude_claude-opus-5-5": "not_stated",
+      "codex_gpt-6-astra": "not_stated"
+     }
+    }
+   }
+  },
+  "visualclaw2026-claude-code": {
+   "work": "visualclaw",
+   "name": "VisualClaw",
+   "label": "VisualClaw",
+   "domain": "digital",
+   "kind": "research",
+   "configuration": "VisualClawArena / Claude Code (Sonnet 4.6), Cascade-8 + FullEvo Cat.",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "later_use": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    }
+   }
+  },
+  "visualclaw2026-codex": {
+   "work": "visualclaw",
+   "name": "VisualClaw",
+   "label": "VisualClaw",
+   "domain": "digital",
+   "kind": "research",
+   "configuration": "VisualClawArena / Codex (GPT-5.5), Cascade-8 + FullEvo Cat.",
+   "reviews": [
+    "claude_claude-fable-5-1",
+    "claude_claude-opus-5-5",
+    "codex_gpt-6-astra"
+   ],
+   "channels": {
+    "S->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "M->A": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->S": {
+     "label": "absent",
+     "rule": "2 of 3",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "absent",
+      "codex_gpt-6-astra": "insufficient"
+     }
+    },
+    "M->S": {
+     "label": "insufficient",
+     "rule": "no majority",
+     "votes": {
+      "claude_claude-fable-5-1": "absent",
+      "claude_claude-opus-5-5": "insufficient",
+      "codex_gpt-6-astra": "reported"
+     }
+    },
+    "A->M": {
+     "label": "reported",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "reported",
+      "claude_claude-opus-5-5": "reported",
+      "codex_gpt-6-astra": "reported"
+     }
+    }
+   },
+   "steps": {
+    "record": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "outcome": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "attribution": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "revision": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    },
+    "later_use": {
+     "label": "stated",
+     "rule": "unanimous",
+     "votes": {
+      "claude_claude-fable-5-1": "stated",
+      "claude_claude-opus-5-5": "stated",
+      "codex_gpt-6-astra": "stated"
+     }
+    }
+   }
+  }
+ },
+ "complete": true
+}

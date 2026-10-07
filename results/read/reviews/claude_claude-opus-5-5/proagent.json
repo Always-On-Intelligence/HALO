@@ -1,0 +1,81 @@
+{
+  "id": "proagent",
+  "configuration": "proagent: Default Qwen3-VL-4B ProAgent with persona updating/retrieval and agent-in-the-loop tiered sensing. Judged the system as designed in §4: on-demand tiered perception with agent-in-the-loop sampling (§4.4), hierarchical contexts with context-aware persona updating and retrieval (§4.2), and the context-aware VLM reasoner with proactive delivery control (§4.3). Defaults per §5.1.2: Qwen3-VL-4B base, L=4, τ=20 s, τf=0.2, τt=0.5.",
+  "sources_read": [
+    "https://arxiv.org/html/2512.06721v2 (arXiv v2 HTML, read directly; the fetched text was truncated within §5.6.1)",
+    "https://web.scraper.workers.dev/?url=https%3A%2F%2Farxiv.org%2Fhtml%2F2512.06721v2&selector=%5Bid%3D%22<section-id>%22%5D&scrape=text: section text of the same v2 HTML for S4.SS1, S4.SS2.SSS1-3, S4.SS3.SSS1-3, S4.SS4.SSS1-2, S5.SS1, S5.SS2.SSS1, S5.SS6.SSS2, S5.SS7, S6, S7, A1",
+    "https://arxiv.org/abs/2512.06721 (submission history only, to confirm that v2 of 7 May 2026 is the latest version)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed context (timestamps, location) and the user's spoken feedback go into interaction records. An LLM infers context-aware personas from them and adds these to the scenario-grouped persona database, merging similar entries and replacing conflicting ones. Users can also supply initial personas in natural language, and the short-term history window stores recent sensory contexts.",
+      "locator": "arXiv 2512.06721v2 HTML, §4.2.2 Context-Aware Persona Updating; §4.2.1 Hierarchical Context Modeling",
+      "quote": "§4.2.2: “In addition to initially provided personas, ProAgent also infers context-aware personas from user feedback and the associated sensory contexts.” … “Each newly inferred persona is compared against existing entries for similarity and conflict. Conflicting personas are replaced, while similar ones are merged.”"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Personas retrieved for the current scenario and the short-term history (recent sensory contexts and responses) are inputs to the VLM reasoner. The reasoner decides whether to assist or stay silent, which tools to call, and what to say. Delivery control also suppresses a candidate response that is too similar to recent responses. §5.6.2 says feedback-derived personas make ProAgent suppress assistance in later similar contexts.",
+      "locator": "§4.3.1 Proactive Intent Reasoning; §4.2.3 Context-Aware Persona Retrieval; §4.3.3 Proactive Delivery Control; §5.6.2 Impact of Human Feedback",
+      "quote": "§4.3.1: “Specifically, raw visual data are fed into the visual encoder, while the remaining contexts, including location, motion, audio, and personas, are sent to the text encoder.” §5.6.2: “When the user later encounters a similar context, this persona helps ProAgent suppress unnecessary proactive assistance.”"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The reasoner's prediction of whether assistance is needed (an Action-side decision) goes back to the sampling scheduler. It keeps the camera at the high rate or returns it to the low rate (agent-in-the-loop adaptive perception). Tool-use plans also drive the fetching of outside information, such as product prices and transit schedules, and those results feed the final assistance.",
+      "locator": "§4.4.2 Agent-in-the-Loop Adaptive Perception; §4.3.1; §5.1.2",
+      "quote": "§4.4.2: “ProAgent then uses this prediction as a lightweight signal for subsequent visual sampling: moments that require proactive assistance suggest that continued high-rate observation may be useful, while moments without proactive need allow the system to return to low-rate sampling.”"
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "The paper never describes stored memory directly shaping sampling, attention, compression, or interpretation. Vision sampling is driven by live motion and POI cues and by the reasoner's prediction, so memory reaches sampling only through M→A→S. Personas and history enter the fused VLM as reasoner inputs at answer time, which is M→A, and the paper does not say they guide the visual description. Scenario detection uses a fixed scenario-object bank, not interaction memory. The paper does not explicitly rule out this route either, so the label is insufficient rather than absent.",
+      "locator": "§4.4.1 Low-Cost Contextual Cue Triggering; §4.4.2; §4.2.3; §4.3.1",
+      "quote": "§4.4.2: “Low-cost cues can activate high-rate sampling, while the agent's decision can either maintain high-rate sampling or return the system to the low-rate mode.”"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Each delivered assistance is recorded with its sensory context and the user's feedback as an interaction record. These records build up into the interaction history that persona inference reads. The short-term context window also stores the system's recent proactive responses with timestamps, which later reasoning uses.",
+      "locator": "§4.2.2 Context-Aware Persona Updating; §4.2.1 Hierarchical Context Modeling",
+      "quote": "§4.2.2: “Specifically, ProAgent records the current sensory context (e.g., timestamps and location), the delivered proactive assistance, and the user's verbal feedback as an interaction record” … “Over time, these records accumulate into an interaction history” §4.2.1: “which stores recent records of sensory contexts and proactive responses with their timestamps”"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service itself records the assistance it delivered: interaction records build up into the history ℋ, which its own persona-inference LLM later reads. It also keeps its recent proactive responses in the short-term history window, used by the reasoner and by redundancy suppression. These are records inside the system, not trial logs that only the authors analyse.",
+      "locator": "§4.2.2; §4.2.1; §4.3.3",
+      "quote": "§4.2.2: “Specifically, ProAgent records the current sensory context (e.g., timestamps and location), the delivered proactive assistance, and the user's verbal feedback as an interaction record” … “Over time, these records accumulate into an interaction history”"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "The user's spoken feedback on delivered assistance is captured and kept in the interaction record and history. The paper's example is a user saying they do not care about bus-schedule information at a particular stop.",
+      "locator": "§4.2.2; §5.6.2 Impact of Human Feedback",
+      "quote": "§4.2.2: “the user's verbal feedback as an interaction record” … “Over time, these records accumulate into an interaction history” §5.6.2: “if a user verbally indicates that they do not care about school bus schedule information at a specific bus stop, ProAgent combines this feedback with contextual cues such as the current GPS location”"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Feedback is stored in the same tuple as the assistance it concerns and its context. The system's own LLM turns it into a context-specific persona, which then suppresses the unwanted assistance in similar later contexts. So the outcome is used to correct assistance inside the service, not only for the authors' scoring.",
+      "locator": "§4.2.2; §5.6.2 (Figure 28)",
+      "quote": "§5.6.2: “ProAgent combines this feedback with contextual cues such as the current GPS location (Lat A, Lon A) and employ an LLM to infer a context-aware persona” … “The results show that such personas help correct some false detections by reducing unnecessary proactive assistance.”"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The only online update is to the persona database, which holds user preferences read by a fixed reasoner. That is content, not a change to the mechanism. The VLM's LoRA fine-tuning (CoT distillation) is done offline by the developers on a human-annotated dataset, and the authors set the thresholds. The paper reports no change the service makes to its own parameters, prompts, skills, rules, or code.",
+      "locator": "§4.2.2; §4.3.2 Context-Aware CoT Distillation; §5.1.2 Configuration",
+      "quote": "§4.2.2: “The inferred personas capture users' context-aware preferences associated with specific situations, locations, and activities.” §4.3.2: “Finally, we fine-tune the VLM on” …",
+      "what": "Nothing is revised by the service itself. Only persona-database entries (user-preference content) are updated, and the VLM LoRA weights change only through the developers' offline fine-tuning."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "The paper reports later runs that use feedback-derived personas, but these use updated preference content, not a revised mechanism. No later run under a mechanism change made by the service is reported.",
+      "locator": "§5.6.2 Impact of Human Feedback",
+      "quote": "§5.6.2: “When the user later encounters a similar context, this persona helps ProAgent suppress unnecessary proactive assistance.”"
+    }
+  },
+  "notes": "Configuration judged: the default Qwen3-VL-4B system with persona updating and retrieval, the reasoner with delivery control, and tiered perception with agent-in-the-loop sampling. Access: reading the v2 HTML directly was cut off within §5.6.1, so I read each needed section through a CSS-selector text extractor applied to the same arXiv v2 HTML. The arXiv PDF was over the fetch size limit. ar5iv serves v1, which lacks §5.6.2, so I did not use it. Quotes came through a model-based fetch tool. I confirmed each one with at least two independent extractions plus exact-substring checks, and those checks rejected strings I had deliberately altered. Math symbols are left out or replaced by an ellipsis. Most evaluation is offline on recorded data (CAB-Lite, and 92 h of real-world data from 20 participants who wrote their own initial personas). The paper does not say how the §5.6.2 feedback was collected. The user-study Likert ratings were collected by the researchers and are not used by the service. Under the protocol, neither point negates the reported flows. The persona-inference prompt is shown in an appendix figure whose text I could not extract. The auto-generated case README showed one earlier reviewer's summary labels. I did not open that review and judged independently.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 743,
+    "code_commit": null
+  }
+}

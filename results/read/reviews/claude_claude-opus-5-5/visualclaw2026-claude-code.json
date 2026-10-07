@@ -1,0 +1,95 @@
+{
+  "id": "visualclaw2026-claude-code",
+  "configuration": "VisualClawArena / Claude Code (Sonnet 4.6), Cascade-8 + FullEvo Cat. This is the Table 7 row 'VisualClaw (Cat.)' for the Claude Code backend. Sensing is the cascade keyframe gate (dHash → 128-d CPU encoder → change gate), with timestamps cited in the question text pinned and the set padded to 8 frames (runner default --keyframe-mode cascade, helper --max-keyframes 8). Prompting uses hot/cold skill injection and per-scenario runner memory (--memory). Skill evolution runs within each scenario and again at its end, and in the Cat. variant the retrieved memory is concatenated into the evolver prompt (runner mode simple_concat).",
+  "sources_read": [
+    "https://arxiv.org/html/2606.16295v1 (paper v1). Read only through WebFetch, which paraphrases. Sections covered: Abstract, §1, §3.1–3.4 (Eq. 1, ΔS_Cat./ΔS_Guide, F1/F2), §4.2 Bridge to Multimodal Agentic Benchmarks, §5.1 Setup, §5.3 VisualClawArena results (Table 7 caption, Fig. 5 discussion), §5.5 Case Studies. Appendix A.3 (algorithm) could not be retrieved.",
+    "cases/visualclaw/case.yaml",
+    "Repo UCSC-VLAA/VisualClaw @ f6de05bb8f03e8ba44ec5ee458961cd70002a6d5: README.md",
+    "docs/visualclawarena.md",
+    "scripts/run_visualclawarena_self_evolve.sh",
+    "benchmark/visualclawarena/runner.py (full)",
+    "benchmark/visualclawarena/engines/claude_code.py",
+    "benchmark/visualclawarena/work_copy.py",
+    "benchmark/visualclawarena/cascade_frames.py",
+    "benchmark/skill_wire.py",
+    "visualclaw/modules/skill/evolver.py",
+    "visualclaw/modules/skill/manager.py (load, retrieve, hybrid injection, add/remove/write skill)",
+    "visualclaw/modules/memory/manager.py (from_gateway_config, _persist_units, retrieve_for_prompt, render_for_prompt)",
+    "visualclaw/modules/memory/policy_optimizer.py; models.py and store.py (outcome field, via grep)",
+    "visualclaw/config/defaults.yaml",
+    "visualclaw/skills_seed/seed_universal_mc/video-context-grounding/SKILL.md, qa_types.json, skill_utility.jsonl",
+    "benchmark/visualclawarena/plot_clean_per_day_curve.py (grep: a 'day step' is a within-scenario round); aggregate_per_day_curve.py (header)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "After every round, the runner writes the round's user-supplied question into the per-scenario memory store. It also stores the external evaluator's pass/fail verdict as MemoryUnit.outcome, which is persisted in SQLite. Failed rounds' questions and reference answers also go to the failure buffer JSONL. The paper says M_v saves correctly-answered examples and that evaluator failures are routed back into memory. The verdict is feedback that enters through Sensing, so it counts as S→M.",
+      "locator": "runner.py:752-797 (_store_round_memory), runner.py:1015-1030, runner.py:2056-2069; visualclaw/modules/memory/store.py:152-178; paper §3.4, §4.2",
+      "quote": "Code (verbatim, runner.py:775): \"content = f\\\"{label} — Q: {q}\\\"\". Paper §3.4 (UNVERIFIED): \"The memory store M_v saves correctly-answered examples as dense embeddings and retrieves only high-confidence matches.\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "For each question, the top-k skills from the retained, evolving skill bank S are inlined in full ('hot'), and the rest of the bank appears as a name-and-description catalogue ('cold') in the agent prompt. Eq. 1 also conditions the answer on Ret_Mv(q) memory snippets. §4.2 says the runner prepends retrieved skills or memory context to the agent prompt. In code, memory-evolver fusion requires --memory, which prepends memory retrieved from earlier rounds of the scenario to every Claude Code round prompt. Skills are prepended under 'Reasoning skills relevant to this round'. §3.4 says that in the FullEvo variants memory mainly shapes the next skill update rather than the per-question prompt, but the skill-bank retrieval path into Action is present either way.",
+      "locator": "paper §3.1 Eq. (1), §3.3, §4.2; runner.py:610-615, 859-934",
+      "quote": "Paper §3.1 after Eq. (1) (UNVERIFIED): \"where Ret_S(q,k) returns the top-k retrieved skills (the hot tier), Cat(S) produces the name-and-description cold catalogue, and Ret_Mv(q) retrieves confidence-gated memory snippets.\" Code (verbatim, runner.py:613): \"## Relevant memory from earlier rounds of this scenario\""
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Claude Code runs as the tool-using agent. It decides which staged keyframes and workspace files to Read, which is acquisition driven by its information needs. It also runs validation commands on the files it has just edited, which are expected-effect checks inside the system. The prompt tells it to inspect the keyframes with its file-reading tools, and Bash is allowed for ad-hoc validation. The helper also enables a schema/file preflight checklist asking the agent to verify required outputs before finalizing. The cascade gate itself is not driven by Action, and the external evaluator is not counted. The in-system flow is the agent's own read/validate loop.",
+      "locator": "paper §4.2; benchmark/visualclawarena/engines/claude_code.py:12-16, 33-36; runner.py:580-589, 716-738; scripts/run_visualclawarena_self_evolve.sh:131",
+      "quote": "Paper §4.2 (UNVERIFIED): \"Claude Code runs as a native tool-using workspace agent, so reads, edits, and validation commands happen through its regular tool loop.\" Code (verbatim, runner.py:587-588): \"Inspect them with your image/file-reading tools before answering timestamp-grounded visual questions.\" Code (verbatim, engines/claude_code.py:33-35, comment lines joined): \"Bash is allowed so the agent can run `python` for ad-hoc validation; the runner re-validates via check scripts after the agent exits\""
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "No source describes retained memory or skills being used to guide frame sampling, attention, compression, or interpretation. The paper states the cascade gate depends only on f_{1:t}. For VisualClawArena, the code skips the video StateMemory/ContextBuilder stages and pins frames only at timestamps cited in the scenario question text, which is task input, not memory. Memory and skills enter only the answer-time agent prompt, which counts as M→A. Whether in-context memory shapes how the fused agent interprets frames is not addressed. So the route is unknown, but it is not excluded as a whole.",
+      "locator": "paper §3.2; benchmark/visualclawarena/cascade_frames.py:11-14, 67-122; runner.py:1583-1625",
+      "quote": "Paper §3.2 (UNVERIFIED): \"Because g_t depends only on f_{1:t}, the cascade runs on a live stream of unknown length without buffering or replay.\" Code (verbatim, cascade_frames.py:11-12): \"Stage 4 (StateMemory) and Stage 5 (ContextBuilder) of the cascade are not used here\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The agent's own outputs are written back for retention. The tail of each round's answer is stored as 'Conclusion: …' in the memory unit, together with that round's outcome. Failed rounds' answers and prompt tails go to D^fail and are appended to the cross-scenario failure buffer, which later evolver calls replay. The paper says memory saves correctly-answered examples and that the evolver analyses failure trajectories.",
+      "locator": "runner.py:752-797, 1015-1030, 1793-1828, 1898-1956, 2056-2069; paper §3.1 (per-session timescale), §3.4",
+      "quote": "Code (verbatim, runner.py:1016): \"# Store this round's Q&A immediately so the next round can retrieve it.\" Code (verbatim, runner.py:2056-2058, comment lines joined): \"persist this scenario's failures to the cross-scenario buffer so subsequent runs can pool them. Always append (regardless of whether evolve fired) — keeps the buffer the canonical failure ledger.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "After each round, the service stores what it delivered (the question plus the tail of its answer) as an episodic memory unit that later rounds retrieve. It also keeps per-round prompt.txt and answer.txt, which the in-loop evolver reads back, and a persisted failure buffer that later runs reuse. These records are used by the service, not only analysed by the authors.",
+      "locator": "runner.py:752-797, 945-961, 1015-1030, 1793-1828, 2056-2069; paper §3.4",
+      "quote": "Code (verbatim, runner.py:756): \"Store one round's outcome as an episodic memory unit for later rounds.\" Paper §3.4 (UNVERIFIED): \"The memory store M_v saves correctly-answered examples as dense embeddings and retrieves only high-confidence matches.\""
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "The evaluator's verdict on each round (the exec-check result on the workspace, or the parsed multiple-choice answer) is obtained online and retained. It is stored as MemoryUnit.outcome ('passed' or 'failed', persisted in SQLite), and failed rounds with their reference answers go to D^fail and the failure buffer.",
+      "locator": "runner.py:981-1002, 1019-1025, 763-765; visualclaw/modules/memory/store.py:152-178; paper §4.2",
+      "quote": "Code (verbatim, runner.py:763-764): \"v4 Fix 0: ``round_passed`` is plumbed through into MemoryUnit.outcome so retrieval can warn future rounds about failed prior reasoning.\" Paper §4.2 (UNVERIFIED): \"The evaluator checks the final workspace state for execution-style tasks or parses the final answer for multiple-choice rounds, and failures are routed back into the same memory and skill-evolution loop.\""
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Each failed round is packaged with its own question, reference answer, the tail of the context the agent saw, and the agent's response. These are given to the evolver as failures to diagnose, with instructions to produce skills that would have prevented them. SkillWire also credits or blames the skills injected on each round with that round's outcome (F2 utility tracking). The evolution is triggered on D^fail, not on offline scores.",
+      "locator": "runner.py:1785-1828, 1898-1942; visualclaw/modules/skill/evolver.py:403-515; benchmark/skill_wire.py:311-346; paper §3.4",
+      "quote": "Code (verbatim, evolver.py:469-470): \"Your job: analyze the failed conversations below and generate NEW skills that would have prevented those failures.\" Code (verbatim, skill_wire.py:312): \"Credit/blame the last-injected skills with the question outcome.\" Paper §3.4 (UNVERIFIED): \"Let D^fail be the failures since the last evolution. When |D^fail| ≥ N_evo, the evolver retrieves relevant memory from M_v and proposes new skills\""
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The service's own LLM evolver runs automatically: every 5 within-scenario failures, and again at the end of the scenario. It adds new skills to S and writes them to disk as SKILL.md files in the run-local writable bank, with qa_types routing tags. Later questions retrieve and apply them as reusable procedural rules. In the Cat. variant, the retrieved memory R is concatenated into the standard evolver prompt. According to the paper, F1 deduplication and F2 utility pruning also edit the bank. The seed bank is written by the developers and is not a revision.",
+      "locator": "paper §3.4 (ΔS_Cat., S ← S ∪ ℰ(S, D^fail, M_v), F1/F2); visualclaw/modules/skill/evolver.py:245-297; visualclaw/modules/skill/manager.py:782-823, 894-923; runner.py:1774-1884, 1986-2049; README.md:407-408",
+      "quote": "Paper §3.4 (UNVERIFIED): \"The Cat. variant follows the same direct concatenation spirit: ΔS_Cat. = ℰ(𝒫_0(S, D^fail) ⊕ R)\". Code (verbatim, evolver.py:269): \"if self._manager.add_skill(skill_obj, write_to_disk=True):\". Code (verbatim, README.md:407-408): \"Self-evolution writes new skills into a run-local writable bank, never directly into the version-controlled seed bank.\"",
+      "what": "The skill bank S. New skill cards are generated by the evolver LLM as SKILL.md files (name, one-line description, numbered procedure, anti-pattern) with qa_types tags in qa_types.json. Per the paper, F2 also prunes low-utility skills."
+    },
+    "later_use": {
+      "label": "stated",
+      "rationale": "For this exact configuration (Claude Code, VisualClaw (Cat.)), the paper says later rounds within a scenario benefit from self-evolved skills, and it reports accuracy by thirds of the scenario. That means later steps ran with the evolved bank. Table 7 reports 52.16% macro accuracy, against 49.00% without FullEvo. The code's within-scenario evolution adds new skills to the live SkillManager so later rounds retrieve them; this corroborates the claim but is not the basis for it.",
+      "locator": "paper §5.3 (Fig. 5 discussion, Table 7); runner.py:1235-1243, 1774-1884",
+      "quote": "Paper §5.3 (UNVERIFIED): \"After this adaptation period, VisualClaw benefits from both accumulated scenario context and self-evolved skills: Codex VisualClaw (Cat.) is strongest in the mid and late thirds (56.19%, 57.38%), while Claude Code VisualClaw (Cat.) leads all three thirds (52.03%, 50.91%, 53.50%).\" Code (verbatim, runner.py:1238-1239, noted only): \"Newly-evolved skills are written to the skill bank and become visible to LATER rounds in the SAME scenario\""
+    }
+  },
+  "notes": "Judged the Claude Code row 'VisualClaw (Cat.)' of Table 7. The paper was only reachable through WebFetch, which paraphrases, so every paper quote is marked UNVERIFIED. Code quotes were checked verbatim at the listed commit. Code and paper diverge in several places. (1) The public helper script runs the Guide variant (--memory-evolver-context-mode related_prefix). Cat. corresponds to simple_concat, but at this commit build_related_evolver_memory_context returns '' unless the mode is related_prefix (runner.py:1506-1512). So simple_concat would send no memory to the evolver, and the Cat. memory-to-evolver context is supported by the paper only. (2) §3.4 says FullEvo memory affects the next skill update rather than the per-question prompt. In code, fusion requires --memory, which also prepends retrieved memory to every round's prompt. (3) The paper gives N_evo=15 and K_seed=12. The helper fires the evolver every 5 within-scenario failures, plus an end-of-scenario run gated by --skills-buffer-n 10 with a cross-scenario failure buffer. (4) F2 pruning needs --utility-prune, which the helper does not set; outcomes are still tracked per skill. (5) The memory module's MemoryPolicyOptimizer re-tunes retrieval parameters from store volume and telemetry, not from outcomes. The paper does not describe it, so it was not counted as a revision. (6) The §5.5 case studies are video-QA (EgoSchema, NextQA), not VisualClawArena. (7) The tool did not find 'Sonnet 4.6' in the paper text. The helper defaults to MODEL=sonnet and runs the evolver on the Claude Code backend with the same model. The external evaluator's verdict is fed back online into memory, D^fail and skill evolution, so it counts for Outcome and Attribution. It is not counted as an A→S flow.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 761,
+    "code_commit": "f6de05bb8f03e8ba44ec5ee458961cd70002a6d5"
+  }
+}

@@ -1,0 +1,17 @@
+# HALO run mode for VisionClaw: the voice worker (Gemini Live replaced) with the hosted action-agent gateway
+# (Anthropic Managed Agents replaced), connected personal stores and delegated tools.
+# Inputs and the backbone are fixed across arms; only the cut sites differ.
+models:
+  backbone: {backend: "codex:gpt-6-astra", effort: low}    # stands in for Gemini Live and the managed action agent
+  judge: {backend: "codex:gpt-6-astra", effort: high}
+samples: 3
+rubric: >-
+  The assistant runs on smart glasses and the user talks to it over several calls in one day. Compare the
+  assistant's replies in the final call. Prefer the one that gets the user's facts right: what they saved,
+  scheduled or asked for earlier, and what they showed the camera. A reply that states a wrong time, number
+  or item is worse than one that says it does not know. Ignore voice style and length.
+tests:
+  - cut: [S->M]
+  - cut: [M->A]
+  - cut: [A->M]
+  - cut: [A->S]

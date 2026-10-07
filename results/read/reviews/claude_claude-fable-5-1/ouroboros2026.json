@@ -1,0 +1,110 @@
+{
+  "id": "ouroboros2026",
+  "configuration": "Hope live deployment with reviewed experience-driven core evolution (paper arXiv:2608.08311v3 §4 'Hope: Free Evolution under Human Interaction' plus §3 'Two modes of core evolution', read against the repository at commit 4b37f96 / v7.6.0). Caveat: the checked-out commit (2026-10-05) post-dates paper v3 (2026-08-31) and the 161-day Hope window that began February 2026, so some code mechanisms (e.g. the 7.6.0 chronicle memory ladder) may be newer than what Hope ran; paper statements were given precedence for the Hope configuration and code was used to confirm implemented flows.",
+  "sources_read": [
+    "https://arxiv.org/html/2608.08311v3 (fetched via WebFetch in targeted passes; 9 key sentences and Table 4 rows re-checked for exact wording in a second pass; other tool-extracted quotes are marked UNVERIFIED)",
+    "https://arxiv.org/abs/2608.08311v3 (abstract page)",
+    "cases/ouroboros/case.yaml",
+    "README.md",
+    "BIBLE.md",
+    "docs/ARCHITECTURE.md",
+    "docs/architecture/01-high-level-architecture.md (lines 1-247)",
+    "docs/architecture/06-agent-core.md (sections: Background consciousness and Evolution; Git and commit review; Deep self-review; Post-task reflection; Durable memory and project focus)",
+    "docs/PERSISTENCE.md",
+    "prompts/SYSTEM.md",
+    "prompts/CONSCIOUSNESS.md",
+    "ouroboros/memory.py",
+    "ouroboros/consolidator.py",
+    "ouroboros/chronicle_store.py",
+    "ouroboros/reflection.py",
+    "ouroboros/outcomes.py (lines 1-1034)",
+    "ouroboros/evolution_checkpoints.py",
+    "ouroboros/knowledge.py",
+    "ouroboros/post_task_evolution.py",
+    "ouroboros/improvement_backlog.py",
+    "ouroboros/memory_view.py",
+    "ouroboros/memory_inventory.py",
+    "ouroboros/consciousness.py",
+    "ouroboros/consciousness_wake.py",
+    "ouroboros/context.py (lines 600-799, 1100-1360)",
+    "ouroboros/agent_task_pipeline.py",
+    "ouroboros/tools/chronicle.py",
+    "ouroboros/tools/memory_tools.py",
+    "ouroboros/tools/verify.py (lines 560-700)",
+    "ouroboros/tools/git_evolution.py (grep)",
+    "supervisor/evolution_lifecycle.py (lines 1130-1340, 1440-1570; grep)",
+    "supervisor/events_evolution_done.py"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "The paper describes human-supplied input being retained: channel ingress is written to an ordered message log and projected into rolling, per-person and per-call digests, and people's bug reports/suggestions enter the same durable improvement backlog as self-detected faults. The code implements the write path: inbound messages land in logs/chat.jsonl (supervisor/message_bus.py per PERSISTENCE.md §5); the mind seals chat rows into chronicle pages/notes with chronicle_write (host expands the covered row set and verifies quotes); reflection may nominate knowledge notes about people; backlog candidates are appended with recurrence counting.",
+      "locator": "Paper §4 'Multi-channel state' and 'Social-interaction-driven development'; code: ouroboros/tools/chronicle.py:297-317 (_write_page), ouroboros/chronicle_store.py:343-352 (publish to memory/chronicle/records.jsonl), docs/PERSISTENCE.md §5 row logs/chat.jsonl and §6 row memory/chronicle/records.jsonl, ouroboros/improvement_backlog.py:285-372 (append_backlog_items)",
+      "quote": "\"Channel ingress converges on an ordered message log and is projected into separate rolling, per-person, and per-call digests.\" (§4, verified exact) / \"These signals enter the same improvement backlog as self-detected faults and internal observations.\" (§4, verified exact)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained artifacts (constitution, identity profile, scratchpad, chronicle projections, knowledge index, Pattern Register, improvement backlog) are loaded into the acting context and the paper says they shape behavior across sessions. Code: context.py builds identity/scratchpad/WORLD sections, the knowledge index and the patterns register into every integrating context, captures the chronicle memory view, and injects the backlog digest into evolution tasks; the post-task evolution chooser decides whether/what to evolve from the backlog, solve-capability history and closed objectives.",
+      "locator": "Paper §3 'Operational identity and memory'; Appendix A 'Always-loaded constitution as commit criterion'; code: ouroboros/context.py:758-799 (build_memory_sections), :600-647 (knowledge index + patterns register), :1130 and :1294-1301 (memory view capture), :1210-1215 (backlog digest); ouroboros/post_task_evolution.py:129-149 and :249-281 (_DECISION_PROMPT, _decide_promotion)",
+      "quote": "UNVERIFIED (tool-extracted): \"The runtime represents identity and continuity through a versioned constitution, an editable identity profile, scratchpad and chronicle projections, project memory, review ledgers, and Git history. These artifacts shape observable behavior across sessions and model routes.\" (§3); \"A versioned constitution is re-read from disk on every task loop along an untruncatable read path and kept in context at all times.\" (Appendix A)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action-side intentions direct in-system observation and expected-effect checks: the agent's chosen verification commands are run by the host and yield receipts bound to the revision; after a reviewed self-modification commit the agent requests a restart and the boot verifies the expected SHA/branch (restart verification is the absorption boundary); the agent traced a reported fault to a specific code path. Code: verify_and_record runs the agent-specified check and records expected vs actual; write_pending_restart_marker/verify_restart check the expected commit at boot; the evolution execution contract instructs request_restart after a commit.",
+      "locator": "Paper §3 'Task outcomes and verification'; §4 'Evolution during deployment'; code: ouroboros/tools/verify.py:576-700 (_verify_and_record), supervisor/evolution_lifecycle.py:1456-1460 (execution contract) and :1538-1569 (write_pending_restart_marker, request_evolution_restart), docs/PERSISTENCE.md §2 row state/pending_restart_verify.json",
+      "quote": "\"Task completion is recorded on separate execution, objective, review, and artifact axes, and host-run verification commands create revision-bound receipts.\" (§3, verified exact); \"The agent traced the behavior to a duplicate-send path and landed a reviewed verbatim-duplicate guard in the public output pipeline.\" (§4, verified exact)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The paper itself does not describe memory steering sensing (its per-person digests are described as projections, not as a sampling/interpretation prior). The code, however, implements a retained-prior-to-sensing flow: each background-consciousness wake observes new chat rows, task-result transitions and memory-journal records starting from a persisted observation boundary (chat position, transition inventory, memory sequence) accepted by the previous wake, so retained state selects what is sampled; separately, sealed chronicle pages (memory) determine which raw chat rows are rendered verbatim versus folded in the context (compression). Caveat: whether background consciousness was enabled in Hope is not stated, and the chronicle ladder is a post-paper (7.6.0) mechanism.",
+      "locator": "Code: ouroboros/consciousness_wake.py:640-769 (observe_wake with boundary/since), ouroboros/consciousness.py:29-32 and :289-292, :335-336 (consciousness_observation_boundary persisted and reused), docs/architecture/06-agent-core.md:206; ouroboros/memory_inventory.py:321-338 (open_rows_by_room: rows outside the sealed set) and ouroboros/memory_view.py:14-18",
+      "quote": "Code docstring (verbatim): \"What a wake OBSERVES is not this clock's business: it starts after the chat-chain position and the task-result transition state the last admitted wake observed (``consciousness_observation_boundary``, persisted only once the lane admits the wake; ``consciousness_wake.observe_wake``), never at a finish time.\" (ouroboros/consciousness.py:29-32)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The agent's own actions and their outcomes are retained: the paper states faults exposed by its work are recorded as durable error classes and proposed structural repairs, that review ledgers and Git history are part of its memory, and Table 4 counts 1,085 self-modification commits and 40 pattern classes / 659 recurrences. Code: every task writes a durable task result with trace summary, review evidence, verification ledger and outcome axes; post-task reflection appends to logs/task_reflections.jsonl, applies scratchpad/knowledge memory actions and rewrites the Pattern Register; evolution cycles append checkpoints with git SHA and memory hashes; chronicle pages are host-stamped with each covered task's recorded outcome.",
+      "locator": "Paper §3 'Two modes of core evolution', §3 'Operational identity and memory', §4 Table 4; code: ouroboros/agent_task_pipeline.py:1185-1256 (write_task_result), ouroboros/reflection.py:862-871 (append_reflection) and :727-815 (apply_memory_actions), ouroboros/evolution_checkpoints.py:253-291, ouroboros/tools/chronicle.py:247-257 (host_stamp)",
+      "quote": "\"The agent records these as durable error classes and proposed structural repairs, then decides whether to open maintenance work.\" (§3, verified exact)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps records of its own decisions and deliveries for later use: task completion is recorded on separate axes with revision-bound receipts, repository changes leave a trace from feedback/observation to the change, and Table 4 reports 1,085 self-modification commits and 1,522 reviewed self-edit attempts. Code persists one task_results/<id>.json per task (never pruned), logs/tools.jsonl and events.jsonl, review ledgers and evolution checkpoints.",
+      "locator": "Paper §3 'Task outcomes and verification'; §4 Table 4 rows 'Self-modification commits' and 'Reviewed self-edit attempts'; code: ouroboros/agent_task_pipeline.py:1185-1256, docs/PERSISTENCE.md §7 row task_results/<id>.json and §5 rows logs/tools.jsonl, logs/events.jsonl",
+      "quote": "\"Task completion is recorded on separate execution, objective, review, and artifact axes, and host-run verification commands create revision-bound receipts.\" (§3, verified exact); Table 4: \"Self-modification commits\" = 1,085; \"Reviewed self-edit attempts\" = 1,522 (verified)"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later evidence about the agent's actions is obtained and retained: host-run verification receipts, review verdicts on separate axes, and human feedback in deployment (people noticing duplicated messages) that enters the durable improvement backlog. Code: outcome axes and verification receipts are stored on the task result; reflection receives review evidence, error details and child evidence; backlog items retain evidence and recurrence counts.",
+      "locator": "Paper §3 'Task outcomes and verification'; §4 'Social-interaction-driven development' and 'Evolution during deployment'; code: ouroboros/outcomes.py:405-419 and :731-824 (outcome axes), ouroboros/outcome_receipt_store.py (verification receipts), ouroboros/reflection.py:527-724 (generate_reflection inputs)",
+      "quote": "\"These signals enter the same improvement backlog as self-detected faults and internal observations.\" (§4, verified exact)"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Outcomes are linked back to the decisions they concern and used to correct assistance: in deployment the agent traced reported duplicate messages to a duplicate-send path and traced aborting self-review tasks to review-pack context overflow, and the Pattern Register keeps per-error-class rows with count, root cause and structural fix (40 classes / 659 recurrences). Code: the Pattern Register update is keyed to the reflecting task and its typed error markers; backlog items carry task_id and recurrence counts; evolution checkpoints join each cycle's task-done row with its later absorbed/abandoned outcome.",
+      "locator": "Paper §4 'Evolution during deployment'; Appendix A 'Pattern register'; Table 4 'Pattern classes / recurrences'; code: ouroboros/reflection.py:818-860 and :986-1087 (_admits_pattern_register, _update_patterns), ouroboros/improvement_backlog.py:314-337, ouroboros/evolution_checkpoints.py:148-250 (build_solve_capability_digest)",
+      "quote": "\"The agent traced the behavior to a duplicate-send path and landed a reviewed verbatim-duplicate guard in the public output pipeline.\" (§4, verified exact); \"Recurring failures become durable rows (error class, count, root cause, structural fix), shifting repair from instance-level patches to class-level prevention.\" (Appendix A, verified exact)"
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "The service itself durably changes its mechanism: self-authored, reviewed commits to its own code, prompts, tools and context assembly (e.g. a verbatim-duplicate guard in the public output pipeline; replacing the review-pack assembly path with a bounded context atlas), with 94.2% of commits agent-authored; accepted fixes pass the same reviewed commit gate. Code: commit_reviewed/git_review_cycle land the agent's own repository changes; the evolution execution contract requires one reviewed self-modification commit per cycle.",
+      "locator": "Paper abstract; §1 Contributions; §3 'Two modes of core evolution'; §4 'Evolution during deployment' and Table 4 'Agent-authored commit fraction'; code: prompts/SYSTEM.md:298-315 ('Self-Modification'), docs/architecture/06-agent-core.md:443-447, supervisor/evolution_lifecycle.py:1456-1460",
+      "quote": "\"Accepted fixes pass through the same reviewed commit gate as every other core change.\" (§3, verified exact); \"The agent traced the behavior to a duplicate-send path and landed a reviewed verbatim-duplicate guard in the public output pipeline.\" (§4, verified exact); UNVERIFIED: \"replaced the assembly path with a bounded, connectivity-aware context atlas ranked by import-graph centrality\" (§4)",
+      "what": "The agent's own harness implementation in its Git repository: application code, prompts, tools and context-assembly paths, landed as reviewed self-modification commits (Table 4: 1,085 self-modification commits, 94.2% agent-authored), e.g. the verbatim-duplicate guard in the public output pipeline and the bounded context atlas replacing the review-pack assembly path; additionally durable Pattern Register rows (error class / count / root cause / structural fix) and improvement-backlog items as reusable error-class records."
+    },
+    "later_use": {
+      "label": "stated",
+      "rationale": "The paper states that the two deployment-era fixes became reviewed structural changes used by subsequent interactions, that Hope kept interacting across seven surfaces for 161 days while continuously developing its own implementation, and that reviewed commits become the runtime for later work. Code: an evolution cycle is recorded 'absorbed' only after the commit has restart verification, and the owner notice says the reviewed self-modification is now live.",
+      "locator": "Paper §4 'Evolution during deployment' and §4 opening paragraph; abstract; code: supervisor/evolution_lifecycle.py:1288-1296 (absorbed requires has_commit and restart_verified) and :1484-1490 (owner notice), ouroboros/evolution_checkpoints.py:245 ('reviewed commit survived restart')",
+      "quote": "\"Both became durable error classes and reviewed structural changes used by subsequent interactions.\" (§4, verified exact); \"Since February 2026, one persistent Ouroboros agent has interacted with people across seven public and private surfaces while retaining memory and continuously developing its own implementation.\" (§4, verified exact); UNVERIFIED: abstract \"reviewed commits that become the runtime for later work\""
+    }
+  },
+  "notes": "Judged the Hope live deployment with experience-driven (post-task) core evolution as described in paper v3 §3-§4, §7 and Appendix A, using the v7.6.0 repository to confirm implemented flows. The paper text was obtained through a fetch tool that returned short extracts; ten candidate sentences were re-checked in a second pass and nine confirmed exact (quotes labeled 'verified exact'), all other quotes are labeled UNVERIFIED. No fine-tuning or weight update is described; all revision is to the harness (code, prompts, tools, context assembly) and durable registers. Table 4 values used: 161 days continuous; self-modification commits 1,085; agent-authored commit fraction 94.2%; reviewed self-edit attempts 1,522; pattern classes / recurrences 40 / 659. M->S is marked reported on code evidence only (wake observation boundary; sealed-page compression); the paper is silent on it, and part of that code (chronicle ladder) post-dates the Hope window.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 475,
+    "code_commit": "4b37f96223b4b8248eea80c9be22cf923759cd5a"
+  }
+}

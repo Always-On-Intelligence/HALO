@@ -1,0 +1,124 @@
+{
+  "case": "aiget",
+  "channels": {
+    "M->S": "user profile inserted into the perception prompt (context_description)",
+    "M->A": "user profile inserted into the generation prompt (knowledge_generation_filter)",
+    "A->M": "shown suggestions written to the suggestion history that later generation calls read"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "M->S"
+      ],
+      "field": "output",
+      "pairs": 18,
+      "original": 5,
+      "modified": 10,
+      "tie": 3,
+      "metrics": {
+        "revisit_mean_max_similarity": {
+          "original": 0.4267,
+          "modified": 0.4621
+        },
+        "shown": {
+          "original": 1.7778,
+          "modified": 1.7222
+        },
+        "revisit_repeats": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "shown_revisit": {
+          "original": 1.3333,
+          "modified": 1.3889
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 18,
+      "original": 6,
+      "modified": 6,
+      "tie": 6,
+      "metrics": {
+        "revisit_mean_max_similarity": {
+          "original": 0.4267,
+          "modified": 0.4591
+        },
+        "shown": {
+          "original": 1.7778,
+          "modified": 1.8333
+        },
+        "revisit_repeats": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "shown_revisit": {
+          "original": 1.3333,
+          "modified": 1.4444
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A",
+        "M->S"
+      ],
+      "field": "output",
+      "pairs": 18,
+      "original": 13,
+      "modified": 4,
+      "tie": 1,
+      "metrics": {
+        "revisit_mean_max_similarity": {
+          "original": 0.4267,
+          "modified": 0.438
+        },
+        "shown": {
+          "original": 1.7778,
+          "modified": 1.8333
+        },
+        "revisit_repeats": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "shown_revisit": {
+          "original": 1.3333,
+          "modified": 1.5
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->M"
+      ],
+      "field": "output_revisit",
+      "pairs": 18,
+      "original": 15,
+      "modified": 0,
+      "tie": 3,
+      "metrics": {
+        "revisit_mean_max_similarity": {
+          "original": 0.4267,
+          "modified": 0.7459
+        },
+        "shown": {
+          "original": 1.7778,
+          "modified": 1.7778
+        },
+        "revisit_repeats": {
+          "original": 0.0,
+          "modified": 1.0556
+        },
+        "shown_revisit": {
+          "original": 1.3333,
+          "modified": 1.6667
+        }
+      }
+    }
+  ]
+}

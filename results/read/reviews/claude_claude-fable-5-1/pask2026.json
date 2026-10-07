@@ -1,0 +1,95 @@
+{
+  "id": "pask2026",
+  "configuration": "Full Pask service as described in arXiv 2604.08000v1: IntentFlow demand detection (Demand Detector on Qwen3-30B-A3B-Instruct plus MemLoader on Qwen3-4B-Instruct, emitting <silent>/<fast_intervention>/<full_assistance>) coupled with Pask-MM hierarchical memory (user memory as cache, workspace memory as main memory, global memory as external storage with post-session maintenance) and the Pask-PAS always-on runtime (frontend devices, server backend with control/data layers, AI backend tool and model pool). The repository at d54646c contains only the LatentNeeds-Bench construction and evaluation code plus the project page, not the Pask-MM/PAS/IntentFlow service code.",
+  "sources_read": [
+    "https://arxiv.org/html/2604.08000v1 (version v1; read via the WebFetch extraction tool in targeted passes: Abstract; §1 Introduction; §2.1-2.2; §3.1; §3.2.2; §3.3.1-3.3.2; §4 intro, §4.1, §4.2, §4.3; §5; §6.1.1; §6.2-6.5.3; §8; captions of Figures 1-9 and Tables 1-4)",
+    "README.md (repo @ d54646c)",
+    "assets/README_V2.md",
+    "assets/README_V3.md",
+    "docs/index.html (project page text: abstract, DD-MM-PAS, IntentFlow, Pask-MM, Pask-PAS, results tabs)",
+    "eval/run.py",
+    "eval/config.py",
+    "eval/prompts.py",
+    "eval/score.py",
+    "eval/report.py",
+    "eval/results/intentflow_neutral.jsonl (first lines)",
+    "bench/PIPELINE.md",
+    "bench/02_build_turns.py",
+    "bench/03c_memory.py",
+    "latex/latex_fill.py",
+    "latex/output/main_table.tex",
+    "latex/output/multi_turn.tex",
+    "latex/output/latency.tex",
+    "latex/output/figures.tex"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Pask-MM is described with implemented write paths from sensed/user-supplied evidence. During a session the workspace state is updated from each new observation (s_t = TrackState(s_{t-1}, o_t, H_t, tau_t), §4.2) and user memory 'stores stable user traits and the most salient newly observed signals' (§1). After each session the system extracts candidate traits U' from the terminated request trajectory Q (tuples of observation, history, entities, time) and applies a time-decayed Bayesian update with Decay/ResolveConflict to M_user, and inserts new episodes as leaves into the M_global tree with lazy merging and compression (§4.3; Fig. 6 caption: workspace updated continuously, M_user and M_global evolve after session completion). The project page states the same evolution after each session. The repository's benchmark 'memory' field is a static offline LLM summary (bench/02_build_turns.py L15, bench/03c_memory.py) and does not by itself establish a write path; the reported flow rests on the paper's Pask-MM description.",
+      "locator": "paper §1 (User Memory sentence), §4.2 (TrackState update), §4.3 (U' extraction, Decay/ResolveConflict, leaf insertion into v_buffer), Fig. 6 caption; docs/index.html L346; README.md L178",
+      "quote": "UNVERIFIED (paper §4.3): 'Given a newly terminated request trajectory Q={q1,…,qn}, the system extracts candidate user traits U′.' / 'ℳuser(T) = Decay(ℳuser(T-1), Δτ) ⊕ ResolveConflict(𝒰′, ℳuser(T-1))' / 'New episodes Q are initially inserted as raw leaves under a local buffer node v_buffer.' | VERIFIED (docs/index.html L346): 'These layers evolve automatically after each session — updating the user profile, resolving contradictions, and compressing old records'"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information is delivered to the intervention decision and the response. The user profile is 'directly injected into the system prompt' of every inference call (§4.1; README: 'compact summary injected into every inference call'); IntentFlow's third control token ('query memory before responding' / <full_assistance>) triggers retrieval I_t = PaskMM(q_t, M), distillation by MemLoader (I~_t = MemLoader(I_t, x_t, H_t)), and the evidence is 'returned to Demand Detector for final response generation or abstention' (§3.1); §4.2 unifies M_user, workspace, global tag and RAG evidence into the final inference representation I_t = <M_user, I_t^wsp, I_t^global, I_t^rag>. §6.4 reports IntentFlow's multi-turn trajectory 'with Pask-MM'. The released eval harness only injects a static benchmark memory summary into the prompt (eval/prompts.py L118-119).",
+      "locator": "paper §3.1 (full-assistance path), §4.1 (user memory as cache injected into system prompt), §4.2 (final inference representation I_t), Fig. 3 and Fig. 4 captions, §6.4; README.md L163, L174; docs/index.html L336, L346; eval/prompts.py L95, L118-119",
+      "quote": "VERIFIED (README.md L163): 'IntentFlow reads a live conversation continuously and outputs one of three decisions at each turn: stay silent, respond immediately, or query memory before responding.' | VERIFIED (README.md L174): 'User Profile — compact summary injected into every inference call; always-on, near-zero latency' | UNVERIFIED (paper §3.1): 'the retrieved evidence is then refined by MemLoader and returned to Demand Detector for final response generation or abstention'"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The Action-side control token emitted by the Demand Detector determines how the current context is subsequently interpreted. On <full_assistance> 'the recent context is summarized into an observation summary o_t and a set of salient entities e_t' to build a retrieval query (q_t = psi(x_t, H_t, o_t, e_t)), memory is retrieved and distilled, and a second memory-grounded Demand Detector pass performs 'deep intent detection' over the same stream; on <fast_intervention> the system interprets only 'the latest stream and recent interaction context, without consulting external memory'; on <silent> it 'waits for the next dialogue step'. Fig. 4: 'Different DD outcomes trigger different system modes'. This is an intention/information need from Action guiding Sensing-side interpretation and compression of current observations (a fused hand-off inside IntentFlow/PAS). No action-directed acquisition of new observations (e.g., selecting vision/ASR models) and no expected-effect check after intervening is described; the label rests on the mode-selection flow only.",
+      "locator": "paper §3.1 (control tokens; full-assistance pipeline q_t = ψ(x_t, H_t, o_t, e_t), I_t = PaskMM(q_t, M)), Fig. 3 caption, Fig. 4 caption; docs/index.html L336",
+      "quote": "UNVERIFIED (paper Fig. 3 caption): '<full assistance> (invoke memory modules and global context for deep intent detection)' | UNVERIFIED (paper §3.1): 'the recent context is summarized into an observation summary o_t and a set of salient entities e_t, which are used to construct a retrieval query' | UNVERIFIED (paper Fig. 4 caption): 'Different DD outcomes trigger different system modes'"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Memory is supplied to the interpretation of incoming signals, not only to answer-time response selection. §2.2 states MM 'enables the system to interpret current observations in light of accumulated personal context'; §1 says DD 'continuously ingests real-time signals and uses a structured user profile to infer latent user needs' and that user memory 'serves as the primary reference for demand detection'; the profile (with 'behavioral priors' and 'personalized thresholds') is injected into the system prompt for every per-turn inference, i.e., into the model that performs 'contextual understanding, intent prediction' (§3.1); in §4.2 the prior workspace state s_{t-1} conditions state tracking of each new observation (s_t = TrackState(s_{t-1}, o_t, H_t, tau_t)) and the previously located global-memory node anchors interpretation of the current event. Sensing and Action are fused in IntentFlow, so this is judged by function.",
+      "locator": "paper §2.2 (MM definition), §1 (DD and User Memory sentences), §3.1 (Demand Detector roles), §4.1 (profile injected into system prompt; stable attributes incl. behavioral priors), §4.2 (TrackState; anchor node reuse); README.md L174",
+      "quote": "UNVERIFIED (paper §2.2): 'It enables the system to interpret current observations in light of accumulated personal context' | UNVERIFIED (paper §1): 'it continuously ingests real-time signals and uses a structured user profile to infer latent user needs' | UNVERIFIED (paper §4.2): 's_t = TrackState(s_(t-1), o_t, H_t, τ_t)'"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Within a session the service's own decisions and internal states are retained in workspace memory and consumed later. §1: Workspace Memory 'keeps all information within a single interaction session; it is implemented through the context window of the demand detection model and is continuously organized by a dedicated memory agent'; §4.1: M_wsp 'buffers the conversational history, intermediate environmental variables, and internal system states'; §4.2 includes an interaction trace i_{t-1} in the M_wsp tuple; and the Demand Detector is conditioned on 'the previous decision sequence d_{1:t-1}' (§3.3.1), so prior decision tokens are retained and reused. The project page says PAS is 'managing memory read/writes'. Retention scope is within-session (workspace); whether assistant utterances or execution records also enter the post-session user/global updates (which consume the request trajectory Q of observation tuples) is not stated.",
+      "locator": "paper §1 (Workspace Memory sentence), §3.3.1 (L_det conditioning on d_{1:t-1}), §4.1 (M_wsp buffer contents), §4.2 (M_wsp tuple <g, l, s, i>); docs/index.html L355",
+      "quote": "UNVERIFIED (paper §1): 'Workspace Memory (similar to working memory) keeps all information within a single interaction session; it is implemented through the context window of the demand detection model' | UNVERIFIED (paper §4.1): 'ℳwsp buffers the conversational history, intermediate environmental variables, and internal system states' | UNVERIFIED (paper §3.3.1): 'L_det = L(d_t, y_t | b, c, x_{1:t}, d_{1:t-1})' where d_{1:t-1} is 'the previous decision sequence' | VERIFIED (docs/index.html L355): 'managing memory read/writes'"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains its own decisions for later use within the session: the Demand Detector's objective conditions each decision on 'the previous decision sequence d_{1:t-1}'; workspace memory 'buffers the conversational history, intermediate environmental variables, and internal system states' and is 'implemented through the context window of the demand detection model'; M_global 'stores the comprehensive interaction history'. These are system-kept records consumed by later steps, not research logs. Persistence of action records beyond the session is not explicitly stated.",
+      "locator": "paper §3.3.1 (L_det conditioning), §4.1 (M_wsp buffer; M_global interaction history), §1 (Workspace Memory sentence)",
+      "quote": "UNVERIFIED (paper §3.3.1): 'L_det = L(d_t, y_t | b, c, x_{1:t}, d_{1:t-1})' with 'the previous decision sequence d_{1:t-1}' | UNVERIFIED (paper §4.1): 'ℳwsp buffers the conversational history, intermediate environmental variables, and internal system states'"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No mechanism is described for obtaining or retaining later evidence about the service's interventions (user reply, acceptance, dismissal, rating, observed effect). The Introduction's 'feedback-driven updates' and §5's 'feedback circulation' are unexplained phrases without a described signal or store; post-session evolution extracts user traits from the observation trajectory Q, not outcomes of actions; the ratings and quiz in §6.5.3 are an offline user study analysed by the authors.",
+      "locator": "paper §1 (PAS sentence), §5 (Control Layer), §4.3, §6.5.3",
+      "quote": "UNVERIFIED (paper §5): 'Control Layer. keeps PAS stable as an always-on multi-process runtime through communication, scheduling, conflict isolation, resource coordination, and feedback circulation.'"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No linking of any outcome to the decision it concerns and no in-service check or correction of assistance is described. The only evaluations of intervention quality are the offline LLM-as-judge benchmark scoring (§6.1.1; eval/score.py) and the RL reward used during developer training (§3.3.2), neither of which runs inside the service.",
+      "locator": "paper §6.1.1, §3.3.2; eval/score.py L42-69"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service changes only memory content: post-session maintenance updates user traits/preferences in M_user (time-decayed Bayesian update with Decay/ResolveConflict) and inserts/compresses episodes in the M_global tree. This content, including 'personalized thresholds, and behavioral priors', is consumed by a fixed IntentFlow/PAS mechanism and is not a reusable rule, prompt, skill, code or parameter change authored by the service. Model parameters are changed only by developers offline (SFT on LatentNeeds-100k, DAPO RL on LatentNeeds-2K, §3.3). The term 'self-evolving' in the paper refers to this memory maintenance.",
+      "locator": "paper §4.3 (maintenance protocol), §4.1 (M_user stable attributes), §3.3.1-3.3.2 (developer SFT/RL), Fig. 6 caption",
+      "quote": "UNVERIFIED (paper §4.3): 'Triggered strictly post-session (offline) to ensure zero impact on inference latency, Pask implements a structured maintenance protocol addressing conflict resolution, memory decay, and structural compression.'",
+      "what": "None stated. Only memory content is revised (M_user traits/preferences via Decay ⊕ ResolveConflict; M_global episodic tree via leaf insertion and CompressAndMerge); IntentFlow weights and prompts are revised only by developer-run SFT and RL."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No mechanism revision is reported, so no run under a revised mechanism exists. The paper reports later use of memory content (multi-turn evaluation 'with Pask-MM' in §6.4 and the memory case studies in §6.5.2), which is content use by a fixed mechanism, not operation under a service-revised mechanism.",
+      "locator": "paper §6.4, §6.5.2"
+    }
+  },
+  "notes": "Judged configuration: the full Pask service (IntentFlow DD + Pask-MM + Pask-PAS) as described in arXiv 2604.08000v1. Bash was unavailable in this session, so the paper was read through the WebFetch extraction tool in targeted passes; quotes labelled UNVERIFIED were returned by that tool and their exact wording could not be confirmed against the raw HTML, while quotes labelled VERIFIED were read directly from repository files (the abstract text in docs/index.html L317 matches the tool's abstract extraction word for word, which supports the tool's fidelity). The repository at d54646c contains only the LatentNeeds-Bench construction pipeline (bench/), the evaluation harness (eval/, latex/) and the project page; it has no Pask-MM, PAS, IntentFlow inference or training code. In the released harness the benchmark 'memory' field is an offline LLM summary of earlier parts (bench/02_build_turns.py L15 and L180-193; bench/03c_memory.py L33-52) injected into the prompt as '[Memory from earlier conversation]' (eval/prompts.py L118-119); eval/results/intentflow_neutral.jsonl shows IntentFlow was scored through this same static harness. The code therefore neither confirms nor contradicts the paper's described memory read/write flows; channel labels rest on the paper text.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 645,
+    "code_commit": "d54646c52b1555232ce4ab39103768d7f65b8267"
+  }
+}

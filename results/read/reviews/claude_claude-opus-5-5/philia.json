@@ -1,0 +1,80 @@
+{
+  "id": "philia",
+  "configuration": "Variant `philia`: the OpenClaw-based PHILIA assistant (the agent control plane) running over Astribot S1 robot gateways. Durable state was judged as Memory: the OpenClaw Markdown long-term memory files and dated notes, the control plane's persistent semantic state (preferences, long-horizon plans, semantic place names, task history), and the persistent site map with its place manifest. The 128-step policy history mechanisms (fixed-window action tokens and the trajectory overlay on the head-camera image) and the real-time-chunking action prefix were treated as within-execution buffers, not Memory.",
+  "sources_read": [
+    "https://arxiv.org/html/2607.11377v1 (arXiv HTML v1), read through WebFetch: Abstract; §1 Introduction; §2.1 Preliminaries; §2.2 Agentic System Architecture (Plans and Workflows, Capability Exposure, Semantic State and Long-Horizon Context, Safety Envelope); §2.3 Policies as Capabilities (incl. Closing the Deployment Loop, Smooth Execution); §2.4.1 Agentic Memory; §2.4.2 Policy Memory; §2.5 Navigation; §3.1–3.3 (incl. Fig. 2–5 and Table 1–2 captions); §4 Related Work (ABot-Claw and runtime passage); §5.1 and §5.3 in full; §5.2 key sentences only; §6 Conclusion",
+    "No code repository: none is listed in cases/philia/case.yaml"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-supplied evidence is admitted to durable memory. In the Fig. 3 use case the user tells PHILIA a breakfast preference, and PHILIA stores it in long-term memory (OpenClaw Markdown memory files hold durable user facts, preferences, and persistent instructions) and retrieves it later. Sensed evidence is also admitted: in an operator-guided mapping session the onboard SLAM stack builds a persistent map, and operator-marked places are recorded in it and published to the control plane as a place manifest. The 128-step policy buffers played no part in this label.",
+      "locator": "§3.3 PHILIA Playbook, 'Agent-to-Policy Long-Term Memory Grounding' + Fig. 3 caption; §2.4.1 Agentic Memory; §2.5 Navigation (site-mapping paragraph)",
+      "quote": "UNVERIFIED: \"the user previously told PHILIA that he usually has sandwiches and espresso for breakfast.\" … \"PHILIA stores this preference in memory and later retrieves it as context when handling related robot tasks.\" (§3.3) … \"the robot traverses the environment while its on-board SLAM stack builds a persistent map.\" (§2.5)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved long-term memory is delivered to the agent's task planning and shapes the content of the robot requests it dispatches (afternoon-tea example; Fig. 3 breakfast preference). Saved place poses from the persistent map are delivered to navigation planning.",
+      "locator": "§2.4.1 Agentic Memory; §3.3 Fig. 3 'Memory-grounded action'; §2.5 Navigation (per-session re-localization paragraph)",
+      "quote": "UNVERIFIED: \"a later request such as preparing afternoon tea can trigger retrieval of the relevant memory.\" … \"The agent incorporates this information into task planning, queries the robot for the current scene, and formulates appropriate gateway-mediated perception and manipulation requests.\" (§2.4.1) … \"All subsequent navigation requests apply this transform to saved place poses before planning.\" (§2.5)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The agent's plans and information needs direct what is sensed. Plans interleave execution with perception, and while planning the agent queries the robot for the current scene and formulates gateway-mediated perception requests. Capability Exposure also says the agent coordinates perception, and the assistant observes the progress of the tasks it dispatched. A second, within-execution path: the policy draws its past action trajectories onto the head-camera image so that they shape how that image is encoded. The label rests on the agent-level evidence, not on this policy-level path.",
+      "locator": "§2.1 Preliminaries; §2.4.1 Agentic Memory; §2.2 'Capability Exposure'; §4 Related Work (runtime passage after ABot-Claw); §2.4.2 Policy Memory",
+      "quote": "UNVERIFIED: \"with execution interleaved with perception such that intermediate observations continually inform subsequent decisions\" (§2.1) … \"queries the robot for the current scene, and formulates appropriate gateway-mediated perception and manipulation requests.\" (§2.4.1) … \"The second approach projects historical action trajectories onto the robot's primary head view, embedding temporal history directly into visual observation encodings.\" (§2.4.2)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "In the robot-local re-localization step the runtime retrieves a saved anchor pose and uses it to interpret the current odometry pose in the saved map frame. The anchor and the semantic places are recorded in the persistent map frame, which is kept across runtime restarts, and the paper groups localization with real-time perception. This is a retained prior supplied to Sensing for interpretation. Caveat: this label depends on treating re-localization as Sensing; if it is read as part of navigation (Action), this channel would fall to insufficient. At the agent level the only memory-to-perception route is a memory-guided observation request (the M->A->S composition), which was not counted. The 128-step policy buffers are not durable memory and were not used.",
+      "locator": "§2.5 Navigation (site-mapping and per-session re-localization paragraphs); §2.2 'Semantic State and Long-Horizon Context'",
+      "quote": "UNVERIFIED: \"the runtime captures the current odometry pose, retrieves the saved anchor pose, and computes an in-memory rigid transform between the two frames.\" … \"a dedicated calibration anchor, all recorded in the persistent map frame\" (§2.5) … \"while delegating real-time perception, localization, and execution to robot-local runtimes.\" (§2.2)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Action context and execution records are retained in durable memory. The control plane keeps long-horizon plans and task history in persistent semantic state, and OpenClaw memory records day-to-day interaction context as dated Markdown notes. Past decisions and task history are later retrieved into reasoning.",
+      "locator": "§2.2 'Semantic State and Long-Horizon Context'; §2.4.1 Agentic Memory",
+      "quote": "UNVERIFIED: \"The agent control plane maintains persistent semantic state, including user preferences, long-horizon plans, semantic place names, and task history\" (§2.2) … \"day-to-day interaction context is recorded as dated Markdown notes.\" … \"enabling previously acquired preferences, decisions, semantic locations, task history, and other long-term knowledge to be incorporated into reasoning\" (§2.4.1)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service itself keeps records of its own actions: task history, long-horizon plans and decisions sit in persistent memory that the agent retrieves for later reasoning. These are not research logs that only the authors analyse.",
+      "locator": "§2.2 'Semantic State and Long-Horizon Context'; §2.4.1 Agentic Memory",
+      "quote": "UNVERIFIED: \"The agent control plane maintains persistent semantic state, including user preferences, long-horizon plans, semantic place names, and task history\" … \"enabling previously acquired preferences, decisions, semantic locations, task history, and other long-term knowledge to be incorporated into reasoning\""
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Task outcomes are obtained: gateways return them in their semantic summaries and the control plane acts on them. But the paper never says that outcomes, failures, or user confirmations and adjustments are retained, and 'task history' is listed without saying it holds results. Deployed-policy rollouts with corrective human interventions are retained, but the team collects and analyses them for offline post-training. That is a developer pipeline, not the service.",
+      "locator": "§2.2 'Semantic State and Long-Horizon Context'; §2.3 'Closing the Deployment Loop'",
+      "quote": "UNVERIFIED: \"Robot gateways exchange only lightweight semantic summaries, including capability readiness, place manifests, and task outcomes.\" … \"we collect autonomous rollouts from the deployed SFT policy and augment them with corrective human interventions when necessary\""
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The control plane links each workflow step's action outcome to that step and uses it immediately to retry, recover, or terminate. The assistant also observes the progress of dispatched tasks, asks for human confirmation, and triggers bounded recovery. This is an immediate in-service check, which counts even though nothing is kept. The advantage estimator in the developers' offline post-training was not counted.",
+      "locator": "§2.2 'Plans and Workflows'; §4 Related Work (runtime passage after ABot-Claw)",
+      "quote": "UNVERIFIED: \"The agent control plane schedules execution, incorporates intermediate observations to guide subsequent decisions, and handles retries, recovery, or termination based on action outcomes.\" … \"the assistant observes progress, requests cancellation, asks for human confirmation, and triggers bounded recovery without assuming authority over continuous robot control.\""
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "The service makes no durable change to its own mechanism. Robot policies are improved by the team: SFT, then advantage-conditioned offline post-training on rollouts the team analyses first. The paper names online RL but describes only the offline setting. New robots, policies and skills appear only when developers register gateways and capability manifests. The routers and classifiers are not said to be updated from deployment. Memory writes (user facts, preferences, user-given persistent instructions, place names, task history) are content used by a fixed mechanism. Organizing rules the agent infers from a scene are not said to be stored or reused.",
+      "locator": "§2.3 'Closing the Deployment Loop'; §3.1 Capability-Grounded Dispatch; §3.3 'One Agent, Multi-Robot Control'; §2.4.1 Agentic Memory; §1 Introduction",
+      "quote": "UNVERIFIED: \"For high-complexity tasks, we further improve deployed policies through online or offline reinforcement learning (RL).\" … \"Before rollout data is incorporated into training, we analyze its statistics and visualize representative trajectories\" (§2.3) … \"new skills become routable immediately after manifest publication\" (§3.1)",
+      "what": "Nothing is revised by the service. Robot policy weights are revised by the developers through offline post-training. Skills and robots are added by developer registration. Memory holds content, not mechanism changes."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "With no revision made by the service itself, no later run under a service-revised mechanism is reported. The paper says robot-local policies can be continuously improved behind the same capability contracts, and it shows registered policies being invoked, but those improvements are made by developers.",
+      "locator": "§1 Introduction (contributions list); §3.3 'Plug-and-Play Policy Execution' + Fig. 5",
+      "quote": "UNVERIFIED: \"robot-local policies can be continuously improved while preserving the same capability contracts and system interfaces\""
+    }
+  },
+  "notes": "Judged from the arXiv HTML v1 text alone; there is no code. Bash/curl was not permitted in this session, so the paper was read only through WebFetch, which is model-mediated and caps quotes at about 125 characters per fragment. The raw HTML and the sha256 in case.yaml could not be checked. Every quote is marked UNVERIFIED because none was checked against the raw bytes. Each quoted excerpt did come back with identical wording in at least two independently worded fetches; excerpts that varied between fetches were not used. Memory scope: the 128-step policy history mechanisms (§2.4.2) and the RTC action prefix (§2.3) were treated as within-execution buffers and not counted for S->M, M->A, M->S or A->M; the paper itself lists policy buffers under robot-local execution state, separate from persistent semantic state. The policy post-training flywheel (rollouts, human interventions, advantage-conditioned offline training) is developer-run and was not counted toward self-evolution. §5.3 lists measuring long-term reliability and failure-recovery rates as future work, with no self-improvement claims.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 758,
+    "code_commit": null
+  }
+}

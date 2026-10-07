@@ -1,0 +1,44 @@
+{
+ "works": 40,
+ "channels": {
+  "S->M": {
+   "reported": 38,
+   "insufficient": 0,
+   "absent": 2
+  },
+  "M->A": {
+   "reported": 40,
+   "insufficient": 0,
+   "absent": 0
+  },
+  "A->S": {
+   "reported": 30,
+   "insufficient": 8,
+   "absent": 2
+  },
+  "M->S": {
+   "reported": 25,
+   "insufficient": 13,
+   "absent": 2
+  },
+  "A->M": {
+   "reported": 31,
+   "insufficient": 7,
+   "absent": 2
+  }
+ },
+ "steps": {
+  "record": 30,
+  "outcome": 20,
+  "attribution": 26,
+  "revision": 6,
+  "later_use": 3
+ },
+ "A->M with outcome": 19,
+ "agents": [
+  "claude_claude-fable-5-1",
+  "claude_claude-opus-5-5",
+  "codex_gpt-6-astra"
+ ],
+ "complete": true
+}

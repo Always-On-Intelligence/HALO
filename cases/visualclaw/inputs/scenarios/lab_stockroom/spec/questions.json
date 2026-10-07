@@ -1,0 +1,143 @@
+{
+  "scenario": "lab_stockroom",
+  "rounds": [
+    {
+      "id": "q1",
+      "type": "multi_choice",
+      "question": "This week's stock check: using the walkthrough [clip @ 00:06], how many boxes of Nitrile gloves size M should the stock record show as on hand in cabinet B?",
+      "update_ids": [],
+      "eval": {
+        "options": {"A": "5 boxes", "B": "6 boxes (as in inventory.csv)", "C": "3 boxes", "D": "2 boxes"},
+        "answer": ["C"]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:06] shows 3 shrink-wrapped boxes; the 2 opened boxes are in use and are not stock.",
+        "options": {"A": "Counts the 2 opened boxes as stock.", "B": "Stale export.", "C": "Correct.", "D": "Counts only the opened boxes."}
+      },
+      "meta": {"round": 1, "phase": "learning", "required_modalities": ["video", "text"]}
+    },
+    {
+      "id": "q2",
+      "type": "multi_choice",
+      "question": "From the walkthrough [clip @ 00:14], what is the on-hand count of 10 uL filter tip racks for this week's stock record?",
+      "update_ids": [],
+      "eval": {
+        "options": {"A": "1 rack", "B": "4 racks", "C": "7 racks (as in inventory.csv)", "D": "3 racks"},
+        "answer": ["A"]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:14] shows 1 rack still in its sealed sleeve; the 3 open racks are in use.",
+        "options": {"A": "Correct.", "B": "Counts open racks as stock.", "C": "Stale export.", "D": "Counts only the open racks."}
+      },
+      "meta": {"round": 2, "phase": "learning", "required_modalities": ["video", "text"]}
+    },
+    {
+      "id": "q3",
+      "type": "exec_check",
+      "question": "Write docs/stock_cabinet_b.json recording this week's on-hand counts for the three cabinet B items seen in the walkthrough [clip @ 00:06], [clip @ 00:14] and [clip @ 00:22]. Use a JSON list of objects with the keys item (name as in inventory.csv), on_hand and evidence (a [clip @ MM:SS] citation).",
+      "update_ids": [],
+      "eval": {
+        "command": "python ${eval_dir}/${agent_id}/scripts/check_stock_cabinet_b.py ${workspace}",
+        "expect_exit": 0,
+        "timeout": 30
+      },
+      "feedback": {
+        "correct": "Gloves 3, 10 uL tips 1, 1.5 mL tubes 2, each cited to the clip.",
+        "incorrect": "stock_cabinet_b.json missing, or counts include opened units or stale inventory.csv values."
+      },
+      "meta": {"round": 3, "phase": "learning", "required_modalities": ["video", "text"]}
+    },
+    {
+      "id": "q4",
+      "type": "multi_choice",
+      "question": "Using the walkthrough [clip @ 00:39], how many 1 L bottles of 70% ethanol should this week's stock record show as on hand in the flammables cabinet?",
+      "update_ids": [],
+      "eval": {
+        "options": {"A": "5 bottles (as in inventory.csv)", "B": "3 bottles", "C": "2 bottles", "D": "1 bottle"},
+        "answer": ["C"]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:39] shows 2 bottles with unbroken bands; the half-full bottle is in use.",
+        "options": {"A": "Stale export.", "B": "Counts the opened bottle.", "C": "Correct.", "D": "Counts only the opened bottle."}
+      },
+      "meta": {"round": 4, "phase": "learning", "required_modalities": ["video", "text"]}
+    },
+    {
+      "id": "q5",
+      "type": "multi_choice",
+      "question": "From the walkthrough [clip @ 00:55], how many packs of 10 mL serological pipettes should the stock record show as on hand in cabinet C?",
+      "update_ids": [],
+      "eval": {
+        "options": {"A": "6 packs", "B": "7 packs", "C": "4 packs (as in inventory.csv)", "D": "1 pack"},
+        "answer": ["A"]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:55] shows 6 shrink-wrapped packs; the torn pack is in use.",
+        "options": {"A": "Correct.", "B": "Counts the torn pack.", "C": "Stale export.", "D": "Counts only the torn pack."}
+      },
+      "meta": {"round": 5, "phase": "learning", "required_modalities": ["video", "text"]}
+    },
+    {
+      "id": "q6",
+      "type": "exec_check",
+      "question": "Friday order: write docs/reorder_friday.json for the four items in the walkthrough [clip @ 00:31], [clip @ 00:47], [clip @ 00:55] and [clip @ 01:03] (200 uL tips, Tris-HCl buffer pH 8.0, Serological pipettes 10 mL, Parafilm M). Use a JSON list of objects with the keys item (name as in inventory.csv), on_hand, par (from par_levels.csv) and reorder (true when on_hand is below par).",
+      "update_ids": [],
+      "eval": {
+        "command": "python ${eval_dir}/${agent_id}/scripts/check_reorder_friday.py ${workspace}",
+        "expect_exit": 0,
+        "timeout": 30
+      },
+      "feedback": {
+        "correct": "200 uL tips 4/3 no; Tris 0/1 reorder; pipettes 6/5 no; Parafilm 1/2 reorder.",
+        "incorrect": "Counts include opened units, so Tris and Parafilm are missed."
+      },
+      "meta": {"round": 6, "phase": "test", "required_modalities": ["video", "text"]}
+    },
+    {
+      "id": "q7",
+      "type": "multi_choice",
+      "question": "Using the walkthrough [clip @ 00:47], how many bottles of Tris-HCl buffer pH 8.0 should this week's stock record show as on hand?",
+      "update_ids": [],
+      "eval": {
+        "options": {"A": "2 bottles", "B": "3 bottles (as in inventory.csv)", "C": "1 bottle", "D": "0 bottles"},
+        "answer": ["D"]
+      },
+      "feedback": {
+        "correct": "[clip @ 00:47] shows two opened bottles and no sealed bottle.",
+        "options": {"A": "Counts opened bottles.", "B": "Stale export.", "C": "Counts one opened bottle.", "D": "Correct."}
+      },
+      "meta": {"round": 7, "phase": "test", "required_modalities": ["video", "text"]}
+    },
+    {
+      "id": "q8",
+      "type": "exec_check",
+      "question": "Add the items checked earlier this week to the order: write docs/reorder_earlier_items.json for Nitrile gloves size M, 10 uL filter tips, 1.5 mL microcentrifuge tubes and 70% ethanol, with the keys item (name as in inventory.csv), on_hand (this week's count as established in the earlier rounds), par (from par_levels.csv) and reorder (true when on_hand is below par).",
+      "update_ids": [],
+      "eval": {
+        "command": "python ${eval_dir}/${agent_id}/scripts/check_reorder_earlier.py ${workspace}",
+        "expect_exit": 0,
+        "timeout": 30
+      },
+      "feedback": {
+        "correct": "Gloves 3/4 reorder; 10 uL tips 1/3 reorder; tubes 2/2 no; ethanol 2/3 reorder.",
+        "incorrect": "Uses stale inventory.csv counts or counts opened units."
+      },
+      "meta": {"round": 8, "phase": "test", "required_modalities": ["text"], "depends_on": ["q1", "q2", "q3", "q4"]}
+    },
+    {
+      "id": "q9",
+      "type": "multi_choice",
+      "question": "Counting every item checked this week, how many items go on Friday's supplier order?",
+      "update_ids": [],
+      "eval": {
+        "options": {"A": "0 items", "B": "3 items", "C": "5 items", "D": "8 items"},
+        "answer": ["C"]
+      },
+      "feedback": {
+        "correct": "Gloves, 10 uL tips, ethanol, Tris and Parafilm are below par on sealed counts.",
+        "options": {"A": "Counts opened units, so nothing is below par.", "B": "Misses items from the earlier rounds.", "C": "Correct.", "D": "Orders everything."}
+      },
+      "meta": {"round": 9, "phase": "test", "required_modalities": ["text"], "depends_on": ["q1", "q2", "q3", "q4", "q5", "q6"]}
+    }
+  ]
+}

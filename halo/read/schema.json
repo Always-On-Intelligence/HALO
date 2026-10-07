@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HALO read-mode review of one work",
+  "type": "object",
+  "required": ["id", "configuration", "sources_read", "channels", "steps"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string"},
+    "configuration": {"type": "string", "description": "The configuration or mode that was judged."},
+    "sources_read": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "URLs, versions, and code paths actually read."
+    },
+    "channels": {
+      "type": "object",
+      "required": ["S->M", "M->A", "A->S", "M->S", "A->M"],
+      "additionalProperties": false,
+      "properties": {
+        "S->M": {"$ref": "#/$defs/channel"},
+        "M->A": {"$ref": "#/$defs/channel"},
+        "A->S": {"$ref": "#/$defs/channel"},
+        "M->S": {"$ref": "#/$defs/channel"},
+        "A->M": {"$ref": "#/$defs/channel"}
+      }
+    },
+    "steps": {
+      "type": "object",
+      "required": ["record", "outcome", "attribution", "revision", "later_use"],
+      "additionalProperties": false,
+      "properties": {
+        "record": {"$ref": "#/$defs/step"},
+        "outcome": {"$ref": "#/$defs/step"},
+        "attribution": {"$ref": "#/$defs/step"},
+        "revision": {"$ref": "#/$defs/step"},
+        "later_use": {"$ref": "#/$defs/step"}
+      }
+    },
+    "notes": {"type": "string"}
+  },
+  "$defs": {
+    "channel": {
+      "type": "object",
+      "required": ["label", "rationale", "locator"],
+      "additionalProperties": false,
+      "properties": {
+        "label": {"enum": ["reported", "absent", "insufficient"]},
+        "rationale": {"type": "string"},
+        "locator": {"type": "string"},
+        "quote": {"type": "string"}
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": ["label", "rationale", "locator"],
+      "additionalProperties": false,
+      "properties": {
+        "label": {"enum": ["stated", "not_stated"]},
+        "rationale": {"type": "string"},
+        "locator": {"type": "string"},
+        "quote": {"type": "string"},
+        "what": {"type": "string", "description": "For revision: what is revised."}
+      }
+    }
+  }
+}

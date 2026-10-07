@@ -1,0 +1,5 @@
+# ChromaDB as recorded in the paper (fact and archive indices of user_as_code_v5.py)
+chromadb==1.5.7
+# all-MiniLM-L6-v2 from the local HF cache stands in for Chroma's downloaded ONNX copy of the same model
+sentence-transformers
+pyyaml

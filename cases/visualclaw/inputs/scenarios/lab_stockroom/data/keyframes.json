@@ -1,0 +1,14 @@
+{
+  "note": "Text stand-ins for the keyframes that VisualClaw's cascade gate (Cascade-8) forwards from the walkthrough clip. The adapter stages each description as _clip_frames/<MM_SS>.jpg, and the backbone receives it in place of the image attachment.",
+  "clip_seconds": 70,
+  "keyframes": [
+    {"t": "00:06", "description": "Cabinet B, top shelf, door open. Nitrile gloves size M (blue Kimtech boxes): three boxes are still in clear factory shrink-wrap; two boxes have the perforated lid torn open, one about half full and one nearly full. The shelf label reads 'Gloves M'."},
+    {"t": "00:14", "description": "Cabinet B, middle shelf. 10 uL filter tip racks: one rack is still inside its sealed plastic sleeve; three racks stand without sleeves with their hinged lids open and tips missing from the front rows."},
+    {"t": "00:22", "description": "Cabinet B, bottom shelf. Bags of 1.5 mL microcentrifuge tubes: two bags are closed with the factory heat seal; one bag has been cut open along the top and folded over with a black binder clip."},
+    {"t": "00:31", "description": "Bench drawer 3 pulled open. 200 uL tip boxes (yellow tips): four boxes, each with the round tamper-seal sticker unbroken across the lid. No opened tip box is in the drawer."},
+    {"t": "00:39", "description": "Flammables cabinet (yellow, door open). 70% ethanol, 1 L bottles: two bottles with unbroken shrink bands over the caps at the back; one bottle with the band removed, about half full, standing at the front next to a squeeze wash bottle."},
+    {"t": "00:47", "description": "Cold room shelf 2. Tris-HCl buffer pH 8.0, 1 L glass bottles: two bottles, both with the cap seal broken and handwritten 'opened' dates on tape; one is about one-third full and one is nearly full. No sealed bottle is on the shelf."},
+    {"t": "00:55", "description": "Cabinet C, middle shelf. 10 mL serological pipettes: six packs still shrink-wrapped inside the open shipping case; one pack beside the case has been torn open and several pipettes pulled out."},
+    {"t": "01:03", "description": "Cabinet C, lower shelf. Parafilm M: one roll box still has its cellophane wrap; a second box is open with a partly used roll sticking out of the cutter slot."}
+  ]
+}

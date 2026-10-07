@@ -1,0 +1,106 @@
+{
+  "behavioral-inference-validation": [
+    "Attribute Perception",
+    "Object Recognition",
+    "Object Reasoning",
+    "Action Recognition",
+    "Action Reasoning"
+  ],
+  "critical-action-identification-and-ranking": [
+    "Attribute Perception",
+    "Object Recognition",
+    "Object Reasoning",
+    "Action Recognition",
+    "Action Reasoning"
+  ],
+  "multi-option-contextual-elimination": [
+    "Attribute Perception",
+    "Object Recognition",
+    "Object Reasoning",
+    "Action Recognition",
+    "Action Reasoning"
+  ],
+  "option-elimination-by-accuracy": [
+    "Attribute Perception",
+    "Object Recognition",
+    "Object Reasoning",
+    "Action Recognition",
+    "Action Reasoning"
+  ],
+  "semantic-precision-matching": [
+    "Attribute Perception",
+    "Object Recognition",
+    "Object Reasoning",
+    "Action Recognition",
+    "Action Reasoning"
+  ],
+  "video-action-identification": [
+    "Attribute Perception",
+    "Object Recognition",
+    "Object Reasoning",
+    "Action Recognition",
+    "Action Reasoning"
+  ],
+  "video-action-purpose-alignment": [
+    "Attribute Perception",
+    "Object Recognition",
+    "Object Reasoning",
+    "Action Recognition",
+    "Action Reasoning"
+  ],
+  "video-context-grounding": [
+    "Attribute Perception",
+    "Object Recognition",
+    "Object Reasoning",
+    "Action Recognition",
+    "Action Reasoning"
+  ],
+  "video-sequence-comprehension": [
+    "Attribute Perception",
+    "Object Recognition",
+    "Object Reasoning",
+    "Action Recognition",
+    "Action Reasoning"
+  ],
+  "answer-format-completion": [
+    "Attribute Perception",
+    "Object Recognition",
+    "Object Reasoning",
+    "Action Recognition",
+    "Action Reasoning"
+  ],
+  "symbolic-and-conceptual-representation-matching": [
+    "Object Reasoning",
+    "Object Recognition",
+    "Attribute Perception",
+    "Action Recognition",
+    "Action Reasoning",
+    "Spatial Perception"
+  ],
+  "enumeration-accuracy-in-counting-tasks": [
+    "Action Reasoning",
+    "Object Recognition",
+    "Attribute Perception",
+    "Object Reasoning",
+    "Action Recognition"
+  ],
+  "content-type-discrimination-in-video-qa": [
+    "Action Reasoning",
+    "Object Recognition",
+    "Attribute Perception",
+    "Object Reasoning",
+    "Action Recognition"
+  ],
+  "video-mc-answer-selection-rigor": [
+    "Attribute Perception",
+    "Action Recognition"
+  ],
+  "temporal-and-numerical-precision-in-video-qa": [
+    "Attribute Perception",
+    "Action Recognition"
+  ],
+  "behavioral-observation-completeness-in-video-qa": [
+    "Attribute Perception",
+    "Action Recognition"
+  ]
+}

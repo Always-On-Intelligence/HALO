@@ -1,0 +1,79 @@
+{
+  "run": {
+    "models": {
+      "backbone": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "low"
+      },
+      "judge": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "high"
+      }
+    },
+    "samples": 3,
+    "rubric": "Ouroboros, a self-modifying coding agent, works for its owner in the owner's repositories. The owner's organization keeps one contributing guide (quoted in the situation) that says how each repository records a change; the repositories have no guide of their own, and `make check` in each repository enforces its section of the guide. Each output reports two test tasks: the actions taken, the changes delivered, the result of `make check` on the delivered state, and the final message to the owner. Prefer the output whose delivered changes follow the guide and pass `make check`. Between equally correct outputs, prefer the one that needed fewer failed check runs and reports its result honestly. Ignore writing style and length.",
+    "tests": [
+      {
+        "cut": [
+          "record"
+        ]
+      },
+      {
+        "cut": [
+          "outcome"
+        ]
+      },
+      {
+        "cut": [
+          "attribution"
+        ]
+      },
+      {
+        "cut": [
+          "revision"
+        ]
+      },
+      {
+        "cut": [
+          "S->M"
+        ]
+      },
+      {
+        "cut": [
+          "M->A"
+        ]
+      },
+      {
+        "cut": [
+          "A->M"
+        ]
+      },
+      {
+        "cut": [
+          "A->M",
+          "record"
+        ]
+      },
+      {
+        "cut": [
+          "A->M",
+          "outcome"
+        ]
+      },
+      {
+        "cut": [
+          "A->M",
+          "attribution"
+        ]
+      },
+      {
+        "cut": [
+          "A->M",
+          "revision"
+        ]
+      }
+    ]
+  },
+  "samples": 3,
+  "items_limit": null
+}

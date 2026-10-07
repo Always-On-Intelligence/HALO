@@ -1,0 +1,18 @@
+id: properassistant
+name: "ProPerAssistant"
+domain: digital
+kind: research
+report: https://arxiv.org/abs/2509.21730
+sources:
+  - url: https://arxiv.org/html/2509.21730v2
+    kind: paper
+    version: "2509.21730v2"
+    sha256: 42d0ab33fd364071ed82b091dbec4bd1946b29b2285f518aad107d04469c6c2b
+code:
+  repo: https://github.com/jiho283/ProPerSim
+  commit: 013b9eefd618b075875a2ce0ce6089138c30c82f
+variants:
+  - id: propersim
+    label: "ProPerAssistant"
+    configuration: "Full ProPerAssistant with AR history/retrieval and daily per-persona DPO updates (LLaMA 3.3 70B, LoRA)"
+modes: [read, run]

@@ -1,0 +1,100 @@
+{
+  "id": "propersim",
+  "configuration": "Variant propersim: the full ProPerAssistant from arXiv 2509.21730v2 §5 and §6.2. The recommendation policy is a 4-bit LLaMA 3.3 70B with a LoRA adapter, retrained by DPO at the end of every simulated day in a one-persona run. It produces n=2 candidates per 2.5-minute step, and each training run uses 200 samples drawn from the accumulated preference buffer. The assistant's internal state is a day summary of (A_t, R_t) pairs plus retrieved similar past (A_t, R_t) pairs, without scores. Code is commit 013b9eefd618b075875a2ce0ce6089138c30c82f with the README utils.py settings AGENT_MODEL=llama-3.3-70b, TRAIN_METHOD=DPO, PERSONA_GIVEN='', REASON_=noreason, MEMORY_RET=ret_suggest, RANKING=ranking, AGENT_MEMORY_LEVEL=AS, EVALUATOR=gemini-2.0, EVALUATE_SEPERATE=seperate, FORCE_NOREC_RATIO=norec0, REPLAY_BUFFER=equally200, REC_REVISION=recnorev. These settings select the ranking branch at reverie.py:436-466 and the daily update at 00:02:30 (reverie.py:389-392).",
+  "sources_read": [
+    "https://arxiv.org/html/2509.21730v2 (paper v2, read through WebFetch: Abstract, §1 Introduction, §3 Task Formulation, §4.2 User Agent, §5 ProPerAssistant, §6.1 Baselines, §6.2 Experimental Settings, §6.3 Results, §6.4 Further Analyses, captions of Figures 1, 2 and 4, overview of Appendices C-D; quoted prose re-checked in separate exact-substring passes)",
+    "github.com/jiho283/ProPerSim @ 013b9eefd618b075875a2ce0ce6089138c30c82f: README.md (utils.py configuration flags)",
+    "reverie/backend_server/reverie.py",
+    "reverie/backend_server/agent/agent.py",
+    "reverie/backend_server/agent/cognitive_modules/suggestion.py",
+    "reverie/backend_server/agent/cognitive_modules/retrieve.py",
+    "reverie/backend_server/agent/cognitive_modules/perceive.py",
+    "reverie/backend_server/agent/cognitive_modules/plan.py",
+    "reverie/backend_server/agent/cognitive_modules/execute.py",
+    "reverie/backend_server/agent/memory_structures/eval_memory.py",
+    "reverie/backend_server/agent/prompt_template/run_gpt_prompt.py (lines 2440-2780: run_gpt_prompt_make_suggestion, run_mmlu_eval)",
+    "reverie/backend_server/agent/prompt_template/gpt_structure.py (lines 200-339: opensource_inference, opensource_request, opensource_safe_generate_response)",
+    "reverie/backend_server/agent/prompt_template/v1/system_prompt_suggestion_wo_r.txt",
+    "reverie/backend_server/opensource_inference.py",
+    "reverie/backend_server/opensource_training_methods.py",
+    "reverie/backend_server/persona/persona.py",
+    "reverie/backend_server/persona/cognitive_modules/evaluation.py",
+    "reverie/backend_server/persona/prompt_template/run_gpt_prompt.py (lines 2917-2994, via grep)",
+    "reverie/backend_server/persona/cognitive_modules/perceive.py (lines 112 and 171, via grep)",
+    "HALO cases/properassistant/case.yaml (variant definition)",
+    "HALO cases/properassistant/README.md (run-mode adapter notes; read only to map the configuration flags, not used as evidence)",
+    "HALO halo/read/vote.py and halo/read/schema.json"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "The observed user action A_t is kept in the assistant's memory together with the recommendation made for it. Recent pairs are stored in detail and older ones are summarized into 1-hour and 4-hour blocks. Past pairs stay in a store that later steps search by embedding. In code, suggest() copies John Lin's current act_description, or 'John is walking.', into user_action_for_suggestion. perceive_suggestion_eval then writes it as 'John Lin's Action: ...' into the assistant's (Eddy Lin's) events_hourly, the hourly and 4-hourly summaries, and the evaluation memory (e_mem.add_event). The assistant's e_mem is never reset; init_e_mem resets only the user agent's memory. User ratings are also kept, as chosen/rejected labels and scores in the preference buffer.",
+      "locator": "arXiv 2509.21730v2 §5 (ProPerAssistant) and §3; code reverie/backend_server/agent/cognitive_modules/suggestion.py:116-123; persona/cognitive_modules/evaluation.py:103, 157-158, 193-194, 199-220, 240-242; persona/persona.py:257-264; reverie.py:389-392",
+      "quote": "Recent (A_t, R_t) interactions (within the past 10 minutes) are stored in detail, while earlier interactions are compressed into summaries. [§5; math symbols transliterated from MathML]"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The recommendation policy is R_t = A_θ(A_t, S_t^(a)). S_t^(a) is the day summary plus retrieved similar past (A_t, R_t) pairs, and it informs both whether to intervene ('No Recommendation' means silence) and what to suggest. In code, make_suggestion searches the assistant's e_mem using the current user action as the query. It takes the 4 most recent records plus the top 3 by recency, relevance and importance, and prepends the hourly and 4-hourly summaries. This text becomes the [MEMORY] block of the LLaMA suggestion prompt, and the system prompt tells the model to analyze [MEMORY] before deciding.",
+      "locator": "§3 (policy definition), §5; code agent/cognitive_modules/suggestion.py:55-108; agent/cognitive_modules/retrieve.py:197-291; agent/prompt_template/run_gpt_prompt.py:2483-2503, 2577-2587; agent/prompt_template/v1/system_prompt_suggestion_wo_r.txt:2-7",
+      "quote": "the assistant retrieves the five most similar past (A_t, R_t) pairs using OpenAI embeddings, integrating relevant prior experience into its current reasoning. [§5; math symbols transliterated]"
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "Neither the paper nor the code describes the assistant's plans, information needs or execution state steering what it observes, and neither describes an expected-effect check. At every fixed 2.5-minute step the assistant reads the user's current action from the simulator. suggest() copies John Lin's act_description, or 'John is walking.' when reverie.py detects a tile change. The user agent's rating comes from a grader outside the service, so it is not in-system sensing. The only coupling in the code is left over from Generative Agents. plan() always sets act_address to '<persona> John Lin', execute() walks the assistant's avatar next to John, and perceive() logs nearby events to a_mem. The suggestion pipeline never reads a_mem; it reads e_mem. The paper does not describe this path. Nothing explicitly excludes the route, so the label is insufficient rather than absent.",
+      "locator": "§3, §6.2; code agent/cognitive_modules/suggestion.py:112-124; reverie.py:484-492; agent/cognitive_modules/plan.py:823-854, 937; agent/cognitive_modules/execute.py:42-80; agent/cognitive_modules/perceive.py:40-46, 175-177; agent/cognitive_modules/retrieve.py:222-231",
+      "quote": "The simulation timestep T was set to 2.5 minutes, meaning the assistant makes a recommendation decision every 2.5 minutes. [§6.2]"
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Retained memory is used only when the decision is made. Retrieval is keyed on the current action, and its results go into the recommendation prompt, which is M->A. Neither source describes memory-derived priors shaping how A_t is sampled, attended to, compressed or interpreted before the decision. In code, the only memory read inside a perception routine is the Generative Agents retention check in the assistant's perceive(), which compares against the latest a_mem events. It only removes duplicates before they are written into a_mem, a detail of the write path, and a_mem feeds nothing the suggestion module uses. Nothing explicitly excludes the route, so the label is insufficient.",
+      "locator": "§3, §5; code agent/cognitive_modules/suggestion.py:56-65, 108; agent/cognitive_modules/perceive.py:115-120",
+      "quote": "integrating relevant prior experience into its current reasoning. [§5]"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The assistant's own recommendations R_t, including 'No Recommendation', are kept in its internal state with the user action, summarized, and retrieved in later steps and days. The paper defines the AR Memory baseline as having the same action and recommendation history. Both candidate responses are also kept as chosen/rejected examples in the training buffer, which carries over across days. In code, memory level AS writes 'Agent's Suggestion: <suggestion>' into the assistant's events_hourly, summaries and e_mem. update_preference_data stores both candidates, and total_preference_records accumulates them across days. The write is coded inside the user simulator's evaluation module, but it goes into the assistant's own memory (a fused hand-off).",
+      "locator": "§5, §6.1 (AR Memory baseline); code persona/cognitive_modules/evaluation.py:103, 157-158, 193-194, 203-220, 240-242; agent/agent.py:294-315, 360-362, 413-421",
+      "quote": "AR Memory (A_t, R_t): S^(a)_t contains the same action and recommendation history as ProPerAssistant, but no learning is performed. [§6.1; math symbols transliterated]"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps its own recommendations for later use within the service. (A_t, R_t) pairs stay in its internal state and are retrieved in later steps. At each step, the chosen and rejected candidate responses, with their A_t and S_t^(a), go into a training buffer that later DPO runs sample from. In code, perceive_suggestion_eval writes the delivered suggestion into the assistant's e_mem. update_preference_data builds the chosen and rejected conversations from persona.current_prompt and both candidates, and total_preference_records accumulates them.",
+      "locator": "§5; code persona/cognitive_modules/evaluation.py:193-194, 240-242; agent/agent.py:262-315, 360-362, 413-421",
+      "quote": "Each preference example, containing the chosen and rejected responses along with the corresponding A_t and S_t^(a), is stored in a training buffer. [§5; math symbols transliterated]"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "The user agent rates every candidate against its personalized four-dimension rubric (0-4, judged by Gemini 2.0 Flash). The ratings are kept: they set the chosen/rejected label of each preference example in the accumulated buffer, which is sampled for training. The code also stores the numeric score in preference_records and in the per-day total_evaluation_records. At memory level AS the score is not put in the retrieval memory; that is what the separate ARS baseline does.",
+      "locator": "§5, §4.2, §6.1; code reverie.py:451-466; agent/agent.py:307-315, 360-362, 413-435, 493-497",
+      "quote": "The user agent then evaluates the candidates and forms preference pairs according to their scores. [§5] ... 200 samples are randomly drawn from the accumulated buffer for each training run. [§5]"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Each rating is tied to the exact candidate it scored and to that step's prompt (A_t and S_t^(a)). The higher-scored candidate becomes chosen and the other rejected, and ties are dropped. These pairs are the signal used to correct the recommendation policy. In code, reverie.py compares eval_score_reason_1 with eval_score_reason_2 to set better_num, then calls update_preference_data with persona.current_prompt and both candidates. agent.py builds chosen and rejected from better_num and returns without storing on ties.",
+      "locator": "§5, §1; code reverie.py:452-462; agent/agent.py:294-315",
+      "quote": "The user agent then evaluates the candidates and forms preference pairs according to their scores. [§5] / Feedback from the user agent serves as a training signal to iteratively refine the assistant's recommendation strategy, enabling continual improvement in personalization and proactivity. [§1]"
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "At the end of every simulated day the system itself, with no developer step, runs DPO on preference pairs sampled from the buffer and updates LoRA weights of the recommendation model. In code, reverie.py calls update_suggestion_model at 00:02:30 each day. On the first update it wraps the base model in a LoRA adapter (r=16), and every update samples 200 pairs (equally200). It then calls DPO_train, which trains, saves ./lora_model and returns the trained model as self.suggestion_model.",
+      "locator": "§5, §6.2; code reverie.py:389-392; agent/agent.py:386-461; opensource_inference.py:90-109; opensource_training_methods.py:19-117",
+      "quote": "At the end of each simulation day, ProPerAssistant is trained using Direct Preference Optimization (DPO), which updates the model to increase the likelihood of generating preferred responses. [§5] / DPO training is applied using LoRA (Hu et al., 2022), a memory-efficient fine-tuning method. [§6.2]",
+      "what": "Model parameters: the LoRA adapter weights of the 4-bit LLaMA 3.3 70B recommendation policy A_θ, retrained daily for each persona with DPO on preference pairs derived from ratings."
+    },
+    "later_use": {
+      "label": "stated",
+      "rationale": "The paper reports the trained assistant acting over 14 simulated days. Scores rise from Day 2, the first day after an end-of-day DPO update, and the success rate goes from 51.06% on Day 1 to 71.51% on Day 14. It also reports qualitative changes in recommendations from before to after training. In code, opensource_request uses the model returned by DPO_train for every later suggestion.",
+      "locator": "§6.3 (Figure 4), §6.4, §1; code agent/agent.py:456-457; agent/prompt_template/gpt_structure.py:269-275",
+      "quote": "Beginning on Day 2, its performance rapidly rises and maintains a clear lead, with daily average scores approaching 3.4 out of 4. [§6.3] / Moreover, the assistant evolved from offering generic recommendations before training to delivering suggestions tailored to each user's background [§6.4]"
+    }
+  },
+  "notes": "Judgments rest on the paper (arXiv HTML v2) and the code at commit 013b9ee, read together. Paper quotes were taken with WebFetch, which limits quotes to about 125 characters, and checked in separate exact-substring passes on the same HTML. Math symbols are transliterated, for example (A_t, R_t) and S_t^(a), because the HTML renders them as MathML. A PDF fetch returned only binary data, and local PDF rendering was unavailable, so the HTML is the only paper text read. Differences between code and paper, none of which change a label: (1) the code retrieves the 4 most recent plus the top 3 scored memory records (n_count=3, or 5 only with a _rag flag), not five; (2) the assistant's 4-hour summary keeps one block (deque maxlen=1), not three; (3) the assistant's (A_t, R_t) record is written by perceive_suggestion_eval inside the user simulator's evaluation module, a fused hand-off into the assistant's own e_mem. At memory level AS, ratings are not in the assistant's retrieval memory (that is the ARS baseline); they reach it only through the DPO preference buffer and the retrained LoRA weights. Leftovers from Generative Agents (the assistant's avatar follows John, and perceive() logs nearby events with a retention check into a_mem) feed nothing the suggestion pipeline reads, so they were not counted as A->S or M->S. A->S and M->S are labeled insufficient rather than absent because no source explicitly excludes them. DPO_train swallows training exceptions (try/except: pass); the paper's day-by-day results are taken as the statement that later steps ran on the revised model.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 713,
+    "code_commit": "013b9eefd618b075875a2ce0ce6089138c30c82f"
+  }
+}

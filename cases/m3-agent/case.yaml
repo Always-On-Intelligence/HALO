@@ -1,0 +1,18 @@
+id: m3-agent
+name: "M3-Agent"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2508.09736
+sources:
+  - url: https://arxiv.org/html/2508.09736
+    kind: paper
+    version: "content snapshot; version not displayed"
+    sha256: 4d2f986042e4f0899016378e5e2dc55286faf9e781e3ab694d3fe84998dcb1bb
+code:
+  repo: https://github.com/ByteDance-Seed/M3-Agent
+  commit: 0e3e41939bd8a0b66d756e7b7eb8d5fe9992da5c
+variants:
+  - id: m3agent
+    label: "M3-Agent"
+    configuration: "M3-Agent long-video QA configuration: memory-7b-sft plus trained control-32b-rl, with an external multimodal graph"
+modes: [read, run]

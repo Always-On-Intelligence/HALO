@@ -1,0 +1,82 @@
+{
+  "id": "metamuse2026",
+  "configuration": "Muse September 2026 launch configuration (variant metamuse2026): per-user Muse Secure VM with persistent memory and user-editable Memory files, goals with scheduled/event-driven background work, a browser sub-agent, and Sentinel permission controls. The later-announced Muse Confidential VM was not judged.",
+  "sources_read": [
+    "https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/ (content snapshot fetched 2026-10-07 via WebFetch; 'Introducing Muse: The World's First Personal AI Agent Built for Everyone', dateline September 8, 2026, shown updated September 30, 2026; sections Takeaways, How It Works, Built to be Private, Safe, and Secure, Looking Ahead)",
+    "https://introducing.muse.ai/ (content snapshot fetched 2026-10-07 via WebFetch; 'How We Designed Muse', Mona Sarantakos with Christine Awad, September 2026)",
+    "https://research.meta.ai/blog/security-and-safety-for-ai-agents-our-approach-with-muse (content snapshot fetched 2026-10-07 via WebFetch; 'How We Built Safety Into Muse', Tarek Sheasha, September 8, 2026; sections The Lay of the Land, Muse Secure VM, A Built-In Sentinel, Human in the Loop, Least Privilege, Defense in Depth, Browser, Purchases, Bug Bounties, Coming Soon: Muse Confidential VM, Our Policy Around Data, Conclusion)",
+    "No code repository is listed for this work; judged from the three text sources only."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-supplied and conversational evidence is admitted to persistent memory: Muse retains what matters from things a person mentioned once, memory persists across conversations, ideas draw on 'what it's learned in conversation', and the Takeaways describe 'learning from conversations, reflecting on what matters to them'. Correction paths are also described: the user can tell Muse to forget specific learned items and can read and edit the Memory files directly; the security blog says the VM is the system of record for everything the user puts in and that the memory files can be inspected and edited.",
+      "locator": "Newsroom post, 'Built to be Private, Safe, and Secure' bullet 8 and 'How It Works' para 4 and 'Takeaways' bullet 3; introducing.muse.ai, 'Evolving From an Assistant to an Agent' para 1 and 'Background work and transparency'; security blog, 'The Lay of the Land' and 'Our Policy Around Data'.",
+      "quote": "\"Muse remembers what matters to a person, and they can always tell it to \"forget\" specific things it's learned.\" | \"Its memory persists across your conversations, and can manage lots of context.\" | \"You can inspect, edit and download these files freely, including Muse's memory about you.\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information drives action decisions: memory lets Muse make unprompted suggestions and act on details mentioned once (e.g., remembering friends' dietary restrictions before sending invites); idea generation is based on retained goals, patterns and conversation learnings; Sentinel applies the user-set connector policy and stored approval grants when deciding whether later invocations are allowed, denied, or need to ask, so retained policy/grants reach commitment decisions.",
+      "locator": "Newsroom post, 'How It Works' para 4; introducing.muse.ai, 'Finding the magic' para 1; security blog, 'A Built-In Sentinel' (Connectors) and 'Human in the Loop'.",
+      "quote": "\"Muse also remembers what matters to a person, so it can make suggestions unprompted and act on details that person only mentioned once.\" | \"So we designed Muse to always think about what it can do for you, generating ideas based on your goals, your patterns, and what it's learned in conversation.\" | \"Sentinel decides which grant types to present for the user to choose between and ensures that subsequent invocations match the granted scope exactly.\""
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action-side intentions guide acquisition and interpretation: the main agent hands each browsing task to a browser sub-agent that reads pages (accessibility-tree snapshots) to complete that task, and the blog counts 'subagent handoffs' as part of trajectories; browser egress classifiers interpret outbound data relative to 'the task at hand'; once a goal or task is set, background work runs on a schedule and 'in response to relevant events' (the anecdote has Muse watching school emails and a district website for a back-to-school goal), and completed background work is evaluated before surfacing, which is an execution-state check driven by the action taken.",
+      "locator": "Security blog, 'Browser' section (sub-agent paragraph and classifier bullet list) and 'Our Policy Around Data' (trajectories sentence); introducing.muse.ai, 'Muse Is an Agent That Can Actually Do Things' paras 3-7.",
+      "quote": "\"Muse uses a special browser sub-agent to complete each task — reading the pages, traversing the site, filling forms, etc.\" | \"Egress of personal data not related to the task at hand via the browser.\" | \"Once you've set a goal or a task, Muse continues to work on a schedule and in response to relevant events, taking the next step and following up, alongside whatever you ask it in conversation.\""
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "Retained state is described as conditioning the sensing side, not only action requests: background work reacts to 'relevant events' where relevance is judged against retained goals/tasks; Muse 'comes back when something changes', which is change detection against a retained baseline; completed work is surfaced only when 'meaningfully new', a novelty judgment against what is already retained; and in the described anecdote the retained back-to-school context guided interpretation of a flood of school emails to catch a tryout deadline. These are attention/interpretation uses of retained information, so the mark does not rest on the M->A->S composition alone. Caveat: the mechanism is described only at product level, with no detail of how relevance or novelty is computed.",
+      "locator": "introducing.muse.ai, 'Muse Is an Agent That Can Actually Do Things' paras 5-7 (anecdote) and last para; 'Finding the magic' para 2; Newsroom post, 'How It Works' para 3.",
+      "quote": "\"When it completes its background work, it evaluates whether the result is worth surfacing, and notifies you only when something is meaningfully new or needs your input.\" | \"For tasks that take more time, Muse keeps working after people close the app, and comes back when something changes or when it needs approval, like before it sends an email or makes a purchase.\" | \"if Muse knows about your goals, it will proactively share new ideas or adjustments to plan based on its observations and your conversation with it.\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The service retains its own plans and execution records: a complete audit trail of everything it has done and plans to do, a full activity log with approved permissions, and a Goals tab where Muse keeps track of goals and its plan; Sentinel writes the user's decision on each proposed action into its authoritative approval state; the security blog says everything Muse generates is stored in the VM and all durable application state is kept in a postgres database; the single long conversation (including Muse's own messages) persists. Trajectories including tool calls and sub-agent handoffs are also retained by Meta for training, but that retention is outside the service's own memory and is not relied on here.",
+      "locator": "Newsroom post, 'Built to be Private, Safe, and Secure' bullet 4; introducing.muse.ai, 'Background work and transparency' and 'Goals and tracking'; security blog, 'Human in the Loop', 'Muse Secure VM', 'Our Policy Around Data'.",
+      "quote": "\"Muse shows people a complete audit trail of everything it has done and plans to do.\" | \"Tapping on your Muse avatar will show you its full activity log as well as permissions you've approved.\" | \"Sentinel then updates its authoritative approval state and allows the operation to proceed or rejects it as appropriate.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The product keeps a user-facing audit trail and activity log of its own actions and plans, kept inside the service for later review (not a research log analysed only by the authors); the Goals tab also tracks plans and progress.",
+      "locator": "Newsroom post, 'Built to be Private, Safe, and Secure' bullet 4; introducing.muse.ai, 'Background work and transparency' para 1 and 'Goals and tracking' para 1.",
+      "quote": "\"Muse shows people a complete audit trail of everything it has done and plans to do.\" | \"Tapping on your Muse avatar will show you its full activity log as well as permissions you've approved.\""
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later evidence about the service's proposed and performed actions is obtained and retained: the user's accept/reject answer to each approval request is routed back to Sentinel and stored in its authoritative approval state (also shown as 'permissions you've approved'); the results of its own background work are obtained and evaluated; observed state changes bring it back to the user.",
+      "locator": "Security blog, 'Human in the Loop' paras 2-3; introducing.muse.ai, 'Muse Is an Agent That Can Actually Do Things' last para and 'Background work and transparency'; Newsroom post, 'How It Works' para 3.",
+      "quote": "\"A dialog is presented to the user directly within the client UI — not via their conversation with Muse — and their answer is routed directly back to Sentinel, which acts on the user's decision.\" followed by \"Sentinel then updates its authoritative approval state and allows the operation to proceed or rejects it as appropriate.\" | \"When it completes its background work, it evaluates whether the result is worth surfacing, and notifies you only when something is meaningfully new or needs your input.\""
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The outcome is linked to the specific decision it concerns and used to check or correct assistance: Sentinel's pending approval describes 'the exact action to be approved', and the user's answer is acted on immediately to proceed with or reject that action (an immediate check); completed background work is evaluated for whether it is worth surfacing; observations feed adjustments to the plan for a known goal.",
+      "locator": "Security blog, 'Human in the Loop' paras 1-3; introducing.muse.ai, 'Finding the magic' para 2 and 'Muse Is an Agent That Can Actually Do Things' last para.",
+      "quote": "\"Sentinel sends that request directly to the Muse client, describing the exact action to be approved.\" | \"their answer is routed directly back to Sentinel, which acts on the user's decision.\" | \"if Muse knows about your goals, it will proactively share new ideas or adjustments to plan based on its observations and your conversation with it.\""
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No source states that the service itself durably changes its model, prompts, skills, reusable rules, code, or harness. Candidates considered and rejected: 'it can write its own code and build the tools a task needs' is task-scoped with no statement that the tools persist or are applied by later runs as mechanism; 'getting sharper along the way' and 'We'll continue to learn from you and iterate the product' are marketing/developer statements; training 'new checkpoints of the LLM model at the core' from sanitized trajectories and the prompt-injection model training are performed by Meta, not by the service; connector policies, approval grants and the proactivity level are set by the user; Memory files are content used by a fixed mechanism.",
+      "locator": "introducing.muse.ai, 'Muse Is an Agent That Can Actually Do Things' para 5 and 'Where We Go From Here'; Newsroom post, 'Takeaways' bullet 3; security blog, 'Our Policy Around Data' paras on trajectories and 'Defense in Depth'.",
+      "quote": "Rejected candidate: \"Muse has its own computer, with a file system and a terminal, so it can write its own code and build the tools a task needs.\" | Rejected (developer-side): \"To preserve user privacy, these trajectories are sanitized to remove key personally identifiable information before being used in training.\"",
+      "what": "None qualifies. Closest candidates: task-scoped self-written code/tools in the VM (no stated reuse as a mechanism) and Meta-side training of new model checkpoints from sanitized trajectories (developer change, not the service)."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revised mechanism is reported, so no later run under one is stated. The blog says trajectories are useful for training new checkpoints but does not state that any checkpoint trained on Muse trajectories is deployed in this configuration, and reuse of self-built tools by later tasks is not stated.",
+      "locator": "Security blog, 'Our Policy Around Data' (trajectories paragraph); introducing.muse.ai, 'Where We Go From Here'.",
+      "quote": "\"are useful data for training new checkpoints of the LLM model at the core.\" (no deployment of such a checkpoint is stated)"
+    }
+  },
+  "notes": "Judged the September 2026 launch configuration (Muse Secure VM); Muse Confidential VM is announced for later and was not judged. No code repository exists. Shell access was denied in this session, so the raw HTML could not be downloaded; each page was fetched through WebFetch, and every quoted sentence was obtained in one extraction pass and then re-checked in a second independent pass that asked for character-for-character confirmation. All cited sentences were confirmed; the Sentinel connector-policy sentence differs only by bold formatting on the page, and the quotation marks around 'forget' in the newsroom bullet were rendered as double quotes in one pass and single quotes in another, so that punctuation is uncertain. Locators give section headings and paragraph positions from the fetched text. Roles were assigned by function: the browser sub-agent's page reading is Sensing, Sentinel's allow/deny/ask gating is Action-side commitment, and Sentinel's approval state, the audit trail, the Goals tab and the Memory files are Memory. M->S is the most borderline channel; it is marked reported on the basis of described change- and novelty-conditioned interpretation and goal-conditioned event relevance, not on a memory-guided action requesting an observation. Steps 4-5 are not stated: the only self-modification language is task-scoped tool building and vague 'getting sharper' phrasing, and all model training is described as done by Meta.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 506,
+    "code_commit": null
+  }
+}

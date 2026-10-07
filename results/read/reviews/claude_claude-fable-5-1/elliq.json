@@ -1,0 +1,84 @@
+{
+  "id": "elliq",
+  "configuration": "Variant `elliq`: the ElliQ product mechanism as described by the 2024 JARlife paper (Ferguson et al., doi 10.14283/jarlife.2024.2) and the official ElliQ 3 announcement, the current elliq.com FAQ, and the ElliQ privacy policy (Last Updated January 1, 2026). Proprietary implementation not inspected; no code available.",
+  "sources_read": [
+    "https://www.jarlife.net/4982-elliq-an-ai-driven-social-robot-to-alleviate-loneliness-progress-and-lessons-learned.html (JARlife 2024 paper; sections Background / The Robot / Implementation in Senior Care Settings / Challenges / Conclusion; Figures 1-4)",
+    "https://www.intuitionrobotics.com/post/new-year-new-elliq (\"New Year, New ElliQ!\", January 9, 2024, Dor Skuler)",
+    "https://elliq.com/pages/faqs (current FAQ page as fetched 2026-10-07)",
+    "https://elliq.com/pages/elliq-privacy-policy (privacy policy, Last Updated January 1, 2026, as fetched 2026-10-07)",
+    "cases/elliq/case.yaml",
+    "cases/elliq/README.md"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "The ElliQ 3 announcement states that information arising in conversations and the user's non-spoken choices is understood, classified, remembered and maintained in a user profile; the FAQ states ElliQ keeps a log of user-reported health metrics over time and gets to know the user's tastes the more they interact; the paper states suggestions are personalized on the user's learned personality, interests and behavioral patterns. These describe an implemented write path from sensed/user-supplied evidence into retained memory, not a static benchmark profile.",
+      "locator": "Blog, 6th body paragraph (\"Our world class team has integrated LLM technology...\"); FAQ Q \"Does ElliQ learn my preferences over time?\" and Q \"Can ElliQ help me keep track of health measurements like my blood pressure and weight?\" (\"She keeps a careful log of these metrics over time\"); paper section \"The Robot\" (\"based on the user's learned personality, interests, and behavioral patterns\")",
+      "quote": "Information that comes up in both scripted and open-ended conversations (as well as non-spoken actions and choices via other modalities), is understood, classified, remembered, and then referenced in future conversations. Relevant information is maintained in the user profile and context so that new conversations, suggestions, and activities triggered in follow-up conversations remain contextual and on point."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The paper states the proprietary algorithm personalizes and initiates suggestions from the user profile, preferences of previous interactions and behavioral patterns, i.e. retained information drives what and when ElliQ proactively offers. The announcement gives a worked example in which remembered insights are later used by ElliQ to decide to proactively motivate the user to attend a community event. The FAQ states stored reminders are later delivered (\"She will gently prompt you when it's time\").",
+      "locator": "Paper section \"The Robot\" (also: \"The algorithm takes into account factors including user behavior, sentiment analysis, preferences of previous interactions, and context in the day.\"); blog 7th body paragraph (\"These insights are classified and remembered and then referenced by ElliQ in the future ... such as ElliQ deciding to proactively motivate the older adult to attend a community event on Sunday.\"); FAQ Q \"How does ElliQ help me remember to take my medications?\"",
+      "quote": "ElliQ's proactiveness and personalized suggestions for activities therefore dynamically change based on the user profile, current availability and conversational context, as well as identifying relevant interests and behavioral patterns of the user."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The FAQ states that an Action decision (a proactive check-in) opens a bounded listening window targeted at the expected response, and that the camera is only fully activated for features the user chooses such as video calling or selfies; both are cases of the current action setting the sensing target and acquisition. The announcement additionally describes guardrail mechanisms that monitor and mediate the conversation in real time, i.e. an in-system check on the generated conversation. These are in-system flows, not an external grader.",
+      "locator": "FAQ Q \"Is ElliQ listening to me all the time?\"; FAQ Q \"Is ElliQ watching me with those cameras?\" (\"The camera is only fully activated when used for features you choose, like video calling and taking selfies.\"); blog 4th body paragraph (\"guardrail mechanisms that automatically monitor and mediate the conversation in real-time\")",
+      "quote": "When ElliQ proactively checks in, she listens for a short moment for your response, and if there is no response, she stops listening."
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Sensing is described as wake-word detection, presence sensing by camera (\"similar to a motion detector\"), and sentiment analysis, and the privacy policy says cameras/microphones detect whether the user is nearby and whether to initiate communication. No source states that retained priors or the user profile shape sampling, attention, compression, or interpretation of inputs; the memory infusion is described only as feeding the engine's real-time decisions (M->A). Nothing explicitly excludes the route either, so the link is unknown rather than absent.",
+      "locator": "FAQ Q \"Is ElliQ watching me with those cameras?\" and Q \"Is ElliQ safe and secure?\" (\"sensors that help her understand when you are nearby so she can be proactive\"); privacy policy section \"Audio and Visual Data of Users\"; blog 6th body paragraph (\"The capability includes the infusion of both context and memory.\")",
+      "quote": "The cameras are used to sense when you are nearby, similar to a motion detector, so ElliQ can time her interactions naturally."
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "What the sources state is remembered are user-provided facts, user choices, user-reported health metrics, and reminders/goals the user approves (all S->M). Usage and interaction data are collected by the company for research and product improvement, and the privacy policy lists \"Usage information and the contents of your interaction with ElliQ\" among data it may collect, but no source states that ElliQ's own decisions, suggestions, utterances, or execution records are written to the memory the service itself uses. The maintained \"context\" might include ElliQ's turns, but the text does not say so, leaving the necessary link unknown.",
+      "locator": "Paper section \"Implementation in Senior Care Settings\"; privacy policy section \"What types of data and information we may collect in connection with your use of the Services?\" (\"Usage information and the contents of your interaction with ElliQ, which may include text/video/audio data of such communications\"); blog 6th body paragraph (\"Relevant information is maintained in the user profile and context\")",
+      "quote": "All usage and interaction data was collected for the purpose of research and product improvements."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "No source states that the service records its own decisions, suggestions, or utterances for later use. The nearest statements are retention of user-reported metrics, a caregiver dashboard showing when the user was last active, company collection of usage/interaction data for research and product improvement, and a hedged privacy-policy category (\"may include\") covering interaction contents; none names ElliQ's own actions as the thing recorded.",
+      "locator": "FAQ Q \"Can I see if my aging loved one is staying active during the day?\" (\"a helpful dashboard where you can see when your aging loved one was last active with their ElliQ\"); paper section \"Implementation in Senior Care Settings\"; privacy policy section \"What types of data and information we may collect...\"",
+      "quote": "Usage information and the contents of your interaction with ElliQ, which may include text/video/audio data of such communications"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "The FAQ states that the user's acceptance of goals and reminders ElliQ presents is obtained and retained (the goal is set and progress is then tracked and shown in the app), and that ElliQ listens for the response to each proactive check-in. The announcement states that the user's non-spoken actions and choices via other modalities are classified and remembered; the paper states the algorithm uses user behavior and preferences of previous interactions. This is later evidence about ElliQ's offers, obtained and retained.",
+      "locator": "FAQ Q \"Can I help my aging loved one set and track health goals?\"; FAQ Q \"Can I use the app to help my aging loved one remember important tasks?\" (\"Once they approve the reminder on their ElliQ, she will make sure they never miss a beat.\"); FAQ Q \"Is ElliQ listening to me all the time?\"; blog 6th body paragraph (\"non-spoken actions and choices via other modalities ... remembered\"); paper section \"The Robot\" (\"preferences of previous interactions\")",
+      "quote": "They always have the final say to accept these goals on their ElliQ, and once they do, you can cheer them on as you see their wonderful progress right from your app!"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "The FAQ describes an immediate check tied to a specific decision: after a proactive check-in ElliQ listens for the response and, if none comes, stops, so the outcome of that check-in governs the assistance. It also states that no change is made to the user's routine unless the user accepts the specific suggested reminder or goal on the ElliQ screen, linking the accept/decline outcome to the delivered suggestion. The protocol counts an immediate check even if nothing is kept.",
+      "locator": "FAQ Q \"Is ElliQ listening to me all the time?\"; FAQ Q \"Will the app allow me to control my aging loved one's ElliQ?\" (\"No changes are made to their routine unless they personally accept them on their ElliQ screen.\"); paper section \"The Robot\" (proactiveness changes \"based on ... behavioral patterns of the user\")",
+      "quote": "When ElliQ proactively checks in, she listens for a short moment for your response, and if there is no response, she stops listening."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Every described change to the mechanism is made by the developer: the company calibrated the algorithm's parameters from beta-testing before the 2022 launch, the software is updated every 3-4 weeks, membership includes automatic software updates, and the company uses anonymized metadata to improve ElliQ's abilities. The learned user profile and preferences are content consumed by a fixed mechanism, not a reusable rule, prompt, parameter, or code change made by the service itself.",
+      "locator": "Paper section \"The Robot\" (also \"The software is updated every 3-4 weeks.\"); FAQ Q \"What does the ElliQ membership include?\" (\"automatic software updates so she is always getting smarter\"); FAQ Q \"Is ElliQ safe and secure?\" (\"We use anonymized metadata to personalize you experience and improve ElliQ's abilities\")",
+      "quote": "Results of beta-testing allowed the company to 'calibrate' the parameters of the algorithm, such as the frequency and nature of proactive behaviour, priority features and content offered, and the agent's reactions to user interactions, and it was commercially launched in 2022.",
+      "what": "None by the service itself. Algorithm parameter calibration and periodic software updates are developer changes; the user profile/preferences/reminders are content used by a fixed mechanism."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No self-made revision is reported, so no later operation under a service-revised mechanism is reported. The only stated later runs under changed software are developer-pushed upgrades (the ElliQ 3 software rollout to all devices and the 3-4 week update cadence), which are not revisions made by the service.",
+      "locator": "Blog 8th body paragraph; paper section \"The Robot\" (\"The software is updated every 3-4 weeks.\")",
+      "quote": "You can expect to see the new ElliQ 3 hardware in the spring, but all ElliQ devices will be upgraded to the new software as early as late January!"
+    }
+  },
+  "notes": "Judged the single `elliq` variant from text only (no code). Shell access was denied, so raw HTML could not be downloaded and the case.yaml sha256 values could not be checked; all four pages were read through the WebFetch tool in quotation mode, and every quote used above was cross-checked in two independent extractions that matched word-for-word. Two minor extraction discrepancies: one paper sentence was returned once as \"ElliQ uses a proprietary AI algorithm...\" and twice as \"It uses a proprietary AI algorithm...\" (the quoted fragment above avoids the subject), and the weekly-report sentence (\"A template for a summary weekly report that charts activity across several domains ... (Figure 4)\") was attributed to \"Implementation in Senior Care Settings\" by one extraction and \"Challenges\" by another. The page renders the word calibrate with mixed quotation glyphs. The privacy policy contains no mention of learning, training, models, algorithms, or artificial intelligence; the blog contains no mention of feedback, ratings, or training data. Memory used for sensing (M->S) and retention of the service's own actions (A->M, Record) are the open questions a code inspection would settle.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 520,
+    "code_commit": null
+  }
+}

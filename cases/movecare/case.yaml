@@ -1,0 +1,15 @@
+id: movecare
+name: "MoveCare"
+domain: physical
+kind: research
+report: https://pmc.ncbi.nlm.nih.gov/articles/PMC8853423/
+sources:
+  - url: https://pmc.ncbi.nlm.nih.gov/articles/PMC8853423/
+    kind: paper
+    version: ""
+    sha256: d6f95e8e2544106c5061978ee64685a107846b5b8a026694f28b0c0d14b4af7e
+variants:
+  - id: movecare
+    label: "MoveCare"
+    configuration: "MoveCare platform in the 10-week home pilot: Giraff-X robot, environmental sensors, smart objects, community activity centre, and the cloud Virtual Caregiver"
+modes: [read]

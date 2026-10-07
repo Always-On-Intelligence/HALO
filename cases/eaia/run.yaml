@@ -1,0 +1,25 @@
+# HALO run mode for EAIA. Inputs and the backbone are fixed across arms; only the cut sites differ.
+# Each item: 3 learning emails (Alex edits drafts, EAIA's reflection rewrites its prompts), then 2 test
+# emails drafted from the stored prompts. The judge compares the test drafts.
+models:
+  backbone: {backend: "codex:gpt-6-astra", effort: low}   # stands in for gpt-4o (drafting, rewrite), claude-3-5-sonnet (memory choice), o1 (prompt update)
+  judge: {backend: "codex:gpt-6-astra", effort: high}
+samples: 3
+rubric: >-
+  Each output holds an email assistant's reply drafts to the new emails in the situation, written for
+  Alex Rivera, with the addresses each draft adds to the thread. Decide which output follows Alex's rules
+  (listed in the situation) better across all of its drafts. Check each draft for a greeting line, more than
+  three sentences before the sign-off, a sign-off other than exactly "Thanks, Alex" on its own line, a
+  committed date, time, or deadline instead of saying that Alex will confirm the timeline by Friday, and,
+  for partnership, sponsorship, or co-marketing requests, a missing hand-off to Jordan Lee (jordan@lumen.dev
+  added to the reply and named as the one who will follow up). Prefer the output whose drafts break fewer
+  rules. Ignore other differences in wording, tone, or length. "(no draft)" breaks every rule for that
+  email. Answer TIE when both outputs follow the rules equally well.
+tests:
+  - cut: [record]        # reflection does not see the assistant's own draft or tool calls
+  - cut: [outcome]       # EAIA's memory switch off while learning: no feedback reaches reflection
+  - cut: [attribution]   # each feedback reaches reflection with the previous email's trajectory
+  - cut: [revision]      # reflection runs, its prompt writes are discarded (covers later_use)
+  - cut: [A->S]          # the assistant's question does not reach the user during learning
+  # Not listed, implemented in adapter.py: M->A (and its alias later_use) gives the same test-phase
+  # prompts as `revision`; S->M and A->M are aliases of `outcome` and `record`.

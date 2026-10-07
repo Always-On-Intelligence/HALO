@@ -1,0 +1,82 @@
+{
+  "id": "awarellm2026",
+  "configuration": "AwareLLM treatment phase as evaluated in Section 5 (within-subject, counter-balanced vs. a plain gpt-4o-mini chat control): the personalized prototype whose D.1 system-configuration prompt embeds participant-supplied preferences (background, task experience, work style, AI interaction style, taken from a pre-study survey), which retains chat context (last 5 user prompts; in-chat suggestions placed in the latest open chat), and which runs both the 1-minute high-frequency (HF) and 3-minute low-frequency (LF) sensor reasoning loops with the policy layer (preferences, do-not-disturb, debounce). Retention is session-scoped: the paper states all data were deleted immediately after use.",
+  "sources_read": [
+    "https://arxiv.org/html/2605.09625v3 (paper, version 2605.09625v3) read through the WebFetch tool; whole-page fetches were truncated before the appendices",
+    "https://arxiv.org/html/2605.09625v3 section-scoped reads via the selector proxy web.scraper.workers.dev (selectors #S5, [id=S4.SS1], [id=S4.SS4], [id=S4.SS5], [id=S4.T3], [id=S6.SS3], #S8, #S9, #A1, #A2, #A3, #A4, #A5) for Sections 4.1, 4.4, 4.5, Table 3, 5, 6.3, 8, 9 and Appendices A-E",
+    "https://arxiv.org/pdf/2605.09625v3 (fetch returned binary only; could not be rendered locally; not used)",
+    "No code repository (none listed in the case file; the paper says the codebase will be released upon publication)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Sensed and user-supplied evidence is admitted into retained state that later steps use: the first resting minute of ECG and eye-tracking data is written into a session-specific physiological baseline kept for the rest of the session; each minute's sensor snapshots are aggregated into a JSON summary that embeds the previous minute's trends and the last three HF summaries are kept for the LF loop; the user's typed prompts are retained so that the HF and LF prompts can use the last 5 user prompts. Retention is within-session only (data deleted immediately after use).",
+      "locator": "Section 4.3 (Personalized Baselining and State Classification); Section 4.4.2 (The Flow of Data Through the Loops); Appendix D.4.1 and D.5.1 (Input Data); Section 4.2 and Section 8 for the deletion scope",
+      "quote": "UNVERIFIED (tool-extracted, consistent across two fetches): 'It then establishes a personalized, session-specific baseline by analyzing the subsequent 60 seconds of data while the user is in a resting state. This baseline acts as a personal benchmark.' (4.3); 'Four such snapshots are aggregated into a structured JSON summary representing one minute of activity. This summary also embeds the previous minute's trends, enabling continuity across windows.' (4.4.2); 'In addition, use the last 5 user prompts to determine the current task status and progression.' (D.4.1)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained information is delivered to the LLM that selects interventions and to the policy layer: the HF/LF JSON (carrying prev_min_summary, the last three HF summaries and the 3-minute session_summary), the user preferences embedded in the system prompt, the last 5 user prompts, and the chat history used to generate task-focused in-chat suggestions. The carried summary's record of a previous intervention gates the next decision ('Do not give suggestions if the summary indicates one was just given'), and the debounce in the policy layer suppresses repeated cues after a recent intervention.",
+      "locator": "Section 4.4.4 (Fusion and LLM Reasoning); Section 4.5.3 (task-focused interventions paragraph) and Figure 7 caption; Table 3 (Poor posture row); Appendix D.4.1, D.4.6, D.5.1",
+      "quote": "UNVERIFIED (tool-extracted, consistent across two fetches): 'The LLM is then prompted with: (1) The structured JSON summary from either the HF or LF loop, (2) User preferences (tone, frequency of intervention, notification style), (3) Few-shot exemplars demonstrating desired reasoning strategies.' (4.4.4); 'Generated primarily from on-screen context, chat history, and user preferences, they provide direct support for the work at hand' (4.5.3); 'Context Matters: Do not give suggestions if the summary indicates one was just given, or if the user is filling a survey, reading instructions, or actively conversing with the chatbot about setup/instructions.' (D.4.6)"
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "No described flow from the intervention-selecting LLM or policy layer back to the sensing stages. Sampling is on fixed 15-second, 1-minute and 3-minute cadences; the egocentric and screenshot vision prompts (D.2, D.3) receive the image and the static system prompt, not the reasoning LLM's plans, outputs or information needs; 'Trigger only after contextual confirmation' and 'Defer' in Table 3 are gating policies on incoming evidence, not requests for targeted observation; no post-intervention expected-effect check is described. The route is not explicitly excluded either, so the label is insufficient rather than absent.",
+      "locator": "Section 4.4.2-4.4.4; Table 3 (Potential distraction and Elevated cognitive load rows); Appendix D.2, D.3, D.4, D.5",
+      "quote": "UNVERIFIED (tool-extracted): 'System notification. Trigger only after contextual confirmation.' (Table 3); 'Use the system prompt to guide your analysis and decide which \"task\" is being performed.' (D.3, the only guidance given to the screenshot analyser, and it is the static configuration prompt)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "A retained prior is supplied to the interpretation stage of sensing: the session baseline established from the first resting minute is kept and all later HRV, heart-rate and pupil samples are classified by their deviation from it rather than by absolute thresholds (Section 4.3; Appendix B HRV and pupillometry processing). Secondary support: the screenshot analyser is told to use the retained system-configuration prompt (which carries the participant profile) to decide which task is on screen (D.3). This is direct supply to interpretation, not an M->A->S composition. The baseline is session-scoped.",
+      "locator": "Section 4.3 (Personalized Baselining and State Classification); Appendix B.0.3 (Heart Activity Estimation) and B.0.4 (Gaze Analysis and Pupillometry); Appendix D.3 (Screenshot Analysis)",
+      "quote": "UNVERIFIED (tool-extracted, consistent across two fetches): 'High-level classifications such as \"High Stress\" or \"High Cognitive Load\" are not determined by absolute values, but by tracking the magnitude and duration of significant deviations in the processed metrics (e.g., HRV, pupil diameter) from this established baseline.' (4.3); 'Real-time HRV metrics are compared to baseline to detect deviations representing shifts in cognitive or emotional state' (App. B)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "The reasoning LLM's own output is written into retained state that later cycles consume: each HF call must emit a 'summary' that records whether an intervention or suggestion was just given, and that summary is fed back the next minute as prev_min_summary (main text: each minute's summary 'embeds trends from the previous cycle'); the LF loop likewise carries a session_summary and the per-minute summaries. Task-focused suggestions are posted as entries in the user's latest chat, which forms the chat history the LLM later reads, and the debounce/'suppress repeated cues after a recent intervention' policy relies on the delivery record. Retention is within-session.",
+      "locator": "Appendix D.4.5 (Session Summary), D.4.7 (Output Format), D.4.1 (Input Data), D.5.1 and D.5.6; Section 4.4.2 and 4.4.4; Table 3 (Poor posture row); Appendix E.3",
+      "quote": "UNVERIFIED (tool-extracted): 'Include whether the user was given an intervention or suggestion in the previous minute.' (D.4.5); '\"summary\": \"<Concise summary of the last minute: activity, posture, focus trends, sensor insights, progress notes based on user prompts. Mention if prev intervention/suggestion was given.>\"' (D.4.7); 'prev_min_summary: A string summarizing the user's last minute activity.' (D.4.1); 'Suppress repeated cues after a recent intervention.' (Table 3)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps a record of its own recent actions for later use inside the service: the HF prompt requires the summary to state whether an intervention or suggestion was given in the previous minute, that summary is carried into the next cycle as prev_min_summary and used to suppress repeats, and the policy layer debounces on recent interventions. The record is minute-to-minute and session-scoped (all data deleted immediately after use), not a durable log.",
+      "locator": "Appendix D.4.5, D.4.7, D.4.1, D.4.6; Section 4.4.4; Table 3 (Poor posture row)",
+      "quote": "UNVERIFIED (tool-extracted): 'Include whether the user was given an intervention or suggestion in the previous minute.' (D.4.5); 'Mention if prev intervention/suggestion was given.' (D.4.7); 'filtered through a lightweight policy layer (user preferences, do-not-disturb status, and debounce to prevent over-notification).' (4.4.4)"
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "No in-system capture of evidence about delivered interventions: no dismissal, reply, rating or post-cue state check is described; interventions 'can be engaged with or ignored' but nothing records which. The only intervention feedback is a 7-point Likert questionnaire collected by the researchers after the phase (Section 6.3), which is research evaluation, not service input. Section 7.2 itself notes the system lacks user feedback.",
+      "locator": "Section 4.5.2; Section 6.3 (AwareLLM Intervention Feedback); Section 7.2 (Interpretation Reliability and Contextual Ambiguity paragraph)",
+      "quote": "UNVERIFIED (tool-extracted): 'we collected feedback on seven key dimensions using a 7-point Likert scale as employed earlier in 6.2.' (6.3); 'Without additional context or user feedback, the system may misinterpret transient physiological fluctuations as meaningful state changes.' (7.2)"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Nothing links an outcome to the intervention that produced it or uses such a link to check or correct assistance; the carried-forward intervention flag is used only to avoid immediate repetition (time-based suppression), not to evaluate whether the intervention worked. Questionnaire scoring is offline by the authors.",
+      "locator": "Appendix D.4.6; Section 4.4.4; Section 6.3",
+      "quote": "UNVERIFIED (tool-extracted): 'Context Matters: Do not give suggestions if the summary indicates one was just given' (D.4.6) is the only use of the action record, and it is not outcome-based."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No durable change to the mechanism is made by the service. Preferences are participant survey responses that the researchers embed in the static system-configuration prompt (user/developer-supplied content used by a fixed mechanism); the session baseline and the carried summaries are content consumed by a fixed classifier and a fixed prompt; prompts, few-shot exemplars, decision rules, policy-layer thresholds and model parameters are never updated by the system. Section 7.2 explicitly leaves improvement with extended use to future study.",
+      "locator": "Section 4.2 (User Preferences); Section 5 (pre-study survey and personalization sentence); Section 4.4.4; Section 7.2 (Limited Temporal Scope)",
+      "quote": "UNVERIFIED (tool-extracted): 'Customizable settings define the assistant's tone, response style, frequency of interventions, and communication format. These parameters are embedded in the AwareLLM's system prompt' (4.2); 'The responses were used to personalize the behavior of the AwareLLM system.' (5); 'We cannot yet determine how personalization may improve with extended use or how user adaptation to the system occurs over time.' (7.2)",
+      "what": "None. Nothing in the mechanism (prompts, rules, exemplars, thresholds, parameters) is revised by the service; only session content (baseline, carried summaries, chat prompts) changes."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revised mechanism exists, and the evaluation is a single counter-balanced session per participant with data deleted after use, so no later run under a changed mechanism is reported.",
+      "locator": "Section 5 (study design); Section 7.2 (Limited Temporal Scope); Section 8",
+      "quote": "UNVERIFIED (tool-extracted): 'The evaluation was conducted over a single session per participant, limiting our ability to assess long-term patterns.' (7.2); 'All data points were deleted immediately after use and were never stored persistently.' (5)"
+    }
+  },
+  "notes": "Judged the AwareLLM treatment phase of Section 5 (personalized prototype with survey-derived preferences in the D.1 system prompt, retained chat context via the last 5 user prompts and in-chat suggestions in the latest chat, HF 1-minute and LF 3-minute loops with the policy layer). Tooling limits: shell access was denied and the PDF could not be rendered, so all text came through the WebFetch summarizing tool; whole-page fetches of the arXiv HTML were truncated before the appendices, so Sections 5, 6.3, 8, 9 and Appendices A-E were read through a CSS-selector proxy of the same arXiv v3 HTML. Every quote is therefore tool-extracted and labelled UNVERIFIED; key quotes were checked for consistency across two independent extractions. One earlier fetch of the PDF URL returned fabricated procedure sentences (e.g., a '5-minute baseline period', 'control first') and was discarded; a claimed phrase 'update learned associations' could not be found on re-check and was disregarded. Channel verdicts rest on session-scoped retention: the paper states all sensor data were deleted immediately after use, and no cross-session memory is described. Self-evolution: the service records its own last intervention in the carried summary (record stated) but obtains no outcome evidence, performs no attribution, and revises nothing; intervention feedback in Section 6.3 is a post-phase questionnaire analysed by the authors. The paper says the codebase will be released upon publication; no repository was reviewed.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 843,
+    "code_commit": null
+  }
+}

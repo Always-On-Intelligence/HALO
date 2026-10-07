@@ -1,0 +1,143 @@
+{
+  "case": "proactive-agent",
+  "channels": {
+    "S->M": "events kept in the shared event store and gathered into the agent history (activeagent.py:111-115)",
+    "M->A": "the retained event/dialogue history in the proposal prompt (activeagent.py:116-129)",
+    "A->S": "the agent's executed actions turned into observed events by the environment (environment.py:61,121-154)"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 5,
+      "modified": 2,
+      "tie": 5,
+      "metrics": {
+        "accepted": {
+          "original": 1.0,
+          "modified": 1.25
+        },
+        "executed_actions": {
+          "original": 2.3333,
+          "modified": 2.8333
+        },
+        "failed_steps": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "backbone_calls": {
+          "original": 10.6667,
+          "modified": 12.3333
+        },
+        "acceptance_rate": {
+          "original": 1.0,
+          "modified": 0.95
+        },
+        "proposals": {
+          "original": 1.0,
+          "modified": 1.3333
+        },
+        "observed_action_events": {
+          "original": 17.75,
+          "modified": 17.5
+        },
+        "label_agreement": {
+          "original": 0.4792,
+          "modified": 0.5208
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 5,
+      "modified": 2,
+      "tie": 5,
+      "metrics": {
+        "accepted": {
+          "original": 1.0,
+          "modified": 0.75
+        },
+        "executed_actions": {
+          "original": 2.3333,
+          "modified": 2.0833
+        },
+        "failed_steps": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "backbone_calls": {
+          "original": 10.6667,
+          "modified": 9.6667
+        },
+        "acceptance_rate": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "proposals": {
+          "original": 1.0,
+          "modified": 0.75
+        },
+        "observed_action_events": {
+          "original": 17.75,
+          "modified": 17.1667
+        },
+        "label_agreement": {
+          "original": 0.4792,
+          "modified": 0.5
+        }
+      }
+    },
+    {
+      "cut": [
+        "A->S"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 6,
+      "modified": 2,
+      "tie": 4,
+      "metrics": {
+        "accepted": {
+          "original": 1.0,
+          "modified": 1.0
+        },
+        "executed_actions": {
+          "original": 2.3333,
+          "modified": 5.3333
+        },
+        "failed_steps": {
+          "original": 0.0,
+          "modified": 0.0
+        },
+        "backbone_calls": {
+          "original": 10.6667,
+          "modified": 12.1667
+        },
+        "acceptance_rate": {
+          "original": 1.0,
+          "modified": 0.7593
+        },
+        "proposals": {
+          "original": 1.0,
+          "modified": 1.4167
+        },
+        "observed_action_events": {
+          "original": 17.75,
+          "modified": 0.0
+        },
+        "label_agreement": {
+          "original": 0.4792,
+          "modified": 0.4583
+        }
+      }
+    }
+  ]
+}

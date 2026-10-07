@@ -1,0 +1,7 @@
+{
+  "id": "lab_stockroom",
+  "learning_rounds": ["q1", "q2", "q3", "q4", "q5"],
+  "test_rounds": ["q6", "q7", "q8", "q9"],
+  "expected_for_judge": "On-hand counts are sealed units only. Correct results for the later requests: q6 reorder_friday.json = 200 uL tips on_hand 4, par 3, reorder false; Tris-HCl buffer pH 8.0 on_hand 0, par 1, reorder true; Serological pipettes 10 mL on_hand 6, par 5, reorder false; Parafilm M on_hand 1, par 2, reorder true. q7 = D (0 bottles). q8 reorder_earlier_items.json = Nitrile gloves size M on_hand 3, par 4, reorder true; 10 uL filter tips on_hand 1, par 3, reorder true; 1.5 mL microcentrifuge tubes on_hand 2, par 2, reorder false; 70% ethanol on_hand 2, par 3, reorder true. q9 = C (5 items).",
+  "design": "Learning rounds expose the lab's sealed-only counting rule only through the answer keys: AGENTS.md states it, but the Codex bridge drops AGENTS.md and IDENTITY.md from the workspace snapshot (codex_cli.py TEXT_SNAPSHOT_SKIP_NAMES). Test rounds q6-q7 apply the rule to new items with the clip attached; q8-q9 cite no clip, so the counts must come from memory of the earlier rounds. Not sent to any model."
+}

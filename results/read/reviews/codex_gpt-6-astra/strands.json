@@ -1,0 +1,75 @@
+{
+  "id": "strands",
+  "configuration": "STRANDS core system with the 2015 HdB care deployment; no security-only activity-learning evidence combined into the row.",
+  "sources_read": [
+    "cases/strands/case.yaml",
+    "https://arxiv.org/pdf/1604.04384v2 — complete paper, version 2"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Observations enter MongoDB; HdB screen-interaction logs build retained temporal models.",
+      "locator": "[§5, PDF p. 5; §9, PDF p. 10](https://arxiv.org/pdf/1604.04384v2)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retained interaction models determine where and when the HdB robot offers information.",
+      "locator": "[§9, PDF p. 10](https://arxiv.org/pdf/1604.04384v2#page=10)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Backtracking directs the depth camera to sense behind the reversing robot.",
+      "locator": "[§7, PDF p. 9](https://arxiv.org/pdf/1604.04384v2#page=9)"
+    },
+    "M->S": {
+      "label": "reported",
+      "rationale": "The retained laser map supplies the reference for interpreting observations during Monte Carlo localisation.",
+      "locator": "[§5, PDF p. 5](https://arxiv.org/pdf/1604.04384v2#page=5)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Executed edge traversals and their durations/success are logged for subsequent navigation-model learning.",
+      "locator": "[§8, PDF p. 10](https://arxiv.org/pdf/1604.04384v2#page=10)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "Navigation attempts are retained in the robot’s database for subsequent learning.",
+      "locator": "[§8, PDF p. 10](https://arxiv.org/pdf/1604.04384v2#page=10)",
+      "quote": "logged to the robot’s database"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Each traversal’s success and duration are retained.",
+      "locator": "[§8, PDF p. 10](https://arxiv.org/pdf/1604.04384v2#page=10)",
+      "quote": "duration and success"
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Navigation failure is linked to the active action and triggers recovery attempts.",
+      "locator": "[§7, PDF p. 9](https://arxiv.org/pdf/1604.04384v2#page=9)",
+      "quote": "monitors them for failure"
+    },
+    "revision": {
+      "label": "stated",
+      "rationale": "Learned temporal predictors change from accumulated interaction logs and guide recurring scheduling.",
+      "locator": "[§9 and Figure 7, PDF pp. 10–11](https://arxiv.org/pdf/1604.04384v2#page=10)",
+      "quote": "FreMEn models learnt",
+      "what": "FreMEn interaction-probability predictors."
+    },
+    "later_use": {
+      "label": "stated",
+      "rationale": "Figure 7 reports deployed scheduling using predictors learned during the care deployment.",
+      "locator": "[Figure 7 caption, PDF p. 11](https://arxiv.org/pdf/1604.04384v2#page=11)",
+      "quote": "using FreMEn models learnt during the 2015 care deployment"
+    }
+  },
+  "notes": "Text-only review; security-only activity learning (§10) excluded. Revision concerns learned predictive models.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 167,
+    "code_commit": null
+  }
+}

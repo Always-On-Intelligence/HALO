@@ -1,0 +1,71 @@
+{
+  "note": "Each item is one short PAHF session of the embodied (household robot) agent for one persona, taken from PAHF's own benchmark (core/data/embodied). 'learn' is a task index in original_scenarios_A.json, run first with pre-action clarification and post-action feedback enabled (PAHF's phase 1, one task, one iteration). 'test' lists task indices in original_scenarios_B.json, run afterwards with both feedback types disabled and the no-ask action prompt (PAHF's phase 2); the judge compares only these later decisions. The first test is the phase-2 version of the learning task (same context, new wording and scene); the second is a different context whose scene contains the learned object as a distractor, so a session that learned the preference has to apply it in the right context only. All persona preferences are counterintuitive in the learned context. 'preferences' are the persona's own lines (core/data/embodied/personas/original_persona.py) for the two test contexts, given to the judge; 'design' is for analysis only. Neither is sent to the system.",
+  "items": [
+    {
+      "id": "alex_drowsy",
+      "user": "Alex",
+      "learn": 1,
+      "test": [1, 0],
+      "preferences": [
+        "When Alex is drowsy, Alex prefers herbal tea (not caffeinated drinks), believing rest is better than stimulation.",
+        "Alex's favorite drink is black coffee; context changes the choice only in the specific situations listed in Alex's persona."
+      ],
+      "design": "learn: drowsy -> herbal tea (scene: energy drink, herbal tea, black coffee); test 1: drowsy before a meeting; test 2: favorite drink with herbal tea as a distractor"
+    },
+    {
+      "id": "raven_stressed",
+      "user": "Raven",
+      "learn": 1113,
+      "test": [1113, 1126],
+      "preferences": [
+        "When Raven is stressed, Raven prefers black coffee (not herbal drinks), because the bitterness helps confront difficult emotions.",
+        "In the evening Raven prefers warm drinks (not room temperature)."
+      ],
+      "design": "learn: stressed -> black coffee; test 1: anxious about a deadline; test 2: bedtime unwind with coffee as a distractor"
+    },
+    {
+      "id": "nova_hot",
+      "user": "Nova",
+      "learn": 962,
+      "test": [962, 977],
+      "preferences": [
+        "When Nova is hot, Nova prefers hot herbal tea (not cold drinks), finding that warmth helps the body cool itself.",
+        "Late at night Nova prefers decaffeinated drinks (for relaxation, not alertness)."
+      ],
+      "design": "learn: hot weather -> hot herbal tea; test 1: sweltering after a workout; test 2: late-night relaxing drink with herbal tea as a distractor"
+    },
+    {
+      "id": "finn_morning",
+      "user": "Finn",
+      "learn": 432,
+      "test": [432, 421],
+      "preferences": [
+        "In the morning Finn has hot chamomile tea for breakfast (warm drinks, not cold).",
+        "When Finn is tired, Finn prefers lemon water (not caffeine), believing citrus gives a gentle awakening without crashes."
+      ],
+      "design": "learn: just woke up -> chamomile tea; test 1: 7 AM morning drink; test 2: tired before a meeting with chamomile tea as a distractor"
+    },
+    {
+      "id": "casey_tired",
+      "user": "Casey",
+      "learn": 181,
+      "test": [181, 180],
+      "preferences": [
+        "When Casey is tired, Casey prefers warm orange juice (not caffeine), believing vitamin C energizes without the crash.",
+        "Casey's favorite beverage is lemon water."
+      ],
+      "design": "learn: exhausted -> warm orange juice; test 1: exhausted before a meeting; test 2: favorite drink with a juice as a distractor"
+    },
+    {
+      "id": "ethan_sick",
+      "user": "Ethan",
+      "learn": 395,
+      "test": [395, 390],
+      "preferences": [
+        "When Ethan is sick, Ethan prefers cold orange juice (not warm drinks), finding vitamin C more effective cold.",
+        "Ethan's favorite drink is green tea."
+      ],
+      "design": "learn: fever -> cold orange juice; test 1: caught a cold; test 2: favorite drink with a juice as a distractor"
+    }
+  ]
+}

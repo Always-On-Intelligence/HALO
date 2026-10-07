@@ -1,0 +1,79 @@
+{
+  "id": "visionclaw2026",
+  "configuration": "Composed Gemini Live + OpenClaw system with connected personal stores and delegated tools.",
+  "sources_read": [
+    "https://arxiv.org/html/2604.03486v2 — system design, implementation, studies, discussion, and limitations.",
+    "https://arxiv.org/pdf/2604.03486v2 — Appendix C, page 15; prompt omitted from the HTML extraction.",
+    "https://github.com/Intent-Lab/VisionClaw/tree/82699eca917c0062516c14b99affa34ea230ecd7 — verified checkout commit.",
+    "README.md; gateway/README.md; samples/CLAUDE.md",
+    "agent/main.py — instructions, gateway delegation, result retention, and relay verification.",
+    "gateway/src/server.ts; gateway/src/store.ts; gateway/src/provision.ts — task ledger, session continuity, and hosted-backend provisioning.",
+    "samples/CameraAccess/CameraAccess/Gemini/GeminiConfig.swift",
+    "samples/CameraAccess/CameraAccess/OpenClaw/OpenClawBridge.swift",
+    "samples/CameraAccess/CameraAccess/OpenClaw/LiveKitSession.swift — backend connection and room-ticket handling."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Camera and speech content are saved as retrievable notes, lifelogs, and personal-store entries.",
+      "locator": "[Paper §6.3, Save; §6.4, Opportunistic Capture](https://arxiv.org/html/2604.03486v2)"
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Stored lists, personal records, and earlier task results inform answers and subsequent assistance.",
+      "locator": "[Paper §6.3, Recall; §6.4, Interaction Evolves with More Personal Data](https://arxiv.org/html/2604.03486v2)"
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Delegated search and browser tasks specify which external information to acquire.",
+      "locator": "[Paper §3.4](https://arxiv.org/html/2604.03486v2); [Appendix C, page 15](https://arxiv.org/pdf/2604.03486v2)",
+      "quote": "Search the web or look up information"
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "Recall informs assistance; retained priors are not shown guiding sensory sampling, attention, compression, or interpretation.",
+      "locator": "[Paper §§3.2–3.4, §6.4, and §7, Memory of Entire Life](https://arxiv.org/html/2604.03486v2)"
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Decisions, delegated tasks, and execution results remain available in memory logs for cross-session recall.",
+      "locator": "[Paper §6.3, Recall](https://arxiv.org/html/2604.03486v2)"
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "Retained decision and task records support service recall, beyond researchers' analysis.",
+      "locator": "[Paper §6.3, Recall, second paragraph](https://arxiv.org/html/2604.03486v2)",
+      "quote": "reviewed past decisions or delegated tasks through accumulated memory logs."
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Earlier agent-task results are retained and retrieved in subsequent sessions.",
+      "locator": "[Paper §6.3, Recall, Barcelona trip-planning example](https://arxiv.org/html/2604.03486v2)",
+      "quote": "to retrieve results from earlier sessions."
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "Result reporting and a duplicate-cart warning do not establish outcome-based checking of the responsible service decision.",
+      "locator": "[Paper §3.4; §6.3, Recall and Shop; §6.4, Screenless Interaction](https://arxiv.org/html/2604.03486v2)"
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Skill growth lacks stated service authorship; accumulated personal content is not mechanism revision.",
+      "locator": "[Paper §6.4, Interaction Evolves with More Personal Data; §7, Models and Continual Learning](https://arxiv.org/html/2604.03486v2)"
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Later personalized interactions are reported, but no run under a service-authored mechanism revision is identified.",
+      "locator": "[Paper §6.4, Interaction Evolves with More Personal Data; §7, Models and Continual Learning](https://arxiv.org/html/2604.03486v2)"
+    }
+  },
+  "notes": "The pinned repository contains a newer LiveKit/Anthropic Managed Agents backend: agent/main.py:1–12 and OpenClawBridge.swift:3–5 identify this transition. Its relay verification and hosted-memory configuration were not transferred to judgments about the named OpenClaw configuration.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 271,
+    "code_commit": "82699eca917c0062516c14b99affa34ea230ecd7"
+  }
+}

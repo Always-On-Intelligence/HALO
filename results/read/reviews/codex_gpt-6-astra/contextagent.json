@@ -1,0 +1,82 @@
+{
+  "id": "contextagent",
+  "configuration": "ContextAgentBench/CAB-Lite evaluated reasoner with supplied per-sample personas and planned tool chains.",
+  "sources_read": [
+    "https://arxiv.org/html/2505.14668v2 — version 2505.14668v2, especially §§3–5 and Appendices A–F.",
+    "cases/contextagent/case.yaml",
+    "https://github.com/openaiotlab/ContextAgent — checkout verified at f4674bf2a1385ce829c6a7f2ea9c53871dd1a8ce.",
+    "README.md; src/sft/README.md; src/cab_lite/README.md",
+    "src/sft/inference.py; src/icl/inference.py; src/icl/inference_api.py",
+    "src/utils.py; src/tool_registry.py; src/config.py; src/calculate_scores.py",
+    "prompt/prompt_sys.txt; prompt/prompt_summarize.txt",
+    "scripts/sft/run_sft_exp.sh; scripts/sft/run_sft_eval.sh; src/cab_lite/sft/sft_exp.sh; src/cab_lite/sft/eval_sft.sh; src/cab_lite/icl/icl_infer.sh; src/cab_lite/icl/icl_infer_api.sh",
+    "LLaMA-Factory/experiments/cab_lora_train.sh; LLaMA-Factory/experiments/configs/cab/train/qwen_lora_sft.yaml; LLaMA-Factory/experiments/configs/cab/inference/qwen_lora_sft.yaml",
+    "data/cab/cab_test.json and data/cab_lite/cab_lite.json — sample records.",
+    "src/tools/get_current_gps_coordinates.py; src/tools/get_health_data.py; src/tools/vllm.py; src/tools/get_city_weather.py; src/tools/check_agenda_time_conflict.py; src/tools/add_to_agenda.py; src/tools/add_meeting.py; src/tools/send_email.py; src/tools/play_music.py"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "insufficient",
+      "rationale": "Personas are supplied benchmark fields; continuous extraction from historical observations is described as a possible practice, not an implemented experimental write path. The executor's observation cache is recreated per sample and does not establish retention across interactions.",
+      "locator": "[Paper §4.1, Persona Context](https://arxiv.org/html/2505.14668v2#S4.SS1); src/sft/inference.py:107–111,170–171; src/utils.py:441–453.",
+      "quote": "In this work, we use persona contexts within ContextAgentBench for experiments."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Stored persona facts and preferences are loaded from each sample and supplied directly to the reasoner deciding proactive assistance and tool plans. This establishes consumption of supplied memory content without establishing how that content was acquired.",
+      "locator": "[Paper §4.2, Context-aware Reasoner](https://arxiv.org/html/2505.14668v2#S4.SS2); src/sft/inference.py:77–93,170–186; data/cab/cab_test.json:43–62.",
+      "quote": "user = f\"Sensory Context:\\n{contextual_info}\\nPersona Context:\\n{personas_str}\""
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Generated plans select information-gathering tools and their arguments, including location, weather, and visual queries. The executor dispatches those selections to the receiving tools. Sandbox observations are simulated, but the action-directed acquisition route is implemented.",
+      "locator": "[Paper §4.2 and Appendix D, Table 5](https://arxiv.org/html/2505.14668v2); src/sft/inference.py:194–205; src/utils.py:455–525; src/tool_registry.py:49–63; src/tools/get_current_gps_coordinates.py:61–84.",
+      "quote": "raw = process_function_call({\"name\": name, \"parameters\": resolved_params})"
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "No direct route from retained personas or interaction history to sensory extraction is established. Personas enter planning after context extraction. Resolving tool arguments from current-sample observations does not establish retained priors guiding sensing; persona-guided tool selection is the composition M→A→S.",
+      "locator": "[Paper §4.1 and Appendix B, Prompt for Proactive-oriented Context Extraction](https://arxiv.org/html/2505.14668v2); src/sft/inference.py:70–93,107–111; src/utils.py:393–439."
+    },
+    "A->M": {
+      "label": "insufficient",
+      "rationale": "Plans, tool results, and responses are exported as benchmark predictions, but no retention route for subsequent service interactions is established. The runtime cache is local to a sample. Database and outbox writes in live tool branches are bypassed by the benchmark sandbox configuration.",
+      "locator": "src/sft/inference.py:107–111,227–246,275–297; src/calculate_scores.py:606–637; scripts/sft/run_sft_eval.sh:41–56; src/cab_lite/sft/eval_sft.sh:40–54; src/tools/add_meeting.py:34–35; src/tools/send_email.py:39–40."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "Prediction files contain decisions and tool traces for research scoring; no action history retained for later service use is reported.",
+      "locator": "src/sft/inference.py:227–246,286–297; src/calculate_scores.py:606–637."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "Tool returns are cached within a sample and exported for evaluation; later assistance outcomes retained for subsequent service use are not reported.",
+      "locator": "src/utils.py:441–525; src/sft/inference.py:107–111,144–146,227–246."
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "The separate benchmark evaluator scores predictions and tool errors; no in-service use of linked outcomes to check or correct assistance is reported.",
+      "locator": "[Paper §5.1, Metrics](https://arxiv.org/html/2505.14668v2#S5.SS1); src/calculate_scores.py:238–295,625–637; src/sft/inference.py:144–146."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "Supervised fine-tuning is author-controlled preparation; the evaluated service does not report durably revising its own mechanism.",
+      "locator": "[Paper §4.2, Training Scheme](https://arxiv.org/html/2505.14668v2#S4.SS2); scripts/sft/run_sft_exp.sh:4–10; LLaMA-Factory/experiments/configs/cab/train/qwen_lora_sft.yaml:5–14,21–39.",
+      "what": "LoRA model parameters are trained externally; no service-authored change to parameters, prompts, reusable rules, skills, code, or harness is identified."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Reported evaluation uses author-trained checkpoints; no later run under a service-authored revision is stated.",
+      "locator": "[Paper §5.2](https://arxiv.org/html/2505.14668v2#S5.SS2); LLaMA-Factory/experiments/configs/cab/inference/qwen_lora_sft.yaml:1–5; scripts/sft/run_sft_eval.sh:12–49."
+    }
+  },
+  "notes": "Reviewed independently from the specified paper version and pinned code. The evaluation scripts select or default to sandbox execution. Live-only persistence, prospective persona updating, and author-run training were not attributed to the evaluated service. The variable named memory is a per-sample tool cache; its name alone does not establish cross-interaction Memory. No inference or training was run, and no files were modified.",
+  "_meta": {
+    "backend": "codex:gpt-6-astra",
+    "effort": "max",
+    "seconds": 224,
+    "code_commit": "f4674bf2a1385ce829c6a7f2ea9c53871dd1a8ce"
+  }
+}

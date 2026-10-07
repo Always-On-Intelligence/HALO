@@ -1,0 +1,114 @@
+{
+  "note": "Scripted glasses days. Each item is one user over two calls (LiveKit sessions). A turn gives what the camera shows (the text stand-in for the video frames the realtime model and the attach_view still receive) and what the user says (the text stand-in for the audio). 'stores' is the user's state before the first call: gateway notes, and the connected apps the action agent reaches through MCP (simulated). 'expect' lists facts the final call should state (alternatives per fact); 'design' is for analysis only and is never sent to a model.",
+  "deployment": {"active_apps": ["gcal-self", "notion"], "slack": "disabled (SLACK_DISABLED=true)", "browse": "disabled (no BROWSER_USE_API_KEY)"},
+  "items": [
+    {
+      "id": "conference_poster",
+      "user": {"id": "maya", "about": "Maya Chen, a PhD student in audio engineering, at a conference in Rotterdam."},
+      "connected_apps": ["gcal-self", "notion"],
+      "stores": {
+        "notes": [],
+        "calendar": [
+          {"summary": "Lunch with Prof. Adeyemi", "start": "2026-10-07T12:00", "end": "2026-10-07T13:00", "location": "Foyer cafe"},
+          {"summary": "My poster #34 (session P2)", "start": "2026-10-07T16:00", "end": "2026-10-07T17:30", "location": "Hall C"}
+        ],
+        "notion": []
+      },
+      "calls": [
+        {"at": "2026-10-07T09:12:00+02:00", "turns": [
+          {"view": "A printed poster board titled 'Tuesday Talks - Track B'. Each row gives time, room and title. The row in the centre of the view reads '14:30-15:00 | Room 204 | Edge AI for Hearing Aids | Dr. Lena Ortiz, TU Delft'. The row above reads '14:00-14:30 | Room 204 | Beamforming on a Budget | K. Osei' and the row below '15:00-15:30 | Room 207 | Spatial Audio Codecs | M. Jensen'.",
+           "say": "Can you put the hearing-aid talk on this poster into my calendar? It's today, here at the venue."},
+          {"view": "A registration desk under a sign 'Badge pickup'. A printed slip in the user's hand reads 'Pickup no. 47 - Desk C - after 13:00'.",
+           "say": "Also remember that my badge pickup is number 47 at desk C, after one o'clock."}
+        ]},
+        {"at": "2026-10-07T14:05:00+02:00", "turns": [
+          {"view": "A busy conference corridor. A sign points left to 'Rooms 201-206' and right to 'Rooms 207-212 and Hall C'.",
+           "say": "Remind me, when does that hearing-aid talk start and which room is it in?"},
+          {"view": "The same corridor; people walking past with lanyards.",
+           "say": "And what was the badge pickup number I asked you to remember?"}
+        ]}
+      ],
+      "expect": [["14:30", "2:30"], ["204"], ["47"]],
+      "design": "Call 1: the talk's time and room are only on the poster, so the calendar entry depends on the frame travelling with the delegated task (attach_view, A->S) and on the calendar write (S->M); the badge slip goes to notes (S->M). Call 2: the answers need the calendar read and the task-ledger briefing (M->A, A->M) and the notes read (M->A)."
+    },
+    {
+      "id": "pharmacy_label",
+      "user": {"id": "daniel", "about": "Daniel Brooks, who manages his father Robert's medication."},
+      "connected_apps": ["gcal-self"],
+      "stores": {
+        "notes": [{"text": "Dad's pharmacy: Mercy Pharmacy, (555) 0142"}],
+        "calendar": [
+          {"summary": "Dad - cardiology follow-up", "start": "2026-10-21T09:30", "end": "2026-10-21T10:30", "location": "Mercy Heart Clinic"}
+        ],
+        "notion": []
+      },
+      "calls": [
+        {"at": "2026-10-07T08:40:00-05:00", "turns": [
+          {"view": "A white pharmacy bottle on a kitchen counter, label facing the camera: 'MERCY PHARMACY (555) 0142 / ROBERT BROOKS / LISINOPRIL 10 MG TABLET / TAKE 1 TABLET BY MOUTH ONCE DAILY IN THE MORNING / QTY 30 / REFILLS: 2 / DR. A. PATEL / FILLED 10/07/2026'.",
+           "say": "Note down how Dad should take this new one."},
+          {"view": "The same bottle turned slightly; a yellow sticker reads 'Do not use salt substitutes containing potassium'.",
+           "say": "And put a reminder in my calendar to call the pharmacy for his refill on November 3rd at 10 in the morning."}
+        ]},
+        {"at": "2026-10-08T19:30:00-05:00", "turns": [
+          {"view": "A weekly pill organizer with compartments S M T W T F S in AM and PM rows; the Thursday AM compartment holds a small pink tablet.",
+           "say": "How is Dad supposed to take the lisinopril again? You noted it down for me yesterday."},
+          {"view": "The same pill organizer, lid closed.",
+           "say": "And when am I meant to call about the refill?"}
+        ]}
+      ],
+      "expect": [["once daily", "once a day", "one tablet a day", "1 tablet a day", "every morning", "each morning"], ["morning"], ["November 3", "Nov 3", "3 November", "November third"], ["10"]],
+      "design": "Call 1: the dosing instructions come from the label (S->M into notes); the refill reminder is a calendar write through the delegated agent (S->M). Call 2 shows no label, so the dosing answer needs the notes read and the refill answer the calendar read or the briefing (M->A, A->M)."
+    },
+    {
+      "id": "hardware_store",
+      "user": {"id": "priya", "about": "Priya Raman, renovating her flat."},
+      "connected_apps": ["notion"],
+      "stores": {
+        "notes": [],
+        "calendar": [],
+        "notion": [
+          {"title": "Flat renovation", "content": "Kitchen: replace the ceiling lights (3 fittings, E27 sockets).\nHallway: 2 wall sconces (E14).\nLighting budget: 120 EUR."}
+        ]
+      },
+      "calls": [
+        {"at": "2026-10-07T11:00:00+01:00", "turns": [
+          {"view": "A store shelf of LED bulbs. The box in the user's hand reads 'Philips Ultra Definition LED A60 / E27 / 2700K warm white / 1100 lm (75 W equivalent) / dimmable / pack of 3 / EUR 14.99'.",
+           "say": "Save these bulbs to my flat renovation page in Notion, for the kitchen.",
+           "hangup": true}
+        ]},
+        {"at": "2026-10-07T11:20:00+01:00", "turns": [
+          {"view": "The inside of a parked car; the dashboard and the store's car park through the windscreen.",
+           "say": "Which bulbs did I just save for the kitchen, and do they fit the kitchen sockets?"}
+        ]}
+      ],
+      "expect": [["2700"], ["1100"], ["E27"]],
+      "design": "The user hangs up while the Notion task runs, so the gateway parks the finished result (server.ts clientGone path, A->M) and the next call's worker drains and relays it (M->A). The box details reach the delegated agent only through attach_view (A->S); the page write is S->M."
+    },
+    {
+      "id": "grocery_list",
+      "user": {"id": "sam", "about": "Sam Okoro, doing the weekly shop."},
+      "connected_apps": [],
+      "stores": {
+        "notes": [{"text": "olive oil", "tag": "shopping"}],
+        "calendar": [],
+        "notion": []
+      },
+      "calls": [
+        {"at": "2026-10-07T17:00:00+00:00", "turns": [
+          {"view": "An open fridge: a nearly empty 1-litre milk carton in the door, an empty egg tray, half a block of cheddar and two lemons.",
+           "say": "Add milk and eggs to my shopping list."},
+          {"view": "A pantry shelf with an empty glass jar labelled 'basmati rice' next to a full jar of pasta.",
+           "say": "Oh, and rice as well."}
+        ]},
+        {"at": "2026-10-07T18:10:00+00:00", "turns": [
+          {"view": "A supermarket dairy aisle with milk bottles and egg boxes on the shelves.",
+           "say": "What's on my shopping list?"},
+          {"view": "The user's hand putting a 2-litre milk bottle into a shopping basket.",
+           "say": "Got the milk, take it off the list."}
+        ]}
+      ],
+      "expect": [["eggs"], ["rice"], ["olive oil"]],
+      "design": "Notes only: the list items go into the gateway notes store (S->M) and come back through recall_notes in the next call (M->A)."
+    }
+  ]
+}

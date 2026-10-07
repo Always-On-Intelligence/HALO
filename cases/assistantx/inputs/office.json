@@ -1,0 +1,310 @@
+{
+  "note": "Scripted office for AssistantX. 'graph' is the robot's persistent relational graph: the adapter writes it to prompt_txt/priori_knowledge.txt, which the upstream read_prior_knowledge() (prompt_test.py:385-388) reads at every loop iteration. Everything else is the simulated world: WeChat contacts, robot map markers, people (where they are, what they know and hold), and the items. People answer by fixed rules, not by a model. Each task is one WeChat instruction; 'goal' says where each item must end up and is used only for the outcome line and the metrics. Instructions avoid '/' because main.py:372 writes Result/gpt4o/<instruction>.txt.",
+  "graph": "People and places:\n- Wu sits at the lab area, left corner. Wu's laptop is a ThinkPad that charges over USB-C.\n- Zheng sits at the lab area, middle. Zheng keeps a spare 65 W USB-C laptop charger in his desk drawer.\n- Chen sits at the lab area, right corner. Chen has a MacBook MagSafe charger. Chen is at a conference in Shanghai today.\n- Prof. Gao's office is Room 412. Prof. Gao supervises Zheng and Chen and signs their reimbursement forms.\n- Lin is the office administrator in Room 301. Lin lends out shared equipment such as the projector remote.\n- Zheng borrowed the projector remote from Lin this morning.\nFacilities:\n- The printer is in Room 305. Huang is on duty at the printer from 9:00 to 17:00 and prints files that are forwarded to him on WeChat.\n- The water dispenser in the corridor is unmanned.\n- Meeting room B is unmanned.\n",
+  "markers": {
+    "Charging station": [
+      "charging station",
+      "charging pile",
+      "充电桩",
+      "dock"
+    ],
+    "Lab area, left corner": [
+      "lab area, left corner",
+      "left corner"
+    ],
+    "Lab area, middle": [
+      "lab area, middle",
+      "lab area middle"
+    ],
+    "Lab area, right corner": [
+      "lab area, right corner",
+      "right corner"
+    ],
+    "Room 301": [
+      "room 301",
+      "301",
+      "admin office",
+      "administrator"
+    ],
+    "Room 305": [
+      "room 305",
+      "305",
+      "printer"
+    ],
+    "Room 412": [
+      "room 412",
+      "412"
+    ],
+    "Meeting room B": [
+      "meeting room b"
+    ],
+    "Water dispenser": [
+      "water dispenser"
+    ]
+  },
+  "people": {
+    "Wu": {
+      "wxid": "wxid_sim_wu",
+      "aliases": [
+        "Wu"
+      ],
+      "marker": "Lab area, left corner",
+      "knows": [
+        [
+          [
+            "model",
+            "watt",
+            "wattage",
+            "requirement",
+            "requirements"
+          ],
+          "It's a ThinkPad X1 Carbon. Any 65 W USB-C PD charger works."
+        ],
+        [
+          [
+            "charger",
+            "adapter",
+            "laptop"
+          ],
+          "My laptop is a ThinkPad, it charges over USB-C."
+        ]
+      ]
+    },
+    "Zheng": {
+      "wxid": "wxid_sim_zheng",
+      "aliases": [
+        "Zheng"
+      ],
+      "marker": "Lab area, middle",
+      "knows": [
+        [
+          [
+            "cable",
+            "cables",
+            "cord"
+          ],
+          "The USB-C cable is attached to the charger, nothing else is needed."
+        ],
+        [
+          [
+            "power delivery",
+            "pd",
+            "watt",
+            "wattage",
+            "output",
+            "rating",
+            "ratings"
+          ],
+          "Yes, it is a 65 W USB-C PD charger. It works with ThinkPads."
+        ],
+        [
+          [
+            "supervisor",
+            "sign"
+          ],
+          "My supervisor is Prof. Gao. His office is Room 412."
+        ],
+        [
+          [
+            "usb",
+            "charger",
+            "adapter"
+          ],
+          "I have a spare USB-C charger in my desk drawer, you can borrow it."
+        ],
+        [
+          [
+            "remote",
+            "projector"
+          ],
+          "I borrowed the projector remote from Lin this morning, it is on my desk."
+        ],
+        [
+          [
+            "form",
+            "reimbursement"
+          ],
+          "My reimbursement form is on my desk."
+        ]
+      ]
+    },
+    "Chen": {
+      "wxid": "wxid_sim_chen",
+      "aliases": [
+        "Chen"
+      ],
+      "marker": "Lab area, right corner",
+      "away": "I'm at a conference in Shanghai today, not in the office.",
+      "knows": []
+    },
+    "Huang": {
+      "wxid": "wxid_sim_huang",
+      "aliases": [
+        "Huang"
+      ],
+      "marker": "Room 305",
+      "prints": true,
+      "knows": [
+        [
+          [
+            "print",
+            "printer",
+            "slides"
+          ],
+          "I'm at the printer in Room 305. Forward me the file on WeChat and send me a QR code, and I'll put the printout in your locker."
+        ]
+      ]
+    },
+    "Lin": {
+      "wxid": "wxid_sim_lin",
+      "aliases": [
+        "Lin"
+      ],
+      "marker": "Room 301",
+      "knows": [
+        [
+          [
+            "remote",
+            "projector"
+          ],
+          "Zheng borrowed the projector remote this morning. Please bring it back to me in Room 301."
+        ]
+      ]
+    },
+    "Gao": {
+      "wxid": "wxid_sim_gao",
+      "aliases": [
+        "Gao",
+        "Prof. Gao",
+        "Professor Gao",
+        "Prof Gao"
+      ],
+      "marker": "Room 412",
+      "signs": [
+        "form"
+      ],
+      "knows": [
+        [
+          [
+            "sign",
+            "form",
+            "reimbursement"
+          ],
+          "Bring the form to my office, Room 412, and I'll sign it."
+        ]
+      ]
+    }
+  },
+  "group_order": [
+    "Zheng",
+    "Lin",
+    "Huang",
+    "Gao",
+    "Wu",
+    "Chen"
+  ],
+  "items": {
+    "usbc_charger": {
+      "name": "spare USB-C laptop charger",
+      "aliases": [
+        "usb-c",
+        "usb c",
+        "type-c",
+        "charger",
+        "adapter"
+      ],
+      "holder": "Zheng"
+    },
+    "magsafe_charger": {
+      "name": "MagSafe charger",
+      "aliases": [
+        "magsafe",
+        "macbook"
+      ],
+      "holder": "Chen"
+    },
+    "form": {
+      "name": "reimbursement form",
+      "aliases": [
+        "reimbursement",
+        "form"
+      ],
+      "holder": "Zheng"
+    },
+    "remote": {
+      "name": "projector remote",
+      "aliases": [
+        "remote"
+      ],
+      "holder": "Zheng"
+    }
+  },
+  "tasks": [
+    {
+      "id": "spare_charger",
+      "time": "2026-10-08 09:30",
+      "from": "Wu",
+      "instruction": "My laptop battery is almost dead and I left my charger at home. Please bring me a charger that works with my laptop.",
+      "goal": [
+        {
+          "item": "usbc_charger",
+          "to": "Wu"
+        }
+      ],
+      "design": "who holds a fitting charger is in the graph; the other charger owner is away and has the wrong type"
+    },
+    {
+      "id": "form_signature",
+      "time": "2026-10-08 10:10",
+      "from": "Zheng",
+      "instruction": "Please take my reimbursement form to my supervisor to be signed, then bring the signed form back to me.",
+      "goal": [
+        {
+          "item": "form",
+          "to": "Zheng",
+          "signed_by": "Gao"
+        }
+      ],
+      "design": "'my supervisor' resolves only through the supervision relation; three locker operations"
+    },
+    {
+      "id": "print_slides",
+      "time": "2026-10-08 11:00",
+      "from": "Wu",
+      "instruction": "Please print the slides I just sent you and bring the printout to my desk.",
+      "file": "group_meeting_slides.pdf",
+      "knows": {
+        "Wu": [
+          [
+            [
+              "slides",
+              "file",
+              "print"
+            ],
+            "I just sent you the slides file in this chat."
+          ]
+        ]
+      },
+      "goal": [
+        {
+          "item": "printout",
+          "to": "Wu"
+        }
+      ],
+      "design": "the printer is a guarded facility; who is on duty is in the graph; the file must be forwarded"
+    },
+    {
+      "id": "return_remote",
+      "time": "2026-10-08 14:00",
+      "from": "Lin",
+      "instruction": "The projector remote has not come back yet. Please collect it from whoever borrowed it and return it to my office.",
+      "goal": [
+        {
+          "item": "remote",
+          "to": "Lin"
+        }
+      ],
+      "design": "the borrower is recorded only as a lending relation in the graph"
+    }
+  ]
+}

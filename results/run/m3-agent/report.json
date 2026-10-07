@@ -1,0 +1,119 @@
+{
+  "case": "m3-agent",
+  "channels": {
+    "S->M": "each clip's episodic and semantic memories are inserted into the memory graph (memorization_memory_graphs.py:66-67)",
+    "M->S": "face and voice nodes kept from earlier clips identify the people in a new clip (face_processing.py:160, voice_processing.py:205)",
+    "M->A": "memories retrieved from the graph are returned to the control model (control.py:117-131)"
+  },
+  "steps": {},
+  "tests": [
+    {
+      "cut": [
+        "S->M"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 12,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "characters": {
+          "original": 3.4167,
+          "modified": 6.5
+        },
+        "correct": {
+          "original": 0.875,
+          "modified": 0.0
+        },
+        "empty_searches": {
+          "original": 0.25,
+          "modified": 8.0
+        },
+        "identities_reused": {
+          "original": 10.5,
+          "modified": 10.5
+        },
+        "text_memories": {
+          "original": 62.25,
+          "modified": 0.0
+        },
+        "control_rounds": {
+          "original": 2.5417,
+          "modified": 5.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->A"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 12,
+      "modified": 0,
+      "tie": 0,
+      "metrics": {
+        "characters": {
+          "original": 3.4167,
+          "modified": 3.4167
+        },
+        "correct": {
+          "original": 0.875,
+          "modified": 0.0
+        },
+        "empty_searches": {
+          "original": 0.25,
+          "modified": 8.0
+        },
+        "identities_reused": {
+          "original": 10.5,
+          "modified": 10.5
+        },
+        "text_memories": {
+          "original": 62.25,
+          "modified": 62.25
+        },
+        "control_rounds": {
+          "original": 2.5417,
+          "modified": 5.0
+        }
+      }
+    },
+    {
+      "cut": [
+        "M->S"
+      ],
+      "field": "output",
+      "pairs": 12,
+      "original": 6,
+      "modified": 1,
+      "tie": 5,
+      "metrics": {
+        "characters": {
+          "original": 3.4167,
+          "modified": 9.4167
+        },
+        "correct": {
+          "original": 0.875,
+          "modified": 0.7917
+        },
+        "empty_searches": {
+          "original": 0.25,
+          "modified": 1.5
+        },
+        "identities_reused": {
+          "original": 10.5,
+          "modified": 0.0
+        },
+        "text_memories": {
+          "original": 62.25,
+          "modified": 66.1667
+        },
+        "control_rounds": {
+          "original": 2.5417,
+          "modified": 3.1667
+        }
+      }
+    }
+  ]
+}

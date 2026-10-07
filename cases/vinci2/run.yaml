@@ -1,0 +1,16 @@
+# HALO run mode for Vinci2 / EgoMemo. Inputs and the backbone are fixed across arms; only the cut sites differ.
+models:
+  backbone: {backend: "codex:gpt-6-astra", effort: low}    # stands in for Qwen3-VL-8B (captions), GPT-5-mini (reasoning) and gpt-4o-mini (graph, query rewriting)
+  judge: {backend: "codex:gpt-6-astra", effort: high}
+samples: 3
+rubric: >-
+  EgoMemo runs on smart glasses. Every 30 seconds it adds what the wearer did to its memory and
+  decides whether to stay silent or give a short spoken reminder. The situation lists what the
+  glasses saw in each 30-second window and what would help the user. Decide which output serves
+  the user better. A needed reminder given at the right time beats a missed one. A reminder that is
+  wrong, unneeded, or repeats one already given counts against an output. Silence is right when
+  nothing warrants a reminder. Ignore wording and length.
+tests:
+  - cut: [S->M]
+  - cut: [M->A]
+  - cut: [A->M]

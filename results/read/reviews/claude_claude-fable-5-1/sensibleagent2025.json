@@ -1,0 +1,84 @@
+{
+  "id": "sensibleagent2025",
+  "configuration": "Sensible Agent WebXR prototype (paper Sec. 5) as run in the n=10 Android XR headset study (Sec. 7): on a trigger, one egocentric frame plus manually injected scenario variables (task familiarity, temporal urgency) is parsed into structured context (VLM + YAMNet, chain-of-thought); a GPT-4o prompt containing six similarity-selected few-shot exemplars from the authors' annotated pool returns the agent action, query format (multi-choice/binary/icon) and presentation modality; the UI manager/TTS delivers it; the input modality manager gates voice/head/hand/gaze responses; after confirmation or selection an LLM generates the follow-up utterance. Framework components that use user history (CONTEXT SIMILARITY MODULE, INTERACTION CONTEXT SIMILARITY MODULE) are explicitly not implemented in this configuration and are judged as absent. Wizard-of-Oz control in the study was limited to activation; core logic ran live.",
+  "sources_read": [
+    "https://arxiv.org/html/2509.09255v2 (paper, version 2509.09255v2) - read via WebFetch page-level extraction (which truncated after Sec. 8.1) plus per-section extraction of Secs. 4, 5.1, 5.2.2, 5.3, 7, 8.3, 9, 10 and Appendix B through a CSS-selector proxy (web.scraper.workers.dev) pointed at the same v2 URL",
+    "https://urltomarkdown.herokuapp.com/?url=https://arxiv.org/html/2509.09255v2 (readability conversion of the same v2 page, reached Sec. 10; used to cross-check Secs. 9-10)",
+    "https://arxiv.org/abs/2509.09255v2 (version history: v1 11 Sep 2025, v2 30 Oct 2025; CC BY 4.0)",
+    "https://ar5iv.labs.arxiv.org/html/2509.09255v2 (ar5iv rendering; version not confirmed and it lacks the v2 Sec. 7.2 Wizard-of-Oz sentences, so used only as a cross-check, not as the basis for any label)",
+    "cases/sensible-agent/case.yaml and cases/sensible-agent/README.md (configuration definition)",
+    "No code repository exists for this work (case file lists none)"
+  ],
+  "channels": {
+    "S->M": {
+      "label": "absent",
+      "rationale": "The prototype has no memory that admits sensed or user-supplied evidence. Sec. 9 states outright that the current prototype does not model user history or longitudinal preferences; the Sec. 4 preamble says context similarity based on long-term user history is envisioned design discussed as future directions; Sec. 8.3 says each proactive interaction is treated as a discrete event. The only persistent store, the annotated few-shot pool (Sec. 5.2.2, App. B), was built offline by the authors from a separate 40-participant annotation study with manually authored reasoning lines; the service never writes to it, and a static developer-built store does not establish a write path. The Sec. 6 'Learned Preferences' scenario (dismissal via head shake -> inferred preference -> later visits) is phrased as 'might'/'can' and is contradicted for this configuration by Sec. 9. Study-time scenario tags and manually injected variables are per-trial inputs, not retained state.",
+      "locator": "Sec. 9 para. 1; Sec. 4 intro para. 2; Sec. 8.3; Sec. 5.2.2 ('Few-shot examples', 'Few-shot selection'); Sec. 6 'Learned Preferences'",
+      "quote": "First, while our design supports personalization and contextual adaptation, our current prototype does not model user history or longitudinal preferences."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "The one retained store that reaches Action decisions is the static annotated exemplar pool: at each trigger, six exemplars are retrieved by contextual similarity to the current context and placed in the GPT-4o prompt that decides the agent action, query format and presentation modality (Sec. 5.2.2; App. B confirms every trial used '6 few-shot exemplars selected based on contextual similarity heuristics'). This is decision-time retrieval of information persisted across interactions, i.e. M->A by function, although the store is developer-curated and never updated by the service. The history-based M->A described for the framework (CONTEXT SIMILARITY MODULE drawing on 'a user context history and prior user actions'; PROACTIVE ACTION MODULE using 'user history of similar context') is explicitly not part of the prototype (Sec. 4 intro; Sec. 9), so the reported flow is limited to the static exemplar pool.",
+      "locator": "Sec. 5.2.2 ('Few-shot selection', 'At runtime'); App. B para. 1; Sec. 4.1; Sec. 4 intro; Sec. 9",
+      "quote": "We provide six exemplars, selected for contextual similarity—matching on high-level activity and at least one additional contextual category (e.g., SIID, social engagement, or familiarity)."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "Action decisions configure what the service senses next and how it interprets it. The chosen query format and presentation modality are passed to the interaction module, whose input modality manager enables only a subset of input recognizers; gating depends on 'the feasibility given the chosen output modality' (audio-only output suppresses gaze dwell), and recognizers are interpreted according to the query type (YES/NO versus ONE/TWO/THREE vocabulary; nod/shake detection for binary queries). Framework Secs. 4.2-4.3 state the same dependency (the WHAT output informs the HOW module; visual-only output makes gaze input non-viable). This is an in-system flow from Action (query type, output modality) to Sensing targets and interpretation, not an external grader.",
+      "locator": "Sec. 5.1 input-modality-manager paragraph; Fig. 3 caption steps (3)-(4); Sec. 5.3.1-5.3.2; Sec. 4.2 'Interaction Modality Adaption'; Sec. 4.3",
+      "quote": "Each modality is gated based on two criteria: the inferred contextual appropriateness (e.g., SIIDs (Liu et al., 2024a)) and the feasibility given the chosen output modality. ... Similarly, if a query is presented solely in audio form, gaze interaction is considered infeasible and suppressed."
+    },
+    "M->S": {
+      "label": "absent",
+      "rationale": "No retained prior reaches context parsing. Sec. 5.1 fully specifies the parsing layer's inputs: the extracted frame plus 'manually injected user-specific variables, such as task familiarity or temporal urgency', with chain-of-thought prompting; those variables are per-trial scenario tags or simulated sensor values (Sec. 5.2.2; Sec. 7.3), i.e. externally supplied observations rather than information the service retained. The paper explicitly states the prototype models no user history (Sec. 9) and that history-based context similarity is envisioned only (Sec. 4 intro; Sec. 4.2 'not yet implemented'), which closes the retained-prior route to Sensing. The static exemplar pool is described only as input to the query-generation prompt (Sec. 5.2.2), which is M->A, not a prior for sampling, attention, compression or interpretation. Trigger detection ('a pause in activity or gaze fixation') is not described as memory-guided either.",
+      "locator": "Sec. 5.1 paras. 1-2; Sec. 5.2.2 'At runtime'; Sec. 7.3; Sec. 9 para. 1; Sec. 4 intro; Sec. 4.2 'User Input Similarity'",
+      "quote": "The first layer uses the visual input along with manually injected user-specific variables, such as task familiarity or temporal urgency, to identify key contextual attributes."
+    },
+    "A->M": {
+      "label": "absent",
+      "rationale": "The service retains none of its own suggestions, selections, utterances or outcomes. Sec. 8.3 says Sensible Agent currently treats each proactive interaction as a discrete event; Sec. 9 says the prototype does not model user history; the framework's interaction-history component is 'not yet implemented' (Sec. 4.2) and adaptation through 'implicit feedback tracking' is future work (Sec. 8.3). Passing the structured context and the selected action to the response LLM (Sec. 5.1) is a within-interaction hand-off between Action stages, not retention. Logging of interaction time and modality (Sec. 7.3) was experimenter instrumentation for analysis, not a memory the service uses.",
+      "locator": "Sec. 8.3; Sec. 9 para. 1; Sec. 4.2 'User Input Similarity'; Sec. 5.1 last para.; Sec. 7.3",
+      "quote": "While Sensible Agent currently treats each proactive interaction as a discrete event, several participants attempted to engage in follow-up utterances or gestures, suggesting a desire for extended, multi-turn exchanges."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "not_stated",
+      "rationale": "No statement that the service keeps records of its own suggestions, formats, modalities or responses for later use; the prototype treats interactions as discrete events and models no history (Secs. 8.3, 9). The only logging reported is the experimenters' measurement of interaction time and modality per response (Sec. 7.3), a research trial log analysed by the authors, which does not count.",
+      "locator": "Sec. 7.3; Sec. 8.3; Sec. 9 para. 1",
+      "quote": "We also logged interaction time (from prompt trigger to system response) and recorded the modality used for each response."
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "The user's confirmation or selection is consumed immediately to generate the follow-up (Sec. 5.1), but nothing about replies, dismissals, ratings or results is retained by the service; Sec. 9 states that no user history or longitudinal preferences are modeled, and Sec. 8.3 lists implicit feedback tracking as a future extension. NASA-TLX, SUS and preference ratings were collected by the researchers, not obtained or retained by the service.",
+      "locator": "Sec. 5.1 last para.; Sec. 7.3-7.4; Sec. 8.3; Sec. 9 para. 1",
+      "quote": "future extensions could incorporate longer-term adaptation through techniques like reinforcement learning or implicit feedback tracking."
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "The only linkage described is the designed two-step dialogue: the agent presents a suggested query and the user confirms or modifies it, after which the selected action and context go to the response LLM (Secs. 5.1, 7.4). That is the basic input-to-action path (a pre-execution confirmation gate), not later evidence about a delivered action being tied back to the decision to check or correct assistance; the paper does not describe what the prototype does on a NO, head shake or thumbs-down, and no expected-effect check after the follow-up utterance is described. The one attribution-like behaviour, inferring a preference from a dismissal and acting on it at later visits (Sec. 6 'Learned Preferences'), is hypothetical ('might', 'can') and ruled out for the prototype by Sec. 9. Study scoring (interaction time, TLX, SUS) was offline analysis by the authors.",
+      "locator": "Sec. 5.1 last para.; Sec. 7.4 'Interaction Time'; Sec. 6 'Learned Preferences'; Sec. 9 para. 1",
+      "quote": "This trend is expected due to Sensible Agent's two-step interaction flow, where the system first presents a suggested query based on context and the user then confirms or modifies it, in contrast to the baseline system where users immediately issue a voice command."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No durable self-change to parameters, prompts, rules, code or harness is reported. Few-shot reasoning lines were manually authored by the authors (Sec. 5.2.2); history and preference-learning components are 'not yet implemented' (Sec. 4.2) or 'envisioned' (Sec. 4 intro); learning via reinforcement learning or implicit feedback (Sec. 8.3) and 'personalized, long-term recommendations' (Sec. 10) are future work. The Teachable Machine non-lexical sound classifier was trained once by the authors before deployment (Sec. 5.3.1), which is a developer change, not a service revision.",
+      "locator": "Sec. 5.2.2; Sec. 4 intro; Sec. 4.2 'User Input Similarity'; Sec. 5.3.1; Sec. 8.3; Sec. 10",
+      "quote": "While not yet implemented, INTERACTION CONTEXT SIMILARITY MODULE component would compare current input-related context to prior interaction patterns, helping refine modality decisions based on similarity to previously successful input conditions.",
+      "what": "Nothing is revised by the service. The prompt preamble, manually authored chain-of-thought lines, annotated exemplar pool, GPT-4o accessed via API, gesture/voice classifiers and modality-gating rules are all developer-authored and fixed."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Since no revision by the service is reported, no later run under a revised mechanism can be stated; all study trials ran the same fixed pipeline (Sec. 7.2: core agent logic 'fully functional', Wizard-of-Oz limited to activation), and long-term adaptation is explicitly deferred to future work (Secs. 9, 10).",
+      "locator": "Sec. 7.2; Sec. 9 para. 1; Sec. 10",
+      "quote": "Furthermore, extending the framework to provide more personalized, long-term recommendations based on inferred user goals and preferences presents an exciting direction."
+    }
+  },
+  "notes": "Judged the sensibleagent2025 configuration: the implemented WebXR prototype and its n=10 study, not the broader framework; framework-only components that use user history are counted as absent because the paper itself says they are not implemented (Sec. 4 intro, Sec. 4.2, Sec. 9). Sensing = trigger detection, frame extraction, context parsing (VLM, YAMNet, manually injected variables), and the voice/head/hand/gaze response recognizers; Memory = only the static developer-built exemplar pool; Action = query generation (action, format, modality), UI/TTS delivery, input-modality gating, and follow-up response generation. Method caveats: shell access was denied, so the raw HTML could not be downloaded or hash-checked against the case file; all text came through the WebFetch extraction model. The page-level fetch of the v2 HTML truncates after Sec. 8.1 (two fetches reported this), and an earlier page-level 'transcription' of Secs. 8.3 and 9 was fabricated by the extraction model and discarded; Secs. 8.3, 9, 10 and Appendix B were instead read via per-section selector extraction of the same v2 URL and cross-checked with a readability conversion of the v2 page. Every quote used was returned identically by at least two independent extraction passes or by a per-section extraction of short content, but byte-level verification against the page was not possible. The PDF exceeded the fetch tool's size limit. The case README displayed another reviewer's labels; I did not open that review file and formed these judgments from the sources alone.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 990,
+    "code_commit": null
+  }
+}

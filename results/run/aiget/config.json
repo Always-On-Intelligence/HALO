@@ -1,0 +1,44 @@
+{
+  "run": {
+    "models": {
+      "backbone": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "low"
+      },
+      "judge": {
+        "backend": "codex:gpt-6-astra",
+        "effort": "high"
+      }
+    },
+    "samples": 3,
+    "rubric": "The assistant runs on smart glasses and shows short knowledge suggestions about what the user sees. Decide which output is better tailored to this particular user: their stated values and non-interests, their background, and how familiar they would be with the place. Ignore writing quality and length. \"(nothing shown)\" means the assistant stayed silent, which is right when nothing suits the user.",
+    "tests": [
+      {
+        "cut": [
+          "M->S"
+        ]
+      },
+      {
+        "cut": [
+          "M->A"
+        ]
+      },
+      {
+        "cut": [
+          "M->S",
+          "M->A"
+        ]
+      },
+      {
+        "cut": [
+          "A->M"
+        ],
+        "field": "output_revisit",
+        "context_field": "context_revisit",
+        "rubric": "The assistant runs on smart glasses and shows short knowledge suggestions about what the user sees. The user is back at a place where suggestions were already shown (listed in the situation). Decide which output serves the user better on this second visit: new and useful information beats repeating or paraphrasing what was already shown. Ignore writing quality and length. \"(nothing shown)\" means the assistant stayed silent."
+      }
+    ]
+  },
+  "samples": 3,
+  "items_limit": null
+}

@@ -1,0 +1,15 @@
+id: philia
+name: "PHILIA"
+domain: physical
+kind: research
+report: https://arxiv.org/abs/2607.11377
+sources:
+  - url: https://arxiv.org/html/2607.11377v1
+    kind: paper
+    version: ""
+    sha256: 20e51b7e1ce435207f1fd50a72fd035f1c7591593c7a83a4a9d2d0df4bdb4b80
+variants:
+  - id: philia
+    label: "PHILIA"
+    configuration: "OpenClaw-based PHILIA assistant on Astribot S1 gateways; durable semantic state distinguished from 128-step policy buffers"
+modes: [read]

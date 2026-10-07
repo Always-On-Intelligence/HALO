@@ -1,0 +1,61 @@
+{
+  "note": "Scripted episodes for the Proactive Agent's Environment Gym. Each item pairs a gym scene from core/dataset/new_scenes_good.yaml (environment and user config, as gym/main.py loads from YAML) with a recorded ProactiveBench trace from core/dataset/test_data whose task matches the scene's user goal. The trace events, verbatim and grouped into batches, are the event stream: each batch is what the environment simulator would return (refine_events) for the user's next activity, and 'activity' is what the user simulator would return (generate_activities). 'user_info' is what update_info would return at setup. Event times follow the trace timestamps (shown in UTC+8, where the traces were recorded). 'needs_help' in the trace is the ProactiveBench annotation of the last event of a batch; it is used only for the label_agreement metric and is never sent to a model.",
+  "items": [
+    {
+      "id": "ruby_capitalize",
+      "scene": 0,
+      "trace": "dataset/test_data/code_11.json",
+      "user_info": {"name": "John", "age": 38, "job": "System administrator at an educational institution", "education": "Not specified",
+                    "characteristics": ["Proficient in Ruby, Perl, and Bash scripting", "Keeps the institution's systems running smoothly and securely", "Automates system maintenance tasks and performs security audits"],
+                    "identities": ["System administrator", "Script writer"]},
+      "batches": [
+        {"activity": "Open CheckName.rb in Visual Studio Code to start the script, then search Google for how to capitalize a person's name in Ruby.", "events": [0, 1]},
+        {"activity": "Open a search result and read the Stack Overflow discussion on capitalizing the first letter of a string in Ruby.", "events": [2, 3, 4]},
+        {"activity": "Look up how to write a function in Ruby, then go back to Visual Studio Code and start writing CheckName.rb.", "events": [5, 6, 7, 8]},
+        {"activity": "Search how to split and concatenate strings in Ruby, then write the code that splits the name and capitalizes each part.", "events": [9, 10, 11, 12, 13, 14]}
+      ]
+    },
+    {
+      "id": "java_palindrome",
+      "scene": 13,
+      "trace": "dataset/test_data/code_12.json",
+      "user_info": {"name": "Anil Kumar", "age": 31, "job": "Backend developer at an e-commerce company", "education": "Not specified",
+                    "characteristics": ["Expertise in Java, NoSQL databases, API development, and microservices architecture", "Focuses on designing efficient backend services and improving data retrieval times"],
+                    "identities": ["Backend developer", "Java programmer"]},
+      "batches": [
+        {"activity": "Open the browser and Visual Studio Code, then open isPalindrome.java to start the palindrome check.", "events": [0, 1, 2, 3, 4, 5, 6]},
+        {"activity": "Search Google for how to check whether a string is a palindrome in Java and read the results.", "events": [7, 8, 9, 10, 11]},
+        {"activity": "Go back to isPalindrome.java and write the palindrome-checking methods.", "events": [12, 13, 14]},
+        {"activity": "Compare my code with the Java palindrome program on GeeksforGeeks, then return to the editor.", "events": [15, 16]}
+      ]
+    },
+    {
+      "id": "fashion_brands",
+      "scene": 26,
+      "trace": "dataset/test_data/writing_11.json",
+      "user_info": {"name": "Sarah Kim", "age": 25, "job": "PR specialist", "education": "Not specified",
+                    "characteristics": ["Excellent communication and writing skills", "Experience in brand management and public relations", "Skilled with PR monitoring tools", "Writes press releases and media statements in professional, consistent formats"],
+                    "identities": ["PR specialist", "Writer"]},
+      "batches": [
+        {"activity": "Create brandResearch.md in Visual Studio Code and start my notes on sustainable fashion brands.", "events": [0, 1, 2]},
+        {"activity": "Search Google for sustainable fashion brands and read the Earthday.org article on fashion.", "events": [3, 4, 5, 6, 7]},
+        {"activity": "Take notes on Svala from its website, then look at Katla's eco-friendly loungewear.", "events": [8, 9, 10, 11, 12, 13]},
+        {"activity": "Record Katla's pricing, product range and market positioning in my notes.", "events": [14, 15, 16, 17, 18, 19]}
+      ]
+    },
+    {
+      "id": "remote_work_tools",
+      "scene": 51,
+      "trace": "dataset/test_data/writing_14.json",
+      "user_info": {"name": "Jordan Lee", "age": 36, "job": "Mid-level manager at a tech company", "education": "Not specified",
+                    "characteristics": ["Proficient in project management", "Keen interest in technology trends", "Works in a well-equipped workspace and uses many digital tools to gather and analyze data"],
+                    "identities": ["Manager", "Evaluator of remote work software"]},
+      "batches": [
+        {"activity": "Start browsing the web for remote work software and switch between the browser and Visual Studio Code.", "events": [0, 1, 2, 3, 4]},
+        {"activity": "Search Bing for remote work software and open the search results.", "events": [5, 6, 7, 8, 9]},
+        {"activity": "Keep exploring the Bing results and start typing notes on the tools I find.", "events": [10, 11, 12, 13]},
+        {"activity": "Read reviews and comparisons of remote desktop software, including an article that compares seven tools.", "events": [14, 15, 16, 17, 18, 19]}
+      ]
+    }
+  ]
+}

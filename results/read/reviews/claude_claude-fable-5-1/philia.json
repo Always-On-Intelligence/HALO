@@ -1,0 +1,80 @@
+{
+  "id": "philia",
+  "configuration": "OpenClaw-based PHILIA assistant (agent control plane with OpenClaw Markdown memory) driving Astribot S1 robot gateways, as described in arXiv 2607.11377v1. Memory = the durable semantic state: OpenClaw long-term memory files and dated notes plus the control plane's persistent semantic state (preferences, long-horizon plans, semantic place names, task history). The robot-local 128-timestep action-history buffers (Sec 2.4.2) and other robot-local execution state are treated as within-execution state, not cross-interaction Memory. Sensing = user input via messaging/voice/web plus robot-local observation, status and task-outcome summaries published through the gateway; Action = the control plane's cascade router, planner and capability dispatch.",
+  "sources_read": [
+    "https://arxiv.org/html/2607.11377v1 (arXiv HTML v1; Abstract, Sec 1 incl. contribution list, Sec 2.1-2.5, Sec 3.1-3.3, Sec 4 memory/personalization paragraph, Sec 5.1-5.3, Sec 6, captions of Fig. 1-5 and Tab. 1-2; read through the WebFetch extraction tool, with each quoted sentence re-verified verbatim in a separate extraction pass)",
+    "No code repository listed for this case; judged from the paper text alone."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "User-supplied evidence is written into durable memory: the Fig. 3 use case states that a preference the user told PHILIA is stored in memory and later retrieved, and Sec 2.4.1 states that durable user facts, preferences and persistent instructions are stored in long-term memory files while day-to-day interaction context is recorded as dated Markdown notes. This is a described write path from sensed user input to Memory, not a static benchmark profile.",
+      "locator": "Sec 3.3 'Agent-to-Policy Long-Term Memory Grounding' (Fig. 3); Sec 2.4.1 'Agentic Memory', first paragraph",
+      "quote": "the user previously told PHILIA that he usually has sandwiches and espresso for breakfast. PHILIA stores this preference in memory and later retrieves it as context when handling related robot tasks."
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Retrieved long-term memory (preferences, decisions, semantic locations, task history) is delivered to the agent control plane's task planning and capability dispatch. Sec 2.4.1 describes retrieval-on-demand feeding reasoning and the sugar-free/low-calorie example where retrieved memory shapes the afternoon-tea plan; Sec 3.3 and the Fig. 3 caption state that PHILIA retrieves long-term user preferences to guide related robot task execution.",
+      "locator": "Sec 2.4.1 'Agentic Memory', paragraphs 1-2; Sec 3.3 'Agent-to-Policy Long-Term Memory Grounding'; Fig. 3 caption",
+      "quote": "This retrieval-on-demand design preserves a compact working context while enabling previously acquired preferences, decisions, semantic locations, task history, and other long-term knowledge to be incorporated into reasoning whenever they become relevant."
+    },
+    "A->S": {
+      "label": "reported",
+      "rationale": "The control plane's plans and information needs direct observation: during planning the agent queries the robot for the current scene and formulates gateway-mediated perception requests; execution is interleaved with perception so intermediate observations are gathered to guide subsequent steps, with retries/recovery decided from action outcomes; and before dispatch the control plane performs readiness checks against the gateway's published state (connectivity, localization, posture, map availability). These are in-system, intention-driven sensing targets and precondition/expected-effect checks, not an external grader.",
+      "locator": "Sec 2.4.1 'Agentic Memory', paragraph 2; Sec 2.2 'Plans and Workflows'; Sec 2.1 'Preliminaries', paragraph 3; Sec 2.2 'Safety Envelope'",
+      "quote": "The agent incorporates this information into task planning, queries the robot for the current scene, and formulates appropriate gateway-mediated perception and manipulation requests."
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "No flow of durable memory into sensing is described. Retrieved memory is delivered only to the agent control plane as semantic context for planning; the agent integrates it with current observations at decision time (M->A), and the memory-triggered scene query is the composition M->A->S, which does not establish M->S. Robot-local perception is stated to remain the runtime's responsibility and manipulation policies are not required to incorporate memory, but the paper does not explicitly exclude memory priors from all interpretation of observations (e.g., agent-side scene reasoning), so the route is undetermined rather than absent. The 128-timestep action-history injection in Sec 2.4.2 is within-execution policy state, not cross-interaction Memory under the judged configuration, and the robot-local saved map/anchor pose is applied to saved place poses for navigation planning, not to sensor interpretation.",
+      "locator": "Sec 2.4.1 'Agentic Memory', paragraph 2; Sec 2.3 'Capability Exposure'; Sec 2.4.2 'Policy Memory'; Sec 2.5 'Per-Session Re-localization Calibration'",
+      "quote": "Retrieved memories are not interpreted as direct robot commands or as the sole source of physical truth; instead, they provide semantic context for the agent control plane."
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Action context is retained: the agent control plane maintains persistent semantic state that includes long-horizon plans and task history, Sec 2.4.1 lists previously acquired decisions and task history among the long-term knowledge retrieved from memory, and day-to-day interaction context is recorded as dated Markdown notes. Plans, decisions and task history are outputs of the Action function delivered to Memory for later retrieval. The write mechanism is described only at the level of OpenClaw memory files, with no code to confirm it.",
+      "locator": "Sec 2.2 'Semantic State and Long-Horizon Context'; Sec 2.4.1 'Agentic Memory', paragraph 1",
+      "quote": "The agent control plane maintains persistent semantic state, including user preferences, long-horizon plans, semantic place names, and task history, while robot-local runtimes retain high-frequency execution state, such as sensor streams, maps, coordinate frames, and policy buffers."
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service retains records of its own decisions and tasks for later use: the control plane keeps long-horizon plans and task history as persistent semantic state, and decisions and task history are among the long-term knowledge later retrieved from memory. These are service-kept records, not author-only trial logs.",
+      "locator": "Sec 2.2 'Semantic State and Long-Horizon Context'; Sec 2.4.1 'Agentic Memory', paragraph 1",
+      "quote": "enabling previously acquired preferences, decisions, semantic locations, task history, and other long-term knowledge to be incorporated into reasoning whenever they become relevant"
+    },
+    "outcome": {
+      "label": "stated",
+      "rationale": "Later evidence about dispatched actions is obtained in-system: robot gateways publish task outcomes and execution-state summaries to the control plane, which acts on action outcomes, and users give human-in-the-loop confirmation or adjustment during execution. Retention of outcomes is stated only indirectly, through the persistent task history and dated interaction notes; the paper does not detail what the task history contains.",
+      "locator": "Sec 2.2 'Semantic State and Long-Horizon Context'; Sec 2.2 'Plans and Workflows'; Abstract",
+      "quote": "Robot gateways exchange only lightweight semantic summaries, including capability readiness, place manifests, and task outcomes."
+    },
+    "attribution": {
+      "label": "stated",
+      "rationale": "Outcomes are linked to the capability invocation they concern and used immediately to correct assistance: the control plane handles retries, recovery, or termination based on action outcomes and feeds intermediate observations into subsequent decisions. This is an in-system immediate check, which counts even though durable use of the outcome is not described; the author-side routing benchmark in Sec 3.1 is not counted.",
+      "locator": "Sec 2.2 'Plans and Workflows'; Sec 2.1 'Preliminaries', paragraph 3",
+      "quote": "The agent control plane schedules execution, incorporates intermediate observations to guide subsequent decisions, and handles retries, recovery, or termination based on action outcomes."
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No durable change to the service's own mechanism by the service is described. Memory files hold user facts, preferences and persistent instructions, which are content consumed by a fixed retrieval mechanism, and persistent instructions originate from the user. Policy improvement (SFT, advantage-conditioned offline RL on rollouts with human interventions) is performed by the authors, who collect the data, inspect its statistics and run training; the contribution claim that robot-local policies can be continuously improved refers to developer-side upgrades behind stable interfaces. No self-modified prompts, skills, rules, code, or parameters are reported.",
+      "locator": "Sec 2.3 'Closing the Deployment Loop'; Sec 2.4.1 'Agentic Memory'; Sec 1 contribution list (4th bullet); Sec 5.1 'Core Design Tradeoffs'",
+      "quote": "we collect autonomous rollouts from the deployed SFT policy and augment them with corrective human interventions when necessary, thereby enriching the training distribution around failure states.",
+      "what": "Nothing is revised by the service itself. Developer-run post-training of robot-local manipulation policies (Sec 2.3) and user-supplied preferences/instructions stored as memory content (Sec 2.4.1) do not qualify."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "Because no service-made revision is reported, there is no report of later steps running under a revised mechanism. Post-trained policies are deployed and used (e.g., Fig. 5), but they are developer-produced updates, and the paper explicitly limits itself to architectural design and representative use cases, deferring sustained-operation evaluation to future work.",
+      "locator": "Sec 5.3 'Limitations and Future Work'; Sec 3.3 'Plug-and-Play Policy Execution'",
+      "quote": "This work focuses on architectural design and representative real-world use cases, not large-scale controlled benchmarking."
+    }
+  },
+  "notes": "Judged the single configuration named in case.yaml (OpenClaw-based PHILIA on Astribot S1 gateways). Primary source: arXiv HTML v1 only; no code repository. Bash was unavailable, so the text was obtained through the WebFetch extraction tool; every quoted sentence was returned identically in at least two independent extractions and re-confirmed in a dedicated verbatim-check pass, so quotes are treated as verbatim. Functional mapping: Sensing = messaging/voice/web user input plus robot-local observation, status and task-outcome summaries published through gateways; Memory = OpenClaw Markdown long-term files and dated notes plus the control plane's persistent semantic state; Action = the control plane's cascade router, planner and capability dispatch. The 128-timestep policy history buffers are robot-local within-execution state and were not treated as Memory. Dispatch benchmarks (Sec 3.1-3.2) are author-side evaluation and did not count toward any step.",
+  "_meta": {
+    "backend": "claude:claude-fable-5-1",
+    "effort": "max",
+    "seconds": 465,
+    "code_commit": null
+  }
+}

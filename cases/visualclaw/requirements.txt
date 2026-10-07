@@ -1,0 +1,4 @@
+# VisualClaw arena loop: config loader (yaml) and the skill evolver module import (httpx).
+# No model SDKs: the agent backend and the evolver client are replaced by the HALO backbone.
+pyyaml
+httpx

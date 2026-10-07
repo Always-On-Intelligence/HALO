@@ -1,0 +1,25 @@
+{
+  "note": "Fictional emails for the EAIA run-mode test. Every email needs a reply from Alex; none asks to schedule a meeting. Rules exercised: R1-R3 in all, R4 in deadline asks, R5 in partnership asks.",
+  "train": [
+    {"id": "t1", "from_email": "priya.nair@northwind.io", "to_email": "alex@lumen.dev", "subject": "SDK bug fix timing",
+     "page_content": "Hi Alex,\n\nFollowing up on the SDK crash we reported last week. Can you tell us when the patch will ship? Our launch is on the 20th and we would like to plan around it.\n\nThanks,\nPriya"},
+    {"id": "t2", "from_email": "marco.bianchi@stackline.com", "to_email": "alex@lumen.dev", "subject": "Co-hosting a webinar?",
+     "page_content": "Hey Alex,\n\nLoved your talk at DevWeek. Would Lumen be up for co-hosting a webinar with Stackline on testing agent tools? We could split the promotion.\n\nBest,\nMarco"},
+    {"id": "t3", "from_email": "ali.hassan@brightfield.ai", "to_email": "alex@lumen.dev", "subject": "Integration is working",
+     "page_content": "Alex,\n\nJust a note to say thanks for the quick help yesterday. The integration works now and the team is happy.\n\nAli"},
+    {"id": "t4", "from_email": "dana.kim@lumen.dev", "to_email": "alex@lumen.dev", "subject": "Pricing page draft",
+     "page_content": "Hi Alex,\n\nThe new pricing page draft is in the shared folder. Could you send me your comments by Wednesday so we can publish next week?\n\nDana"},
+    {"id": "t5", "from_email": "chris.okafor@devtoolssummit.org", "to_email": "alex@lumen.dev", "subject": "Sponsoring DevTools Summit",
+     "page_content": "Dear Alex,\n\nWe would be delighted to have Lumen as a sponsor of this year's DevTools Summit. Our packages range from a booth to a keynote slot. Would you be interested?\n\nKind regards,\nChris Okafor"}
+  ],
+  "test": [
+    {"id": "e1", "from_email": "olivia.grant@meridianbank.com", "to_email": "alex@lumen.dev", "subject": "SSO availability",
+     "page_content": "Hello Alex,\n\nOur security audit is in two weeks. Will single sign-on be available before then? We need a date to tell the auditors.\n\nRegards,\nOlivia Grant"},
+    {"id": "e2", "from_email": "ben.carter@launchpadvc.com", "to_email": "alex@lumen.dev", "subject": "Demo day sponsors",
+     "page_content": "Hi Alex,\n\nOur accelerator is looking for a few sponsors for demo day next month. Given Lumen's audience, we thought you might be a great fit. Interested?\n\nBen"},
+    {"id": "e3", "from_email": "sofia.reyes@seattledevs.org", "to_email": "alex@lumen.dev", "subject": "Thank you for speaking",
+     "page_content": "Hi Alex!\n\nThank you so much for speaking at our meetup last night. The community loved the demo and several people asked for the slides.\n\nSofia"},
+    {"id": "e4", "from_email": "hannah.lee@cloudpeak.io", "to_email": "alex@lumen.dev", "subject": "Q1 co-marketing",
+     "page_content": "Hi Alex,\n\nCloudPeak is planning a co-marketing campaign for Q1 with a few developer-tool companies. Would Lumen like to join? We would love to feature your product.\n\nThanks,\nHannah"}
+  ]
+}

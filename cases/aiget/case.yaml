@@ -1,0 +1,18 @@
+id: aiget
+name: "AiGet"
+domain: wearable
+kind: research
+report: https://arxiv.org/abs/2501.16240
+sources:
+  - url: https://arxiv.org/html/2501.16240v2
+    kind: paper
+    version: "2501.16240v2"
+    sha256: 9b7849dfc20e5c672623a0a075f36b0e9c1d996b4ca38f7df280f41932ac3c91
+code:
+  repo: https://github.com/Synteraction-Lab/AiGet
+  commit: 92b17f82a4e54965fc40ce9ea21e919a753ab6b7
+variants:
+  - id: aiget
+    label: "AiGet"
+    configuration: "Gemini-based AiGet prototype with participant-provided profile, focus/familiarity rules, and interaction history"
+modes: [read, run]

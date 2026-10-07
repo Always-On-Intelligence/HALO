@@ -1,0 +1,4 @@
+{
+  "note": "Order of the scripted VisualClawArena scenarios (one item each).",
+  "items": ["lab_stockroom", "kitchen_labels", "bike_fleet", "site_safety"]
+}

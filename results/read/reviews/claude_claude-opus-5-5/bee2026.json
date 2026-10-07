@@ -1,0 +1,80 @@
+{
+  "id": "bee2026",
+  "configuration": "bee2026: Bee as shipped according to the Amazon article 'Building Bee at Amazon: How the wearable AI device is evolving' (the case gives the configuration date as September 22; the fetched text shows no date) and the live Bee CLI MCP and API-proxy docs. Included: wearable conversation capture started and stopped with a button press, with real-time transcription and no stored audio, plus Voice Notes; a retained personal store of conversations and transcripts, conversation and daily summaries, facts (create, update, confirm, delete), todos, and to-do suggestions that can be accepted or dismissed; Daily Insights; and Actions (drafting emails, creating calendar invites). Templates are excluded because the article says they 'will deliver' summaries, which is future work. External MCP and proxy clients (Claude, Claude Code, Codex, local apps) were treated as readers of Bee's store, not as part of Bee's own Action module.",
+  "sources_read": [
+    "https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features (case.yaml pins no version; live page read 2026-10-07 through WebFetch). Sections read: Key takeaways; introduction; What we've learned; Accelerating with Amazon, including the Actions, Daily Insights, Voice Notes and Templates bullets and the privacy paragraph; Building ambient AI.",
+    "https://docs.bee.computer/docs/mcp (no version pinned; live page read 2026-10-07). Sections read: Connect quickly to Claude, Claude Code, or Codex; What this is; Connectors; Transports (stdio, HTTP, serve-http security); the Tool catalog table and the notes after it; See also.",
+    "https://docs.bee.computer/docs/proxy (no version pinned; live page read 2026-10-07). Sections read: API; Usage; Options; Proxy Authentication; API Reference (User, Changes, Facts, Todos, Journals, Conversations, Daily Summaries, Search, Streaming); Direct API (No Proxy)."
+  ],
+  "channels": {
+    "S->M": {
+      "label": "reported",
+      "rationale": "Captured and user-supplied evidence goes into a retained store. Worn capture adds conversations to a picture of the user's life that keeps growing. Voice Notes become part of Bee's understanding of the user. Transcripts and conversation summaries are kept until the customer deletes them; only the audio is not stored. Users or connected assistants can also add facts (POST /v1/facts) and confirm or correct them (bee_update_fact with confirmed: true; PUT /v1/facts/:id). That is user-supplied admission and correction of memory.",
+      "locator": "aboutamazon.com article: introduction paragraph starting 'Bee is the wearable AI that understands you'; the Voice Notes bullet and the privacy paragraph under 'Accelerating with Amazon'. docs.bee.computer/docs/mcp: 'Tool catalog', notes after the table. docs.bee.computer/docs/proxy: 'API Reference > Facts' code block.",
+      "quote": "[article, intro] \"As you wear it throughout the day, it captures your conversations, understands your commitments, and builds a picture of your life that grows richer over time.\" [article, Voice Notes bullet] \"They all become part of Bee's understanding of you, easily accessible whenever you need them.\" [article, privacy paragraph] \"Customers can also delete their personal data, including transcripts and summaries of conversations, at any time.\" [mcp, Tool catalog] \"To confirm a fact over MCP, call `bee_update_fact` with `confirmed: true`; `text` can be omitted and Bee preserves the existing fact text.\""
+    },
+    "M->A": {
+      "label": "reported",
+      "rationale": "Daily Insights is a shipped way of communicating with the user. Its content comes from retained history covering weeks to months (conversations, emails, calendar data, HealthKit metrics), and it recommends personalized goals. The key takeaway also links what Bee has learned from shared information to 'personalized insights and suggested actions'. Actions are triggered by a current mention, and the sources do not say whether they use retained memory, so this label rests on Insights and suggestions.",
+      "locator": "aboutamazon.com article: Key takeaways, bullet 1; 'What we've learned', paragraph 2; 'Accelerating with Amazon', Daily Insights bullet.",
+      "quote": "[article, What we've learned] \"Bee surfaces insights across months of conversations, emails, calendar data, and health metrics from HealthKit—things that would otherwise go unnoticed.\" [article, Daily Insights bullet] \"Daily Insights surfaces patterns you'd never catch yourself: trends in how you're feeling, shifts in your relationships, themes that recur across weeks and recommends personalized goals to help you act on what matters.\" [article, Key takeaways] \"Bee learns from conversations, emails, and other information you choose to share to provide personalized insights and suggested actions.\""
+    },
+    "A->S": {
+      "label": "insufficient",
+      "rationale": "No source says that Action's intentions, plans, information needs or execution state steer what Bee captures or how it interprets it. The user starts and stops capture with the button. Actions draft emails and create invites, but no follow-up observation or check of the expected effect is described. Bee reads email and calendar data for insights, but the sources do not connect that reading to Bee's own Actions. Reads such as bee_get_current_location are requests from external MCP or proxy clients, and the docs do not say they trigger or steer new acquisition. Nothing explicitly rules the route out, so the label is insufficient, not absent.",
+      "locator": "aboutamazon.com article: introduction ('A single press of the button…'); Actions bullet under 'Accelerating with Amazon'. docs.bee.computer/docs/mcp: 'Tool catalog' table.",
+      "quote": "[article, intro] \"A single press of the button starts and stops capturing, with a green LED to indicate when the device is recording.\" [article, Actions bullet] \"When you mention needing to send an email or schedule a meeting, Bee can draft the email, create the invite, and handle it for you.\""
+    },
+    "M->S": {
+      "label": "insufficient",
+      "rationale": "The sources never say that retained facts, past conversations or the growing 'picture of your life' are fed back into capture, or into how new conversations are transcribed or read for commitments. The documented uses of retained data are search, related conversations, daily summaries and insights, which are retrieval for Action (M→A). Nothing explicitly rules the route out, so the label is insufficient.",
+      "locator": "aboutamazon.com article: introduction. docs.bee.computer/docs/mcp: 'Tool catalog' (bee_search, bee_get_related_conversations). docs.bee.computer/docs/proxy: 'API Reference'.",
+      "quote": "[article, intro] \"As you wear it throughout the day, it captures your conversations, understands your commitments, and builds a picture of your life that grows richer over time.\""
+    },
+    "A->M": {
+      "label": "reported",
+      "rationale": "Bee's own outputs are written to its store and kept there. To-do suggestions (Bee's proposed to-dos; compare the article's 'suggested actions') stay retrievable until the user accepts or dismisses them. Insights are stored items that can be listed and fetched by id. Daily summaries and conversation summaries are kept until the customer deletes them. So assistant outputs (suggestions, insights, summaries) reach Memory and are retained. The sources do not say whether Actions' drafted emails or created invites are recorded in Bee's store.",
+      "locator": "docs.bee.computer/docs/mcp: 'Tool catalog' table rows for todo suggestions and insights. docs.bee.computer/docs/proxy: 'API Reference' paragraph on forwarded developer endpoints. aboutamazon.com: privacy paragraph under 'Accelerating with Amazon'.",
+      "quote": "[mcp, Tool catalog table rows] \"bee_get_todo_suggestions\" → \"bee todos suggestions\"; \"bee_accept_todo_suggestion\" → \"bee todos accept-suggestion\"; \"bee_dismiss_todo_suggestion\" → \"bee todos dismiss-suggestion\"; \"bee_get_insights\" → \"bee insights list\"; \"bee_get_insight\" → \"bee insights get\". [proxy, API Reference] \"additional developer endpoints (for example `insights`, `locations`, `photos`, `todoSuggestions`, `conversations/:id/related`, `search/conversations`, `journals`, and `todayBrief`) are forwarded the same way.\""
+    }
+  },
+  "steps": {
+    "record": {
+      "label": "stated",
+      "rationale": "The service keeps what it suggested and delivered as product data for later use. Its to-do suggestions stay retrievable until the user accepts or dismisses them. Insights are stored items that can be listed and fetched by id. Daily summaries and conversation summaries are kept. The user, the CLI and connected assistants all use these records later, from 'the same data'; they are not research logs analysed only by the authors. No record of the emails Actions draft or the invites they create is described.",
+      "locator": "docs.bee.computer/docs/mcp: 'Tool catalog' (opening sentence and table rows). docs.bee.computer/docs/proxy: 'API Reference' (forwarded endpoints include todoSuggestions and insights). aboutamazon.com: privacy paragraph.",
+      "quote": "[mcp, Tool catalog] \"Every read, search, and manage capability in the CLI is exposed as an MCP tool, so the CLI and your assistant work from the same data.\" Table rows: \"bee_get_todo_suggestions\" → \"bee todos suggestions\"; \"bee_get_insights\" → \"bee insights list\"; \"bee_get_insight\" → \"bee insights get\"; \"bee_list_daily_summaries\" → \"bee daily list\". [article, privacy paragraph] \"Customers can also delete their personal data, including transcripts and summaries of conversations, at any time.\""
+    },
+    "outcome": {
+      "label": "not_stated",
+      "rationale": "The documented tools show that Bee receives the user's acceptance or dismissal of its to-do suggestions. No source says that response is kept as evidence about the suggestion: no suggestion status or history is shown, no link from a todo back to its suggestion, and what dismissal does is not documented. Todo completion and fact confirmation are stored as user task state and memory content, not as outcomes of Bee's actions. No receipt or result for Actions is described.",
+      "locator": "docs.bee.computer/docs/mcp: 'Tool catalog' table. docs.bee.computer/docs/proxy: 'API Reference > Todos' code block. aboutamazon.com: Actions bullet.",
+      "quote": "[mcp, Tool catalog table rows] \"bee_accept_todo_suggestion\" → \"bee todos accept-suggestion\"; \"bee_dismiss_todo_suggestion\" → \"bee todos dismiss-suggestion\". [proxy, Todos code block] {\"text\": \"Updated todo\", \"completed\": true, \"alarm_at\": null}"
+    },
+    "attribution": {
+      "label": "not_stated",
+      "rationale": "No source says Bee ties an acceptance, dismissal, todo completion, fact confirmation or Action result back to the decision that produced it in order to check or correct its help. For example, nothing describes verifying that an email was sent or an invite created, or adjusting later suggestions.",
+      "locator": "aboutamazon.com: 'Accelerating with Amazon' (Actions and Daily Insights bullets). docs.bee.computer/docs/mcp: Tool catalog. docs.bee.computer/docs/proxy: API Reference.",
+      "quote": "[article, Actions bullet] \"When you mention needing to send an email or schedule a meeting, Bee can draft the email, create the invite, and handle it for you.\""
+    },
+    "revision": {
+      "label": "not_stated",
+      "rationale": "No source reports Bee changing its own model, prompts, rules, skills or code based on outcomes. 'Learns … continuously' is a marketing-level claim. What builds up over time is user content (transcripts, summaries, facts, todos, insights) used by a fixed mechanism. Developer-shipped features (Actions, Daily Insights, Voice Notes) and the future Templates are not changes the service makes to itself.",
+      "locator": "aboutamazon.com article: introduction and Key takeaways.",
+      "quote": "\"Bee learns from your daily patterns continuously to provide personalized insights that can empower you throughout your daily life.\" ; \"There's no setup, no training, no manual input.\"",
+      "what": "None reported. The stored facts, transcripts, summaries and insights are content, not a change to the mechanism."
+    },
+    "later_use": {
+      "label": "not_stated",
+      "rationale": "No revision is reported, so no source says later runs used a revised mechanism. Later use of retained content, such as insights drawn from months of data, is M→A, not use of a revised mechanism.",
+      "locator": "aboutamazon.com article (all sections); docs.bee.computer/docs/mcp; docs.bee.computer/docs/proxy."
+    }
+  },
+  "notes": "Text-only review: this work has no public code repository. WebFetch would not return whole pages word for word, so I extracted text section by section. I then re-checked every quote used here in separate string-match passes that mixed in deliberately altered control strings, and every alteration was detected. Curly versus straight apostrophes and dash characters may differ from the rendered pages. None of the three pages shows a publication or version date, so I judged the live text as the September 22 documentation. I opened the case README while locating case.yaml, and it shows one earlier agent's labels; I read no review files, and every label here comes from the sources. Main uncertainty is Outcome: the docs show acceptance and dismissal of Bee's to-do suggestions, but not that the response is kept as evidence about the suggestion. A reader who counts the persisted state change itself as retention would mark Outcome stated.",
+  "_meta": {
+    "backend": "claude:claude-opus-5-5",
+    "effort": "max",
+    "seconds": 718,
+    "code_commit": null
+  }
+}
