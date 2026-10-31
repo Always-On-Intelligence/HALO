@@ -52,7 +52,7 @@ def ellipse(cx, cy, z, r, cls, n=96):
     return line(pts, cls)
 
 
-PERIOD = 10.0  # seconds per cycle
+PERIOD = 6.0  # seconds per cycle
 
 
 def pace(*points):
@@ -64,9 +64,9 @@ def pace(*points):
     return ';'.join(times), ';'.join(values)
 
 
-def fade(start, end=9.2, shown=1):
+def fade(start, end=5.4, shown=1):
     """Opacity 0 until `start`, `shown` until `end`, then 0 again, on the shared cycle."""
-    kt, vals = pace((0, 0), (start, 0), (start + 0.25, shown), (end, shown), (end + 0.5, 0), (PERIOD, 0))
+    kt, vals = pace((0, 0), (start, 0), (start + 0.2, shown), (end, shown), (end + 0.35, 0), (PERIOD, 0))
     return (f'<animate attributeName="opacity" dur="{PERIOD}s" repeatCount="indefinite" calcMode="linear" '
             f'keyTimes="{kt}" values="{vals}"/>')
 
@@ -129,12 +129,12 @@ def scene():
     out.append(ellipse(*ring_c, 8.45, 4.6, 'ring2'))
 
     # animation: three steps cross three channels, each is logged up to the ring
-    steps = [('ch-sm', 0.4, 'M', 'S→M'), ('ch-ma', 2.6, 'A', 'M→A'), ('ch-as', 4.8, 'S', 'A→S')]
+    steps = [('ch-sm', 0.25, 'M', 'S→M'), ('ch-ma', 1.55, 'A', 'M→A'), ('ch-as', 2.85, 'S', 'A→S')]
     beads = [112, 72, 32]
     rx, ry = iso(ring_c[0] + 4.6 * math.cos(math.radians(-45)), ring_c[1] + 4.6 * math.sin(math.radians(-45)), 8.2)
     lx, ly = rx + 26, ry - 34
     for k, (pid, t0, dest, name) in enumerate(steps):
-        length = 1.0 if pid != 'ch-as' else 1.3
+        length = 0.6 if pid != 'ch-as' else 0.8
         out.append(travel(pid, t0, length))
         arrive = t0 + length
         # the channel list beside the ring: grey until a step has crossed the channel, then solid
@@ -147,13 +147,13 @@ def scene():
         cx, cy = centers[dest]
         bottom, top = iso(cx, cy, 1.9), iso(cx, cy, 8.2)
         out.append(line([bottom, top], 'track', f' id="up-{k}"'))
-        out.append(travel(f'up-{k}', arrive, 0.6))
+        out.append(travel(f'up-{k}', arrive, 0.4))
         # the ring keeps a bead for each logged event
         a = math.radians(beads[k])
         bx, by = iso(ring_c[0] + 4.6 * math.cos(a), ring_c[1] + 4.6 * math.sin(a), 8.2)
-        out.append(f'<circle class="bead" cx="{bx:.1f}" cy="{by:.1f}" r="4" opacity="0">{fade(arrive + 0.6)}</circle>')
+        out.append(f'<circle class="bead" cx="{bx:.1f}" cy="{by:.1f}" r="4" opacity="0">{fade(arrive + 0.4)}</circle>')
     # the ring brightens once the three steps are in the trace, as a report would
-    out.append(f'<g opacity="0">{ellipse(*ring_c, 8.2, 4.6, "ring-on")}{fade(7.4, shown=0.9)}</g>')
+    out.append(f'<g opacity="0">{ellipse(*ring_c, 8.2, 4.6, "ring-on")}{fade(4.3, shown=0.9)}</g>')
     return out
 
 

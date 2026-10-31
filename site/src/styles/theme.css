@@ -219,3 +219,8 @@ site-search button[data-open-modal] {
 	font-size: var(--sl-text-xs);
 	color: var(--sl-color-gray-3);
 }
+
+/* Keep short labels in a table's first column on one line (Chinese labels would otherwise break per character) */
+.sl-markdown-content :is(th, td):first-child {
+	min-width: 4.5em;
+}

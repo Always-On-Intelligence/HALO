@@ -89,4 +89,4 @@ e4 [day2] act: reminded at 9:30 (uses e3) {trigger=self, form=communication}
 
 ### `halo_guide`
 
-返回给智能体的使用说明，与服务器在 MCP 中作为 instructions 发送的文本相同。这个工具不接受参数。
+返回给智能体的说明，与服务器作为 MCP 说明发送的文字相同。这个工具不接受参数。

@@ -34,7 +34,7 @@ Action: something the agent does for the user, or a decision to stay silent.
 
 | Parameter | Type | Default | Meaning |
 |---|---|---|---|
-| `trigger` | `request` or `self`, required | | `request` if the user asked for it or set it up, including steps inside a run the user scheduled. `self` only if nothing the user asked or scheduled started it and the agent decided on its own whether to act |
+| `trigger` | `request` or `self`, required | | `request` if the user asked for it or set it up, including steps inside a run the user requested or scheduled. `self` only if nothing the user asked or scheduled started it and the agent decided on its own whether to act |
 | `form` | `silence`, `communication`, `preparation`, or `execution` | `communication` | what kind of action it was |
 
 ### `halo_outcome`

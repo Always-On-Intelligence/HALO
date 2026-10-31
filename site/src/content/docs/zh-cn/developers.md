@@ -36,7 +36,7 @@ tests/                unit tests, including tests/test_mcp.py for the plugin
 .venv/bin/python -m pytest -q tests/
 ```
 
-`tests/test_mcp.py` 重放[快速开始](/HALO/zh-cn/quickstart/)中为期三天的提醒轨迹，并检查：去掉某个等级的条件后，报告的等级会随之下降。
+`tests/test_mcp.py` 重放[快速上手](/HALO/zh-cn/quickstart/)中为期三天的提醒轨迹，并检查：去掉某个等级的条件后，报告的等级会随之下降。
 
 ## 添加运行模式案例
 

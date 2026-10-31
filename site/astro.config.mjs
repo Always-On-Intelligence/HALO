@@ -44,7 +44,7 @@ export default defineConfig({
 			plugins: [
 				starlightSidebarTopics([
 					{
-						label: { en: 'Guide', 'zh-cn': '指南' },
+						label: { en: 'Guide', 'zh-cn': '指南', 'zh-CN': '指南' },
 						link: '/overview/',
 						icon: 'open-book',
 						items: [
@@ -69,25 +69,25 @@ export default defineConfig({
 						],
 					},
 					{
-						label: { en: 'Survey results', 'zh-cn': '论文结果' },
+						label: { en: 'Survey results', 'zh-cn': '论文结果', 'zh-CN': '论文结果' },
 						link: '/results/',
 						icon: 'document',
 						items: ['results', 'results/research', 'results/products'],
 					},
 					{
-						label: { en: 'MCP reference', 'zh-cn': 'MCP 参考' },
+						label: { en: 'MCP reference', 'zh-cn': 'MCP 参考', 'zh-CN': 'MCP 参考' },
 						link: '/reference/tools/',
 						icon: 'puzzle',
 						items: ['reference/tools', 'reference/report', 'reference/server'],
 					},
 					{
-						label: { en: 'CLI reference', 'zh-cn': '命令行参考' },
+						label: { en: 'CLI reference', 'zh-cn': '命令行参考', 'zh-CN': '命令行参考' },
 						link: '/cli/',
 						icon: 'seti:shell',
 						items: ['cli'],
 					},
 					{
-						label: { en: 'Developers', 'zh-cn': '开发者' },
+						label: { en: 'Developers', 'zh-cn': '开发者', 'zh-CN': '开发者' },
 						link: '/developers/',
 						icon: 'setting',
 						items: ['developers', 'developers/contributing'],

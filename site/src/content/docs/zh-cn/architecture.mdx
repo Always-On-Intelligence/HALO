@@ -16,7 +16,7 @@ import ArchitectureFigure from '../../../components/ArchitectureFigure.astro';
 | **工具** | 九个 MCP 工具：六个用来记录闭环中的一步，`halo_trace`、`halo_report` 和 `halo_guide` 三个用来读取。每个记录工具都会检查，这一步只引用了同一智能体更早的事件。 | `halo/mcp/server.py` |
 | **账本** | 按顺序保存每个记录下来的事件及其引用。事件从不修改或删除，所以报告总能追溯到智能体记录的内容。 | `halo/mcp/ledger.py`，以及运行服务器的那台机器上的一个 SQLite 文件 |
 | **分析** | 从事件之间的引用读出通路、证据步骤和等级。它不调用任何模型。 | `halo/mcp/analysis.py` |
-| **报告** | 按综述表格的各行返回结果，每个单元格都附上背后的事件编号。 | `halo_report`，或命令行中的 `halo trace report` |
+| **报告** | 按论文表格的各行返回结果，每个单元格都附上背后的事件编号。 | `halo_report`，或命令行中的 `halo trace report` |
 
 ## 一步的完整过程
 
