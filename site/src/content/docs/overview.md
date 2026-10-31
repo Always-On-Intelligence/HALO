@@ -38,7 +38,7 @@ Run mode never intervenes on the agent a user relies on. For released code it ru
 No single service can connect to every personal agent, and many of the agents that matter are closed products or devices. HALO is therefore a shared protocol that the makers and users of those agents attach themselves. It has three parts:
 
 - **The events.** Six kinds of steps, observe, remember, recall, act, outcome, and revise, each naming the earlier steps it used. [Event model](/HALO/architecture/events/) defines them.
-- **The ways in.** An agent can log its steps through MCP, or the code that runs each step can write the same events directly.
+- **The ways in.** An agent can log its steps through MCP, or the code that runs each step can write the same events directly. A system that already records its steps, for example in OpenTelemetry, a common format for runtime traces, or through agent hooks, which are scripts that run at each step, could instead have those records converted into HALO events, so that its maker does not log twice. HALO does not convert them yet.
 - **The report.** The rows of the survey's tables: six channels, five evidence steps, and a level.
 
 Who attaches HALO decides how strong the evidence is.
@@ -50,6 +50,8 @@ Who attaches HALO decides how strong the evidence is.
 | A researcher | many systems at once | reports in the same terms for every system |
 
 For a person who uses an agent, a report shows what the agent keeps, what it has changed about its own way of working, and whether that person approved the change.
+
+Whether makers and developers need this can be checked cheaply. Convert the records of a system already in use, such as the hooks of OpenClaw or Hermes Agent, into HALO events, and see whether the report points to a problem that nobody had noticed.
 
 ## How the plugin works
 
