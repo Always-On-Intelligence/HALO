@@ -22,6 +22,7 @@ export default defineConfig({
 				Header: './src/components/Header.astro',
 				Sidebar: './src/components/Sidebar.astro',
 				SiteTitle: './src/components/SiteTitle.astro',
+				ThemeSelect: './src/components/ThemeToggle.astro',
 			},
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/Always-On-Intelligence/HALO' }],
 			expressiveCode: {
