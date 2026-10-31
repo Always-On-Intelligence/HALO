@@ -27,6 +27,10 @@ halo tables                                              # results/read/table.md
 
 Models are called through local coding-agent CLIs, set with `HALO_CODEX_BIN` and `HALO_CLAUDE_BIN`, so no API key is stored in the repository.
 
+## Results
+
+The survey's read-mode table is split into [research systems](/HALO/results/research/) and [products](/HALO/results/products/).
+
 ## Read mode and the plugin
 
 Read mode tells you what a product says it does. The plugin tells you what a running agent logged. For a closed product the two are the evidence available from outside, and they can disagree: a product may document a memory it never used in your trace, or log a check its documentation does not mention.

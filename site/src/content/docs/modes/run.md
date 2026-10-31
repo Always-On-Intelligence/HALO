@@ -26,6 +26,10 @@ halo run cases/aiget --workers 4
 
 The harness writes every run's output, the judge's verdicts, and a summary to `runs/<case>/<name>/`. [Developers](/HALO/developers/) explains how to add a case.
 
+## Results
+
+The survey's run-mode tests are on [AiGet](/HALO/results/research/#run-mode-aiget), a research system, and on [EAIA](/HALO/results/products/#run-mode-eaia), a product with released code.
+
 ## Closed products
 
 A product without released code cannot be cut inside. The same design still works at the product's boundary: run the same scripted inputs with a control the product exposes switched on and off, such as memory, a connected plugin, or feedback, and let the judge compare. [What a trace can show](/HALO/architecture/trust/) describes how this combines with the plugin.

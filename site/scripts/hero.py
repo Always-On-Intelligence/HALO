@@ -1,5 +1,9 @@
 """Draw the landing-page illustration: the loop's three modules on a plate, with HALO's ring above them.
 
+The drawing is animated with SMIL, which also runs inside an <img>: a step travels S->M, M->A, then A->S,
+each channel's label lights up once a step has crossed it, the step is logged up to the ring, and a bead
+for each logged event gathers on the ring. Then the cycle starts again.
+
     python3 scripts/hero.py        writes src/assets/hero-light.svg and src/assets/hero-dark.svg
 """
 import math
@@ -48,6 +52,35 @@ def ellipse(cx, cy, z, r, cls, n=96):
     return line(pts, cls)
 
 
+PERIOD = 10.0  # seconds per cycle
+
+
+def pace(*points):
+    """keyTimes and values for a property that holds each value from the given second until the next one."""
+    times, values = [], []
+    for t, v in points:
+        times.append(f'{t / PERIOD:.4f}')
+        values.append(str(v))
+    return ';'.join(times), ';'.join(values)
+
+
+def fade(start, end=9.2, shown=1):
+    """Opacity 0 until `start`, `shown` until `end`, then 0 again, on the shared cycle."""
+    kt, vals = pace((0, 0), (start, 0), (start + 0.25, shown), (end, shown), (end + 0.5, 0), (PERIOD, 0))
+    return (f'<animate attributeName="opacity" dur="{PERIOD}s" repeatCount="indefinite" calcMode="linear" '
+            f'keyTimes="{kt}" values="{vals}"/>')
+
+
+def travel(path_id, start, length):
+    """A dot that moves along a path from `start` for `length` seconds and is hidden otherwise."""
+    a, b = start / PERIOD, (start + length) / PERIOD
+    return (f'<circle class="packet" r="3.4" opacity="0">'
+            f'<animateMotion dur="{PERIOD}s" repeatCount="indefinite" calcMode="linear" '
+            f'keyPoints="0;0;1;1" keyTimes="0;{a:.4f};{b:.4f};1"><mpath href="#{path_id}"/></animateMotion>'
+            f'<animate attributeName="opacity" dur="{PERIOD}s" repeatCount="indefinite" calcMode="discrete" '
+            f'keyTimes="0;{a:.4f};{b:.4f}" values="0;1;0"/></circle>')
+
+
 def scene():
     out = []
     n = 12
@@ -70,6 +103,20 @@ def scene():
         return (ax + ux * off, ay + uy * off), (bx - ux * off, by - uy * off)
     for a, b in (('S', 'M'), ('M', 'A'), ('S', 'A')):
         out += arrow(*edge(a, b))
+    # A->S: Action guiding what Sensing checks, drawn as an arc in front of the loop
+    (ax, ay), (sx, sy) = centers['A'], centers['S']
+    arc = [iso(*pt) for pt in [((1 - t) ** 2 * (ax + 0.35) + 2 * (1 - t) * t * 9.4 + t ** 2 * (sx + 1.55),
+                                 (1 - t) ** 2 * (ay + 1.55) + 2 * (1 - t) * t * 9.4 + t ** 2 * (sy + 0.35))
+                                for t in [k / 24 for k in range(25)]]]
+    out.append(line(arc, 'flow back', ' id="ch-as"'))
+    end, before = arc[-1], arc[-3]
+    ang = math.atan2(end[1] - before[1], end[0] - before[0])
+    out.append(line([(end[0] - 7 * math.cos(ang - 0.45), end[1] - 7 * math.sin(ang - 0.45)), end,
+                     (end[0] - 7 * math.cos(ang + 0.45), end[1] - 7 * math.sin(ang + 0.45))], 'flow back'))
+    # invisible copies of the forward edges for the moving steps to follow
+    for a, b, pid in (('S', 'M', 'ch-sm'), ('M', 'A', 'ch-ma')):
+        p0, p1 = edge(a, b)
+        out.append(line([iso(*p0, 0.02), iso(*p1, 0.02)], 'track', f' id="{pid}"'))
     ring_c = tuple(sum(c[i] for c in centers.values()) / 3 for i in (0, 1))   # over the middle of the loop
     # dashed sight lines from the ring down to each module
     for k, (cx, cy) in centers.items():
@@ -80,6 +127,33 @@ def scene():
     # the halo: a ring floating above the loop
     out.append(ellipse(*ring_c, 8.2, 4.6, 'ring'))
     out.append(ellipse(*ring_c, 8.45, 4.6, 'ring2'))
+
+    # animation: three steps cross three channels, each is logged up to the ring
+    steps = [('ch-sm', 0.4, 'M', 'S→M'), ('ch-ma', 2.6, 'A', 'M→A'), ('ch-as', 4.8, 'S', 'A→S')]
+    beads = [112, 72, 32]
+    rx, ry = iso(ring_c[0] + 4.6 * math.cos(math.radians(-45)), ring_c[1] + 4.6 * math.sin(math.radians(-45)), 8.2)
+    lx, ly = rx + 26, ry - 34
+    for k, (pid, t0, dest, name) in enumerate(steps):
+        length = 1.0 if pid != 'ch-as' else 1.3
+        out.append(travel(pid, t0, length))
+        arrive = t0 + length
+        # the channel list beside the ring: grey until a step has crossed the channel, then solid
+        y = ly + 22 * k
+        out.append(f'<circle class="todo" cx="{lx:.1f}" cy="{y - 4:.1f}" r="4"/>'
+                   f'<text class="chan dim" x="{lx + 12:.1f}" y="{y:.1f}">{name}</text>')
+        out.append(f'<g opacity="0"><circle class="done" cx="{lx:.1f}" cy="{y - 4:.1f}" r="4"/>'
+                   f'<text class="chan" x="{lx + 12:.1f}" y="{y:.1f}">{name}</text>{fade(arrive)}</g>')
+        # logged: a dot rises from the module to the ring
+        cx, cy = centers[dest]
+        bottom, top = iso(cx, cy, 1.9), iso(cx, cy, 8.2)
+        out.append(line([bottom, top], 'track', f' id="up-{k}"'))
+        out.append(travel(f'up-{k}', arrive, 0.6))
+        # the ring keeps a bead for each logged event
+        a = math.radians(beads[k])
+        bx, by = iso(ring_c[0] + 4.6 * math.cos(a), ring_c[1] + 4.6 * math.sin(a), 8.2)
+        out.append(f'<circle class="bead" cx="{bx:.1f}" cy="{by:.1f}" r="4" opacity="0">{fade(arrive + 0.6)}</circle>')
+    # the ring brightens once the three steps are in the trace, as a report would
+    out.append(f'<g opacity="0">{ellipse(*ring_c, 8.2, 4.6, "ring-on")}{fade(7.4, shown=0.9)}</g>')
     return out
 
 
@@ -95,6 +169,15 @@ def render(theme):
              f'.sight{{fill:none;stroke:{faint};stroke-width:0.9;stroke-dasharray:3 4}}'
              f'.ring{{fill:none;stroke:{ink};stroke-width:1.6}}'
              f'.ring2{{fill:none;stroke:{faint};stroke-width:0.8}}'
+             f'.ring-on{{fill:none;stroke:{ink};stroke-width:3}}'
+             f'.back{{stroke:{faint};stroke-dasharray:4 4}}'
+             f'.track{{fill:none;stroke:none}}'
+             f'.packet{{fill:{ink}}}'
+             f'.bead{{fill:{top};stroke:{ink};stroke-width:1.6}}'
+             f'.chan{{fill:{ink};font:600 12px ui-monospace,"Geist Mono",Menlo,monospace}}'
+             f'.chan.dim{{fill:{faint};font-weight:500}}'
+             f'.todo{{fill:none;stroke:{faint};stroke-width:1.2}}'
+             f'.done{{fill:{ink};stroke:{ink};stroke-width:1.2}}'
              f'.label{{fill:{ink};font:600 22px "Geist Mono",ui-monospace,Menlo,monospace}}')
     xs, ys = zip(*(iso(x, y, z) for x in (0, 12) for y in (0, 12) for z in (-0.6, 10.2)))
     pad = 12

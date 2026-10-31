@@ -1,0 +1,148 @@
+---
+// The survey's read-mode table for one group of works: research systems or products.
+import data from '../data/survey-table.json';
+
+interface Props {
+	group: 'research' | 'products';
+	lang?: 'en' | 'zh';
+}
+const { group, lang = 'en' } = Astro.props;
+const zh = lang === 'zh';
+const rows = data.rows.filter((r) => r.product === (group === 'products'));
+const domains = ['Wearable', 'Physical', 'Digital'].filter((d) => rows.some((r) => r.domain === d));
+const domainName = zh ? { Wearable: '可穿戴', Physical: '实体', Digital: '数字' } : { Wearable: 'Wearable', Physical: 'Physical', Digital: 'Digital' };
+const steps = zh ? ['记录', '结果', '归因', '修订', '后续使用'] : ['Rec.', 'Out.', 'Attr.', 'Rev.', 'Use'];
+const channelMark = { R: '●', I: '◐', A: '○' } as Record<string, string>;
+const channelTitle = zh
+	? ({ R: '已报告', I: '信息不足', A: '明确不存在' } as Record<string, string>)
+	: ({ R: 'reported', I: 'insufficient', A: 'absent' } as Record<string, string>);
+const count = (i: number, mark: string, key: 'channels' | 'steps') => rows.filter((r) => r[key][i] === mark).length;
+---
+
+<div class="matrix not-content">
+	<table>
+		<thead>
+			<tr>
+				<th class="name">{zh ? '系统' : 'System'}</th>
+				{data.channels.map((c) => <th class="cell">{c}</th>)}
+				{steps.map((s) => <th class="cell step">{s}</th>)}
+			</tr>
+		</thead>
+		{
+			domains.map((d) => (
+				<tbody>
+					<tr class="domain">
+						<td colspan="11">{domainName[d as keyof typeof domainName]}</td>
+					</tr>
+					{rows
+						.filter((r) => r.domain === d)
+						.map((r) => (
+							<tr>
+								<td class="name">
+									{r.report ? <a href={r.report}>{r.name}</a> : r.name}
+									{r.code && (
+										<a class="code" href={r.code}>
+											{zh ? '代码' : 'code'}
+										</a>
+									)}
+								</td>
+								{[...r.channels].map((m) => (
+									<td class={`cell m-${m}`} title={channelTitle[m]}>
+										{channelMark[m]}
+									</td>
+								))}
+								{[...r.steps].map((m, i) => (
+									<td class={`cell step s-${m === 'S' ? 'y' : 'n'}`} title={m === 'S' ? (zh ? '已陈述' : 'stated') : zh ? '未陈述' : 'not stated'}>
+										{m === 'S' ? '●' : '·'}
+									</td>
+								))}
+							</tr>
+						))}
+				</tbody>
+			))
+		}
+		<tfoot>
+			<tr>
+				<td class="name">{zh ? `已报告 / 已陈述（共 ${rows.length} 项）` : `Reported or stated (of ${rows.length})`}</td>
+				{data.channels.map((_, i) => <td class="cell">{count(i, 'R', 'channels')}</td>)}
+				{steps.map((_, i) => <td class="cell step">{count(i, 'S', 'steps')}</td>)}
+			</tr>
+		</tfoot>
+	</table>
+	<p class="legend">
+		{zh ? '通道：● 已报告　◐ 信息不足以判断　○ 明确不存在。证据步骤：● 来源中已陈述　· 未陈述。' : 'Channels: ● reported, ◐ insufficient to decide, ○ explicitly absent. Evidence steps: ● stated in the source, · not stated.'}
+	</p>
+</div>
+
+<style>
+	.matrix {
+		margin: 1.5rem 0;
+		overflow-x: auto;
+	}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: var(--sl-text-xs);
+	}
+	th,
+	td {
+		padding: 0.32rem 0.4rem;
+		border-bottom: 1px solid var(--halo-line);
+		white-space: nowrap;
+	}
+	th {
+		font-weight: 500;
+		color: var(--sl-color-gray-2);
+		text-align: left;
+	}
+	.cell {
+		text-align: center;
+		width: 2.4rem;
+	}
+	th.step,
+	td.step {
+		background: var(--halo-panel);
+	}
+	.name {
+		color: var(--sl-color-white);
+	}
+	.domain td {
+		padding-top: 0.9rem;
+		font-family: var(--halo-display);
+		font-weight: 500;
+		color: var(--sl-color-gray-3);
+		border-bottom: 1px solid var(--sl-color-gray-5);
+	}
+	.m-R,
+	.s-y {
+		color: var(--sl-color-white);
+	}
+	.m-I {
+		color: var(--sl-color-gray-3);
+	}
+	.m-A,
+	.s-n {
+		color: var(--sl-color-gray-4);
+	}
+	.name a {
+		color: var(--sl-color-white);
+		text-decoration: underline;
+		text-decoration-color: var(--sl-color-gray-5);
+		text-underline-offset: 0.18em;
+	}
+	.name a.code {
+		margin-left: 0.45rem;
+		color: var(--sl-color-gray-3);
+		font-family: var(--sl-font-mono);
+		font-size: 0.7rem;
+	}
+	tfoot td {
+		font-weight: 600;
+		border-bottom: 0;
+	}
+	.legend {
+		margin-top: 0.6rem;
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+</style>

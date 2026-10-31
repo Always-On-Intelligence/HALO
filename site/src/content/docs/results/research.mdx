@@ -1,0 +1,30 @@
+---
+title: Research systems
+description: Read-mode results for the 34 research systems in the survey, and run-mode results for AiGet.
+---
+
+import SurveyMatrix from '../../../components/SurveyMatrix.astro';
+
+These are the survey's read-mode judgments for its 34 research systems, from their papers and, where released, their code. The basic S→A path is present in every agent system and is not reviewed.
+
+<SurveyMatrix group="research" />
+
+## What the table shows
+
+- **Memory reaches Action more often than Sensing.** S→M and M→A are reported for 31 of the 34 systems, A→S for 23, and M→S for 15. Most of the remaining M→S cells are insufficient rather than absent, so the papers leave open whether retained state guides what these systems observe.
+- **Action records give only part of the chain.** 19 systems keep records of their actions, 13 keep outcomes, and 16 link outcomes to the decisions they concern, while 4 revise their mechanism and 4 show the revised mechanism in later use.
+- **Channel coverage and self-evolution are separate.** No system that reports every channel also reports a revision. The three systems that state all five evidence steps, Ouroboros, VisualClaw, and ProPerSim, each leave some channel insufficient.
+- **A complete chain can still be narrow.** ProPerSim records each user action with its response, gets a rating from a simulated user, trains on the rated pairs at the end of each simulated day, and scores above its baselines from the second day on. The chain is complete, but only against a simulated evaluator.
+
+## Run mode: AiGet
+
+AiGet is an L3 smart-glasses assistant. The same user profile enters the prompt that interprets the scene and the prompt that writes suggestions, so the profile reaches Action by two paths. The survey ran 6 everyday scenes rendered as text, 5 samples per scene and condition, with Claude Opus 5.5 as the backbone and a blind judge.
+
+| Cut | What was withheld | Result |
+|---|---|---|
+| A→M | the record of suggestions already shown, before revisiting a scene | AiGet repeated earlier suggestions, and unrelated history did not prevent it |
+| M→S | the profile in the perception prompt | some settings appeared unfamiliar, but the judge had no clear preference |
+| M→A | the profile in the generation prompt | no clear preference |
+| M→A and M→S | the profile in both prompts | the judge preferred the original suggestions |
+
+Cutting one path at a time locates effects along a path, while cutting both reveals a dependence that the other path masks. S→M was not tested because the profile is preloaded, and AiGet does not implement A→S.

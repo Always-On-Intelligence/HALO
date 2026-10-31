@@ -1,0 +1,42 @@
+---
+title: How the survey used HALO
+description: The read-mode and run-mode pipelines behind the survey's results, for research systems and for products.
+---
+
+import PipelineFigure from '../../components/PipelineFigure.astro';
+
+The survey *Always-On Personal Intelligence* applied HALO to 40 works: 34 research systems and 6 products. Every work went through read mode. Run mode tested one research system, AiGet, and one product with released code, EAIA. The results are on two pages, because research systems and products are reviewed from different sources:
+
+- [Research systems](/HALO/results/research/): papers and their released code.
+- [Products](/HALO/results/products/): product documentation, and code where a product releases it.
+
+The tables on these pages repeat the survey's published table.
+
+## Read mode
+
+<PipelineFigure mode="read" />
+
+Each oversight agent reads the sources listed in the work's case file on its own and returns one judgment per cell: a label, a verbatim quote, and a locator such as a section, a file path, or a URL. Every review must validate against `halo/read/schema.json`, and the majority of the three agents decides each cell. The protocol is `halo/read/protocol/PROTOCOL.md`, and [Read mode](/HALO/modes/read/) shows how to run it.
+
+A product's sources are its official pages, fetched once and pinned. The case file records each page's address, the date it was fetched, and a SHA-256 hash of the text the agents read:
+
+```yaml title="cases/dot/case.yaml"
+id: dot
+kind: product
+sources:
+  - url: https://learn.chatgpt.com/docs/dots
+    kind: product_documentation
+    version: "Markdown documentation page fetched 2026-10-05"
+    sha256: 2dd16a1beab72dac1e70eff29e79fee52d27831ef58adc56228e8bc93ecac6eb
+modes: [read]
+```
+
+## Run mode
+
+<PipelineFigure mode="run" />
+
+Run mode needs released code. The adapter of a case runs the upstream code with only its model clients replaced, and declares where each channel or evidence step passes through that code so it can be cut at the receiving end. [Run mode](/HALO/modes/run/) shows how to run a case.
+
+## Where the plugin fits
+
+Read mode and run mode review a work once, from its sources or its code. The [plugin](/HALO/architecture/) follows an agent while it runs, which is the only way to watch a product whose code is closed. The [products page](/HALO/results/products/) lists what each product in the survey allows.

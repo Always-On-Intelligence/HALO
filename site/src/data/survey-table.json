@@ -1,0 +1,379 @@
+{
+ "source": "Table \"Channel review and chain of evidence for self-evolution\" of the survey Always-On Personal Intelligence, read-mode majority vote over 40 works; R reported, I insufficient, A absent; S stated, - not stated.",
+ "channels": [
+  "S→M",
+  "M→A",
+  "A→S",
+  "M→S",
+  "A→M"
+ ],
+ "steps": [
+  "Record",
+  "Outcome",
+  "Attribution",
+  "Revision",
+  "Later use"
+ ],
+ "rows": [
+  {
+   "name": "Vinci",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRIII",
+   "steps": "-----",
+   "report": "https://arxiv.org/abs/2412.21080",
+   "code": "https://github.com/OpenGVLab/vinci"
+  },
+  {
+   "name": "Vinci2",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRIII",
+   "steps": "-----",
+   "report": "https://arxiv.org/abs/2607.11523",
+   "code": "https://github.com/SitongGong/EgoMemo"
+  },
+  {
+   "name": "VisionClaw",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRRIR",
+   "steps": "SS---",
+   "report": "https://arxiv.org/abs/2604.03486",
+   "code": "https://github.com/Intent-Lab/VisionClaw"
+  },
+  {
+   "name": "ContextAgent",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "IIRII",
+   "steps": "-----",
+   "report": "https://arxiv.org/abs/2505.14668",
+   "code": "https://github.com/openaiotlab/ContextAgent"
+  },
+  {
+   "name": "ProAgent",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRRRR",
+   "steps": "SSS--",
+   "report": "https://arxiv.org/abs/2512.06721",
+   "code": ""
+  },
+  {
+   "name": "AiGet",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRIRR",
+   "steps": "S----",
+   "report": "https://arxiv.org/abs/2501.16240",
+   "code": "https://github.com/Synteraction-Lab/AiGet"
+  },
+  {
+   "name": "Alpha-Service",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRRIR",
+   "steps": "S----",
+   "report": "https://arxiv.org/abs/2510.14359",
+   "code": ""
+  },
+  {
+   "name": "Memento",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRRRR",
+   "steps": "S-S--",
+   "report": "https://arxiv.org/abs/2601.17622",
+   "code": ""
+  },
+  {
+   "name": "SocialMind",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRIRR",
+   "steps": "S----",
+   "report": "https://arxiv.org/abs/2412.04036",
+   "code": ""
+  },
+  {
+   "name": "SpeechLess",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRRRR",
+   "steps": "S-S--",
+   "report": "https://arxiv.org/abs/2602.00793",
+   "code": ""
+  },
+  {
+   "name": "M3-Agent",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRIRI",
+   "steps": "-----",
+   "report": "https://arxiv.org/abs/2508.09736",
+   "code": "https://github.com/ByteDance-Seed/M3-Agent"
+  },
+  {
+   "name": "LightMem-Ego",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRIII",
+   "steps": "-----",
+   "report": "https://arxiv.org/abs/2607.11487",
+   "code": "https://github.com/zjunlp/LightMem-Ego"
+  },
+  {
+   "name": "Sensible Agent",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "AARAA",
+   "steps": "-----",
+   "report": "https://arxiv.org/abs/2509.09255",
+   "code": ""
+  },
+  {
+   "name": "Egocentric Co-Pilot",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRRII",
+   "steps": "-----",
+   "report": "https://arxiv.org/abs/2603.01104",
+   "code": "https://github.com/YoungSeng/Egocentric-Co-Pilot"
+  },
+  {
+   "name": "ProAssist",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "IIIII",
+   "steps": "-----",
+   "report": "https://arxiv.org/abs/2605.04227",
+   "code": ""
+  },
+  {
+   "name": "Pro²Bench",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRRRR",
+   "steps": "SSS--",
+   "report": "https://arxiv.org/abs/2606.04970",
+   "code": ""
+  },
+  {
+   "name": "IPIBench",
+   "product": false,
+   "domain": "Wearable",
+   "channels": "RRRRI",
+   "steps": "-----",
+   "report": "https://arxiv.org/abs/2605.27074",
+   "code": "https://github.com/lijinzhao30/IPI"
+  },
+  {
+   "name": "Omi",
+   "product": true,
+   "domain": "Wearable",
+   "channels": "RRRRR",
+   "steps": "S----",
+   "report": "https://docs.omi.me/doc/developer/apps/Notifications",
+   "code": "https://github.com/BasedHardware/omi"
+  },
+  {
+   "name": "Bee",
+   "product": true,
+   "domain": "Wearable",
+   "channels": "RRIIR",
+   "steps": "SS---",
+   "report": "https://www.aboutamazon.com/news/devices/bee-amazon-wearable-ai-device-new-features",
+   "code": ""
+  },
+  {
+   "name": "AssistantX",
+   "product": false,
+   "domain": "Physical",
+   "channels": "RRRRR",
+   "steps": "--S--",
+   "report": "https://arxiv.org/abs/2409.17655",
+   "code": "https://github.com/AssistantX-Agent/AssistantX"
+  },
+  {
+   "name": "Hobbit",
+   "product": false,
+   "domain": "Physical",
+   "channels": "RRRRI",
+   "steps": "--S--",
+   "report": "https://doi.org/10.1155/2018/1754657",
+   "code": ""
+  },
+  {
+   "name": "STRANDS",
+   "product": false,
+   "domain": "Physical",
+   "channels": "RRRRR",
+   "steps": "SSS--",
+   "report": "https://arxiv.org/abs/1604.04384",
+   "code": "https://github.com/strands-project"
+  },
+  {
+   "name": "PHILIA",
+   "product": false,
+   "domain": "Physical",
+   "channels": "RRRIR",
+   "steps": "S-S--",
+   "report": "https://arxiv.org/abs/2607.11377",
+   "code": ""
+  },
+  {
+   "name": "ABot-Claw",
+   "product": false,
+   "domain": "Physical",
+   "channels": "RRRIR",
+   "steps": "SSS--",
+   "report": "https://arxiv.org/abs/2604.10096",
+   "code": "https://github.com/amap-cvlab/ABot-Claw"
+  },
+  {
+   "name": "MoveCare",
+   "product": false,
+   "domain": "Physical",
+   "channels": "RRRRR",
+   "steps": "SSS--",
+   "report": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8853423/",
+   "code": ""
+  },
+  {
+   "name": "ElliQ",
+   "product": true,
+   "domain": "Physical",
+   "channels": "RRRII",
+   "steps": "-----",
+   "report": "https://doi.org/10.14283/jarlife.2024.2",
+   "code": ""
+  },
+  {
+   "name": "PASK",
+   "product": false,
+   "domain": "Digital",
+   "channels": "RRIII",
+   "steps": "-----",
+   "report": "https://arxiv.org/abs/2604.08000",
+   "code": "https://github.com/xzf-thu/Pask"
+  },
+  {
+   "name": "User as Code",
+   "product": false,
+   "domain": "Digital",
+   "channels": "RRIII",
+   "steps": "---SS",
+   "report": "https://arxiv.org/abs/2606.16707",
+   "code": "https://github.com/19PINE-AI/user-as-code"
+  },
+  {
+   "name": "PITCH",
+   "product": false,
+   "domain": "Digital",
+   "channels": "RRRIR",
+   "steps": "SSS--",
+   "report": "https://arxiv.org/abs/2509.24073",
+   "code": ""
+  },
+  {
+   "name": "Ouroboros",
+   "product": false,
+   "domain": "Digital",
+   "channels": "RRRIR",
+   "steps": "SSSSS",
+   "report": "https://arxiv.org/abs/2608.08311",
+   "code": "https://github.com/razzant/ouroboros"
+  },
+  {
+   "name": "VisualClaw",
+   "product": false,
+   "domain": "Digital",
+   "channels": "RRRIR",
+   "steps": "SSSSS",
+   "report": "https://arxiv.org/abs/2606.16295",
+   "code": "https://github.com/UCSC-VLAA/VisualClaw"
+  },
+  {
+   "name": "Proactive Agent",
+   "product": false,
+   "domain": "Digital",
+   "channels": "RRRII",
+   "steps": "SS---",
+   "report": "https://arxiv.org/abs/2410.12361",
+   "code": "https://github.com/thunlp/ProactiveAgent"
+  },
+  {
+   "name": "PAHF",
+   "product": false,
+   "domain": "Digital",
+   "channels": "RRRIR",
+   "steps": "-SS--",
+   "report": "https://arxiv.org/abs/2602.16173",
+   "code": "https://github.com/facebookresearch/PAHF"
+  },
+  {
+   "name": "AwareLLM",
+   "product": false,
+   "domain": "Digital",
+   "channels": "RRIRI",
+   "steps": "-----",
+   "report": "https://arxiv.org/abs/2605.09625",
+   "code": ""
+  },
+  {
+   "name": "ProAct",
+   "product": false,
+   "domain": "Digital",
+   "channels": "RRRRR",
+   "steps": "S----",
+   "report": "https://arxiv.org/abs/2605.25971",
+   "code": "https://github.com/AgentACE-AI/ProAct"
+  },
+  {
+   "name": "Long-term TOA",
+   "product": false,
+   "domain": "Digital",
+   "channels": "RRRRR",
+   "steps": "SSS--",
+   "report": "https://arxiv.org/abs/2601.09382",
+   "code": ""
+  },
+  {
+   "name": "ProPerSim",
+   "product": false,
+   "domain": "Digital",
+   "channels": "RRIIR",
+   "steps": "SSSSS",
+   "report": "https://arxiv.org/abs/2509.21730",
+   "code": "https://github.com/jiho283/ProPerSim"
+  },
+  {
+   "name": "Dot",
+   "product": true,
+   "domain": "Digital",
+   "channels": "RRRRR",
+   "steps": "SSS--",
+   "report": "https://learn.chatgpt.com/docs/dots",
+   "code": ""
+  },
+  {
+   "name": "Muse",
+   "product": true,
+   "domain": "Digital",
+   "channels": "RRRIR",
+   "steps": "S----",
+   "report": "https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/",
+   "code": ""
+  },
+  {
+   "name": "EAIA",
+   "product": true,
+   "domain": "Digital",
+   "channels": "RRRIR",
+   "steps": "SSSS-",
+   "report": "https://www.langchain.com/blog/introducing-ambient-agents",
+   "code": "https://github.com/langchain-ai/executive-ai-assistant"
+  }
+ ]
+}

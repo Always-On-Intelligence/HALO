@@ -1,10 +1,30 @@
 ---
 // The plugin at a glance: an agent's loop on the left, HALO on the right, MCP calls between them.
+const zh = Astro.props.lang === 'zh';
+const T = zh
+	? {
+			title: '个人智能体把循环中的每一步通过 MCP 记录到 HALO 插件，并向它请求报告。',
+			agent: '个人智能体', hosts: 'dot、Grok Bot、Claude Code 或你自己的', loop: '三个模块之间的六条通道',
+			mcp: 'stdio，托管智能体用 HTTPS', log: '记录每一步，以及它用到的步骤', diag: '按需返回诊断',
+			halo: 'HALO 插件', local: '运行在你的机器上',
+			tools: '工具', toolsSub: '检查每个事件及其引用', ledger: '账本', ledgerSub: '只追加的 SQLite，每个智能体一条轨迹',
+			analysis: '分析', analysisSub: '通道、证据步骤、等级', report: '报告', reportSub: '论文表格的各行，附事件编号',
+			caption: '智能体保留自己的循环。HALO 只接收智能体记录的步骤，保存下来，再从它们之间的引用读出循环。',
+		}
+	: {
+			title: 'A personal agent logs each step of its loop to the HALO plugin over MCP and asks it for a report.',
+			agent: 'Personal agent', hosts: 'a dot, Grok Bot, Claude Code, your own', loop: 'six channels between three modules',
+			mcp: 'stdio, or HTTPS for hosted agents', log: 'log each step, with the steps it used', diag: 'diagnosis on request',
+			halo: 'HALO plugin', local: 'on your machine',
+			tools: 'Tools', toolsSub: 'check each event and its links', ledger: 'Ledger', ledgerSub: 'append-only SQLite, one trace per agent',
+			analysis: 'Analysis', analysisSub: 'channels, evidence steps, level', report: 'Report', reportSub: "the survey's rows, with event ids",
+			caption: 'The agent keeps its own loop. HALO only receives the steps the agent logs, keeps them, and reads the loop off their links.',
+		};
 ---
 
 <figure class="halo-figure">
 	<svg viewBox="0 0 720 300" role="img" aria-labelledby="arch-title">
-		<title id="arch-title">A personal agent logs each step of its loop to the HALO plugin over MCP and asks it for a report.</title>
+		<title id="arch-title">{T.title}</title>
 		<style>
 			.box { fill: var(--sl-color-black); stroke: currentColor; stroke-width: 1.1; }
 			.inner { fill: var(--halo-panel); stroke: var(--sl-color-gray-4); stroke-width: 0.9; }
@@ -29,8 +49,8 @@
 
 		<!-- the agent and its loop -->
 		<rect class="box" x="8" y="20" width="236" height="262" rx="10" />
-		<text class="h" x="24" y="46">Personal agent</text>
-		<text class="s" x="24" y="63">a dot, Grok Bot, Claude Code, your own</text>
+		<text class="h" x="24" y="46">{T.agent}</text>
+		<text class="s" x="24" y="63">{T.hosts}</text>
 		<rect class="mod" x="102" y="96" width="48" height="30" rx="6" />
 		<text class="k" x="126" y="115" text-anchor="middle">M</text>
 		<rect class="mod" x="36" y="196" width="48" height="30" rx="6" />
@@ -41,38 +61,38 @@
 		<path class="line" d="M70 194 L108 130" marker-end="url(#arr)" />
 		<path class="line" d="M144 130 L182 194" marker-end="url(#arr)" />
 		<path class="faint" d="M188 230 C 150 262, 100 262, 66 232" marker-end="url(#arr-g)" />
-		<text class="s" x="126" y="270" text-anchor="middle">six channels between three modules</text>
+		<text class="s" x="126" y="270" text-anchor="middle">{T.loop}</text>
 
 		<!-- MCP between them -->
 		<text class="t" x="356" y="46" text-anchor="middle">MCP</text>
-		<text class="s" x="356" y="62" text-anchor="middle">stdio, or HTTPS for hosted agents</text>
+		<text class="s" x="356" y="62" text-anchor="middle">{T.mcp}</text>
 		<path class="line" d="M246 116 H466" marker-end="url(#arr)" />
-		<text class="t" x="356" y="106" text-anchor="middle">log each step, with the steps it used</text>
+		<text class="t" x="356" y="106" text-anchor="middle">{T.log}</text>
 		<text class="m" x="356" y="134" text-anchor="middle">observe · remember · recall</text>
 		<text class="m" x="356" y="148" text-anchor="middle">act · outcome · revise</text>
 		<path class="line" d="M466 212 H246" marker-end="url(#arr)" />
-		<text class="t" x="356" y="202" text-anchor="middle">diagnosis on request</text>
+		<text class="t" x="356" y="202" text-anchor="middle">{T.diag}</text>
 		<text class="m" x="356" y="230" text-anchor="middle">halo_report · halo_trace</text>
 
 		<!-- HALO -->
 		<rect class="box" x="468" y="20" width="244" height="262" rx="10" />
-		<text class="h" x="484" y="46">HALO plugin</text>
-		<text class="s" x="484" y="63">on your machine</text>
+		<text class="h" x="484" y="46">{T.halo}</text>
+		<text class="s" x="484" y="63">{T.local}</text>
 		<rect class="inner" x="484" y="78" width="212" height="38" rx="6" />
-		<text class="t" x="496" y="95">Tools</text>
-		<text class="s" x="496" y="109">check each event and its links</text>
+		<text class="t" x="496" y="95">{T.tools}</text>
+		<text class="s" x="496" y="109">{T.toolsSub}</text>
 		<rect class="inner" x="484" y="128" width="212" height="38" rx="6" />
-		<text class="t" x="496" y="145">Ledger</text>
-		<text class="s" x="496" y="159">append-only SQLite, one trace per agent</text>
+		<text class="t" x="496" y="145">{T.ledger}</text>
+		<text class="s" x="496" y="159">{T.ledgerSub}</text>
 		<rect class="inner" x="484" y="178" width="212" height="38" rx="6" />
-		<text class="t" x="496" y="195">Analysis</text>
-		<text class="s" x="496" y="209">channels, evidence steps, level</text>
+		<text class="t" x="496" y="195">{T.analysis}</text>
+		<text class="s" x="496" y="209">{T.analysisSub}</text>
 		<rect class="inner" x="484" y="228" width="212" height="38" rx="6" />
-		<text class="t" x="496" y="245">Report</text>
-		<text class="s" x="496" y="259">the survey's rows, with event ids</text>
+		<text class="t" x="496" y="245">{T.report}</text>
+		<text class="s" x="496" y="259">{T.reportSub}</text>
 		<path class="faint" d="M590 116 V126" marker-end="url(#arr-g)" />
 		<path class="faint" d="M590 166 V176" marker-end="url(#arr-g)" />
 		<path class="faint" d="M590 216 V226" marker-end="url(#arr-g)" />
 	</svg>
-	<figcaption>The agent keeps its own loop. HALO only receives the steps the agent logs, keeps them, and reads the loop off their links.</figcaption>
+	<figcaption>{T.caption}</figcaption>
 </figure>

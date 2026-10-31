@@ -1,0 +1,33 @@
+---
+title: Products
+description: Read-mode results for the six products in the survey's table, run mode on EAIA, and the plugin on a live dot.
+---
+
+import SurveyMatrix from '../../../components/SurveyMatrix.astro';
+
+Products are reviewed from their official documentation, fetched and pinned as described in [How the survey used HALO](/HALO/results/#read-mode), and from their code when they release it. Six products appear in the survey's channel and evidence table.
+
+<SurveyMatrix group="products" />
+
+## What the table shows
+
+- **Every product documents memory.** All six report S→M and M→A.
+- **Documentation rarely says how memory shapes what a product notices.** M→S is insufficient for four of the six.
+- **Few products document their own feedback loop.** Five keep records of their actions, three keep outcomes, and two link outcomes to decisions. EAIA is the only one that states a revision: it rewrites its prompts from the user's edits. No product's sources report a run under a revised mechanism.
+
+## Run mode: EAIA
+
+EAIA is an L4 email assistant whose code is released, so run mode can test its evidence chain. It revises its prompts from edits to its drafts through a step called reflection. In the survey's test, a simulated user with 5 unstated preferences edited drafts for 5 emails, and 4 new emails then checked whether the preferences carried forward. EAIA ran on GPT-6-Astra, GPT-6.1-Sol, and Claude Opus 5.5, with 2 runs per condition, and a test counted as changing the output when the unmodified run was preferred in at least 5 of 8 comparisons for at least one model.
+
+| Cut during learning | Result |
+|---|---|
+| record: reflection loses the assistant's questions and drafts | effects less consistent across models |
+| outcome: the user's feedback is withheld from reflection | all 3 models lost the required closing sign-off, and partnership replies no longer mentioned the designated colleague |
+| attribution: feedback is paired with the previous email's record | effects less consistent across models |
+| revision and later use: revised prompts are generated but not stored | the same losses as withholding feedback |
+
+Read mode left later use unmarked, because EAIA's sources report no run that demonstrates it. Run mode supplied that evidence: replies in the reproduced configuration depend on stored revisions.
+
+## The plugin on a live product
+
+Most products release no code, so run mode cannot cut inside them. The [plugin](/HALO/architecture/) follows a running product instead. [ChatGPT dots](/HALO/connect/chatgpt-dots/) describes the first trace, from a dot that logged one run of a daily countdown the user had set up.

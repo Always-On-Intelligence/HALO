@@ -2,13 +2,14 @@
 import config from 'virtual:starlight/user-config';
 import mark from '../assets/mark.svg?raw';
 
-const href = import.meta.env.BASE_URL;
+const zh = Astro.locals.starlightRoute?.locale === 'zh-cn';
+const href = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/${zh ? 'zh-cn/' : ''}`;
 ---
 
 <a href={href} class="halo-title" aria-label={config.title.en ?? 'HALO'}>
 	<span class="halo-mark" set:html={mark} />
 	<span class="halo-name">HALO</span>
-	<span class="halo-sub">Always-On Intelligence docs</span>
+	<span class="halo-sub">{zh ? 'Always-On Intelligence 文档' : 'Always-On Intelligence docs'}</span>
 </a>
 
 <style>
