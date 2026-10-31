@@ -1,0 +1,60 @@
+---
+import Default from '@astrojs/starlight/components/Header.astro';
+
+const topics = Astro.locals.starlightSidebarTopics?.topics ?? [];
+---
+
+<div class="halo-header">
+	<div class="halo-header-row"><Default /></div>
+	<nav class="halo-tabs" aria-label="Documentation sections">
+		{
+			topics.map((topic) => (
+				<a href={topic.link} class:list={[{ current: topic.isCurrent }]} aria-current={topic.isCurrent ? 'page' : undefined}>
+					{topic.label}
+				</a>
+			))
+		}
+	</nav>
+</div>
+
+<style>
+	.halo-header {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+	.halo-header-row {
+		flex: 1;
+		min-height: 0;
+	}
+	.halo-tabs {
+		display: none;
+	}
+	@media (min-width: 50rem) {
+		.halo-header-row {
+			flex: 0 0 var(--halo-row-height);
+		}
+		.halo-tabs {
+			display: flex;
+			gap: 1.75rem;
+			height: var(--halo-tabs-height);
+			align-items: stretch;
+		}
+		.halo-tabs a {
+			display: flex;
+			align-items: center;
+			font-size: var(--sl-text-sm);
+			color: var(--sl-color-gray-3);
+			text-decoration: none;
+			border-bottom: 1.5px solid transparent;
+			margin-bottom: -1px;
+		}
+		.halo-tabs a:hover {
+			color: var(--sl-color-white);
+		}
+		.halo-tabs a.current {
+			color: var(--sl-color-white);
+			border-bottom-color: var(--sl-color-white);
+		}
+	}
+</style>

@@ -1,0 +1,35 @@
+---
+import Default from '@astrojs/starlight/components/Sidebar.astro';
+
+const topics = Astro.locals.starlightSidebarTopics?.topics ?? [];
+---
+
+<ul class="halo-mobile-topics">
+	{topics.map((topic) => <li><a href={topic.link} class:list={[{ current: topic.isCurrent }]}>{topic.label}</a></li>)}
+</ul>
+<Default><slot /></Default>
+
+<style>
+	.halo-mobile-topics {
+		list-style: none;
+		padding: 0 0 0.75rem;
+		margin: 0 0 0.75rem;
+		border-bottom: 1px solid var(--sl-color-hairline-light);
+	}
+	.halo-mobile-topics a {
+		display: block;
+		padding: 0.3em 0.5rem;
+		color: var(--sl-color-gray-2);
+		text-decoration: none;
+		font-weight: 500;
+	}
+	.halo-mobile-topics a.current {
+		color: var(--sl-color-white);
+		font-weight: 600;
+	}
+	@media (min-width: 50rem) {
+		.halo-mobile-topics {
+			display: none;
+		}
+	}
+</style>

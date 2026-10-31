@@ -14,10 +14,25 @@ HALO works in two modes.
   selected channels or evidence steps cut, and compares the two. Only the model clients are
   replaced, by one backbone that stays fixed across arms.
 
+HALO also works as an **MCP plugin** for agents that are already running, such as ChatGPT dots, Grok Bot,
+Claude Code, or Codex. The agent logs each step of its loop to HALO, naming the earlier steps it used, and
+HALO reads the channels, the evidence steps, and the level the trace supports from those links:
+
+```bash
+uv pip install -p .venv/bin/python -e ".[mcp]"
+halo serve                      # stdio, for local hosts
+halo serve --http --port 8765   # Streamable HTTP
+halo trace report <agent>       # the diagnosis of one agent's trace
+```
+
+The documentation in `site/` (an Astro Starlight site) explains the plugin's architecture, how to connect
+each host, and the MCP tools.
+
 ## What is in this repository
 
 ```
 halo/                 the package
+  mcp/                the MCP plugin: server, ledger, analysis, and `halo trace`
   backends/           model calls through local coding-agent CLIs (Codex, Claude Code)
   read/               read mode: protocol, review, batch, vote, tables
   run/                run mode: adapter base class, worker, harness, judge, cached LLM
@@ -29,6 +44,7 @@ cases/<work>/         one folder per reviewed work (40 works)
 results/read/         our read-mode reviews, votes, per-work counts, and the table
 results/run/          our run-mode reports
 docs/                 how to add a case or connect your own system
+site/                 the documentation site for the plugin
 scripts/              cloning the upstream repositories, generating case files
 ```
 

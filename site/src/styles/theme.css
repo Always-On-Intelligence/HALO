@@ -1,0 +1,221 @@
+/* HALO docs: a quiet black-and-white theme. Geist for text, Space Grotesk for headings, Geist Mono for code. */
+
+:root {
+	--halo-display: 'Space Grotesk Variable', 'Geist Variable', system-ui, sans-serif;
+	--sl-font: 'Geist Variable', -apple-system, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+	--sl-font-mono: 'Geist Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+	--sl-content-width: 46rem;
+	--sl-text-h1: 2.6rem;
+	--sl-text-h2: 1.75rem;
+	--sl-text-h3: 1.3rem;
+	--halo-row-height: 3.75rem;
+	--halo-tabs-height: 2.5rem;
+}
+
+@media (min-width: 50rem) {
+	:root {
+		--sl-nav-height: calc(var(--halo-row-height) + var(--halo-tabs-height));
+	}
+}
+
+/* Dark */
+:root {
+	--sl-color-accent-low: #262626;
+	--sl-color-accent: #e8e8e8;
+	--sl-color-accent-high: #ffffff;
+	--sl-color-white: #ffffff;
+	--sl-color-gray-1: #ececec;
+	--sl-color-gray-2: #c4c4c4;
+	--sl-color-gray-3: #8f8f8f;
+	--sl-color-gray-4: #5c5c5c;
+	--sl-color-gray-5: #3a3a3a;
+	--sl-color-gray-6: #262626;
+	--sl-color-black: #141414;
+	--halo-line: #2e2e2e;
+	--halo-panel: #1b1b1b;
+}
+
+/* Light */
+:root[data-theme='light'] {
+	--sl-color-accent-low: #efefef;
+	--sl-color-accent: #111111;
+	--sl-color-accent-high: #000000;
+	--sl-color-white: #111111;
+	--sl-color-gray-1: #262626;
+	--sl-color-gray-2: #404040;
+	--sl-color-gray-3: #6b6b6b;
+	--sl-color-gray-4: #9a9a9a;
+	--sl-color-gray-5: #d4d4d4;
+	--sl-color-gray-6: #ededed;
+	--sl-color-gray-7: #f6f6f6;
+	--sl-color-black: #ffffff;
+	--halo-line: #e6e6e6;
+	--halo-panel: #f6f6f6;
+}
+
+:root {
+	--sl-color-hairline-light: var(--halo-line);
+	--sl-color-hairline: var(--halo-line);
+	--sl-color-text-accent: var(--sl-color-white);
+	--sl-color-bg-nav: var(--sl-color-black);
+	--sl-color-bg-sidebar: var(--sl-color-black);
+}
+
+header.header {
+	border-bottom: 1px solid var(--halo-line);
+	padding-bottom: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+.hero h1 {
+	font-family: var(--halo-display);
+	letter-spacing: -0.015em;
+	font-weight: 500;
+}
+
+.sl-markdown-content h2 {
+	margin-top: 2.4rem;
+}
+
+/* Links read as text with an underline, as on the reference site */
+.sl-markdown-content a:not(:where(.not-content *)) {
+	color: var(--sl-color-white);
+	text-decoration-color: var(--sl-color-gray-4);
+	text-underline-offset: 0.18em;
+}
+.sl-markdown-content a:not(:where(.not-content *)):hover {
+	text-decoration-color: var(--sl-color-white);
+}
+
+/* Sidebar: small grey group labels, the current page on a light pill */
+nav.sidebar .group-label .large {
+	font-size: var(--sl-text-sm);
+	font-weight: 500;
+	color: var(--sl-color-gray-2);
+}
+nav.sidebar a {
+	font-size: var(--sl-text-sm);
+	color: var(--sl-color-gray-2);
+}
+nav.sidebar a[aria-current='page'],
+nav.sidebar a[aria-current='page']:hover {
+	background: var(--sl-color-gray-6);
+	color: var(--sl-color-white);
+	font-weight: 500;
+}
+:root:not([data-theme='light']) nav.sidebar a[aria-current='page'] {
+	background: var(--sl-color-gray-6);
+}
+
+/* Right-hand table of contents */
+starlight-toc h2,
+mobile-starlight-toc h2 {
+	font-family: var(--sl-font);
+	font-size: var(--sl-text-xs);
+	color: var(--sl-color-gray-3);
+	font-weight: 500;
+}
+starlight-toc a {
+	font-size: var(--sl-text-xs);
+	color: var(--sl-color-gray-3);
+}
+starlight-toc a[aria-current='true'] {
+	color: var(--sl-color-white);
+}
+
+/* Inline code */
+.sl-markdown-content :not(pre) > code {
+	background: var(--halo-panel);
+	border: 1px solid var(--halo-line);
+	border-radius: 4px;
+	padding: 0.05em 0.35em;
+	font-size: 0.86em;
+}
+
+/* Tables: hairlines only */
+.sl-markdown-content table {
+	font-size: var(--sl-text-sm);
+}
+.sl-markdown-content :is(th, td) {
+	border-color: var(--halo-line);
+}
+.sl-markdown-content th {
+	font-weight: 500;
+	background: transparent;
+}
+
+/* Asides in grey */
+.starlight-aside {
+	border-inline-start-color: var(--sl-color-gray-4);
+	background: var(--halo-panel);
+}
+.starlight-aside .starlight-aside__title {
+	color: var(--sl-color-white);
+}
+
+/* Buttons (hero actions, LinkButton) */
+.sl-link-button.primary,
+.action.primary {
+	background: var(--sl-color-white);
+	color: var(--sl-color-black);
+	border-color: var(--sl-color-white);
+	border-radius: 6px;
+	font-weight: 500;
+}
+.sl-link-button.secondary,
+.action.secondary {
+	border: 1px solid var(--halo-line);
+	color: var(--sl-color-white);
+	border-radius: 6px;
+	font-weight: 500;
+}
+.action.minimal {
+	color: var(--sl-color-white);
+}
+
+/* Cards: hairline boxes */
+.card {
+	border: 1px solid var(--halo-line) !important;
+	border-radius: 8px;
+	background: transparent !important;
+	box-shadow: none !important;
+}
+.card .title {
+	font-family: var(--halo-display);
+	font-weight: 500;
+}
+.card .icon {
+	background: transparent !important;
+	color: var(--sl-color-white) !important;
+	border: 1px solid var(--halo-line);
+	border-radius: 6px;
+}
+
+/* Search button as a quiet field */
+site-search button[data-open-modal] {
+	border: 1px solid var(--halo-line);
+	border-radius: 6px;
+	background: transparent;
+}
+
+/* Figures drawn for these docs */
+.halo-figure {
+	margin: 1.5rem 0;
+	padding: 1.25rem;
+	border: 1px solid var(--halo-line);
+	border-radius: 8px;
+}
+.halo-figure svg {
+	width: 100%;
+	height: auto;
+	display: block;
+	color: var(--sl-color-white);
+}
+.halo-figure figcaption {
+	margin-top: 0.75rem;
+	font-size: var(--sl-text-xs);
+	color: var(--sl-color-gray-3);
+}

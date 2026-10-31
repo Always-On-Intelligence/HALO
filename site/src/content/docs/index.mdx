@@ -1,0 +1,56 @@
+---
+title: HALO
+description: Plug HALO into a personal agent through MCP and see how its loop closes.
+template: splash
+hero:
+  title: HALO
+  tagline: Plug HALO into a personal agent through MCP. The agent logs each step of its loop, and HALO shows which channels carry information, how far its evidence for self-improvement goes, and which level the trace supports.
+  image:
+    light: ../../assets/hero-light.svg
+    dark: ../../assets/hero-dark.svg
+    alt: Sensing, Memory, and Action on a plate, with HALO's ring above them
+  actions:
+    - text: Quickstart
+      link: /HALO/quickstart/
+      icon: right-arrow
+      variant: primary
+    - text: Architecture
+      link: /HALO/architecture/
+      variant: secondary
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+```json title="Any MCP client"
+{
+  "mcpServers": {
+    "halo": { "command": "halo", "args": ["serve"] }
+  }
+}
+```
+
+<CardGrid>
+	<Card title="A plugin, not a fork" icon="puzzle">
+		HALO is an MCP server. Hosts that take a custom MCP server, such as ChatGPT dots, Grok Bot, Claude Code, and Codex, can use it without changing their code. [How it connects](/HALO/architecture/).
+	</Card>
+	<Card title="Channels from links" icon="random">
+		Every step the agent logs names the earlier steps it used. A Memory step used by an Action step is the channel M→A. [Event model](/HALO/architecture/events/).
+	</Card>
+	<Card title="Evidence for self-improvement" icon="list-format">
+		HALO follows an action to its outcome, the revision the outcome led to, and the later action that used the revision. [Analysis](/HALO/architecture/analysis/).
+	</Card>
+	<Card title="Levels as lower bounds" icon="approve-check">
+		The report places the trace at a loop-closure level from L0 to L5, and says what the next level would need. [Levels](/HALO/concepts/levels/).
+	</Card>
+</CardGrid>
+
+## Where to start
+
+| You want to | Start with |
+|---|---|
+| See what HALO reports | [Quickstart](/HALO/quickstart/) |
+| Understand the plugin | [Plugin architecture](/HALO/architecture/), then [Event model](/HALO/architecture/events/) |
+| Connect a hosted agent | [ChatGPT dots](/HALO/connect/chatgpt-dots/) or [Grok Bot](/HALO/connect/grok-bot/) |
+| Connect a local agent | [Claude Code, Codex, and other local hosts](/HALO/connect/local-agents/) |
+| Look up a tool | [MCP reference](/HALO/reference/tools/) |
+| Review published systems | [Read mode](/HALO/modes/read/) and [Run mode](/HALO/modes/run/) |
