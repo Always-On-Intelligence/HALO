@@ -22,7 +22,7 @@ Every call to a logging tool stores one event. An event belongs to one module of
 | `uses` | all | Ids of earlier events this step relied on, such as `["e3", "e7"]`. |
 | `session` | all | A label for the conversation or wake-up, the same for each step in it. |
 | `agent` | all | The agent's name. Empty means the server's `--agent` value, then the name the client sent. |
-| `trigger` | act | `request` if the user asked now or set its time or condition. `self` if the agent decided by itself, between requests, to act or to stay silent. |
+| `trigger` | act | `request` if the user asked for it or set it up, including every step inside a run the user requested or scheduled, even when the agent chooses how to do it. `self` only if no request or schedule of the user started it and the agent decided by itself, between requests, whether to act or to stay silent. |
 | `form` | act | `silence`, `communication`, `preparation`, or `execution`. |
 | `about` | outcome | The id of the earlier `act` event the outcome is about. |
 | `target` | revise | What changed: the prompt, rule, skill, or policy. |

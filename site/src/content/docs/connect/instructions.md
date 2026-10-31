@@ -9,8 +9,9 @@ An agent logs to HALO only when it is told to. `halo_guide` returns the short ve
 From now on, log each step of your work to HALO while you do it, in a few words:
 - halo_observe when you take in something new, such as my message, a page, or a tool result.
 - halo_remember when you keep something for later conversations, and halo_recall when you look it up.
-- halo_act when you do something for me or decide to stay silent. Use trigger "self" when you
-  decided on your own between my requests, and "request" when I asked or set the time.
+- halo_act when you do something for me or decide to stay silent. Use trigger "request" when I asked
+  for it or set it up, including every step of a run I scheduled. Use "self" only when nothing I asked
+  or scheduled started it and you decided on your own whether to act.
 - halo_outcome when you learn how one of your actions went. Pass the action's id as about.
 - halo_revise when you change your own way of working for the future.
 Always pass uses with the ids of the earlier steps you relied on. Use one session label per

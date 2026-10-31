@@ -3,13 +3,13 @@
 const zh = Astro.props.lang === 'zh';
 const T = zh
 	? {
-			title: '个人智能体把循环中的每一步通过 MCP 记录到 HALO 插件，并向它请求报告。',
-			agent: '个人智能体', hosts: 'dot、Grok Bot、Claude Code 或你自己的', loop: '三个模块之间的六条通道',
+			title: '个人智能体把闭环中的每一步通过 MCP 记录到 HALO 插件，并向它请求报告。',
+			agent: '个人智能体', hosts: 'dot、Grok Bot、Claude Code 或你自己的', loop: '三个模块之间的六条通路',
 			mcp: 'stdio，托管智能体用 HTTPS', log: '记录每一步，以及它用到的步骤', diag: '按需返回诊断',
 			halo: 'HALO 插件', local: '运行在你的机器上',
 			tools: '工具', toolsSub: '检查每个事件及其引用', ledger: '账本', ledgerSub: '只追加的 SQLite，每个智能体一条轨迹',
-			analysis: '分析', analysisSub: '通道、证据步骤、等级', report: '报告', reportSub: '论文表格的各行，附事件编号',
-			caption: '智能体保留自己的循环。HALO 只接收智能体记录的步骤，保存下来，再从它们之间的引用读出循环。',
+			analysis: '分析', analysisSub: '通路、证据步骤、等级', report: '报告', reportSub: '论文表格的各行，附事件编号',
+			caption: '智能体的闭环照常运行。HALO 只接收智能体记录的步骤，保存下来，再从它们之间的引用读出闭环。',
 		}
 	: {
 			title: 'A personal agent logs each step of its loop to the HALO plugin over MCP and asks it for a report.',

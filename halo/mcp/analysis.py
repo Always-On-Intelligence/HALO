@@ -222,10 +222,13 @@ def report(events, agent='', session=''):
     ch, st = channels(events), steps(events)
     reached, checks = level(events, ch, st)
     sessions = sorted({e.get('session') or '' for e in events} - {''})
+    higher = [n for n in range(reached + 2, 6) if checks[n].observed]
     lines = [f'# HALO report{": " + agent if agent else ""}', '',
              f'{len(events)} events in {max(len(sessions), 1)} session(s), from {events[0]["ts"][:16]} to {events[-1]["ts"][:16]} UTC.'
              + (f' Scope: session `{session}`.' if session else ''), '',
-             f'**The trace supports L{reached} ({LEVELS[reached]}).** A level is a lower bound: the agent may do more than it logged.', '',
+             f'**The trace supports L{reached} ({LEVELS[reached]}).** A level is a lower bound: the agent may do more than it logged.'
+             + (f' The conditions of {" and ".join(", ".join(f"L{n}" for n in higher).rsplit(", ", 1))} also appear, but L{reached + 1} does not, and each level needs '
+                f'the ones below it.' if higher else ''), '',
              '## Channels', '', '| Channel | In this trace | Evidence |', '|---|---|---|']
     for c in CHANNELS:
         f = ch[c]

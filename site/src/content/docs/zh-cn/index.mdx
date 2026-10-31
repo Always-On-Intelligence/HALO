@@ -1,0 +1,56 @@
+---
+title: HALO
+description: 通过 MCP 把 HALO 接入个人智能体，查看它如何形成闭环。
+template: splash
+hero:
+  title: HALO
+  tagline: 通过 MCP 把 HALO 接入个人智能体。智能体记录闭环中的每一步，HALO 据此显示哪些通路在传递信息，自我改进的证据走到了哪一步，以及记录下来的轨迹支持哪个等级。
+  image:
+    light: ../../../assets/hero-light.svg
+    dark: ../../../assets/hero-dark.svg
+    alt: 一块底板上放着感知、记忆和行动，HALO 的光环悬在它们上方
+  actions:
+    - text: 快速上手
+      link: /HALO/zh-cn/quickstart/
+      icon: right-arrow
+      variant: primary
+    - text: 架构
+      link: /HALO/zh-cn/architecture/
+      variant: secondary
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+```json title="任意 MCP 客户端"
+{
+  "mcpServers": {
+    "halo": { "command": "halo", "args": ["serve"] }
+  }
+}
+```
+
+<CardGrid>
+	<Card title="插件接入，无需改动智能体" icon="puzzle">
+		HALO 是一个 MCP 服务器。能接入自定义 MCP 服务器的宿主（即运行智能体的应用），例如 ChatGPT dots、Grok Bot、Claude Code 和 Codex，不改自己的代码就能使用它。[如何接入](/HALO/zh-cn/architecture/)。
+	</Card>
+	<Card title="从引用读出通路" icon="random">
+		智能体记录的每一步都写明它用到了哪些更早的步骤。一个记忆步骤被一个行动步骤用到，就是通路 M→A。[事件模型](/HALO/zh-cn/architecture/events/)。
+	</Card>
+	<Card title="自我改进的证据" icon="list-format">
+		HALO 从一次行动出发，依次追踪它的结果、这个结果引出的修订，以及之后用到这次修订的行动。[分析](/HALO/zh-cn/architecture/analysis/)。
+	</Card>
+	<Card title="等级是下界" icon="approve-check">
+		报告把轨迹放到 L0 到 L5 中的某个闭环等级上，实际等级可能更高。报告还会说明到达下一级需要什么。[等级](/HALO/zh-cn/concepts/levels/)。
+	</Card>
+</CardGrid>
+
+## 从哪里开始
+
+| 你想 | 先看 |
+|---|---|
+| 看 HALO 会报告什么 | [快速上手](/HALO/zh-cn/quickstart/) |
+| 了解插件 | [插件架构](/HALO/zh-cn/architecture/)，再看[事件模型](/HALO/zh-cn/architecture/events/) |
+| 接入托管智能体 | [ChatGPT dots](/HALO/zh-cn/connect/chatgpt-dots/) 或 [Grok Bot](/HALO/zh-cn/connect/grok-bot/) |
+| 接入本地智能体 | [Claude Code、Codex 和其他本地宿主](/HALO/zh-cn/connect/local-agents/) |
+| 查找某个工具 | [MCP 参考](/HALO/zh-cn/reference/tools/) |
+| 审阅已发布的系统 | [只读模式](/HALO/zh-cn/modes/read/)和[运行模式](/HALO/zh-cn/modes/run/) |

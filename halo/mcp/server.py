@@ -24,9 +24,11 @@ how far your evidence for self-improvement goes. Log each step as it happens, in
 - halo_observe: you take in something new (a user message, a page, a sensor reading, a tool result).
 - halo_remember: you keep something for later conversations (a fact, a preference, a record of what you did).
 - halo_recall: you look up something you kept earlier.
-- halo_act: you do something for the user, or decide to stay silent. trigger is "self" when you decided on
-  your own between requests (a follow-up you chose, a check you scheduled), and "request" when the user
-  asked now or set the time or condition.
+- halo_act: you do something for the user, or decide to stay silent. trigger is "request" when the user asked
+  for it or set it up, including every step inside a run the user requested or scheduled, even when you choose
+  how to do it. trigger is "self" only when no request or schedule of the user's started it and you decided on
+  your own, between requests, whether to act or stay silent (a follow-up you chose to send, a check you chose
+  to make).
 - halo_outcome: you learn how one of your earlier actions went (a reply, a rating, a correction, a result).
   Pass the action's id as about.
 - halo_revise: you change your own way of working (a prompt, rule, skill, or policy you will reuse).
@@ -107,8 +109,9 @@ def build(ledger, default_agent=''):
     @server.tool(annotations=write)
     def halo_act(summary: Summary,
                  trigger: Annotated[Literal['request', 'self'], Field(description=(
-                     '"request" if the user asked for this now or set its time or condition; "self" if you decided '
-                     'on your own, between requests, to act or to stay silent.'))],
+                     '"request" if the user asked for it or set it up, including steps inside a run the user requested '
+                     'or scheduled, even when you choose how to do them. "self" only if no request or schedule of the '
+                     'user started it and you decided on your own, between requests, whether to act or stay silent.'))],
                  form: Annotated[Literal['silence', 'communication', 'preparation', 'execution'], Field(description=(
                      'silence: you decided not to act; communication: you told or asked the user; preparation: you '
                      'got something ready; execution: you changed something in the world for the user.'))] = 'communication',
@@ -196,7 +199,8 @@ def main():
         hosts.append(args.public_host)
         print(f'HALO plugin URL: https://{args.public_host}{path}', flush=True)
     print(f'HALO plugin listening on http://{args.host}:{args.port}{path} (ledger {Ledger(args.db).path})', flush=True)
-    server.run('streamable-http', host=args.host, port=args.port, streamable_http_path=path, stateless_http=False,
+    # behind a tunnel the server keeps no MCP sessions, so a restart does not break hosts that are already connected
+    server.run('streamable-http', host=args.host, port=args.port, streamable_http_path=path, stateless_http=bool(args.public_host),
                transport_security=TransportSecuritySettings(allowed_hosts=hosts, allowed_origins=[]))
 
 

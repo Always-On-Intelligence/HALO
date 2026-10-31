@@ -1,0 +1,42 @@
+---
+title: 论文如何使用 HALO
+description: 论文结果背后的只读模式和运行模式流程，适用于研究系统和产品。
+---
+
+import PipelineFigure from '../../../components/PipelineFigure.astro';
+
+论文《Always-On Personal Intelligence》把 HALO 应用于 40 项工作，其中有 34 个研究系统和 6 个产品。每项工作都经过了只读模式的审阅。运行模式测试了一个研究系统 AiGet，以及一个公开了代码的产品 EAIA。研究系统和产品依据的资料不同，所以结果分成两页：
+
+- [研究系统](/HALO/zh-cn/results/research/)：各系统的论文及其公开的代码。
+- [产品](/HALO/zh-cn/results/products/)：产品文档，产品公开了代码时也包括代码。
+
+这两页的表格照录论文中发表的表格。
+
+## 只读模式
+
+<PipelineFigure mode="read" lang="zh" />
+
+每个监督智能体（能联网的编程智能体）独立阅读这项工作的案例文件中列出的资料，并为每一格给出一个判断：一个标签、一段原文引用，以及一个出处位置，例如章节、文件路径或网址。每份审阅结果都必须通过 `halo/read/schema.json` 的校验，每一格由三个智能体中的多数决定。审阅规程见 `halo/read/protocol/PROTOCOL.md`，运行方法见[只读模式](/HALO/zh-cn/modes/read/)。
+
+产品的资料是它的官方网页，只抓取一次，并固定在抓取时的版本。案例文件记录每个网页的地址、抓取日期，以及智能体所读文本的 SHA-256 哈希值：
+
+```yaml title="cases/dot/case.yaml"
+id: dot
+kind: product
+sources:
+  - url: https://learn.chatgpt.com/docs/dots
+    kind: product_documentation
+    version: "Markdown documentation page fetched 2026-10-05"
+    sha256: 2dd16a1beab72dac1e70eff29e79fee52d27831ef58adc56228e8bc93ecac6eb
+modes: [read]
+```
+
+## 运行模式
+
+<PipelineFigure mode="run" lang="zh" />
+
+运行模式需要公开发布的代码。案例的适配器运行上游代码（系统原本发布的代码），只替换其中的模型客户端。适配器还声明每条通路或每个证据步骤在这段代码中经过的位置，以便在接收端切断它。[运行模式](/HALO/zh-cn/modes/run/)介绍了如何运行一个案例。
+
+## 插件的位置
+
+只读模式和运行模式根据一项工作的资料或代码，对它审阅一次。[插件](/HALO/zh-cn/architecture/)则在智能体运行期间跟随它，这是观察闭源产品的唯一途径。[产品页面](/HALO/zh-cn/results/products/)列出了论文中每个产品各自允许哪些检查。

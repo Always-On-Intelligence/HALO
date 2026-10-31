@@ -18,7 +18,7 @@ Levels are cumulative, so the report gives the highest level whose condition, an
 
 ## Requested or unrequested
 
-L2 and L3 differ in who decides to act. A reminder the user set for 9:00 is requested, even when it fires while the user is away, so the action is logged with trigger `request`. A check after a meeting that ends in a reminder, or in a decision to wait, is the agent's own decision, so it is logged with trigger `self`. Running in the background or on a timer does not by itself make a service always-on.
+L2 and L3 differ in who decides to act. A reminder the user set for 9:00 is requested, even when it fires while the user is away, so the action is logged with trigger `request`. The same holds for every step inside a run the user scheduled: choosing another data source or picking which papers to send is the agent's choice of how to do a requested task, not a decision to act. A check after a meeting that ends in a reminder, or in a decision to wait, is the agent's own decision whether to act, so it is logged with trigger `self`. Running in the background or on a timer does not by itself make a service always-on.
 
 ## Governed revision
 
