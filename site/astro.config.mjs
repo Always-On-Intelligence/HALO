@@ -63,7 +63,7 @@ export default defineConfig({
 							{
 								label: 'Connect an agent',
 								translations: { 'zh-CN': '接入智能体' },
-								items: ['connect/chatgpt-dots', 'connect/grok-bot', 'connect/local-agents', 'connect/instructions'],
+								items: ['connect/coverage', 'connect/chatgpt-dots', 'connect/grok-bot', 'connect/claude', 'connect/local-agents', 'connect/instructions'],
 							},
 							{ label: 'Other modes', translations: { 'zh-CN': '其他模式' }, items: ['modes/read', 'modes/run'] },
 						],
