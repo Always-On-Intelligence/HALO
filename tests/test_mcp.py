@@ -1,8 +1,9 @@
 """The plugin's analysis and ledger, on a reminder service that learns the user's timing over three days."""
 import pytest
 
-from halo.mcp.analysis import chain, channels, level, report, steps
+from halo.mcp.analysis import KINDS, chain, channels, level, report, steps
 from halo.mcp.ledger import Ledger, LedgerError
+from halo.mcp.server import GUIDE, HTTP_GUIDE, post_event
 
 DAYS = [
     # day 1: the user states a preference, the service keeps it
@@ -91,3 +92,29 @@ def test_report_mentions_level_and_rows(tmp_path):
     _, events = trace(tmp_path)
     text = report(events, 'dot')
     assert 'supports L5 (Governed revision)' in text and '| M→S | not observed |' in text
+
+
+def test_http_events_are_checked_like_tool_calls(tmp_path):
+    ledger = Ledger(tmp_path / 'ledger.sqlite')
+    status, reply = post_event(ledger, {'agent': 'muse', 'session': 's1', 'kind': 'observe', 'summary': 'user asks for a plan'})
+    assert status == 201 and reply['id'] == 'e1'
+    status, reply = post_event(ledger, {'agent': 'muse', 'session': 's1', 'kind': 'act', 'summary': 'drafted a plan',
+                                        'uses': ['e1'], 'trigger': 'request', 'form': 'preparation'})
+    assert status == 201 and 'S→A' in reply['note']
+    for bad, message in [({'agent': 'muse', 'kind': 'act', 'summary': 'sent it'}, 'act needs trigger'),
+                         ({'agent': 'muse', 'kind': 'act', 'summary': 'sent it', 'trigger': 'maybe'}, 'trigger must be one of'),
+                         ({'agent': 'muse', 'kind': 'outcome', 'summary': 'liked it'}, 'outcome needs about'),
+                         ({'agent': 'muse', 'kind': 'outcome', 'summary': 'liked it', 'about': 'e1'}, 'about must be'),
+                         ({'agent': 'muse', 'kind': 'recall', 'summary': 'plan', 'uses': 'e1'}, 'uses must be a list'),
+                         ({'agent': 'muse', 'kind': 'remember', 'summary': 'plan', 'uses': ['e9']}, 'unknown event id'),
+                         ({'kind': 'observe', 'summary': 'a message'}, 'agent is missing'),
+                         ({'agent': 'muse', 'kind': 'note', 'summary': 'a message'}, 'kind must be one of'),
+                         (['not', 'an', 'event'], 'one event as a JSON object')]:
+        status, reply = post_event(ledger, bad)
+        assert status == 400 and message in reply['error']
+    assert [e['kind'] for e in ledger.events('muse')] == ['observe', 'act']
+
+
+def test_both_guides_explain_every_kind():
+    assert all(f'- halo_{k}:' in GUIDE and f'- {k}:' in HTTP_GUIDE for k in KINDS)
+    assert '{base}/events' in HTTP_GUIDE and 'Content-Type: application/json' in HTTP_GUIDE

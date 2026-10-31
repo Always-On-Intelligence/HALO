@@ -53,7 +53,7 @@ class Ledger:
             missing = [u for u in uses if u not in known]
             if missing:
                 raise LedgerError(f'unknown event id(s) {", ".join(missing)} for agent {agent!r}; '
-                                  'call halo_trace to see the ids of your earlier events')
+                                  'list your earlier events (halo_trace, or GET /events) to see their ids')
             if extra.get('about') and known.get(extra['about']) != 'act':
                 raise LedgerError(f'about must be the id of one of your earlier act events, not {extra["about"]!r}')
             ts = datetime.now(timezone.utc).isoformat(timespec='seconds')
