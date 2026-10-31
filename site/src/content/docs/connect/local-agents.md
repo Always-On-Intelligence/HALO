@@ -38,7 +38,7 @@ Use the stdio command above, or start `halo serve --http` and point the client a
 
 ## Your own agent
 
-An agent you build can call HALO through any MCP client library, or log to the ledger directly:
+An agent you build can call HALO through any MCP client library, send events to the [HTTP address](/HALO/reference/http/) from any language, or, in Python, log to the ledger directly:
 
 ```python
 from halo.mcp.ledger import Ledger

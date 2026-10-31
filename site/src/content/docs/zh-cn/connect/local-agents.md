@@ -38,7 +38,7 @@ args = ["serve", "--agent", "codex"]
 
 ## 你自己的智能体
 
-你自己写的智能体可以通过任何 MCP 客户端库调用 HALO，也可以直接写账本：
+你自己写的智能体可以通过任何 MCP 客户端库调用 HALO，也可以用任何语言把事件发到 [HTTP 地址](/HALO/zh-cn/reference/http/)，用 Python 的话还可以直接写账本：
 
 ```python
 from halo.mcp.ledger import Ledger

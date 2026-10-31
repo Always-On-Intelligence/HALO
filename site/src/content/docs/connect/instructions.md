@@ -19,6 +19,17 @@ conversation or wake-up, and agent "<name>". Log only what really happened, mark
 afterwards as such, and leave out secrets and private text.
 ```
 
+## Over HTTP
+
+An agent without MCP gets the same rules from `GET /guide`, with the server's address filled in, so its standing instruction only has to point there:
+
+```text title="Standing instruction over HTTP"
+From now on, log each step of your work to HALO while you do it. How to log is explained at
+https://HOST/<token>/guide. Use agent "<name>" and one session label per conversation or wake-up.
+Log only what really happened, mark anything logged afterwards as such, and leave out secrets and
+private text.
+```
+
 ## Habits that make a trace useful
 
 - **Label sessions consistently.** State durability is read across sessions, so a session per conversation or per scheduled wake-up is enough. Reusing one label for everything hides it.

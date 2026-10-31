@@ -5,10 +5,12 @@ description: How HALO can attach to each personal-intelligence product the surve
 
 We checked how HALO can attach to each product the survey reviews, from the makers' public documentation on 31 October 2026. Products change quickly, so treat this as a starting point and check the linked documentation before you rely on a row. "Unconfirmed" means the documentation does not say.
 
+This page maps how each product could attach. So far three have been connected and tested, ChatGPT dots, Grok Bot, and Claude, and Muse has been prepared as a case. [The connection protocol](/HALO/connect/protocol/) explains each way in.
+
 A product falls into one of three groups:
 
-- **Plugin.** The product's agent can add HALO as a custom MCP server and log its own steps.
-- **Bridge.** The product sends or exposes its own events, through webhooks, an event stream, an API, or an MCP server of its own, and HALO can read them. A bridge records what the product did without relying on the agent's report. HALO does not ship bridges yet: each is a small adapter that turns a product's events into HALO events.
+- **Plugin.** The product's agent can log its own steps to HALO, as a custom MCP server or, without MCP, over [plain HTTP](/HALO/reference/http/).
+- **Bridge.** The product sends or exposes its own events, through webhooks, an event stream, an API, or an MCP server of its own, and HALO can read them. A bridge records what the product did without relying on the agent's report. HALO does not ship bridges yet. Each would be a small adapter that turns a product's events into HALO events and sends them over HTTP.
 - **Outside only.** Nothing reaches HALO. [Read mode](/HALO/modes/read/) and an A/B test at the product's boundary under a [test identity](/HALO/modes/run/) are what remain.
 
 ## Plugin
@@ -18,6 +20,7 @@ A product falls into one of three groups:
 | ChatGPT dots | a custom MCP server, created as a personal plugin | [tested on 31 October 2026](/HALO/connect/chatgpt-dots/) |
 | Grok Bot | ask the bot in chat to add a custom MCP server | [tested on 31 October 2026](/HALO/connect/grok-bot/) |
 | Claude (Cowork, Duet) | Customize, Connectors, Add custom connector | [tested with Cowork on 31 October 2026](/HALO/connect/claude/). Paid plans. Scheduled tasks can use connectors. Duet reuses connected apps, but custom connectors are unconfirmed |
+| Muse | a custom connector to HALO's HTTP address, which Muse builds in chat | [prepared as a case](/HALO/connect/muse/), not yet run. Meta's documentation does not mention MCP |
 | Manus | Connectors, Create, Add MCP by URL | whether scheduled tasks can call a custom server is unconfirmed |
 | OpenClaw | `openclaw mcp add`, stdio or HTTP | self-hosted. A separate test agent, which keeps tests out of the main agent's memory, needs its own model credentials |
 | Hermes Agent | `mcp_servers` in `~/.hermes/config.yaml` | self-hosted. Cron jobs can name the server |
@@ -38,7 +41,6 @@ A product falls into one of three groups:
 | Bee | a real-time event stream that can be forwarded to a webhook, a REST API, and a local MCP server | developer mode, integrations need Bee Pro |
 | Memoket Gem | webhooks after each recording and summary, and a read-only MCP server | |
 | Inbox Zero | a "Call webhook" rule action, and a REST API | |
-| Muse | custom connectors that Muse builds in chat | MCP support is unconfirmed |
 | Kindroid | a REST API that HALO would poll | |
 | Looki L1 | a REST API | access by approval |
 | Leon | skills, and a local HTTP API | the API is undocumented |

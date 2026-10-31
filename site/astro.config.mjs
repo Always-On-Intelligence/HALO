@@ -63,7 +63,12 @@ export default defineConfig({
 							{
 								label: 'Connect an agent',
 								translations: { 'zh-CN': '接入智能体' },
-								items: ['connect/coverage', 'connect/chatgpt-dots', 'connect/grok-bot', 'connect/claude', 'connect/local-agents', 'connect/instructions'],
+								items: ['connect/protocol', 'connect/instructions', 'connect/local-agents', 'connect/coverage'],
+							},
+							{
+								label: 'Connection cases',
+								translations: { 'zh-CN': '接入案例' },
+								items: ['connect/chatgpt-dots', 'connect/grok-bot', 'connect/claude', 'connect/muse'],
 							},
 							{ label: 'Other modes', translations: { 'zh-CN': '其他模式' }, items: ['modes/read', 'modes/run'] },
 						],
@@ -75,10 +80,10 @@ export default defineConfig({
 						items: ['results', 'results/research', 'results/products'],
 					},
 					{
-						label: { en: 'MCP reference', 'zh-cn': 'MCP 参考', 'zh-CN': 'MCP 参考' },
+						label: { en: 'Plugin reference', 'zh-cn': '插件参考', 'zh-CN': '插件参考' },
 						link: '/reference/tools/',
 						icon: 'puzzle',
-						items: ['reference/tools', 'reference/report', 'reference/server'],
+						items: ['reference/tools', 'reference/http', 'reference/report', 'reference/server'],
 					},
 					{
 						label: { en: 'CLI reference', 'zh-cn': '命令行参考', 'zh-CN': '命令行参考' },

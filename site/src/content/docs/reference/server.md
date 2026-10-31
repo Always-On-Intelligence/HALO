@@ -11,6 +11,8 @@ description: Transports, addresses, host checks, and the ledger file.
 | `halo serve --http` | Streamable HTTP | `http://127.0.0.1:8765/mcp` |
 | `halo serve --http --public-host HOST` | Streamable HTTP behind a tunnel or proxy | `https://HOST/<token>/mcp` |
 
+The HTTP server also serves the [plain HTTP routes](/HALO/reference/http/) next to `/mcp`, at `/events`, `/report`, and `/guide`, under the same secret path when there is one.
+
 ## Options
 
 | Option | Default | Meaning |
@@ -25,7 +27,7 @@ description: Transports, addresses, host checks, and the ledger file.
 
 ## Host and path checks
 
-The server rejects requests whose Host header is not `127.0.0.1`, `localhost`, or the `--public-host`, which protects a local server from DNS rebinding. With `--public-host`, the plugin is served only under `/<token>/mcp`, and every other path returns 404. Keep the token stable with `--token` or `HALO_TOKEN` when a host has the address saved.
+The server rejects requests whose Host header is not `127.0.0.1`, `localhost`, or the `--public-host`, which protects a local server from DNS rebinding. With `--public-host`, the plugin is served only under `/<token>/`, at `/mcp` and the plain HTTP routes, and every other path returns 404. Keep the token stable with `--token` or `HALO_TOKEN` when a host has the address saved.
 
 ## The ledger
 
@@ -38,6 +40,6 @@ The ledger is one SQLite table, `events`, with one row per logged event:
 | `agent`, `session` | who logged it and in which session |
 | `kind`, `summary`, `uses` | the event, its summary, and the ids it used, as JSON |
 | `trigger`, `form`, `about`, `target`, `made_by`, `governance` | the fields of acts, outcomes, and revisions |
-| `client` | the MCP client's name |
+| `client` | the MCP client's name, or `http` for an event sent over plain HTTP |
 
 The server only appends. To start a new trace, give the agent a new name or point `--db` at a new file.

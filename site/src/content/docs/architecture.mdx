@@ -7,13 +7,13 @@ import ArchitectureFigure from '../../components/ArchitectureFigure.astro';
 
 <ArchitectureFigure />
 
-The plugin has four parts, and the agent stays as it is. HALO does not run the agent, wrap its model, or read its memory. It receives the steps the agent logs over MCP and reads the loop off them.
+The plugin has four parts, and the agent stays as it is. HALO does not run the agent, wrap its model, or read its memory. It receives the steps the agent logs, over MCP or plain HTTP, and reads the loop off them.
 
 ## The parts
 
 | Part | What it does | Where it lives |
 |---|---|---|
-| **Tools** | Nine MCP tools: six to log a step of the loop, and `halo_trace`, `halo_report`, and `halo_guide` to read. Each logging tool checks that the step names only earlier events of the same agent. | `halo/mcp/server.py` |
+| **Tools** | Nine MCP tools: six to log a step of the loop, and `halo_trace`, `halo_report`, and `halo_guide` to read. Each logging tool checks that the step names only earlier events of the same agent. The same server takes the same events over [plain HTTP](/HALO/reference/http/). | `halo/mcp/server.py` |
 | **Ledger** | Keeps every logged event, in order, with its links. Events are never edited or deleted, so a report can always be traced back to what the agent logged. | `halo/mcp/ledger.py`, a SQLite file on the machine that runs the server |
 | **Analysis** | Reads channels, evidence steps, and the level from the links between events. It calls no model. | `halo/mcp/analysis.py` |
 | **Report** | Returns the result in the rows of the survey's tables, with the event ids behind every cell. | `halo_report`, or `halo trace report` on the command line |
