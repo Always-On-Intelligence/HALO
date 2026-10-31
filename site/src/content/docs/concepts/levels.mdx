@@ -3,7 +3,11 @@ title: Loop-closure levels
 description: The six levels from L0 to L5, and what a trace must show for each.
 ---
 
+import LevelsFigure from '../../../components/LevelsFigure.astro';
+
 The survey places services on six cumulative levels of loop closure. Two properties make a service always-on: **state durability**, so what it learns persists across interactions, and **operational continuity**, so it decides between requests whether to act. Both hold from L3 on.
+
+<LevelsFigure />
 
 | Level | Name | Adds | What a HALO trace must show |
 |---|---|---|---|

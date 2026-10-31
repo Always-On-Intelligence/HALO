@@ -1,0 +1,15 @@
+---
+// The loop-closure levels as in the survey's Figure 10, animated. Drawn by scripts/levels.py.
+import en from '../assets/levels-en.svg?raw';
+import zh from '../assets/levels-zh.svg?raw';
+
+const { lang = 'en' } = Astro.props;
+---
+
+<figure class="halo-figure halo-levels not-content" set:html={lang === 'zh' ? zh : en} />
+
+<style>
+	.halo-levels {
+		padding: 0.75rem;
+	}
+</style>

@@ -224,3 +224,6 @@ site-search button[data-open-modal] {
 .sl-markdown-content :is(th, td):first-child {
 	min-width: 4.5em;
 }
+.sl-markdown-content :is(th, td):nth-child(2) {
+	min-width: 5.5em;
+}
