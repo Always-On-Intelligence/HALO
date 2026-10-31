@@ -30,6 +30,15 @@ The harness writes every run's output, the judge's verdicts, and a summary to `r
 
 The survey's run-mode tests are on [AiGet](/HALO/results/research/#run-mode-aiget), a research system, and on [EAIA](/HALO/results/products/#run-mode-eaia), a product with released code.
 
-## Closed products
+## Closed products, without touching daily use
 
-A product without released code cannot be cut inside. The same design still works at the product's boundary: run the same scripted inputs with a control the product exposes switched on and off, such as memory, a connected plugin, or feedback, and let the judge compare. [What a trace can show](/HALO/architecture/trust/) describes how this combines with the plugin.
+A product without released code cannot be cut inside, so the test moves to the product's boundary: run the same scripted inputs with a control the product exposes switched on and off, such as memory, a connected plugin, or feedback, and let the judge compare.
+
+Such a test must stay apart from the user's own agent, because every input it sends becomes part of what the agent remembers about its user. A boundary test therefore runs under a separate test identity:
+
+- **A separate account or agent.** A test account, or a second bot or dot where the product allows several, holds the scripted user and nothing of the real one.
+- **No memory where the product allows it.** A chat mode that neither reads nor writes memory serves as the arm with memory switched off.
+- **Clean up after.** Where the product lists what it remembers, the memories a test created are removed when it ends.
+- **Separate traces.** Test sessions get their own session labels in HALO, so a report on daily use never mixes in a test.
+
+A test identity has no history with the real user, so it tests the mechanism and not what the agent has learned about this user. The plugin covers that part by observing ordinary use. HALO does not yet automate boundary tests. This section describes how to run one by hand.
