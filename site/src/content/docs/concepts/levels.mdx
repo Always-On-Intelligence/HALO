@@ -5,7 +5,7 @@ description: The six levels from L0 to L5, and what a trace must show for each.
 
 import LevelsFigure from '../../../components/LevelsFigure.astro';
 
-The survey places services on six cumulative levels of loop closure. Two properties make a service always-on: **state durability**, so what it learns persists across interactions, and **operational continuity**, so it decides between requests whether to act. Both hold from L3 on.
+The survey places assistants on six cumulative levels of loop closure. Two properties make an assistant always-on: **state durability**, so what it learns persists across interactions, and **operational continuity**, so it decides between requests whether to act. Both hold from L3 on.
 
 <LevelsFigure />
 
@@ -22,7 +22,7 @@ Levels are cumulative, so the report gives the highest level whose condition, an
 
 ## Requested or unrequested
 
-L2 and L3 differ in who decides to act. A reminder the user set for 9:00 is requested, even when it fires while the user is away, so the action is logged with trigger `request`. The same holds for every step inside a run the user scheduled: choosing another data source or picking which papers to send is the agent's choice of how to do a requested task, not a decision to act. A check after a meeting that ends in a reminder, or in a decision to wait, is the agent's own decision whether to act, so it is logged with trigger `self`. Running in the background or on a timer does not by itself make a service always-on.
+L2 and L3 differ in who decides to act. A reminder the user set for 9:00 is requested, even when it fires while the user is away, so the action is logged with trigger `request`. The same holds for every step inside a run the user scheduled: choosing another data source or picking which papers to send is the agent's choice of how to do a requested task, not a decision to act. A check after a meeting that ends in a reminder, or in a decision to wait, is the agent's own decision whether to act, so it is logged with trigger `self`. Running in the background or on a timer does not by itself make an assistant always-on.
 
 ## Governed revision
 

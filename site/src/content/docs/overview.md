@@ -3,7 +3,7 @@ title: Overview
 description: What HALO is, what the plugin adds, and how it relates to read mode and run mode.
 ---
 
-HALO, the Harness for Always-On Loop Oversight, checks how an always-on personal service closes its loop. It follows the framework of the survey *Always-On Personal Intelligence*: a service is a loop of three modules, Sensing, Memory, and Action, connected by information-flow channels, and a service that improves itself also needs a chain of evidence that runs from its own records to a revision it later uses. [The continuing loop](/HALO/concepts/loop/) defines these terms.
+HALO, the Harness for Always-On Loop Oversight, is a diagnostic tool that assesses the loop completeness of always-on assistants. It follows the framework of the survey *Always-On Personal Intelligence*: an always-on assistant runs a continuing loop of three functional modules, Sensing, Memory, and Action, connected by six directed coupling channels, and self-evolution extends this loop when the assistant revises how it works from its own operating experience. A claim of self-evolution that rests on outcome feedback needs a chain of evidence with five steps: record, outcome, attribution, revision, and later use. [The continuing loop](/HALO/concepts/loop/) defines these terms.
 
 ## Three ways to use HALO
 

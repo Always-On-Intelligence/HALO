@@ -3,7 +3,7 @@ title: Quickstart
 description: Connect an agent, log three days of a small loop, and read the report.
 ---
 
-This page connects a local MCP client to HALO and logs the loop of a reminder service over three days. The same steps work from any host. Only the way of connecting differs.
+This page connects a local MCP client to HALO and logs the loop of a reminder assistant over three days. The same steps work from any host. Only the way of connecting differs.
 
 ## 1. Connect a client
 
@@ -21,7 +21,7 @@ For a local host that starts MCP servers itself, such as Claude Code or Codex, r
 
 ## 2. Log the loop
 
-Ask the agent to call `halo_guide` once. It returns the instructions the agent needs. Then the agent logs each step as it happens. Over three days, a reminder service that learns the user's timing logs these calls:
+Ask the agent to call `halo_guide` once. It returns the instructions the agent needs. Then the agent logs each step as it happens. Over three days, a reminder assistant that learns the user's timing logs these calls:
 
 ```text
 day1  halo_observe   "user asks for reminders before meetings"                      -> e1

@@ -1,22 +1,35 @@
 # HALO: Harness for Always-On Loop Oversight
 
-HALO checks how an always-on personal service closes its loop. It follows the framework of the
-survey *Always-On Personal Intelligence*: a service is a loop of three modules, **Sensing**,
-**Memory**, and **Action**, connected by coupling channels, and a service that improves itself
-also needs a chain of evidence that runs from its own records to a revision it later uses.
+HALO is a diagnostic tool that assesses the loop completeness of existing always-on assistants. It
+follows the framework of the survey *Always-On Personal Intelligence*: an always-on assistant runs a
+continuing loop of three functional modules, **Sensing**, **Memory**, and **Action**, connected by six
+directed coupling channels, and self-evolution extends this loop when the assistant revises how it
+works from its own operating experience.
 
-HALO works in two modes.
+HALO examines two parts of this framework: the coupling channels of the continuing loop and, for
+self-evolution that rests on outcome feedback, the five steps of the chain of evidence. For each
+channel or step, it asks two questions. Does a system's source report it? And does removing it change
+the system's behavior? The five steps are record, outcome, attribution, revision, and later use. For an
+email assistant that learns from the user's edits, as EAIA does, the record is the draft it wrote and
+the outcome is the user's edit. Attribution links the edit to that draft, the revision rewrites the
+drafting prompt, and later use is the next draft written with the new prompt.
 
-- **Read mode.** Three oversight agents (coding agents with web access) each read a work's papers
-  and released code on their own, and judge every coupling channel and every evidence step with a
-  quote and a locator. A majority vote decides each cell.
-- **Run mode.** HALO runs a system's own code on fixed inputs, once unmodified and once with
-  selected channels or evidence steps cut, and compares the two. Only the model clients are
-  replaced, by one backbone that stays fixed across arms.
+HALO answers the two questions in two modes.
+
+- **Read mode.** Three oversight agents, language-model coding agents with web access, each read a
+  work's papers and released code on their own and judge every coupling channel and every evidence
+  step with a quote and a locator. A majority vote decides each cell.
+- **Run mode.** HALO runs a system's released code on fixed inputs, once unmodified and once with one
+  or more channels or evidence steps removed, and examines how its behavior changes. The model
+  clients call one backbone that stays fixed across arms, and each case's README says what else its
+  adapter replaces.
+
+The word harness in the name refers to these two modes of analysis, not to the harness inside an
+assistant's scaffolding.
 
 HALO also works as an **MCP plugin** for agents that are already running, such as ChatGPT dots, Grok Bot,
 Claude Code, or Codex. The agent logs each step of its loop to HALO, naming the earlier steps it used, and
-HALO reads the channels, the evidence steps, and the level the trace supports from those links:
+HALO reads the channels, the evidence steps, and the loop-closure level the trace supports from those links:
 
 ```bash
 uv pip install -p .venv/bin/python -e ".[mcp]"
