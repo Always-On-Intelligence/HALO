@@ -1,7 +1,7 @@
 # HALO: Harness for Always-On Loop Oversight
 
 HALO is a diagnostic tool that assesses the loop completeness of existing always-on assistants. It
-follows the framework of the survey *Always-On Personal Intelligence*: an always-on assistant runs a
+follows the framework of the survey [*Always-On Personal Intelligence*](https://always-on-intelligence.github.io/Always-On_Personal_Intelligence.pdf): an always-on assistant runs a
 continuing loop of three functional modules, **Sensing**, **Memory**, and **Action**, connected by six
 directed coupling channels, and self-evolution extends this loop when the assistant revises how it
 works from its own operating experience.

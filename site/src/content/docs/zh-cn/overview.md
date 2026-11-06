@@ -3,7 +3,7 @@ title: 概览
 description: HALO 是什么，插件增加了什么，以及插件与只读模式、运行模式的关系。
 ---
 
-HALO 全称 Harness for Always-On Loop Oversight，即持续在线闭环监督工具。它是一个诊断工具，评估持续在线助手的闭环完整性。HALO 沿用论文 *Always-On Personal Intelligence*（持续在线个人智能）的框架：持续在线助手运行一个持续闭环，由感知、记忆和行动三个功能模块组成，模块之间由六条有向的耦合通路相连。助手根据自己的运行经验修订工作方式时，自演化就扩展了这个闭环。依赖结果反馈的自演化需要一条五步的证据链：记录、结果、归因、修订和后续使用。[持续闭环](/HALO/zh-cn/concepts/loop/)一页定义了这些术语。
+HALO 全称 Harness for Always-On Loop Oversight，即持续在线闭环监督工具。它是一个诊断工具，评估持续在线助手的闭环完整性。HALO 沿用论文 [*Always-On Personal Intelligence*](https://always-on-intelligence.github.io/Always-On_Personal_Intelligence.pdf)（持续在线个人智能）的框架：持续在线助手运行一个持续闭环，由感知、记忆和行动三个功能模块组成，模块之间由六条有向的耦合通路相连。助手根据自己的运行经验修订工作方式时，自演化就扩展了这个闭环。依赖结果反馈的自演化需要一条五步的证据链：记录、结果、归因、修订和后续使用。[持续闭环](/HALO/zh-cn/concepts/loop/)一页定义了这些术语。
 
 ## 使用 HALO 的三种方式
 
