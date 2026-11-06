@@ -183,3 +183,9 @@ samples per item. Each case's `report.md`, every arm's output (`arms.jsonl`), an
 Write a case folder for it: an adapter that runs your code with its model client pointed at the
 HALO backbone, the sites where each channel or evidence step can be cut, and a few scripted
 inputs. `docs/adding_a_case.md` gives the rules, and `cases/aiget/` is the reference case.
+
+## License
+
+HALO's own code is under the [MIT License](LICENSE). The code under `cases/*/core/` comes from each work's
+own repository and keeps that repository's terms. Where a repository states no license, its authors keep
+their rights.
