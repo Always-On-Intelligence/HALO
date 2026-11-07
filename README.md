@@ -267,6 +267,10 @@ HALO is introduced in the survey below. If you use it, please cite:
 }
 ```
 
+## Acknowledgments
+
+We thank [LMMs-Lab](https://www.lmms-lab.com/) for the idea and inspiration behind our documentation.
+
 ## License
 
 HALO's own code is under the [MIT License](LICENSE). The code under `cases/*/core/` comes from each work's
